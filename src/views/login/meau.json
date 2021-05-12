@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "name": "首页",
+        "pid": 1000,
+        "type": 1,
+        "url": "/home",
+        "code": null,
+        "props": "icon-shitu",
+        "sort": 10000,
+        "pids": null,
+        "descr": "首页",
+        "updateBy": null,
+        "updateTime": "2020-08-06 10:44:57"
+    },
+    {
+        "id": 2,
+        "name": "项目列表",
+        "pid": 1000,
+        "type": 1,
+        "url": "/projectList",
+        "code": null,
+        "props": "icon-xinyong",
+        "sort": 20000,
+        "pids": null,
+        "descr": "项目列表",
+        "updateBy": null,
+        "updateTime": "2020-08-06 10:45:06"
+    },
+    {
+        "id": 3,
+        "name": "项建书",
+        "pid": 1000,
+        "type": 1,
+        "url": "/xiangJianshu",
+        "code": null,
+        "props": "icon-fengxian",
+        "sort": 30000,
+        "pids": null,
+        "descr": "项建书",
+        "updateBy": null,
+        "updateTime": "2020-08-06 10:45:32"
+    },
+    {
+        "id": 4,
+        "name": "工可审批",
+        "pid": 1000,
+        "type": 1,
+        "url": "/workPermitApproval",
+        "code": "",
+        "props": "icon-faxian",
+        "sort": 50000,
+        "pids": null,
+        "descr": "工可审批",
+        "updateBy": null,
+        "updateTime": "2020-08-06 10:44:01"
+    }
+]

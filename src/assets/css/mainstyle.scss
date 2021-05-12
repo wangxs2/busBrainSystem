@@ -1,0 +1,519 @@
+.info-detail {
+    .task-list {
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 21px 20px;
+            cursor: pointer;
+
+            .item-l {
+                width: 100%;
+                display: flex;
+                justify-content: flex-start;
+                // align-items: center;
+                box-sizing: border-box;
+
+                .img-dot {
+                    position: relative;
+                    margin-right: 16px;
+
+                    img {
+                        width: 40px;
+                        height: 40px;
+                    }
+
+                    .dot {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 10px;
+                        height: 10px;
+                        background: rgba(255, 2, 2, 1);
+                        border-radius: 5px;
+                    }
+                }
+
+                .project-name {
+                    font-size: 20px;
+                    color: #333;
+                    padding-bottom: 10px;
+                }
+
+                .desc-time {
+                    font-size: 14px;
+
+                    .desc {
+                        display: flex;
+                        justify-content: flex-start;
+                        color: rgba(28, 34, 74, 1);
+
+                        .ask {
+                            width: 22px;
+                            height: 22px;
+                            background: rgba(247, 136, 36, 0.2);
+                            border-radius: 4px;
+                            font-size: 14px;
+                            color: rgba(248, 136, 36, 1);
+                            text-align: center;
+                            line-height: 22px;
+                            margin-right: 2px;
+                            padding: 0 4px;
+                        }
+
+                        .desc-content {
+                            width: 100%;
+                            white-space: normal; // this it is
+                            word-break: break-all; //or word-wrap:break-word;
+                        }
+
+                        .reply-name {
+                            background: none;
+                            font-size: 14px;
+                            font-weight: bold;
+                            color: rgba(77, 90, 176, 1);
+                        }
+                    }
+
+                    .time {
+                        color: rgba(140, 150, 168, 1);
+                        margin-top: 10px;
+                    }
+                }
+            }
+
+            .item-r {
+                img {
+                    width: 22px;
+                    height: 22px;
+                }
+            }
+        }
+    }
+}
+
+.inquiry-quiry {
+
+    .el-pager li.active+li {
+        border-left: 1px solid rgba(198, 203, 212, 1);
+    }
+
+    .el-pagination .btn-next,
+    .el-pagination .btn-prev {
+        color: #b2b8c4;
+    }
+
+    .el-pager li,
+    .el-pagination .btn-next,
+    .el-pagination .btn-prev {
+        min-width: 30px;
+        height: 30px;
+        font-size: 14px;
+        color: #2c325a;
+        border: 1px solid rgba(198, 203, 212, 1);
+        border-radius: 4px;
+        padding: 0;
+        margin: 0 5px;
+    }
+
+    .el-pager li.active {
+        border: 1px solid rgba(74, 156, 252, 1);
+        color: rgba(44, 50, 90, 1);
+    }
+
+    .el-textarea__inner {
+        border-radius: 0;
+    }
+
+    .top-input {
+        .el-textarea__inner:focus {
+            border-color: #ffac0c;
+        }
+    }
+
+    .input-wrapper {
+        .el-textarea__inner:focus {
+            border-color: #ffac0c;
+        }
+
+        .el-textarea .el-input__count {
+            bottom: -28px;
+            right: 0;
+            font-size: 14px;
+            font-family: Microsoft YaHei;
+            font-weight: 400;
+            color: rgba(140, 149, 167, 1);
+        }
+    }
+
+    .el-input input {
+        outline-color: invert;
+        outline-style: none;
+        outline-width: 0px;
+        border: none;
+        border-style: none;
+        text-shadow: none;
+        -webkit-appearance: none;
+        -webkit-user-select: text;
+        outline-color: transparent;
+        box-shadow: none;
+    }
+
+    .people-list {
+        .input-wrapper {
+            border-bottom: 5px solid #eee;
+        }
+    }
+
+    .auto-input {
+        .el-input__inner {
+            background-color: #f3f4f9;
+            height: 35px;
+            line-height: 35px;
+            border: 1px solid #bbb;
+        }
+    }
+
+    .project-header {
+        padding: 20px;
+        box-sizing: border-box;
+        background: #fff;
+        border-radius: 12px;
+        margin-bottom: 16px;
+
+        .top-input {}
+
+        .bottom-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 6px;
+
+            .btn-l-l {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            .btn-l {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                position: relative;
+                cursor: pointer;
+
+                &:last-child {
+                    margin-left: 20px;
+                }
+
+                .desc1 {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: rgba(140, 150, 168, 1);
+                    margin-right: 8px;
+                }
+
+                .desc2 {
+                    font-size: 14px;
+                    color: rgba(100, 114, 142, 1);
+                }
+
+                .people-list {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    position: absolute;
+                    top: 32px;
+                    left: 0;
+                    width: 150px;
+                    height: 200px;
+                    border: 1px solid rgba(140, 150, 168, 1);
+                    border-radius: 10px;
+                    background: #fff;
+                    overflow: hidden;
+                    overflow-y: scroll;
+                    z-index: 48;
+
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .list-item {
+                        padding: 10px 20px;
+                        border-bottom: 1px solid #eee;
+
+                        &.list-item-active {
+                            color: #0084ff;
+                        }
+                    }
+                }
+            }
+
+            .btn-r {
+                width: 64px;
+                height: 30px;
+                font-size: 14px;
+                color: rgba(255, 255, 255, 1);
+                background: rgba(74, 156, 252, 0.9);
+                border-radius: 4px;
+                line-height: 30px;
+                text-align: center;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .project-body {
+        flex: 1;
+        padding: 20px;
+        box-sizing: border-box;
+        background: #fff;
+        border-radius: 12px;
+
+        .project-body-header {
+            display: flex;
+            justify-content: flex-start;
+            height: 36px;
+            background: rgba(243, 244, 249, 1);
+            padding: 0 20px;
+
+            .tab-list {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+
+                .tab-item {
+                    font-size: 14px;
+                    color: rgba(140, 150, 168, 1);
+                    cursor: pointer;
+                    padding: 0 10px 0 0;
+                    margin-right: 27px;
+
+                    .name {}
+
+                    .num {}
+
+                    &.tab-item-color {
+                        color: rgba(44, 50, 90, 1);
+                    }
+                }
+            }
+
+            .btn-select {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                cursor: pointer;
+
+                span {
+                    font-size: 14px;
+                    color: rgba(44, 50, 90, 1);
+                    padding-right: 21px;
+                }
+
+                img {
+                    width: 22px;
+                    height: 22px;
+                }
+            }
+        }
+
+        .project-body-body {
+            padding: 12px 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: scroll;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            .task-list {
+                .list-item {
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    padding: 21px 20px;
+                    border-bottom: 1px solid #edeff2;
+
+                    &.list-item-child {
+                        .desc-time-child {
+                            padding-bottom: 14px;
+                        }
+                    }
+
+                    .item-l {
+                        width: 100%;
+                        display: flex;
+                        justify-content: flex-start;
+
+                        .img-dot {
+                            position: relative;
+                            margin-right: 16px;
+
+                            img {
+                                width: 40px;
+                                height: 40px;
+                            }
+                        }
+
+                        .desc-time-input {
+                            flex: 1;
+
+                            .desc-time {
+                                font-size: 14px;
+
+                                .desc {
+                                    display: flex;
+                                    justify-content: flex-start;
+                                    color: rgba(28, 34, 74, 1);
+
+                                    .write {
+                                        width: 22px;
+                                        height: 22px;
+                                        background: rgba(247, 136, 36, 0.2);
+                                        border-radius: 4px;
+                                        font-size: 14px;
+                                        color: rgba(248, 136, 36, 1);
+                                        text-align: center;
+                                        line-height: 22px;
+                                        margin-right: 5px;
+                                        padding: 0 4px;
+                                    }
+
+                                    .reply-name {
+                                        background: none;
+                                        font-size: 14px;
+                                        font-weight: bold;
+                                        color: rgba(77, 90, 176, 1);
+                                    }
+
+                                    .desc-content {
+                                        width: 100%;
+                                        white-space: normal; // this it is
+                                        word-break: break-all; //or word-wrap:break-word;
+                                    }
+                                }
+
+                                .time {
+                                    color: rgba(140, 150, 168, 1);
+                                    margin-top: 10px;
+
+                                    .reply {
+                                        font-size: 14px;
+                                        color: rgba(0, 132, 255, 1);
+                                        padding: 0 20px;
+                                        cursor: pointer;
+
+                                        &.reply-click {
+                                            text-decoration: underline;
+                                        }
+                                    }
+
+                                    .cancle {
+                                        cursor: pointer;
+                                        color: #f56c6c;
+                                    }
+                                }
+                            }
+
+                            .sub-list {
+                                .sub-list-item {
+                                    padding: 9px 0;
+                                    border-top: 1px solid #edeff2;
+
+                                    &:first-child {
+                                        margin-top: 9px;
+                                    }
+
+                                    &:last-child {
+                                        padding-bottom: 0;
+                                    }
+
+                                    .desc-time {
+                                        .desc {
+                                            display: flex;
+                                            justify-content: flex-start;
+
+                                            .write {
+                                                width: 22px;
+                                                height: 22px;
+                                                background: rgba(39, 192, 102, 0.2);
+                                                border-radius: 4px;
+                                                font-size: 14px;
+                                                color: rgba(39, 192, 102, 1);
+                                                text-align: center;
+                                                line-height: 22px;
+                                                margin-right: 5px;
+                                                padding: 0 4px;
+                                            }
+
+                                            .reply-name {
+                                                background: none;
+                                                font-size: 14px;
+                                                font-weight: bold;
+                                                color: rgba(77, 90, 176, 1);
+                                            }
+
+                                            .desc-content {
+                                                width: 100%;
+                                                white-space: normal; // this it is
+                                                word-break: break-all; //or word-wrap:break-word;
+                                            }
+                                        }
+
+                                        .time {
+                                            margin-top: 9px;
+                                        }
+                                    }
+                                }
+                            }
+
+                            .input-wrapper {
+                                width: 76%;
+                                margin-top: 13px;
+
+                                .btn-publish {
+                                    display: flex;
+                                    justify-content: flex-start;
+                                    align-items: center;
+                                    padding-top: 8px;
+
+                                    .confirm,
+                                    .cancle {
+                                        width: 56px;
+                                        height: 26px;
+                                        text-align: center;
+                                        line-height: 26px;
+                                        font-size: 14px;
+                                        margin-right: 12px;
+                                        cursor: pointer;
+                                    }
+
+                                    .confirm {
+                                        background: rgba(150, 158, 175, 1);
+                                        color: rgba(255, 255, 255, 1);
+                                    }
+
+                                    .cancle {
+                                        background: rgba(237, 238, 240, 1);
+                                        color: rgba(140, 149, 167, 1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .block {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 100%;
+            padding-top: 20px;
+            box-sizing: border-box;
+        }
+    }
+}

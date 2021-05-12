@@ -1,0 +1,268 @@
+<template>
+  <div class="login">
+    <div class="login-content">
+      <div class="title-form">
+        <div class="title">接口测试管理平台</div>
+        <div class="input-form">
+          <el-form
+            :model="loginForm"
+            :show-message="false"
+            :rules="loginRules"
+            ref="loginForm"
+            class="ruleSa"
+          >
+            <el-form-item label prop="username" style="position: relative;margin-bottom:14px">
+              <el-input type="text" placeholder="请输入账号" v-model="loginForm.username">
+                <i slot="prefix" class="iconfont" style="font-size:17px;margin-left:3px;"></i>
+              </el-input>
+              <img src="../../assets/image/icon_zh@3x.png" alt class="zdy-icon" />
+              <span v-if="nameFlag" class="error-message">{{nameMess}}</span>
+            </el-form-item>
+            <el-form-item label prop="password" style="position: relative;margin-bottom:0;">
+              <el-input type="password" placeholder="请输入密码" v-model="loginForm.password">
+                <i slot="prefix" class="iconfont" style="font-size:24px;"></i>
+              </el-input>
+              <img src="../../assets/image/icon_mm@3x.png" alt class="zdy-icon" />
+              <span v-if="pswFlag" class="error-message">{{pswMess}}</span>
+            </el-form-item>
+            <div class="passwordSa">
+              <el-checkbox v-model="checked" @change="rememberPasswordS">记住用户名</el-checkbox>
+              <span style="cursor: pointer" @click="forget">忘记密码?</span>
+            </div>
+            <el-form-item style="margin-bottom:0;margin-top:48px">
+              <el-button :loading="subLoad" type="primary" @click="login('loginForm')">登录</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import base64 from "@/libs/base.js";
+import store from '@/stores'
+import { _debounce } from "@/libs/public.js";
+export default {
+  data () {
+    let check = (rule, value, callback) => {
+      if (value === "") {
+        if (rule.field == "username") {
+          this.nameFlag = true;
+          this.nameMess = "请输入账号";
+        } else {
+          this.pswFlag = true;
+          this.pswMess = "请输入密码";
+        }
+        return callback(new Error());
+      } else {
+        if (rule.field == "username") {
+          this.nameFlag = false;
+          this.nameMess = "";
+        } else {
+          this.pswFlag = false;
+          this.pswMess = "";
+        }
+        callback();
+      }
+    };
+    return {
+      checked: false, //记住用户名
+      subLoad: false, //登录按钮动画
+      message: "", // 登录提示
+      nameMess: "",
+      nameFlag: false,
+      pswMess: "",
+      pswFlag: false,
+      loginForm: {
+        // 登录数据
+        username: "",
+        password: ""
+      },
+      loginRules: {
+        username: [
+          { required: true, trigger: "blur", validator: check }
+        ],
+        password: [
+          { required: true, trigger: "blur", validator: check }
+        ]
+      }
+    };
+  },
+  beforeCreate () {
+    if (this.$route.query.flag) {
+      this.$router.push("/login");
+      location.reload();
+    }
+  },
+  mounted () {
+    document.onkeydown = event => {
+      //回车登录
+      if (event.keyCode === 13) {
+        this.login();
+      }
+    };
+    sessionStorage.clear()
+    if (localStorage.getItem("checked") == "true") {
+      this.loginForm.username = localStorage.getItem("userNameSa")
+      this.checked = true
+    }
+  },
+  methods: {
+    //记住密码
+    rememberPasswordS (val) {
+      this.checked = val
+      if (this.checked) {
+        localStorage.setItem("userNameSa", this.loginForm.username);
+        localStorage.setItem("checked", true);
+      } else {
+        localStorage.removeItem("userNameSa");
+        localStorage.removeItem("checked");
+      }
+    },
+    login: _debounce(function (formName) {
+     this.$router.push("/apiList");
+      // this.$refs[formName].validate(valid => {
+      //   if (valid) {
+      //     this.subLoad = true;
+      //     this.$fetchPost("sys/login", this.loginForm, 'json')
+      //       .then(res => {
+      //         this.subLoad = false;
+      //         if (res.code == 200) {
+      //           document.cookie = "flag=true";
+      //           document.cookie = "user=" + res.result.userInfo.id;
+      //           document.cookie = "userName=" + res.result.userInfo.username;
+      //           document.cookie = "Token=" + res.result.token;
+      //           document.cookie = "roleid=" + res.result.role[0].id;
+      //           document.cookie = "realname=" + res.result.userInfo.realname;
+      //           document.cookie = "orgname=" + res.result.org[0].name;
+      //           document.cookie = "realcode=" +  res.result.role[0].code;
+      //           this.$store.commit('SET_TOKEN', res.result.token)
+      //           this.$store.commit("SET_ID", res.result.userInfo.id);
+      //           this.$store.commit("SET_USERINFO", res.result.userInfo);
+      //           this.$store.commit("SET_NAME", res.result.userInfo.username);
+      //           this.$store.commit("SET_REALNAME", res.result.userInfo.realname);
+      //           this.$store.commit("SET_ROLES", res.result.org);
+      //           localStorage.setItem("userNameSa", this.loginForm.username);
+      //           this.$store.commit("SET_ROLEID", res.result.role[0].id);
+      //           this.$store.commit("SET_ROLECODE", res.result.role[0].code);
+      //            this.$router.push("/apiList");
+      //           this.$message.success(res.message)
+      //         } else {
+      //           this.$message.error(res.message)
+      //         }
+      //       })
+      //       .catch(res => {
+      //         this.subLoad = false;
+      //       });
+      //   }
+      // });
+    }, 300),
+    forget () {
+      //忘记密码
+      this.$router.push("/forgetPwd");
+    }
+  }
+};
+</script>
+<style lang="scss">
+.login {
+  .el-input__inner {
+    border: none;
+    font-size: 16px;
+    color: #989898;
+    line-height: vh(44);
+    height: vh(44);
+  }
+  .el-input__prefix {
+    width: vw(30);
+  }
+  .el-form-item {
+    position: relative;
+    .zdy-icon {
+      position: absolute;
+      top: vh(12);
+      left: vw(5);
+      width: vw(20);
+      height: vh(20);
+    }
+  }
+  .el-form-item__content {
+    line-height: vh(44);
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: url("../../assets/image/bg_1@3x.png") center center no-repeat;
+  background-size: 100% 100%;
+  .login-content {
+    display: flex;
+    justify-content: flex-end;
+    width: vw(1310);
+    height: vh(604);
+    background: url("../../assets/image/bg_2@3x.png") center center no-repeat;
+    background-size: vw(1310) vh(604);
+    .title-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: vw(744);
+      .title {
+        font-size: vw(42);
+        font-family: FZZhengHeiS-EB-GB;
+        font-weight: 400;
+        color: rgba(74, 156, 252, 1);
+        text-align: center;
+        margin-top: vh(144);
+        margin-bottom: 0;
+      }
+      .input-form {
+        width: vw(360);
+        margin-top: vh(48);
+        .el-form-item {
+          .el-input {
+            position: relative;
+            width: vw(360);
+            height: wh(44);
+            background: rgba(255, 255, 255, 1);
+            border: 1px solid rgba(223, 226, 233, 1);
+            border-radius: vw(4);
+          }
+          .error-message {
+            position: absolute;
+            top: 0;
+            right: vw(20);
+            color: red;
+          }
+          .el-button {
+            width: vw(360);
+            height: vh(44);
+            background: rgba(74, 156, 252, 1);
+            border-radius: vw(4);
+          }
+          .el-button--primary {
+            border: 1px solid rgba(74, 156, 252, 1);
+          }
+        }
+        .passwordSa {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: vh(20);
+          font-size: vw(14);
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: rgba(73, 155, 252, 1);
+        }
+      }
+    }
+  }
+}
+</style>
