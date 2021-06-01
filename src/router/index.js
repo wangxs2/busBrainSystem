@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/views/layout/index'
-import apiList from '@/views/apiList/index'
 import login from '@/views/login/index'
+import apiList from '@/views/apiList/index'
 import forgetPwd from '@/views/forgetPwd/index'
-import journal from '@/views/journal/index'
 Vue.use(Router)
 export const constantRouterMap = [
   {
@@ -21,12 +20,6 @@ export const constantRouterMap = [
     name: Layout,
     component: Layout,
     children: [
-      {
-        path: '/journal',
-        name: 'journal',
-        component: journal
-
-      },
       {
         path: '/apiList',
         name: 'apiList',

@@ -78,7 +78,6 @@
             <div class="list-item">
               <div class="item-l">
                 <div class="img-dot">
-                  <img src="../../../../../assets/image/icon_message_4@3x.png" alt />
                 </div>
                 <div class="desc-time-input">
                   <div class="desc-time">

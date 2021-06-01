@@ -1,20 +1,25 @@
 <template>
   <div class="treeleft">
-    <el-menu
-      mode="vertical"
-      ref="navbar"
-      :collapse-transition="false"
-      :default-active="$route.path"
-      unique-opened
-      router
-      :collapse="menuFlag"
-      active-text-color="#89B8FF"
-      background-color="#272E59"
-      text-color="#ffffff"
-      @select="selectMenu"
-    >
-      <menu-item v-for="(item,n) in menuData" :item="item" :navIndex="String(n)" :key="item.id"></menu-item>
-    </el-menu>
+    <!-- <div @click="show(item,n)" v-for="(item,n) in menuData" :key="item.id" class="one-meanu">
+      <div  :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
+      <div v-if="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>
+      <div class="sonmenu-box" v-show="meauindex==n">
+        <div class="son-name" v-for="(iteam,index) in item.children" :key="index">{{iteam.name}}</div>
+      </div>
+    </div>-->
+
+    <el-dropdown @command="changemenu" v-for="(item,n) in menuData" :key="item.id">
+      <div class="one-meanu">
+        <div :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
+        <div v-if="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>
+      </div>
+
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item :command="{iteam,n}" v-for="(iteam,index) in item.children" :key="iteam.id">
+          <div class="son-name">{{iteam.name}}</div>
+        </el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
   </div>
 </template>
 
@@ -27,79 +32,196 @@ export default {
   components: {
     menuItem
   },
-  data () {
+  data() {
     return {
-      isCollapse: false,
-      menuData:[
+      ihow: false,
+      menuData: [
         {
-          name:'api列表',
-          id:1,
+          name: "线网特征",
+          id: 1,
           props: "icon-spxx",
-          url:"/apiList"
-        },{
-           name:'日志',
-          id:2,
+          url: "/apiList",
+          children: [
+            {
+              name: "道路网",
+              id: 11,
+              props: "icon-spxx",
+              url: "/apiList/linelist"
+            },
+            {
+              name: "公交线路网",
+              id: 12,
+              props: "icon-spxx",
+              url: "/apiList/linelist"
+            },
+            {
+              name: "公交站点",
+              id: 13,
+              props: "icon-spxx",
+              url: "/apiList/linelist"
+            },
+            {
+              name: "公交专用道",
+              id: 14,
+              props: "icon-spxx",
+              url: "/apiList/linelist"
+            }
+          ]
+        },
+        {
+          name: "客流分析",
+          id: 2,
           props: "icon-wdgl",
-          url:"/journal"
+          url: "/journal",
+          children: [
+            {
+              name: "道路网",
+              id: 15,
+              props: "icon-spxx",
+              url: "/apiList/linelist"
+            },
+            {
+              name: "公交线路网",
+              id: 16,
+              props: "icon-spxx",
+              url: "/apiList/linelist"
+            },
+            {
+              name: "公交站点",
+              id: 17,
+              props: "icon-spxx",
+              url: "/apiList/linelist"
+            },
+            {
+              name: "公交专用道",
+              id: 18,
+              props: "icon-spxx",
+              url: "/apiList/linelist"
+            }
+          ]
+        },
+        {
+          name: "运营服务",
+          id: 3,
+          props: "icon-spxx",
+          url: "/apiList"
+        },
+        {
+          name: "线网优化",
+          id: 4,
+          props: "icon-wdgl",
+          url: "/journal"
         }
-      ]
+      ],
+      meauindex: 0
     };
   },
   computed: {
     ...mapGetters(["menuFlag"]),
-    sliceRouter: function () {
+    sliceRouter: function() {
       //把router第一个 / 截取掉
       return this.$route.path.slice(1);
     }
   },
-  created () {
-    console.log(this.menuData)
+  created() {
+    console.log(this.$router);
   },
   methods: {
-    selectMenu (index, indexPath) {
-      this.$emit("mainmodelshow", false)
-      this.$store.commit('SET_CONSTRUCTIONCODE', '')
-      this.$store.commit('SET_CONSTRUCTIONNAME', '')
-      // 手风琴效果
-      // 获取当前打开的所有菜单
-      this.$store.commit("SET_ROUTERNOW", index);
-      // this.
-      let openMenu = this.$refs.navbar.openedMenus.concat([]);
-      // 获取点击菜单的父级index，如果当前点击的是根节点，则直接关闭所有打开菜单
-      let nowMenuPath =
-        indexPath.length > 1 ? indexPath[indexPath.length - 2] : "";
-      if (nowMenuPath) {
-        // 获取父级index在数组中索引，关闭其后所有的菜单
-        let menuIndex = openMenu.indexOf(nowMenuPath);
-        openMenu = openMenu.slice(menuIndex + 1);
-      }
-      openMenu = openMenu.reverse();
-      openMenu.forEach(ele => {
-        this.$refs.navbar.closeMenu(ele);
-      });
+    changemenu(command){
+       this.meauindex = command.n
+      console.log(command.iteam)
+      this.$router.push(command.iteam.url);
     }
   }
 };
 </script>
 
-<style lang="scss" scoped>
-.treeleft {
-  width: 261px;
+<style lang="scss">
+.el-dropdown-menu{
+  background-color: RGBA(0, 35, 79, 0.8) !important;
+  border:none!important;
+  padding:vh(0) vw(0)!important;
+  box-shadow: 0px 0px vh(10) rgba(69, 120, 255, 1) inset !important;
+   top: vw(48) !important;
+   border-radius:0!important;
+  .el-dropdown-menu__item{
+      color:rgba(255, 255, 255, 1)!important;
+      font-size:vw(16)!important;
+      padding:vh(6) vw(50);
+  }
 }
-.el-menu-item.is-active {
-  background-color: #1c2149 !important;
-  color: #89b8ff !important;
+.el-popper .popper__arrow, .el-popper .popper__arrow::after {
+  content: none!important;
+    border: none!important;
+    border-style:none!important;
 }
-.el-menu-item {
-  // padding-left: 16px !important;
+
+.el-dropdown-menu__item:hover{
+  background-color:rgba(69, 120, 255, 1)!important;
 }
+
 </style>
 
-<style lang="scss">
+<style lang="scss"  scoped>
 .treeleft {
-  .menuIcon {
-    padding: 0px 10px;
-    font-size: 14px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  .one-meanu {
+    width: vw(180);
+    height: vw(60);
+    line-height: vw(60);
+    position: relative;
+    font-size: vw(18);
+    font-family: Microsoft YaHei;
+    font-weight: 500;
+
+    color: #ffffff;
+    text-align: center;
+    cursor: pointer;
+    .fram-active {
+      font-weight: bold;
+      color: #00ffff;
+      font-style: italic;
+      text-shadow: 0 0 2.4em #00ffff, -0 -0 2.4em #00ffff;
+    }
+    .framf {
+      color: #ffffff;
+      font-style: italic;
+    }
+    .line-bor {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: vw(180);
+      height: 3px;
+      background: #00ffff;
+      border-radius: 50%;
+    }
+
+    .sonmenu-box {
+      width: vw(180);
+      position: absolute;
+      z-index: 100;
+      box-shadow: 0px 0px vh(10) rgba(69, 120, 255, 1) inset;
+      background: RGBA(0, 35, 79, 0.8);
+      left: 0;
+      top: vw(60);
+      .son-name {
+        width: 100%;
+        font-size: vw(18);
+        box-sizing:border-box;
+        padding:vh(0) vw(40);
+      }
+      .son-name:hover {
+        background: #4578ff;
+      }
+    }
+  }
+  .one-meanu:hover > .framf {
+    color: #00ffff;
+    font-weight: bold;
   }
 }
 </style>

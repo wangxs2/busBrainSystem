@@ -46,7 +46,6 @@ export default {
 .iconsanjiaoxing-copy1{
   width:16px;
   height:16px;
-  background: url("../../../assets/image/triangle@3x.png") no-repeat;
   background-size: 100% 100%;
 
 }
@@ -54,7 +53,6 @@ export default {
   display:inline-block;
   width:18px;
   height:18px;
-  background: url("../../../assets/image/icon_list_1@3x.png") no-repeat;
   background-size: 100% 100%;
   margin-bottom:3px
 }
@@ -62,28 +60,24 @@ export default {
   display:inline-block;
   width:18px;
   height:18px;
-  background: url("../../../assets/image/icon_list_2@3x.png") no-repeat;
   background-size: 100% 100%;
 }
 .icon-xtgl{
   display:inline-block;
   width:18px;
   height:18px;
-  background: url("../../../assets/image/icon_list_11@3x.png") no-repeat;
   background-size: 100% 100%;
 }
 .icon-wdgl{
   display:inline-block;
   width:18px;
   height:18px;
-  background: url("../../../assets/image/icon_list_7@3x.png") no-repeat;
   background-size: 100% 100%;
 }
 .icon-spxx{
   display:inline-block;
   width:18px;
   height:18px;
-  background: url("../../../assets/image/icon_list_4@3x.png") no-repeat;
   background-size: 100% 100%;
 }
 

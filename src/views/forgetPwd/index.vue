@@ -15,7 +15,6 @@
               <el-input type="text" placeholder="请输入手机号码" v-model="phoneDxForm.number">
                 <i slot="prefix" class="iconfont" style="font-size:17px;margin-left:3px;"></i>
               </el-input>
-              <img src="../../assets/image/icon_zh@3x.png" alt class="zdy-icon" />
               <span v-if="phoneFlag" class="error-message">{{phoneMess}}</span>
             </el-form-item>
             <div class="dx-code-wrapper">
@@ -23,7 +22,6 @@
                 <el-input type="text" placeholder="请输入短信验证码" v-model="phoneDxForm.veriCode">
                   <i slot="prefix" class="iconfont" style="font-size:24px;"></i>
                 </el-input>
-                <img src="../../assets/image/icon_yzh@3x.png" alt class="zdy-icon" />
                 <span v-if="dxCodeFlag" class="error-message">{{dxCodeMess}}</span>
               </el-form-item>
               <el-button
@@ -49,14 +47,12 @@
               <el-input type="password" placeholder="请输入新密码" v-model="resetPwdForm.password">
                 <i slot="prefix" class="iconfont" style="font-size:17px;margin-left:3px;"></i>
               </el-input>
-              <img src="../../assets/image/icon_mm@3x.png" alt class="zdy-icon" />
               <span v-if="resetPwdFlag" class="error-message">{{resetPwdMess}}</span>
             </el-form-item>
             <el-form-item label prop="againPwd" style="position: relative;margin-bottom:0;">
               <el-input type="password" placeholder="再次确认新密码" v-model="resetPwdForm.againPwd">
                 <i slot="prefix" class="iconfont" style="font-size:24px;"></i>
               </el-input>
-              <img src="../../assets/image/icon_mm@3x.png" alt class="zdy-icon" />
               <span v-if="againResetPwdFlag" class="error-message">{{againResetPwdMess}}</span>
             </el-form-item>
             <el-form-item style="margin-bottom:0;margin-top:48px">
@@ -340,7 +336,6 @@ export default {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: url("../../assets/image/bg_1@3x.png") center center no-repeat;
   background-size: 100% 100%;
   .forget-pwd-content {
     display: flex;

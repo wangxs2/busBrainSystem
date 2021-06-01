@@ -10,7 +10,7 @@ function resolve (dir) {
 module.exports = {
   lintOnSave: false,
   // publicPath: '/', // 部署项目路径
-  outputDir:"apitest", //打包后的项目目录名称
+  outputDir:"busBrainSystem", //打包后的项目目录名称
   publicPath: "./",
   // baseUrl: process.env_NODE_ENV == 'production' ? '/vehiclerepair/' : '', // 部署项目路径
   devServer: {
@@ -18,24 +18,16 @@ module.exports = {
     // host: '10.1.',
     open: false, // 配置自动启动浏览器
     proxy: {
-      '/api2db/*': {
+      '/busbrain/*': {
         // target: 'http://10.1.4.175:8001/traffic-investment',
         // target: 'http://192.168.1.109:8004/api2db',
-        target: 'http://10.1.30.207:50045/api2db', // 测试
+        target: 'http://101.231.47.117:50020/busbrain', // 测试
         changeOrigin: true,
         pathRewrite: {
-          '/api2db': '/'
+          '/busbrain': '/'
         }
       },
-      // '/fileapi/*': { 
-      //   target: 'http://10.1.30.204:1112/fileapi',
-      //   // target: 'http://10.1.4.175:50017/fileapi',
-      //   // target: 'http://10.1.30.204:50020/traffic-investment', // 测试
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     '/fileapi': '/'
-      //   }
-      // },
+     
     }
   },
   // configureWebpack: {

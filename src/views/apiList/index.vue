@@ -1,255 +1,249 @@
 <template>
-  <div class="apiList-box">
-    <div class="search-box">
-      <div></div>
-      <div>
-        <el-button type="primary" size="medium" @click="addProject()">新增</el-button>
-      </div>
-    </div>
-    <div class="tabel-box">
-      <el-table :data="tableData" border  :height="$store.getters.docHeight-20">
-        <el-table-column type="index" label="序号" align="center"  width="60"></el-table-column>
-        <el-table-column prop="id" label="编号" align="left" ></el-table-column>
-        <el-table-column prop="platformCode" label="场景编号" width="110"></el-table-column>
-        <el-table-column prop="apiUrl" label="API路径"></el-table-column>
-        <el-table-column prop="description" label="描述"></el-table-column>
-        <!-- <el-table-column prop="limitTimes" label="数据上限" width="100"></el-table-column>
-        <el-table-column prop="cronId" label="定时id" width="80"></el-table-column>
-        <el-table-column prop="targetTab" label="目标库" width="100"></el-table-column> -->
-        <el-table-column prop="method" label="方法" width="60"></el-table-column>
-        <el-table-column prop="param" label="参数表达{json形式}" width="400">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.param"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作">
-          <template slot-scope="scope">
-            <el-button @click="upmepoint(scope.row)">修改</el-button>
-            <el-button @click="mepoint(scope.row)" type="primary">调用</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="page-box">
-      <el-pagination
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="query.pageNo"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="query.pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-      ></el-pagination>
-    </div>
-    <el-dialog
-      title="结果"
-      :close-on-click-modal="false"
-      :visible.sync="dialogVisible"
-      :show-close="false"
-      width="50%">
-        <json-viewer :value="responseJs" :expand-depth="4" copyable sort></json-viewer>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">关 闭</el-button>
-      </span>
-    </el-dialog>
+  <div class="apiList-box" id="container">
+   
+    <!-- <iframe style="width:500px;height:600px;z-index:10" src="http://101.231.47.117:50009"></iframe> -->
+    <!-- <iframe style="width: 400px; height: 300px;z-index:10" src="https://github.com/wangxs2/Viruses"/> -->
 
-      <el-dialog
-      :title="title"
-      :close-on-click-modal="false"
-      :visible.sync="formdialogVisible"
-      :show-close="false"
-      @close="handclose()"
-      width="60%">
-
-        <el-form label-position="right" :rules="rules" label-width="80px" ref="formLabelAlign" :model="formLabelAlign">
-          <!-- <el-form-item label="id">
-            <el-input v-model="formLabelAlign.id"></el-input>
-          </el-form-item> -->
-          <el-form-item label="API路径" prop="apiUrl">
-            <el-input v-model="formLabelAlign.apiUrl"></el-input>
-          </el-form-item>
-          <el-form-item label="场景编号" prop="platformCode">
-            <el-input v-model="formLabelAlign.platformCode"></el-input>
-          </el-form-item>
-          <el-form-item label="描述">
-            <el-input v-model="formLabelAlign.description"></el-input>
-          </el-form-item>
-          <el-form-item label="数据上限">
-            <el-input v-model="formLabelAlign.limitTimes"></el-input>
-          </el-form-item>
-          <el-form-item label="定时id">
-            <el-input v-model="formLabelAlign.cronId"></el-input>
-          </el-form-item>
-          <el-form-item label="目标库">
-            <el-input v-model="formLabelAlign.targetTab"></el-input>
-          </el-form-item>
-          <el-form-item label="方法" prop="method">
-            <el-input v-model="formLabelAlign.method"></el-input>
-          </el-form-item>
-            <el-form-item label="参数">
-            <el-input v-model="formLabelAlign.param"></el-input>
-          </el-form-item>
-        </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="formdialogVisible = false">关 闭</el-button>
-        <el-button type="primary" @click="saveIp()">确 定</el-button>
-      </span>
-    </el-dialog>
-
-  
+    <div class="page-box" style="z-index:10">
+         <el-button type="primary" @click="ttt()">入库公交线路</el-button>
+         <el-button type="primary" @click="tologin()">ceshi</el-button>
+         <el-button type="primary" @click="metbase()">去metbase</el-button>
+         <el-button type="primary" @click="pointAll()">渲染站点</el-button>
+         <el-button type="primary" @click="kyAll()">客运走廊数据</el-button>
+         <el-button type="primary" @click="clsj()">客运走廊</el-button>
+    </div>
   </div>
 </template>
 
 <script>
-import JsonViewer from 'vue-json-viewer'
+import JsonViewer from "vue-json-viewer";
+// import nydata './cra.js';
+let datafg=require('./car.js');
 export default {
   components: {
-     JsonViewer,
+    JsonViewer
   },
   data() {
     return {
-      total: null,
-      dialogVisible:false,
-      formdialogVisible:false,
       query: {
-        pageNo: 1,
-        pageSize: 10
+        page: 1,
+        pageSize: 15,
+        country: "",
+        countryId: ""
       },
-      responseJs:'',
-      title:'',
-       formLabelAlign: {
-          id: '',                          //id
-          apiUrl: '',                    // API路径
-          description: '',                 //描述
-          limitTimes: '',                 //数据上限
-          cronId: '',                     //定时id
-          targetTab : '',                // 目标库
-          method : '',                     //方法
-          param: '',                       //参数表达{json形式}
-          platformCode:'',//场景编号
+      myMap:null,
+      linesearch:null,
+      norarr:[],
+      kedata1:[],
+      kedata2:[],
+       ruleForm: {
+          pass: '',
+          checkPass: '',
+          age: ''
         },
-      tableData: [],
-      rules:{
-         apiUrl:[
-                    { required: true, message: 'apiUrl路径', trigger: 'blur' },
-                ],
-          platformCode:[
-                    { required: true, message: '场景编号', trigger: 'blur' },
-                ],
-          method:[
-                    { required: true, message: '方法', trigger: 'blur' },
-                ],
-      }
     };
   },
   beforeCreate() {},
   created() {
-    this.getall()
+    console.log(navigator)
   },
-  mounted() {},
+  mounted() {
+    this.initMap()
+  },
 
   methods: {
-    handleSizeChange(val) {
-      //分页 选择每页条数
-      this.query.pageSize = val;
-      this.getall()
+    initMap(){
+       this.myMap=new AMap.Map("container", {
+          resizeEnable: true,
+          center: [121.460752,31.011182],//地图中心点
+          zoom: 10, //地图显示的缩放级别
+          mapStyle:'amap://styles/d67717253a691e523956e9482ca38f1e'
+      });
+      
+      
     },
-    handleCurrentChange(val) {
-      //分页 选择当前是多少页
-
-      this.query.pageNo = val;
-      this.getall()
+    metbase(){
+      // window.open('http://101.231.47.117:50009')
+      window.location.href="http://101.231.47.117:50009"
+      console.log(window.location.href)
     },
-    addProject() {
-      this.title="新增"
-      this.formdialogVisible=true
+    ttt(){
+      //  this.getBusLine('790路')
+      datafg.datafg.forEach(iteam=>{
+        this.getBusLine(iteam.name)
+       
+      })
+
     },
-    handclose(){
-      this.formLabelAlign = {
-         id: '',                          //id
-          apiUrl: '',                    // API路径
-          description: '',                 //描述
-          limitTimes: '',                 //数据上限
-          cronId: '',                     //定时id
-          targetTab : '',                // 目标库
-          method : '',                     //方法
-          param: '',                       //参数表达{json形式}
-          platformCode:'',//场景编号
-      };
-      this.$refs.formLabelAlign.resetFields();
+    pointAll(){
+      this.$fetchGet("indicator/stationCoverArea").then(res => {
+        this.pointAll3(res.result['站点的详细属性'].slice(0,4000),1)
+      });
     },
-    saveIp(){
-       this.$refs["formLabelAlign"].validate((valid) => {
-          if (valid){
-            if(this.title=="新增"){
-               this.$fetchPost("/api2db/conf-api/add", this.formLabelAlign, 'json')
-                .then(res => {
-                  if(res.code=="200"){
-                    this.formdialogVisible=false
-                    this.getall()
-
-                  }else{
-                    this.$message({
-                            message:res.message,
-                            type: 'error'
-                        });
-                  }
-
-                })
-
-            }else{
-                this.$fetchPost("/api2db/conf-api/update", this.formLabelAlign, 'json')
-                .then(res => {
-                  if(res.code=="200"){
-                    this.formdialogVisible=false
-                    this.getall()
-
-                  }else{
-                    this.$message({
-                            message:res.message,
-                            type: 'error'
-                        });
-                  }
-
+    kyAll(){
+      this.$fetchGet("indicator/corridor").then(res => {
+        let add=[]
+        let data1=res.result.smap
+        let data2=res.result.mmap
+        let data=[]
+        let data3=[]
+            for(let key  in data1){
+                data1[key].forEach(itam=>{
+                   itam.lnglat=[itam.longitude,itam.latitude]
+                  this.kedata1.push(itam)
                 })
             }
-           
-          }else{
-                    this.$message({
-                        message: '请完善信息！',
-                        type: 'warning'
-                    });
-                }
-       })
-    },
-    getall() {
-      this.$fetchGet("/api2db/conf-api/list",this.query).then(res => {
-        this.tableData = res.result.records;
-        console.log(77)
-        this.total=res.result.total;
-      })
-    },
-    mepoint(row) {
-      this.$fetchGet("/api2db/conf-api/executeUrl",
-      {
-        id: row.id,
-        param: row.param
-      }
-      ).then(res => {
-        this.dialogVisible=true
-        this.responseJs=res
-      })
-    },
-    upmepoint(row){
-      this.title="修改"
-      this.formdialogVisible=true
+            for(let key  in data2){
+                
+                data2[key].forEach(itam=>{
+                  itam.lnglat=[itam.lon,itam.lat]
+                  this.kedata2.push(itam)
+                })
+            }
+            console.log(this.kedata1)
+            console.log(this.kedata2)
+            this.pointAll3(this.kedata1,2)
+            this.pointAll3(this.kedata2,3)
 
-       $.each(this.formLabelAlign, (key, item) => {
-        this.formLabelAlign[key] = row[key] + "";
       });
+    },
+     separateArr(data, n) {
+            //获取要切割的数组的长度
+            let len = data.length;
+            let lineNum = len % n === 0 ? len / n : Math.floor(len / n + 1);
+            let res = [];
+            for (let i = 0; i < lineNum; i++) {
+                // slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。且原始数组不会被修改。
+                let temp = data.slice(i * n, i * n + n);
+                res.push(temp);
+            }
+            return res;
+        },
+    //划线
+    clsj(){
 
+      var path=[121.519582,31.244213,121.519504,31.241951,121.519706,31.240515,121.520005,31.239596,121.520566,31.238437,121.522564,31.234565,121.524342,31.231122,121.525827,31.227642,121.527369,31.223936,121.5288,31.220249,121.529217,31.218594,121.529336,31.216774,121.529217,31.21494,121.528592,31.213133,121.527758,31.211611,121.52685,31.209842,121.525213,31.206825,121.523456,31.203604,121.521253,31.199657,121.518743,31.194945,121.516408,31.192784,121.513805,31.191212,121.510819,31.189607]
+      var polyline = new AMap.Polyline({
+          path: this.separateArr(path,2),
+          isOutline: true,
+          outlineColor: '#ffeeff',
+          borderWeight: 3,
+          strokeColor: "#3366FF",
+          strokeOpacity: 1,
+          strokeWeight: 6,
+          // 折线样式还支持 'dashed'
+          strokeStyle: "solid",
+          // strokeStyle是dashed时有效
+          strokeDasharray: [10, 5],
+          lineJoin: 'round',
+          lineCap: 'round',
+          zIndex: 50,
+        })
+           this.myMap.add(polyline);
+      // this.kedata2.forEach(itam=>{
+      //   this.kedata1.push(itam)
+      // })
+
+    },
+    pointAll3(datapoint,type){
+
+        var style = [
+          {
+              url: 'https://webapi.amap.com/images/mass/mass0.png',
+              anchor: new AMap.Pixel(6, 6),
+              size: new AMap.Size(11, 11),
+              zIndex: 3,
+          }, {
+        url: 'https://webapi.amap.com/images/mass/mass1.png',
+        anchor: new AMap.Pixel(4, 4),
+        size: new AMap.Size(7, 7),
+        zIndex: 2,
+    }, {
+        url: 'https://webapi.amap.com/images/mass/mass2.png',
+        anchor: new AMap.Pixel(3, 3),
+        size: new AMap.Size(5, 5),
+        zIndex: 1,
     }
+          ];
+
+          var mass = new AMap.MassMarks(datapoint, {
+              opacity: 0.8,
+              zIndex: 111,
+              cursor: 'pointer',
+              style: type==1?style[0]:type==2?style[1]:style[2]
+          });
+
+          var marker = new AMap.Marker({content: ' ', map: this.myMap});
+
+          mass.on('mouseover',  (e)=> {
+
+              marker.setPosition(e.data.lnglat);
+              console.log(e.data)
+              marker.setLabel({content: e.data.stationName})
+          });
+
+          mass.setMap(this.myMap);
+
+
+    },
+    getBusLine(busLineName){
+
+        this.linesearch = new AMap.LineSearch({
+                pageIndex: 1,
+                city: '上海',
+                pageSize: 10,
+                extensions: 'all'
+            });
+            this.linesearch.search(busLineName, (status, result)=> {
+              let arr=[]
+            if (status === 'complete' && result.info === 'OK') {
+                result.lineInfo[0].path.forEach(itam=>{
+                  let obj={
+                    lat:itam.lat,
+                    lng:itam.lng,
+                    routeName:busLineName
+                  }
+                  arr.push(obj)
+                })
+                 this.$fetchPost("/config-route-lnglat/receive",arr,'json').then(res=>{
+
+                     })
+            } else {
+              this.norarr.push(busLineName)
+              console.log(this.norarr)
+            }
+        });
+
+    },
+    tologin() {
+      // document.cookie = "metabase.SESSION=" + 'bbbdab37-2391-4bb9-87cf-7577228638f07879';
+      this.$fetchGet(
+        "http://192.168.1.185:4562/example/getData",
+        this.query
+      ).then(res => {});
+      
+    },
+    addProject() {
+      this.$fetchGet("indicator/stationCoverArea").then(res => {});
+      this.$fetchGet("indicator/corridor").then(res => {});
+    },
+    submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+             this.$fetchPost("http://192.168.1.185:4562/example/addData",this.ruleForm)
+              .then(res=>{
+                
+              
+              })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      }
   }
 };
 </script>
@@ -262,9 +256,9 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-    overflow: hidden;
-    box-sizing:border-box;
-    padding:12px;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding-top:vw(70);
   .search-box {
     width: 100%;
     height: 60px;
@@ -272,13 +266,13 @@ export default {
     justify-content: space-between;
     align-items: center;
   }
-  .page-box{
+  .page-box {
     width: 100%;
     height: 60px;
-    text-align:right;
+    text-align: right;
   }
-  .tabel-box{
-    flex:1;
+  .tabel-box {
+    flex: 1;
   }
 }
 </style>

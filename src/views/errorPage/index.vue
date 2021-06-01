@@ -28,7 +28,6 @@
 </template>
 
 <script>
-// import errGif from '@/assets/image/401.gif'
 export default {
   data () {
     return {

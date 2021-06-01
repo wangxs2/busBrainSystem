@@ -21,6 +21,7 @@ body,
   padding: 0;
   margin: 0;
   font-size: 14px;
+  color: #FFFFFF;
   font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
     Microsoft YaHei, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
