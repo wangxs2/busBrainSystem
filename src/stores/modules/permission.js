@@ -10,7 +10,7 @@ import {
 } from '@/libs/util'
 const _import = require('@/router/_import_' + process.env.NODE_ENV)
 // console.log(process.env.NODE_ENV)
-const localList = `/home,/Intelligence,/Intelligence/ElectronicArchives,/Intelligence/recordExpect,/Intelligence/unlicensed,/Intelligence/zd,/Intelligence/noRecord,/Intelligence/recordMature,/Intelligence/missDectProcess,/Intelligence/disposeNotDeclare,/system,/system/roles,/system/orgs,/system/users,/system/auth,/system/const,/companyView,/creditSupervision,/creditSupervision/creditStandard,/creditSupervision/companyCreditManage,/creditSupervision/creditAdjustSupply,/riskRegulation,/riskRegulation/riskStandard,/riskRegulation/companyRiskManage,/riskRegulation/riskAdjustSupply,/classSupervision,/classSupervision/classStandard,/classSupervision/classImplementation,/synergism,/synergism/send,/orderManage,/orderManage/checkOrder,/orderManage/earlyWarnOrder,/orderManage/checkUpOrder,/dataManage,/dataManage/penaltyInfoManage,/dataManage/complaintSupervision,/dataManage/dangerDiscard,/dataManage/vehicleRatingData,/materialManage,/materialManage/drawRegist,/materialManage/extendRegist,
+const localList = `,
 ` //本地列表 注意最后加逗号
 
 /**

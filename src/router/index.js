@@ -2,7 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/views/layout/index'
 import login from '@/views/login/index'
-import apiList from '@/views/apiList/index'
+import lineCharacteristics from '@/views/lineCharacteristics/index'
+import roadDistribution from '@/views/lineCharacteristics/roadDistribution/index'
+import publicTransport from '@/views/lineCharacteristics/publicTransport/index'  
+import busStop from '@/views/lineCharacteristics/busStop/index' 
+import busLane from '@/views/lineCharacteristics/busLane/index' 
 import forgetPwd from '@/views/forgetPwd/index'
 Vue.use(Router)
 export const constantRouterMap = [
@@ -21,14 +25,37 @@ export const constantRouterMap = [
     component: Layout,
     children: [
       {
-        path: '/apiList',
-        name: 'apiList',
-        component: apiList
+        path: '/lineCharacteristics',
+        name: '线网特征',
+        component: lineCharacteristics,
+        children: [
+          {
+            path: '/lineCharacteristics/roadDistribution',
+            name: '道路网',
+            component: roadDistribution,
+          },
+          {
+            path: '/lineCharacteristics/publicTransport',
+            name: '公交线路网',
+            component: publicTransport,
+          },
+          {
+            path: '/lineCharacteristics/busStop',
+            name: '公交站点',
+            component: busStop,
+            
+          },{
+            path: '/lineCharacteristics/busLane',
+            name: '公交专用道',
+            component: busLane,
+            
+          }
+        ]
 
       }
     ]
 
-  },
+  }
 
 ]
 

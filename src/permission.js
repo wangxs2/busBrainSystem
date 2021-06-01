@@ -15,13 +15,13 @@ NProgress.configure({
 })
 
 router.beforeEach((to, from, next) => {
-
   NProgress.start() // 进度条开始
   if (to.path === '/login') {
     next()
     // store.commit('SET_ID', '') //清除user
     return
   }
+
   if (to.path === '/') {
     next("/login")
     // store.commit('SET_ID', '') //清除user

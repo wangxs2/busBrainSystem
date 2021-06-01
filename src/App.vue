@@ -20,7 +20,7 @@ body,
   overflow: hidden;
   padding: 0;
   margin: 0;
-  font-size: 14px;
+  font-size: vw(16);
   color: #FFFFFF;
   font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
     Microsoft YaHei, Arial, sans-serif;

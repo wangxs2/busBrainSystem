@@ -40,31 +40,31 @@ export default {
           name: "线网特征",
           id: 1,
           props: "icon-spxx",
-          url: "/apiList",
+          url: "/lineCharacteristics",
           children: [
             {
               name: "道路网",
               id: 11,
               props: "icon-spxx",
-              url: "/apiList/linelist"
+              url: "/lineCharacteristics/roadDistribution"
             },
             {
               name: "公交线路网",
               id: 12,
               props: "icon-spxx",
-              url: "/apiList/linelist"
+              url: "/lineCharacteristics/publicTransport"
             },
             {
               name: "公交站点",
               id: 13,
               props: "icon-spxx",
-              url: "/apiList/linelist"
+              url: "/lineCharacteristics/busStop"
             },
             {
               name: "公交专用道",
               id: 14,
               props: "icon-spxx",
-              url: "/apiList/linelist"
+              url: "/lineCharacteristics/busLane"
             }
           ]
         },
@@ -78,25 +78,25 @@ export default {
               name: "道路网",
               id: 15,
               props: "icon-spxx",
-              url: "/apiList/linelist"
+              url: "/lineCharacteristics/linelist"
             },
             {
               name: "公交线路网",
               id: 16,
               props: "icon-spxx",
-              url: "/apiList/linelist"
+              url: "/lineCharacteristics/linelist"
             },
             {
               name: "公交站点",
               id: 17,
               props: "icon-spxx",
-              url: "/apiList/linelist"
+              url: "/lineCharacteristics/linelist"
             },
             {
               name: "公交专用道",
               id: 18,
               props: "icon-spxx",
-              url: "/apiList/linelist"
+              url: "/lineCharacteristics/linelist"
             }
           ]
         },
@@ -104,7 +104,7 @@ export default {
           name: "运营服务",
           id: 3,
           props: "icon-spxx",
-          url: "/apiList"
+          url: "/lineCharacteristics"
         },
         {
           name: "线网优化",
@@ -129,7 +129,6 @@ export default {
   methods: {
     changemenu(command){
        this.meauindex = command.n
-      console.log(command.iteam)
       this.$router.push(command.iteam.url);
     }
   }

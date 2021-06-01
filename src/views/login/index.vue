@@ -167,7 +167,7 @@ export default {
              document.cookie ="metabase.SESSION="+res.info.metabaseSession;
           sessionStorage.setItem("metabase.SESSION", res.info.metabaseSession)
           localStorage.setItem('metabase.SESSION', res.info.metabaseSession)
-          this.$router.push("/apiList");
+          this.$router.push("/lineCharacteristics");
 
 
         this.$fetchPost("http://101.231.47.117:50009/api/session",data1,'json')
@@ -175,15 +175,15 @@ export default {
           // document.cookie ="metabase.SESSION="+res.id;
           // sessionStorage.setItem("metabase.SESSION", res.id)
           // localStorage.setItem('metabase.SESSION', res.id)
-          // this.$router.push("/apiList");
+          // this.$router.push("/lineCharacteristics");
         })
        
       })
       // this.$fetchGet("http://101.231.47.117:50020/busbrain/indicator/repetition?routeId=1")
       // .then(res=>{
-      //   this.$router.push("/apiList");
+      //   this.$router.push("/lineCharacteristics");
       // })
-      // this.$router.push("/apiList");
+      // this.$router.push("/lineCharacteristics");
     },
     login: _debounce(function(formName) {
       // this.$refs[formName].validate(valid => {
@@ -210,7 +210,7 @@ export default {
       //           localStorage.setItem("userNameSa", this.loginForm.username);
       //           this.$store.commit("SET_ROLEID", res.result.role[0].id);
       //           this.$store.commit("SET_ROLECODE", res.result.role[0].code);
-      //            this.$router.push("/apiList");
+      //            this.$router.push("/lineCharacteristics");
       //           this.$message.success(res.message)
       //         } else {
       //           this.$message.error(res.message)
