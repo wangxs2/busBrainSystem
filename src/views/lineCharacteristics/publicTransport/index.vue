@@ -1,249 +1,210 @@
 <template>
-  <div class="lineCharacteristics-box" id="container">
-   
-    <!-- <iframe style="width:500px;height:600px;z-index:10" src="http://101.231.47.117:50009"></iframe> -->
-    <!-- <iframe style="width: 400px; height: 300px;z-index:10" src="https://github.com/wangxs2/Viruses"/> -->
+  <div class="publicTransport-box">
+    <div class="leftlinemsg">
+      <div class="tit">线网分布信息</div>
+      <div class="itmsg-box">
+        <div class="itmsg">
+          <div class="itmsgs">
+            <img style="margin-right:0.4vw" src="@/assets/image/licon_1.png" />
+            线路总数
+          </div>
+          <div>264条</div>
+        </div>
+        <div class="itmsg">
+          <div class="itmsgs">
+            <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
+            线路总长
+          </div>
+          <div>4422.75公里</div>
+        </div>
+        <div class="itmsg">
+          <div class="itmsgs">
+            <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
+            线路重复系数
+          </div>
+          <div>2.42</div>
+        </div>
+        <div class="itmsg">
+          <div class="itmsgs">
+            <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
+            线网密度
+          </div>
+          <div>10.14</div>
+        </div>
+        <div class="itmsg">
+          <div class="itmsgs">
+            <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
+            线网长度
+          </div>
+          <div>3650.5公里</div>
+        </div>
+      </div>
+    </div>
+    <div class="leftlinemsg1">
+      <div class="titbox">
+        <div class="titboxname">
+          <div
+            @click="tomeay(item)"
+            :class="islist==(n+1)?'meay meay-active':'meay'"
+            v-for="(item,n) in lisData"
+            :key="n"
+          >{{item.name}}</div>
+        </div>
+        <div class="imgtit">
+          <img style="margin-right:0.4vw" src="@/assets/image/download.png" />
+          下载
+        </div>
+      </div>
+      <div class="bttit">
+        <div>排名</div>
+        <div>线路名称</div>
+        <div>线长(公里)</div>
+      </div>
+      <div class="tablbox">
+        <div class="bttit bttit1" v-for="(item,n) in lineaData" :key="n">
+          <div>{{n+1}}</div>
+          <div>{{item.name}}</div>
+          <div>{{item.id}}</div>
+        </div>
+      </div>
+    </div>
 
-    <div class="page-box" style="z-index:10">
-         <el-button type="primary" @click="ttt()">入库公交线路</el-button>
-         <el-button type="primary" @click="tologin()">ceshi</el-button>
-         <el-button type="primary" @click="metbase()">去metbase</el-button>
-         <el-button type="primary" @click="pointAll()">渲染站点</el-button>
-         <el-button type="primary" @click="kyAll()">客运走廊数据</el-button>
-         <el-button type="primary" @click="clsj()">客运走廊</el-button>
+    <div class="lkicon">
+      <div style="text-align:center">线网颜色说明(条)</div>
+      <div class="lkicon-box">
+        <div class="lkicon-itam">
+          <div class="lk1"></div>1-4
+        </div>
+        <div class="lkicon-itam">
+          <div class="lk1 lk2"></div>5-6
+        </div>
+        <div class="lkicon-itam">
+          <div class="lk1 lk3"></div>7-8
+        </div>
+         <div class="lkicon-itam">
+          <div class="lk1 lk4"></div>大于8
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import JsonViewer from "vue-json-viewer";
-// import nydata './cra.js';
-let datafg=require('../car.js');
 export default {
-  components: {
-    JsonViewer
-  },
+  components: {},
   data() {
     return {
-      query: {
-        page: 1,
-        pageSize: 15,
-        country: "",
-        countryId: ""
-      },
-      myMap:null,
-      linesearch:null,
-      norarr:[],
-      kedata1:[],
-      kedata2:[],
-       ruleForm: {
-          pass: '',
-          checkPass: '',
-          age: ''
+      lisData: [
+        {
+          name: "最长线路",
+          id: 1
         },
+        {
+          name: "最短线路",
+          id: 2
+        }
+      ],
+      islist: 1,
+      lineaData: [
+        {
+          name: "919",
+          id: 1
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        },
+        {
+          name: "790",
+          id: 42.8
+        }
+      ]
     };
   },
   beforeCreate() {},
   created() {
-
+     setTimeout(()=>{
+      this.$store.commit('SET_LOADING',false)
+    },2000)
   },
-  mounted() {
-    this.initMap()
-  },
+  mounted() {},
 
   methods: {
-    initMap(){
-       this.myMap=new AMap.Map("container", {
-          resizeEnable: true,
-          center: [121.460752,31.011182],//地图中心点
-          zoom: 10, //地图显示的缩放级别
-          mapStyle:'amap://styles/d67717253a691e523956e9482ca38f1e'
-      });
-      
-      
-    },
-    metbase(){
-      // window.open('http://101.231.47.117:50009')
-      window.location.href="http://101.231.47.117:50009"
-      console.log(window.location.href)
-    },
-    ttt(){
-      //  this.getBusLine('790路')
-      datafg.datafg.forEach(iteam=>{
-        this.getBusLine(iteam.name)
-       
-      })
-
-    },
-    pointAll(){
-      this.$fetchGet("indicator/stationCoverArea").then(res => {
-        this.pointAll3(res.result['站点的详细属性'].slice(0,4000),1)
-      });
-    },
-    kyAll(){
-      this.$fetchGet("indicator/corridor").then(res => {
-        let add=[]
-        let data1=res.result.smap
-        let data2=res.result.mmap
-        let data=[]
-        let data3=[]
-            for(let key  in data1){
-                data1[key].forEach(itam=>{
-                   itam.lnglat=[itam.longitude,itam.latitude]
-                  this.kedata1.push(itam)
-                })
-            }
-            for(let key  in data2){
-                
-                data2[key].forEach(itam=>{
-                  itam.lnglat=[itam.lon,itam.lat]
-                  this.kedata2.push(itam)
-                })
-            }
-            console.log(this.kedata1)
-            console.log(this.kedata2)
-            this.pointAll3(this.kedata1,2)
-            this.pointAll3(this.kedata2,3)
-
-      });
-    },
-     separateArr(data, n) {
-            //获取要切割的数组的长度
-            let len = data.length;
-            let lineNum = len % n === 0 ? len / n : Math.floor(len / n + 1);
-            let res = [];
-            for (let i = 0; i < lineNum; i++) {
-                // slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。且原始数组不会被修改。
-                let temp = data.slice(i * n, i * n + n);
-                res.push(temp);
-            }
-            return res;
-        },
-    //划线
-    clsj(){
-
-      var path=[121.519582,31.244213,121.519504,31.241951,121.519706,31.240515,121.520005,31.239596,121.520566,31.238437,121.522564,31.234565,121.524342,31.231122,121.525827,31.227642,121.527369,31.223936,121.5288,31.220249,121.529217,31.218594,121.529336,31.216774,121.529217,31.21494,121.528592,31.213133,121.527758,31.211611,121.52685,31.209842,121.525213,31.206825,121.523456,31.203604,121.521253,31.199657,121.518743,31.194945,121.516408,31.192784,121.513805,31.191212,121.510819,31.189607]
-      var polyline = new AMap.Polyline({
-          path: this.separateArr(path,2),
-          isOutline: true,
-          outlineColor: '#ffeeff',
-          borderWeight: 3,
-          strokeColor: "#3366FF",
-          strokeOpacity: 1,
-          strokeWeight: 6,
-          // 折线样式还支持 'dashed'
-          strokeStyle: "solid",
-          // strokeStyle是dashed时有效
-          strokeDasharray: [10, 5],
-          lineJoin: 'round',
-          lineCap: 'round',
-          zIndex: 50,
-        })
-           this.myMap.add(polyline);
-      // this.kedata2.forEach(itam=>{
-      //   this.kedata1.push(itam)
-      // })
-
-    },
-    pointAll3(datapoint,type){
-
-        var style = [
-          {
-              url: 'https://webapi.amap.com/images/mass/mass0.png',
-              anchor: new AMap.Pixel(6, 6),
-              size: new AMap.Size(11, 11),
-              zIndex: 3,
-          }, {
-        url: 'https://webapi.amap.com/images/mass/mass1.png',
-        anchor: new AMap.Pixel(4, 4),
-        size: new AMap.Size(7, 7),
-        zIndex: 2,
-    }, {
-        url: 'https://webapi.amap.com/images/mass/mass2.png',
-        anchor: new AMap.Pixel(3, 3),
-        size: new AMap.Size(5, 5),
-        zIndex: 1,
+    tomeay(row) {
+      this.islist = row.id;
     }
-          ];
-
-          var mass = new AMap.MassMarks(datapoint, {
-              opacity: 0.8,
-              zIndex: 111,
-              cursor: 'pointer',
-              style: type==1?style[0]:type==2?style[1]:style[2]
-          });
-
-          var marker = new AMap.Marker({content: ' ', map: this.myMap});
-
-          mass.on('mouseover',  (e)=> {
-
-              marker.setPosition(e.data.lnglat);
-              console.log(e.data)
-              marker.setLabel({content: e.data.stationName})
-          });
-
-          mass.setMap(this.myMap);
-
-
-    },
-    getBusLine(busLineName){
-
-        this.linesearch = new AMap.LineSearch({
-                pageIndex: 1,
-                city: '上海',
-                pageSize: 10,
-                extensions: 'all'
-            });
-            this.linesearch.search(busLineName, (status, result)=> {
-              let arr=[]
-            if (status === 'complete' && result.info === 'OK') {
-                result.lineInfo[0].path.forEach(itam=>{
-                  let obj={
-                    lat:itam.lat,
-                    lng:itam.lng,
-                    routeName:busLineName
-                  }
-                  arr.push(obj)
-                })
-                 this.$fetchPost("/config-route-lnglat/receive",arr,'json').then(res=>{
-
-                     })
-            } else {
-              this.norarr.push(busLineName)
-              console.log(this.norarr)
-            }
-        });
-
-    },
-    tologin() {
-      // document.cookie = "metabase.SESSION=" + 'bbbdab37-2391-4bb9-87cf-7577228638f07879';
-      this.$fetchGet(
-        "http://192.168.1.185:4562/example/getData",
-        this.query
-      ).then(res => {});
-      
-    },
-    addProject() {
-      this.$fetchGet("indicator/stationCoverArea").then(res => {});
-      this.$fetchGet("indicator/corridor").then(res => {});
-    },
-    submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-             this.$fetchPost("http://192.168.1.185:4562/example/addData",this.ruleForm)
-              .then(res=>{
-                
-              
-              })
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
-      }
   }
 };
 </script>
@@ -251,28 +212,168 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-.lineCharacteristics-box {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+.publicTransport-box {
   box-sizing: border-box;
-  padding-top:vw(70);
-  .search-box {
-    width: 100%;
-    height: 60px;
+  margin-top: vw(70);
+  position: relative;
+  z-index: 10;
+  .leftlinemsg {
+    position: absolute;
+    top: vh(65);
+    left: vw(20);
+    width: vw(370);
+    height: vh(330);
+    background: url("~@/assets/image/msgLine.png");
+    background-size: 100% 100%;
+    .tit {
+      width: 100%;
+      height: vh(60);
+      font-size: vw(17);
+      color: #ffffff;
+      line-height: vh(80);
+      text-shadow: 0 0 1.2em rgba(255, 255, 255, 0.8),
+        -0 -0 1.4em rgba(255, 255, 255, 0.7);
+      text-indent: vw(32);
+      font-weight: bold;
+    }
+    .itmsg-box {
+      box-sizing: border-box;
+      padding: 0 vw(32);
+      margin-top: vh(22);
+      .itmsg {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: vh(22);
+        .itmsgs {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+  .leftlinemsg1 {
+    position: absolute;
+    top: vh(408);
+    left: vw(20);
+    width: vw(370);
+    height: vh(588);
+    background: url("~@/assets/image/bigline.png");
+    background-size: 100% 100%;
+    flex-direction: column;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size: vw(17);
+    .titbox {
+      width: 100%;
+      height: vh(58);
+      box-sizing: border-box;
+      padding: 0 vw(30);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .titboxname {
+      display: flex;
+      width: vw(180);
+      line-height: vh(70);
+      height: 100%;
+
+      justify-content: space-between;
+      .meay {
+        display: block;
+        margin-right: vw(20);
+        text-align: center;
+
+        cursor: pointer;
+      }
+      .meay-active {
+        border-bottom: vw(2) solid #ffffff;
+        font-weight: bold;
+        text-shadow: 0 0 1.2em rgba(255, 255, 255, 0.8),
+          -0 -0 1.4em rgba(255, 255, 255, 0.7);
+      }
+    }
+    .imgtit {
+      display: flex;
+      align-items: center;
+      margin-top: vh(6);
+    }
+    .bttit {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      // padding:0 vw(30);
+      padding-right: vw(10);
+      margin-top: vh(20);
+      div {
+        flex: 1;
+        text-align: center;
+      }
+    }
+    .bttit1 {
+      // padding:0;
+      width: 100%;
+      height: vh(42);
+      // margin-bottom:vh(20);
+      margin-top: vh(0);
+      cursor: pointer;
+    }
+    .bttit1:hover {
+      background: rgba(93, 137, 255, 0.1);
+      box-shadow: 0px 0px vh(6) rgba(69, 120, 255, 0.6) inset;
+    }
+    .tablbox {
+      flex: 1;
+      box-sizing: border-box;
+      margin-right: vw(10);
+      margin-left: vw(8);
+      overflow: hidden;
+      overflow-y: scroll;
+      margin-top: vh(12);
+      margin-bottom: vh(30);
+    }
   }
-  .page-box {
-    width: 100%;
-    height: 60px;
-    text-align: right;
-  }
-  .tabel-box {
-    flex: 1;
+
+  .lkicon {
+    position: absolute;
+    top: vh(65);
+    right: vw(12);
+    width: vw(300);
+    height: vh(86);
+    background: rgba(26, 66, 118, 0.2);
+    border: 1px solid #27b6ff;
+    box-shadow: 0px 0px vh(10) rgba(69, 120, 255, 1) inset;
+    opacity: 0.8;
+    border-radius: 2px;
+    box-sizing: border-box;
+    padding: vh(8) vw(20);
+    .lkicon-box {
+      display: flex;
+      justify-content: space-between;
+      margin-top: vh(8);
+      .lk1{
+        width: vw(60);
+        height: vh(10);
+        background: #34b000;
+        margin-bottom: vh(6);
+      }
+      .lk2{
+        background: #FECB00;
+      }
+      .lk3{
+        background: #FF2A2A;
+      }
+      .lk4{
+        background: #B10400;
+      }
+      .lkicon-itam {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    }
   }
 }
 </style>

@@ -1,8 +1,9 @@
 <template>
-  <!-- <div class="login">
+  <div class="login">
+  <div class="bityu">公交大脑</div>
     <div class="login-content">
       <div class="title-form">
-        <div class="title">接口测试管理平台</div>
+        <div class="title">用户登录</div>
         <div class="input-form">
           <el-form
             :model="loginForm"
@@ -25,19 +26,20 @@
             </el-form-item>
             <div class="passwordSa">
               <el-checkbox v-model="checked" @change="rememberPasswordS">记住用户名</el-checkbox>
-              <span style="cursor: pointer" @click="forget">忘记密码?</span>
+              <!-- <span style="cursor: pointer" @click="forget">忘记密码?</span> -->
             </div>
-            <el-form-item style="margin-bottom:0;margin-top:48px">
-              <el-button :loading="subLoad" type="primary" @click="login('loginForm')">登录</el-button>
+            <el-form-item style="margin-bottom:0;margin-top:18px">
+            <!-- @click="login('loginForm')" -->
+              <el-button :loading="subLoad" type="primary" @click="tologin()">登录</el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
     </div>
-  </div>-->
-  <div>
-      <el-button type="primary" @click="tologin()">登录</el-button>
   </div>
+  <!-- <div>
+      <el-button type="primary" @click="tologin()">登录</el-button>
+  </div> -->
 </template>
 
 <script>
@@ -164,20 +166,13 @@ export default {
       .then(res=>{
         // document.cookie ="metabase.SESSION=aa93df65-b217-48ba-9759-1ded01e3d60e";
         
-             document.cookie ="metabase.SESSION="+res.info.metabaseSession;
+          document.cookie ="metabase.SESSION="+res.info.metabaseSession;
           sessionStorage.setItem("metabase.SESSION", res.info.metabaseSession)
           localStorage.setItem('metabase.SESSION', res.info.metabaseSession)
-          this.$router.push("/lineCharacteristics");
-
-
-        this.$fetchPost("http://101.231.47.117:50009/api/session",data1,'json')
-        .then(res=>{
-          // document.cookie ="metabase.SESSION="+res.id;
-          // sessionStorage.setItem("metabase.SESSION", res.id)
-          // localStorage.setItem('metabase.SESSION', res.id)
-          // this.$router.push("/lineCharacteristics");
-        })
-       
+          this.$router.push("/lineCharacteristics/roadDistribution");
+        // this.$fetchPost("http://101.231.47.117:50009/api/session",data1,'json')
+        // .then(res=>{
+        // })
       })
       // this.$fetchGet("http://101.231.47.117:50020/busbrain/indicator/repetition?routeId=1")
       // .then(res=>{
@@ -230,12 +225,17 @@ export default {
 };
 </script>
 <style lang="scss">
+.login .login-content .title-form .input-form .el-form-item .el-input{
+  background: rgba(26, 66, 118, 0.2) !important;
+   border: 1px solid #27B6FF !important;
+    // box-shadow: 0px 0px vh(6) rgba(39, 182, 255, 0.8) inset !important;
+}
 .login {
   .el-input__inner {
-    border: none;
-    font-size: 16px;
-    color: #989898;
-    line-height: vh(44);
+   background: rgba(26, 66, 118, 0.2) !important;
+    color: #dae4ff !important;
+   
+      line-height: vh(44);
     height: vh(44);
   }
   .el-input__prefix {
@@ -260,34 +260,41 @@ export default {
 <style lang="scss" scoped>
 .login {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
-  background-size: 100% 100%;
+  background: url("~@/assets/image/dl_bj.png");
+    background-size: 100% 100%;
+    .bityu{
+      font-size: vw(42);
+      font-weight: bold;
+      margin-bottom: vh(16);
+    }
   .login-content {
-    display: flex;
-    justify-content: flex-end;
-    width: vw(1310);
-    height: vh(604);
-    background-size: vw(1310) vh(604);
+    width: vw(564);
+    height: vh(512);
+    background: url("~@/assets/image/dlk.png");
+    background-size: 100% 100%;
     .title-form {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: vw(744);
+      width: 100%;
+      height:100%;
       .title {
-        font-size: vw(42);
+        font-size: vw(36);
         font-family: FZZhengHeiS-EB-GB;
         font-weight: 400;
-        color: rgba(74, 156, 252, 1);
+        color: #ffffff;
         text-align: center;
-        margin-top: vh(144);
+        margin-top: vh(90);
         margin-bottom: 0;
       }
       .input-form {
         width: vw(360);
-        margin-top: vh(48);
+        margin-top: vh(20);
         .el-form-item {
           .el-input {
             position: relative;

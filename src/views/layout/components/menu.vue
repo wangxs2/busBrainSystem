@@ -15,7 +15,7 @@
       </div>
 
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item :command="{iteam,n}" v-for="(iteam,index) in item.children" :key="iteam.id">
+        <el-dropdown-item :command="{iteam,n}" v-for="(iteam) in item.children" :key="iteam.id">
           <div class="son-name">{{iteam.name}}</div>
         </el-dropdown-item>
       </el-dropdown-menu>
@@ -65,6 +65,12 @@ export default {
               id: 14,
               props: "icon-spxx",
               url: "/lineCharacteristics/busLane"
+            },
+            {
+              name: "客运走廊",
+              id: 15,
+              props: "icon-spxx",
+              url: "/lineCharacteristics/passengerCorridor"
             }
           ]
         },
@@ -75,13 +81,13 @@ export default {
           url: "/journal",
           children: [
             {
-              name: "道路网",
+              name: "线路客流",
               id: 15,
               props: "icon-spxx",
               url: "/lineCharacteristics/linelist"
             },
             {
-              name: "公交线路网",
+              name: "断面客流",
               id: 16,
               props: "icon-spxx",
               url: "/lineCharacteristics/linelist"
@@ -124,7 +130,7 @@ export default {
     }
   },
   created() {
-    console.log(this.$router);
+    
   },
   methods: {
     changemenu(command){
@@ -183,7 +189,7 @@ export default {
       font-weight: bold;
       color: #00ffff;
       font-style: italic;
-      text-shadow: 0 0 2.4em #00ffff, -0 -0 2.4em #00ffff;
+      text-shadow: 0 0 1.8em #00ffff, -0 -0 1.8em #00ffff;
     }
     .framf {
       color: #ffffff;

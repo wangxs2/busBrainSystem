@@ -1,0 +1,16 @@
+{
+  "id": "1710019",
+  "name": "单车。ts",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "单车。ts",
+  "glyphs": [
+    {
+      "icon_id": "9319725",
+      "name": "关  闭",
+      "font_class": "guanbi",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    }
+  ]
+}

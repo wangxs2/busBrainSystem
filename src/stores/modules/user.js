@@ -4,6 +4,7 @@ import {
 const user = {
   state: {
     userId: "",
+    aloading:true,
     roleId: "",
     userName: '',
     ishuadata:2,//从项目材料回来是否刷新
@@ -12,16 +13,36 @@ const user = {
     userInfo: "",
     roleCode: "",
     realname:'',
-    userRole: [], //用户角色
-    userOrg: [], //用户组织
+    heatData:[],
+    userRole: [], //用户路由记录
+    userStation: [], //站点的信息
+    threeMap:[],//300米
     btnAuth: '', //按钮权限
     isBreak: "",//是否刷新页面
+    keyunData:[],//客运走廊的数据
+    keyunData1:[],//客运走廊的数据
     constructionCode: '', // 项目code
-    constructionName: ''
+    constructionName: '',
+    isbtn:1,
   },
   mutations: {
-    SET_BTNAUTH: (state, btnAuth) => { //按钮权限
-      state.btnAuth = btnAuth
+    SET_BTNAUTH: (state, isbtn) => { //子路由的传值300米
+      state.isbtn = isbtn
+    },
+     SET_THREEMAP: (state, threeMap) => { //300米
+      state.threeMap = threeMap
+    },
+     SET_KEYUNDATA: (state, keyunData) => { //客运走廊
+      state.keyunData = keyunData
+    },
+    SET_KEYUNDATA1: (state, keyunData1) => { //客运走廊
+      state.keyunData1 = keyunData1
+    },
+    SET_HEATMAP: (state, heatData) => { //储存热力图的值
+      state.heatData = heatData
+    },
+    SET_LOADING: (state, aloading) => { //按钮权限
+      state.aloading = aloading
     },
     SET_REALNAME: (state, realname) => { //按钮权限
       state.realname = realname
@@ -47,11 +68,11 @@ const user = {
     SET_NAME: (state, userName) => { //用户名
       state.userName = userName
     },
-    SET_ROLES: (state, userRole) => { //用户角色
+    SET_ROLES: (state, userRole) => { //用户路由记录
       state.userRole = userRole
     },
-    SET_ORG: (state, userOrg) => { //用户组织
-      state.userOrg = userOrg
+    SET_STATION: (state, userStation) => { //用户路由记录
+      state.userStation = userStation
     },
     SET_ROUTERNOW: (state, routerNow) => { //用户组织
       state.routerNow = routerNow

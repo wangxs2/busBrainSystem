@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+
+<head>
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="referrer" content="no-referrer"/>
+    <title>站点分布</title>
+    <meta charset=utf-8>
+    <link rel="stylesheet" type="text/css" href="../css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../css/datepicker.css">
+    <link rel="stylesheet" type="text/css" href="../css/jquery.mloading.css">
+    <link rel="stylesheet" type="text/css" href="../css/dialog.css">
+    <link rel="stylesheet" type="text/css" href="../css/gm.css">
+    <link rel="stylesheet" type="text/css" href="../css/chosen.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="../css/doublebox-bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap-slider.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/timeplay.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="../js/libs/layui-v2.4.5/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="../css/layui-layer-customer.css">
+</head>
+<style>
+    .tkxlzd-top-panel.map-option-panel
+    .kllzd-top-panel.map-option-panel
+    .hczdzd-top-panel.map-option-panel {
+        height: 160px;
+    }
+
+    .map-table .map-table-tbody {
+        display: block;
+        height: 160px;
+    }
+
+
+
+
+</style>
+<body style="overflow: hidden;">
+<div id="index_page_show_box" class="index-page-show-box" style="height: 100%;">
+    <div id="zdfb_map" class="full-panel"></div>
+    <div class="zdfb-left-map-panel">
+
+        <div id="zdfb_action_option_panel" class="map-option-panel mb10">
+
+            <div class="main-search-box">
+                <div class="search-input-area clearfix" style="display: flex;">
+
+                    <div class="search-input-component">
+                        <input type="text" id="station_input"
+                               class="search-station-input station-name common-input search-common-input"
+                               autocomplete="off"
+                               placeholder="请输入站点名" name="StationName" value="">
+                        <ul class="input-selections"></ul>
+                    </div>
+
+                    <button id="clear_btn" class="layui-btn" style="height: 33px">清除</button>
+                </div>
+
+
+
+            </div>
+
+            <div class="map-option-container">
+                <div id="zdfb_select_layout" class="search-cell clearfix">
+                    <div class="search-label fl">行政区域：</div>
+                    <div class="search-input fr">
+                        <select class="common-select" id="zdfb_area_select" placeholder="请选择行政区域"
+                                name="zdfbArea">
+                            <!--<option value="all">全部区域</option>-->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="search-cell clearfix">
+                    <div class="search-label fl">300米站点覆盖区域：</div>
+                    <div class="search-input fr">
+                        <div id="zdfb_fgl3_control_btn" class="ios-switch-btn"></div>
+                    </div>
+                </div>
+
+                <div class="search-cell clearfix">
+                    <div class="search-label fl">500米站点覆盖区域：</div>
+                    <div class="search-input fr">
+                        <div id="zdfb_fgl_control_btn" class="ios-switch-btn"></div>
+                    </div>
+                </div>
+
+
+                <div class="search-cell clearfix">
+                    <div class="search-label fl">热力图：</div>
+                    <div class="search-input fr">
+                        <div id="zdfb_heat_control_btn" class="ios-switch-btn"></div>
+                    </div>
+                </div>
+                <div class="search-cell clearfix mb10">
+                    <div class="search-label fl">站点分布：</div>
+                    <div class="search-input fr">
+                        <div id="zdfb_stations_control_btn" class="ios-switch-btn"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="zdfb_jbzb_info_panel"></div>
+
+    </div>
+
+    <div class="zdfb-right-map-panel">
+
+        <div id="xlxq_extended_plugin_panel" class="map-layout-plugin clearfix">
+            <div class="extended-cell weipian" id="weipian"></div>
+            <div class="extended-cell lukuang" id="lukuang"></div>
+            <div class="extended-cell touying" id="touying"></div>
+            <div class="extended-cell cj" id="cj"></div>
+        </div>
+
+        <div id="zdfb_tkxlzd_top_panel" class="tkxlzd-top-panel map-option-panel mt60 mb10">
+
+            <div class="title">
+                <span class="title-txt">停靠线路最多</span>
+                <img class="downimg ml20" src="../images/exportExcel.png" onclick="downTable1()"/>
+                <span class="downfont" onclick="downTable1()">下载</span>
+                <div class="slide-btn active"></div>
+            </div>
+
+            <div class="map-option-container">
+                <table id="zdfb_tkxlzd_table" class="map-table">
+                    <thead class="map-table-thead">
+                    <tr class="map-table-headtr">
+                        <th class="map-table-headth table-index">排名</th>
+                        <th class="map-table-headth">站点名称</th>
+                        <th class="map-table-headth br-none">经过线路数</th>
+                        <th class="map-table-headth scroll-th"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="map-table-tbody common-scroll-bar scroll-y">
+                    <tr class="empty-content">
+                        <td colspan="3">暂无数据</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="zdfb_kllzd_top_panel" class="kllzd-top-panel map-option-panel mb10">
+            <div class="title">
+                <span class="title-txt">客流量最大</span>
+                <img class="downimg ml20" src="../images/exportExcel.png" onclick="downTable2()"/>
+                <span class="downfont" onclick="downTable2()">下载</span>
+                <div class="slide-btn active"></div>
+            </div>
+            <div class="map-option-container">
+                <table id="zdfb_kllzd_table" class="map-table">
+                    <thead class="map-table-thead">
+                    <tr class="map-table-headtr">
+                        <th class="map-table-headth table-index">排名</th>
+                        <th class="map-table-headth">站点名称</th>
+                        <th class="map-table-headth br-none">日均客流</th>
+                        <th class="map-table-headth scroll-th"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="map-table-tbody common-scroll-bar scroll-y">
+                    <tr class="empty-content">
+                        <td colspan="3">暂无数据</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="zdfb_hczdzd_top_panel" class="hczdzd-top-panel map-option-panel">
+            <div class="title">
+                <span class="title-txt">换乘最多站点</span>
+                <img class="downimg ml20" src="../images/exportExcel.png" onclick="downTable3()"/>
+                <span class="downfont" onclick="downTable3()">下载</span>
+                <div class="slide-btn active"></div>
+            </div>
+            <div class="map-option-container">
+                <table id="zdfb_hczdzd_table" class="map-table">
+                    <thead class="map-table-thead">
+                    <tr class="map-table-headtr">
+                        <th class="map-table-headth table-index">排名</th>
+                        <th class="map-table-headth">站点名称</th>
+                        <th class="map-table-headth br-none">日均换乘</th>
+                        <th class="map-table-headth scroll-th"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="map-table-tbody common-scroll-bar scroll-y">
+                    <tr class="empty-content">
+                        <td colspan="3">暂无数据</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script src="../js/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
+<script src="https://webapi.amap.com/maps?v=1.4.12&key=1cef9fa56139934b8d178586baf627aa&plugin=AMap.Walking,Map3D,AMap.DistrictLayer,AMap.Scale,AMap.ToolBar,AMap.MouseTool,AMap.Geocoder,AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch,AMap.RangingTool,AMap.DistrictSearch"></script>
+<script src="https://webapi.amap.com/loca?v=1.2.1&key=1cef9fa56139934b8d178586baf627aa"></script>
+<script src="https://webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+<script src="../js/libs/jquery.slimscroll.min.js"></script>
+<script src="../js/libs/moment.min.js"></script>
+<script src="../js/libs/datepicker.all.min.js"></script>
+<script src="../js/libs/jquery.mloading.js"></script>
+<script src="../js/libs/dialog.js"></script>
+<script src="../js/libs/layui-v2.4.5/layui/layui.js"></script>
+<script src="../js/libs/echarts.min.js"></script>
+<script src="../js/libs/shine.js"></script>
+<script src="../js/libs/chosen.jquery.min.js"></script>
+<script src="../js/libs/bootstrap.js"></script>
+<script src="../js/libs/doublebox-bootstrap.js"></script>
+<script src="../js/libs/antv/g2.min.js"></script>
+<script src="../js/libs/antv/data-set.min.js"></script>
+<script src="../js/libs/bootstrap-slider.min.js"></script>
+<script src="../js/libs/template.js"></script>
+<script src="../js/libs/timeplay.js"></script>
+<script src="../js/util.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/public.js"></script>
+<script src="../js/page.js"></script>
+<script src="../js/map_plus.js"></script>
+<script src="../js/dynamic-panel-customer.js"></script>
+
+<script>
+    $(function () {
+        init();
+        renderZdfbMap();
+    });
+
+    let cityCode = cityConfig.cityCode;
+    let pCode = cityCode;
+    var cityCodec;
+    let flag500 = false;
+    let flag300 = false;
+    var zdfbMap;    //站点分布地图
+    var zdfbMapOption = { // 站点分布 - 海量点/热力图数据
+        mass: '', // 海量点数据
+        heat: '', // 热力图数据
+        heatMaxCount: 30, // 热力图密度最大值
+        tags: [], // 搜索的标签数据
+        polygon: [], // 多边形总数据500米
+        polygon300: [] // 多边形总数据300米
+    };
+    var indicatorData = {};
+    var lngLatSubList = [];
+    var districtExplorer;
+    var district = null;
+    var polygons=[];
+    var stations=[];
+    var stationss=[];
+    var shows=true;
+    var heatOption = [];
+    var heatOptions = [];
+    var showh=false;
+    var colors = [
+        "#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00",
+        "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707",
+        "#651067", "#329262", "#5574a6", "#3b3eac", "#abba10", "#3366bb","#73116e","#b87033"
+    ];
+
+    function init() {
+        // 初始化区域下拉框
+        setCityAreaSelect($('#zdfb_area_select'));
+        // 初始化地图
+        zdfbMap = new AMap.Map('zdfb_map', { // 站点分布地图
+            // resizeEnable: true,
+            center: cityConfig.centerPosition,
+            mapStyle: cityConfig.defaultMapStyle,
+            zoom: 12,
+            viewMode: '2D',
+        });
+        //加载鹰眼
+        AMap.plugin(["AMap.OverView"], function () {
+            var view = new AMap.OverView();
+            zdfbMap.addControl(view);
+        });
+        //加载比例尺
+        AMap.plugin(["AMap.Scale"], function () {
+            var scale = new AMap.Scale({zIndex: 101});
+            zdfbMap.addControl(scale);
+        });
+        //行政区域绘制
+        AMapUI.loadUI(['geo/DistrictExplorer'], function (DistrictExplorer) {
+            initPage(DistrictExplorer);
+        });
+        // 地图信息窗口关闭按钮
+        $('#zdfb_map').on('click', '.info-window-close', function () {
+            zdfbMap.clearInfoWindow();
+        });
+
+        MapTool(zdfbMap,'weipian','lukuang','touying','cj');
+
+        // 区域选择下拉框改变事件
+        $('#zdfb_area_select').on('change', function () {
+            var val = $(this).val();
+            cityCode = val;
+            getStationIndicator();
+            for (var i = 0; i < cityConfig.cityAreasList.length; i++) {
+                if (zdfbMapOption.polygon[cityConfig.cityAreasList[i].areaCode])
+                    zdfbMapOption.polygon[cityConfig.cityAreasList[i].areaCode].hide();
+            }
+            for (var i = 0; i < cityConfig.cityAreasList.length; i++) {
+                if (zdfbMapOption.polygon300[cityConfig.cityAreasList[i].areaCode])
+                    zdfbMapOption.polygon300[cityConfig.cityAreasList[i].areaCode].hide();
+            }
+            if(zdfbMapOption.mass){
+                zdfbMapOption.mass.clear();
+            }
+            if(val.substring(val.length-2) == '00'){
+                removeMapBounds(zdfbMap);
+                zdfbMapOption.mass = new AMap.MassMarks(stations, {
+                    opacity: 0.8,
+                    zIndex: 111,
+                    cursor: 'pointer',
+                    style: {
+                        url: '../images/blue.png',
+                        anchor: new AMap.Pixel(5, 5),
+                        size: new AMap.Size(10, 10)
+                    }
+                });
+                zdfbMapOption.heat.setDataSet({data: heatOption, max: zdfbMapOption.heatMaxCount});
+            }else {
+                stationss = [];
+                heatOptions= [];
+                for (let i = 0; i <stations.length ; i++) {
+                    if(stations[i].adCode==val){
+                        stationss.push(stations[i])
+                        var heatOptionObj = {};
+                        heatOptionObj.lng = stations[i].lnglat.lng;
+                        heatOptionObj.lat = stations[i].lnglat.lat;
+                        heatOptions.push(heatOptionObj);
+                    }
+                }
+                zdfbMapOption.mass = new AMap.MassMarks(stationss, {
+                    opacity: 0.8,
+                    zIndex: 111,
+                    cursor: 'pointer',
+                    style: {
+                        url: '../images/blue.png',
+                        anchor: new AMap.Pixel(5, 5),
+                        size: new AMap.Size(10, 10)
+                    }
+                });
+                zdfbMapOption.heat.setDataSet({data: heatOptions, max: zdfbMapOption.heatMaxCount});
+                drawMapBounds(zdfbMap,val)
+            }
+            var hoverMarker = new AMap.Marker({content: ' ', map: zdfbMap});
+            zdfbMapOption.mass.on('mouseover', function (e) {
+                hoverMarker.setPosition(e.data.lnglat);
+                hoverMarker.setLabel({content: e.data.name})
+            });
+            zdfbMapOption.mass.on('mouseout', function (e) {
+                hoverMarker.setPosition(e.data.lnglat);
+                hoverMarker.setLabel({content: null});
+            });
+
+            zdfbMapOption.mass.on('click', function (e) {
+                StopDetail.showMarker(zdfbMap, e.data.id);
+            });
+            zdfbMapOption.mass.setMap(zdfbMap);
+            if(shows){
+                zdfbMapOption.mass.show();
+            }else {
+                zdfbMapOption.mass.hide();
+            }
+            if(showh){
+                zdfbMapOption.heat.show();
+            }else {
+                zdfbMapOption.heat.hide();
+            }
+            if(flag500)
+            {
+                if (val.substring(val.length-2) == '00') {
+                    for (var i = 0; i < cityConfig.cityAreasList.length; i++) {
+                        zdfbMapOption.polygon[cityConfig.cityAreasList[i].areaCode].show();
+                    }
+                } else {
+                    for (var key in zdfbMapOption.polygon) {
+                        if (key == val){
+                            zdfbMapOption.polygon[key].show();
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(flag300){
+                if (val.substring(val.length-2) == '00') {
+                    for (var i = 0; i < cityConfig.cityAreasList.length; i++) {
+                        zdfbMapOption.polygon300[cityConfig.cityAreasList[i].areaCode].show();
+                    }
+                }else {
+                    for (var key in zdfbMapOption.polygon300) {
+                        if (key == val){
+                            zdfbMapOption.polygon300[key].show();
+                            break;
+                        }
+                    }
+                }
+            }
+            // if (val.substring(val.length-2) != '00'){
+            //     for (var j = 0; j < lngLatSubList.length; j++) {
+            //         if (lngLatSubList[j].properties.adcode == val) {
+            //              drawBounds(val);
+            //             break;
+            //         }
+            //     }
+            // }
+        })
+        // 热力图控制开关
+        $('#zdfb_heat_control_btn').on('click', function () {
+            if ($(this).hasClass('active')) {
+                showh = false;
+                if (zdfbMapOption.heat) {
+                    $(this).removeClass('active');
+                    zdfbMapOption.heat.hide();
+                }
+            } else {
+                showh = true;
+                if (zdfbMapOption.heat) {
+                    $(this).addClass('active');
+                    zdfbMapOption.heat.show();
+                }
+            }
+        });
+        // 海量点控制开关
+        $('#zdfb_stations_control_btn').on('click', function () {
+            if ($(this).hasClass('active')) {
+                shows = false;
+                if (zdfbMapOption.heat) {
+                    $(this).removeClass('active');
+                    zdfbMapOption.mass.hide();
+                    zdfbMap.clearInfoWindow();
+                }
+            } else {
+                shows = true;
+                if (zdfbMapOption.heat) {
+                    $(this).addClass('active');
+                    zdfbMapOption.mass.show();
+                }
+            }
+        })
+        // 300米覆盖率控制开关
+        $('#zdfb_fgl3_control_btn').on('click', function () {
+            getStationIndicator();
+            if ($(this).hasClass('active')) {
+                if (zdfbMapOption.polygon300) {
+                    hide3AreaSelect();
+                    zdfbMapOption.polygon300.forEach(function (item) {
+                        item.hide()
+                    })
+                }
+                flag300=false;
+                flag500=false;
+            } else {
+                if (zdfbMapOption.polygon300) {
+                    show3AreaSelect();
+                    zdfbMapOption.polygon.forEach(function (item) {
+                        item.hide()
+                    })
+                    for (var i = 0; i < cityConfig.cityAreasList.length; i++) {
+                        if (pCode==cityCode)
+                        {
+                            zdfbMapOption.polygon300.forEach(function (item) {
+                                item.show()
+                            })
+                        }else if(cityConfig.cityAreasList[i].areaCode==cityCode){
+                            zdfbMapOption.polygon300[cityCode].show();
+                        }
+                    }
+                }
+                flag300=true;
+                flag500=false;
+            }
+        });
+        // 500米覆盖率控制开关
+        $('#zdfb_fgl_control_btn').on('click', function () {
+            getStationIndicator();
+            if ($(this).hasClass('active')) {
+                if (zdfbMapOption.polygon) {
+                    hideAreaSelect();
+                    zdfbMapOption.polygon.forEach(function (item) {
+                        item.hide()
+                    })
+                }
+                flag300=false;
+                flag500=false;
+            } else {
+                if (zdfbMapOption.polygon) {
+                    showAreaSelect();
+                    zdfbMapOption.polygon300.forEach(function (item) {
+                        item.hide()
+                    })
+                    for (var i = 0; i < cityConfig.cityAreasList.length; i++) {
+                        if (pCode==cityCode)
+                        {
+                            zdfbMapOption.polygon.forEach(function (item) {
+                                item.show()
+                            })
+                        }else if(cityConfig.cityAreasList[i].areaCode==cityCode){
+                            zdfbMapOption.polygon[cityCode].show();
+                        }
+                    }
+                }
+                flag300=false;
+                flag500=true;
+            }
+        });
+        // 数据表格点击事件
+        $('.map-table-tbody').on('click', 'tr', function (e) {
+            $(".map-table-body-tr").removeAttr("style")
+            $("tr[data-id=" + e.currentTarget.attributes[0].nodeValue + "]").css("background-color", "#0e494a");
+            StopDetail.showMarker(zdfbMap, e.currentTarget.attributes[0].nodeValue);
+        });
+
+        $('.map-table-tbody').on('mouseover', 'tr', function (e) {
+            $("tr[data-id=" + e.currentTarget.attributes[0].nodeValue + "]").css("cursor", "pointer");
+        })
+    }
+
+    function renderZdfbMap() {
+        $('#zdfb_panel').mLoading({
+            text: "",//加载文字，默认值：加载中...
+            icon: '../images/loading_icon.gif',//加载图标，默认值：一个小型的base64的gif图片
+        });
+        getStationIndicator();
+        ajaxGetCommon({}, api.getDistrictAreas)
+            .then(function (res) {
+                for (var i = 0; i < res.length; i++) {
+                    var areaCode = res[i].code;
+                    var areaColor = null;
+                    areaColor = getAppointedCityAreaData(areaCode, cityConfig.cityAreasList).areaColor;
+                    if(null==areaColor || undefined == areaColor)
+                    {
+                        areaColor  = colors[i % colors.length];
+                    }
+                    var areaPolygonOptions = {
+                        map: zdfbMap,
+                        strokeColor: areaColor,
+                        strokeWeight: 1,
+                        fillColor:areaColor,
+                        fillOpacity: 0.2,
+                        zIndex:100
+                    };
+                    //500
+                    var areaPath = [];
+                    for (var j = 0; j < res[i].area500.length; j++) {
+                        areaPath.push(res[i].area500[j].outer);
+                        for (var k = 0; k < res[i].area500[j].inner.length; k++) {
+                            areaPath.push(res[i].area500[j].inner[k]);
+                        }
+                    }
+                    zdfbMapOption.polygon[areaCode] = new AMap.Polygon(areaPolygonOptions);
+                    zdfbMapOption.polygon[areaCode].setPath(areaPath);
+                    zdfbMapOption.polygon.forEach(function (item) {
+                        item.hide()
+                    })
+                    //300
+                    var areaPath300 = [];
+                    for (var j = 0; j < res[i].area300.length; j++) {
+                        areaPath300.push(res[i].area300[j].outer);
+                        for (var k = 0; k < res[i].area300[j].inner.length; k++) {
+                            areaPath300.push(res[i].area300[j].inner[k]);
+                        }
+                    }
+                    zdfbMapOption.polygon300[areaCode] = new AMap.Polygon(areaPolygonOptions);
+                    zdfbMapOption.polygon300[areaCode].setPath(areaPath300);
+                    zdfbMapOption.polygon300.forEach(function (item) {
+                        item.hide()
+                    })
+                    hideAllAreaSelect();
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            })
+
+        // 站点分布
+        ajaxPostCommon(zdfbMapOption.tags, api.getStationDistribution)
+            .then(function (data) {
+                stations = data;
+                if (stations === 0) {
+                    showToast('暂无搜索数据');
+                    return
+                }
+                // 绘制站点海量点
+                if (zdfbMapOption.mass) {
+                    zdfbMapOption.mass.clear();
+                }
+                zdfbMapOption.mass = new AMap.MassMarks(stations, {
+                    opacity: 0.8,
+                    zIndex: 111,
+                    cursor: 'pointer',
+                    style: {
+                        url: '../images/blue.png',
+                        anchor: new AMap.Pixel(5, 5),
+                        size: new AMap.Size(10, 10)
+                    }
+                });
+                $('#zdfb_stations_control_btn').addClass('active');
+                // 绘制站点热力图
+                heatOption = []
+                for (var i = 0; i < stations.length; i++) {
+                    var heatOptionObj = {};
+                    heatOptionObj.lng = stations[i].lnglat[0];
+                    heatOptionObj.lat = stations[i].lnglat[1];
+                    heatOption.push(heatOptionObj);
+                }
+                if (zdfbMapOption.heat) {
+                    zdfbMapOption.heatareaColor.setDataSet({data: [], max: zdfbMapOption.heatMaxCount});
+                }
+                zdfbMap.plugin(["AMap.Heatmap"], function () {      //加载热力图插件
+                    zdfbMapOption.heat = new AMap.Heatmap(zdfbMap, {
+                        opacity: [0, 0.8], zIndex: 112,
+                        gradient: {
+                            0.5: '#3EFF8F',
+                            0.65: '#67E8FF',
+                            0.7: '#1CD1FF',
+                            0.9: '#FFEE0E',
+                            1.0: '#FF5E41'
+                        }
+                    });    //在地图对象叠加热力图
+                    zdfbMapOption.heat.setDataSet({data: heatOption, max: zdfbMapOption.heatMaxCount}); //设置热力图数据集
+                    $('#zdfb_heat_control_btn').removeClass('active');
+                    zdfbMapOption.heat.hide();
+                    // showAreaSelect()
+                });
+                var hoverMarker = new AMap.Marker({content: ' ', map: zdfbMap});
+                zdfbMapOption.mass.on('mouseover', function (e) {
+                    hoverMarker.setPosition(e.data.lnglat);
+                    hoverMarker.setLabel({content: e.data.name})
+                });
+                zdfbMapOption.mass.on('mouseout', function (e) {
+                    hoverMarker.setPosition(e.data.lnglat);
+                    hoverMarker.setLabel({content: null});
+                });
+
+                zdfbMapOption.mass.on('click', function (e) {
+                    StopDetail.showMarker(zdfbMap, e.data.id);
+                });
+
+                zdfbMapOption.mass.setMap(zdfbMap);
+                $('#zdfb_panel').mLoading("hide");
+            })
+            .catch(function (err) {
+                console.log(err);
+                $('#zdfb_panel').mLoading("hide");
+            });
+    }
+
+    function downTable1() {
+        var jsonData = []
+        var showLabel = [];
+        var fileName = '停靠线路最多';
+        try {
+            indicatorData.mostLine.forEach((item, i) => {
+                //只下载前50
+                if(i>=50)
+                {
+                    throw Error();
+                }
+                var json1 = {};
+                json1.bank = i+1;
+                json1.name = item.name;
+                json1.value = item.value+'条';
+                jsonData.push(json1);
+            });
+        } catch(e) {
+
+        }
+        var sl0 = '排名';
+        showLabel.push(sl0);
+        var sl1 = '站点名称';
+        showLabel.push(sl1);
+        var sl2 = '经过线路数';
+        showLabel.push(sl2);
+        exportExcel(jsonData, showLabel, fileName)
+    }
+
+    function downTable2() {
+        var jsonData = []
+        var showLabel = [];
+        var fileName = '客流量最大';
+        try {
+            indicatorData.mostFlow.forEach((item, i) => {
+                //只下载前50
+                if(i>=50)
+                {
+                    throw Error();
+                }
+                var json1 = {};
+                json1.bank = i+1;
+                json1.name = item.name;
+                json1.value = item.value+'人';
+                jsonData.push(json1);
+            });
+        } catch(e) {
+
+        }
+        var sl0 = '排名';
+        showLabel.push(sl0);
+        var sl1 = '站点名称';
+        showLabel.push(sl1);
+        var sl2 = '日均客流';
+        showLabel.push(sl2);
+        exportExcel(jsonData, showLabel, fileName)
+    }
+
+    function downTable3() {
+        var jsonData = []
+        var showLabel = [];
+        var fileName = '换乘最多站点';
+        try {
+            indicatorData.mostTransfer.forEach((item, i) => {
+                //只下载前50
+                if(i>=50)
+                {
+                    throw Error();
+                }
+                var json1 = {};
+                json1.bank = i+1;
+                json1.name = item.name;
+                json1.value = item.value+'次';
+                jsonData.push(json1);
+            });
+        } catch(e) {
+
+        }
+        var sl0 = '排名';
+        showLabel.push(sl0);
+        var sl1 = '站点名称';
+        showLabel.push(sl1);
+        var sl2 = '日均换乘次数';
+        showLabel.push(sl2);
+        exportExcel(jsonData, showLabel, fileName)
+    }
+
+    $('.input-selections').on('click', "li", function (event) {
+        event.preventDefault();
+        $('.input-selections').hide();
+        var stationInfo = $(this).text();
+        var stationInfoArr = stationInfo.split('|');
+        var stationName = stationInfoArr[0];
+        var stationId = stationInfoArr[1];
+        if (!stationName || !stationId) {
+            showToast('请选择规范的站点名');
+            return
+        }
+        StopDetail.showMarker(zdfbMap, stationId);
+    })
+
+    function hide3AreaSelect() {
+        $('#zdfb_fgl3_control_btn').removeClass('active');
+    }
+
+    function show3AreaSelect() {
+        $('#zdfb_fgl3_control_btn').addClass('active');
+        $('#zdfb_fgl_control_btn').removeClass('active');
+    }
+
+    function hideAreaSelect() {
+        $('#zdfb_fgl_control_btn').removeClass('active');
+    }
+
+    function showAreaSelect() {
+        $('#zdfb_fgl_control_btn').addClass('active');
+        $('#zdfb_fgl3_control_btn').removeClass('active');
+    }
+
+    function hideAllAreaSelect() {
+        $('#zdfb_fgl_control_btn').removeClass('active');
+        $('#zdfb_fgl3_control_btn').removeClass('active');
+    }
+
+    //绘制边界
+    function drawBounds(name) {
+        var opts = {
+            subdistrict: 0,   //获取边界不需要返回下级行政区
+            extensions: 'all',  //返回行政区边界坐标组等具体信息
+            level: 'district'  //查询行政级别
+        };
+        district = new AMap.DistrictSearch(opts);
+        district.setLevel('district');
+        district.search(name, function(status, result) {
+            polygons = [];
+            var bounds = result.districtList[0].boundaries;
+            if (bounds) {
+                for (var i = 0, l = bounds.length; i < l; i++) {
+                    var polygon = new AMap.Polyline({
+                        path: bounds[i],
+                        strokeColor: 'white',
+                        strokeWeight: 2,
+                        lineJoin: 'round',
+                        zindex:11
+                    });
+                    polygons.push(polygon);
+                }
+            }
+            zdfbMap.add(polygons)
+            zdfbMap.setFitView(polygons);//视口自适应
+        });
+    }
+
+    function mapZoom() {
+        if (zdfbMapOption.mass === '') return
+        let zoom = zdfbMap.getZoom(); //获取当前地图级别
+        if (zoom <= 12) {
+            zdfbMapOption.mass.hide();
+            $('#zdfb_stations_control_btn').removeClass('active')
+        } else {
+            zdfbMapOption.mass.show();
+            $('#zdfb_stations_control_btn').addClass('active')
+        }
+    }
+
+    /**
+     * 站点分布 - 填充地图控制面板数据
+     */
+    function getStationIndicator() {
+        ajaxGetCommon({code: cityCode}, api.xwtz.getStationIndicator)
+            .then(function (data) {
+                //基本指标
+                indicatorData = data;
+                $('#zdfb_jbzb_info_panel .option-detail-txt').each(function () {
+                    let key = $(this).attr('markid');
+                    if (key == 'coverageFraction') $(this).html(data ? parseFloat(data[key]) * 100 : 0);
+                    else $(this).html(data ? data[key] : '')
+                });
+
+             	// 初始化面板
+                initPanels(indicatorData, $('#zdfb_jbzb_info_panel'), api.xwtz.getStationIndicator, {code: cityCode});
+
+                //客流量最大
+                let mostFlow = '';
+                if (data.mostFlow !== undefined) {
+                    var len=50;
+                    if(data.mostFlow.length<50)
+                    {
+                        len = data.mostFlow.length;
+                    }
+                    data.mostFlow.slice(0, len).forEach(item => {
+                        mostFlow += `<tr data-id="${item.id}" data-name="${item.name}"  class="map-table-body-tr">
+                                        <th class="table-index">${item.rank}</th>
+                                        <th>${item.name}</th>
+                                        <th>${item.value}</th>
+                                    </tr>`;
+                        $('#zdfb_kllzd_top_panel .map-table-tbody').html(mostFlow)
+                    });
+                }
+
+                //停靠线路最多
+                let mostLine = '';
+                if (data.mostLine !== undefined) {
+                    var len=50;
+                    if(data.mostLine.length<50)
+                    {
+                        len = data.mostFlow.length;
+                    }
+                    data.mostLine.slice(0, len).forEach(item => {
+                        mostLine += `<tr data-id="${item.id}" data-name="${item.name}"  class="map-table-body-tr">
+                                        <th class="table-index">${item.rank}</th>
+                                        <th>${item.name}</th>
+                                        <th>${item.value}</th>
+                                    </tr>`;
+                        $('#zdfb_tkxlzd_top_panel .map-table-tbody').html(mostLine)
+                    });
+                }
+
+                //换乘最多站点
+                let mostTransfer = '';
+                if (data.mostTransfer !== undefined) {
+                    var len=50;
+                    if(data.mostTransfer.length<50)
+                    {
+                        len = data.mostFlow.length;
+                    }
+                    data.mostTransfer.slice(0, len).forEach(item => {
+                        mostTransfer += `<tr data-id="${item.id}" data-name="${item.name}"  class="map-table-body-tr">
+                                            <th class="table-index">${item.rank}</th>
+                                            <th>${item.name}</th>
+                                            <th>${item.value}</th>
+                                        </tr>`;
+                        $('#zdfb_hczdzd_top_panel .map-table-tbody').html(mostTransfer)
+                    });
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
+
+    /**
+     * 站点覆盖率 - 加载区域下拉框数据
+     * @jQueryDom jQuery对象
+     */
+    function setCityAreaSelect(jQueryDom) {
+        var html = getCityAreaSelectOptionDom(cityConfig.cityAreasList);
+        jQueryDom.html(html);
+    }
+
+    /**
+     * 获取城市的区域信息下拉框数据dom
+     * @areaList 城市的区域信息
+     */
+    function getCityAreaSelectOptionDom(areaList) {
+        cityCodec=citycode = JSON.parse(sessionStorage.getItem('userInfo')).cityNo;
+        var html = '<option value="'+citycode+'">全部区域</option>';
+        for (var i = 0; i < areaList.length; i++) {
+            html += '<option value="' + areaList[i].areaCode + '">' + areaList[i].areaName + '</option>';
+        }
+        return html;
+    }
+
+    /**
+     * 获取指定的城市的区域信息
+     * @areaCode 区域编码
+     * @areaList 城市的区域信息
+     */
+    function getAppointedCityAreaData(areaCode, areaList) {
+        var areaData = {};
+        for (var i = 0; i < areaList.length; i++) {
+            if (areaCode == areaList[i].areaCode) {
+                areaData = areaList[i];
+                return areaData;
+                break;
+            }
+        }
+        return areaData
+    }
+
+    // 绘制行政区域
+    function initPage(DistrictExplorer) {
+         districtExplorer = new DistrictExplorer({
+            map: zdfbMap, //关联的地图实例
+            eventSupport:true
+        });
+
+        var adcode = cityConfig.cityCode; //当前城市的区划编码
+        districtExplorer.loadAreaNode(adcode, function (error, areaNode) {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            //绘制载入的区划节点
+            renderAreaNode(districtExplorer, areaNode);
+        });
+
+
+        //鼠标hover提示内容
+        var $tipMarkerContent = $('<div class="tipMarker top"   style="color: #ffffff;font-size:15px;font-weight:bold"  ></div>');
+
+        var tipMarker = new AMap.Marker({
+            content: $tipMarkerContent.get(0),
+            offset: new AMap.Pixel(0, 0),
+            bubble: true
+        });
+
+        //根据Hover状态设置相关样式
+        function toggleHoverFeature(feature, isHover, position) {
+            tipMarker.setMap(isHover ? zdfbMap : null);
+            if (!feature) {
+                return;
+            }
+            var props = feature.properties;
+            if (isHover) {
+                //更新提示内容
+                $tipMarkerContent.html( props.name);
+                //更新位置
+                tipMarker.setPosition(position || props.center);
+            }
+            $('#area-tree').find('h2[data-adcode="' + props.adcode + '"]').toggleClass('hover', isHover);
+            //更新相关多边形的样式
+            var polys = districtExplorer.findFeaturePolygonsByAdcode(props.adcode);
+            for (var i = 0, len = polys.length; i < len; i++) {
+                polys[i].setOptions({
+                    fillOpacity: isHover ? 0.8 : 0.1
+                });
+            }
+        }
+
+        districtExplorer.on('featureMouseout featureMouseover', function(e, feature) {
+        });
+
+        districtExplorer.on('featureMousemove', function(e, feature) {
+        });
+    }
+
+    function renderAreaNode(districtExplorer, areaNode) {
+        lngLatSubList = areaNode._data.geoData.sub.features;
+    }
+
+    // 清空按钮
+    $("#clear_btn").on('click', function (event) {
+        $('#station_input').val('');
+        deleteScreenMarkerById('stop', 'Marker', zdfbMap)
+        zdfbMap.clearInfoWindow();
+    });
+</script>
+
+</html>

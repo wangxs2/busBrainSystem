@@ -25,7 +25,9 @@ export default {
   },
   beforeCreate() {},
   created() {
-    console.log("我是道路网")
+     setTimeout(()=>{
+        this.$store.commit('SET_LOADING',false)
+      },1000)
   },
   mounted() {
   },

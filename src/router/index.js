@@ -4,9 +4,11 @@ import Layout from '@/views/layout/index'
 import login from '@/views/login/index'
 import lineCharacteristics from '@/views/lineCharacteristics/index'
 import roadDistribution from '@/views/lineCharacteristics/roadDistribution/index'
-import publicTransport from '@/views/lineCharacteristics/publicTransport/index'  
-import busStop from '@/views/lineCharacteristics/busStop/index' 
-import busLane from '@/views/lineCharacteristics/busLane/index' 
+import publicTransport from '@/views/lineCharacteristics/publicTransport/index'   //公交线路
+import busStop from '@/views/lineCharacteristics/busStop/index' //公交站点
+import busLane from '@/views/lineCharacteristics/busLane/index'  //公交专用道
+import passengerCorridor from '@/views/lineCharacteristics/passengerCorridor/index' //客运走廊
+
 import forgetPwd from '@/views/forgetPwd/index'
 Vue.use(Router)
 export const constantRouterMap = [
@@ -44,10 +46,15 @@ export const constantRouterMap = [
             name: '公交站点',
             component: busStop,
             
-          },{
+          },{ 
             path: '/lineCharacteristics/busLane',
             name: '公交专用道',
             component: busLane,
+            
+          },{
+            path: '/lineCharacteristics/passengerCorridor',
+            name: '客运走廊',
+            component: passengerCorridor,
             
           }
         ]

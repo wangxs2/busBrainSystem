@@ -14,8 +14,30 @@ NProgress.configure({
   showSpinner: false
 })
 
+function quc(arrays){
+  var result = [];
+
+  var obj = {};
+
+  for(var i =0; i<arrays.length; i++){
+
+      if(!obj[arrays[i].name]){
+
+        result.push(arrays[i]);
+
+        obj[arrays[i].name] = true;
+
+      }
+
+  }
+  return result
+}
+
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条开始
+ 
+  
+
   if (to.path === '/login') {
     next()
     // store.commit('SET_ID', '') //清除user
@@ -27,7 +49,17 @@ router.beforeEach((to, from, next) => {
     // store.commit('SET_ID', '') //清除user
     return
   }
+
   next()
+
+  console.log('我在promise456')
+  store.commit('SET_LOADING',true)
+  let arour=[]
+  let routenow = to.matched.slice(2)[0]
+  if (store.getters.userRole.length == 0) {
+    store.getters.userRole.push(to.matched.slice(2)[0])
+  }
+  store.getters.userRole.push(to.matched.slice(2)[0])
   // if (to.path !== '/login' && !getCookie('user')) {
   //   next('/login')
   //   return
