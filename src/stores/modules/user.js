@@ -17,10 +17,13 @@ const user = {
     userRole: [], //用户路由记录
     userStation: [], //站点的信息
     threeMap:[],//300米
+    threeMap1:[],//300米
+    threeMap2:[],//300米
     btnAuth: '', //按钮权限
     isBreak: "",//是否刷新页面
     keyunData:[],//客运走廊的数据
     keyunData1:[],//客运走廊的数据
+    keyunData2:[],//客运走廊的数据
     constructionCode: '', // 项目code
     constructionName: '',
     isbtn:1,
@@ -32,11 +35,20 @@ const user = {
      SET_THREEMAP: (state, threeMap) => { //300米
       state.threeMap = threeMap
     },
+    SET_THREEMAP1: (state, threeMap1) => { //500米
+      state.threeMap1 = threeMap1
+    },
+    SET_THREEMAP2: (state, threeMap2) => { //500米
+      state.threeMap2 = threeMap2
+    },
      SET_KEYUNDATA: (state, keyunData) => { //客运走廊
       state.keyunData = keyunData
     },
     SET_KEYUNDATA1: (state, keyunData1) => { //客运走廊
       state.keyunData1 = keyunData1
+    },
+    SET_KEYUNDATA2: (state, keyunData2) => { //客运走廊线
+      state.keyunData2 = keyunData2
     },
     SET_HEATMAP: (state, heatData) => { //储存热力图的值
       state.heatData = heatData

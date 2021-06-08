@@ -16,6 +16,8 @@ const getters = {
   isbtn: state => state.user.isbtn,
   heatData: state => state.user.heatData,
   threeMap: state => state.user.threeMap,
+  threeMap1: state => state.user.threeMap1,
+  threeMap2: state => state.user.threeMap2,
   btnAuth: state => state.user.btnAuth,
   menuData: state => state.permission.menuData,
   routers: state => state.permission.routers,
@@ -23,6 +25,7 @@ const getters = {
   token: state => state.user.token,
   keyunData: state => state.user.keyunData,
   keyunData1: state => state.user.keyunData1,
+  keyunData2: state => state.user.keyunData2,
   constructionCode: state => state.user.constructionCode,
   constructionName: state => state.user.constructionName
 }

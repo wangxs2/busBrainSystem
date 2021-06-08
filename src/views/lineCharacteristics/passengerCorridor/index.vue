@@ -10,7 +10,7 @@
             <div class="zhandian" v-for="(iteam,n) in slinedata" :key="n">
                 <div class="zhnadiason" style="margin-right:0.2vw">{{iteam.name}}</div>
                 <div class="zhnadiason zhnadiason1">
-                    <div class='zhnadiasonla' v-for="(itam,index) in removal(iteam.station)" :key="index">
+                    <div class='zhnadiasonla' @click="datastation(itam)" v-for="(itam,index) in removal(iteam.station)" :key="index">
                         {{itam.stationName}}
                     </div>
                 </div>
@@ -26,7 +26,7 @@
             <div class="zhandian" v-for="(iteam,n) in mlinedata" :key="n">
                 <div class="zhnadiason" style="margin-right:0.2vw">{{iteam.name}}</div>
                 <div class="zhnadiason zhnadiason1">
-                    <div class='zhnadiasonla' v-for="(itam,index) in removal(iteam.station)" :key="index">
+                    <div class='zhnadiasonla' @click="datastation(itam)" v-for="(itam,index) in removal(iteam.station)" :key="index">
                         {{itam.stationName}}
                     </div>
                 </div>
@@ -102,15 +102,21 @@ export default {
     setTimeout(()=>{
       this.$store.commit('SET_LOADING',false)
     },1000)
-    this.getkyzlData()
+    
 
    
 
   },
   mounted() {
+      this.getkyzlData()
   },
   methods: {
-     
+      //站点显示信息窗口
+     datastation(rows){
+         this.$emit('changefun',{
+          isinfobtn:rows
+      })
+     },
     separateArr(data, n) {
         //获取要切割的数组的长度
         let len = data.length;
@@ -144,15 +150,32 @@ export default {
                 });
                 sdata.push(obj)
             }
-            console.log(allStation)
-            console.log(allStation1)
-            console.log(this.removal(allStation))
             console.log(this.removal(allStation1))
+            console.log(res.result.corridorList)
             this.$store.commit('SET_KEYUNDATA', this.removal(allStation1))
             this.$store.commit('SET_KEYUNDATA1', this.removal(allStation))
+            console.log(this.setTwo(res.result.corridorList))
+            // this.$store.commit('SET_KEYUNDATA2', res.result.corridorList) 
             this.mlinedata=mdata
             this.slinedata=sdata
         });
+    },
+    setTwo(data){
+        let data2=[]
+        data.forEach(iteam=>{
+            iteam.lonlat1=iteam.lonlat.split(' ')
+            let arr=[]
+            iteam.lonlat1.forEach(itam=>{
+                itam=[itam]
+                console.log(itam)
+            })
+            
+            data2.push(iteam)
+           
+        })
+       
+         console.log(data2)
+        
     },
     //
     removal(arr){

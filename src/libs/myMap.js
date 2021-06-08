@@ -8,11 +8,15 @@ export default class Map {
             el: data.el, // 地图容器
             mass:null,//海量点站点
             heatmap:null,//热力图
+            infoWindow:null,//信息窗口
             polygonThree:null,//300
+            polygonThree1:null,//500
+            polygonThree2:null,//500
             overlayGroups:new AMap.OverlayGroup(),//站点300米和500米的集合
             overlayGroups1:new AMap.OverlayGroup(),//站点300米和500米的集合
             busLaneGroups:new AMap.OverlayGroup(),//公交专用道
             kyLinedata:null,
+            kyLineOver:new AMap.OverlayGroup(),//客运走廊
             keyunLaneGroups:new AMap.OverlayGroup(),//客运走廊
             map: null, // 地图实例
             mapCenter: [121.460752,31.011182], // 默认地图中心点
@@ -51,10 +55,65 @@ export default class Map {
             }
         }); 
       })   //在地图对象叠加热力图
+
+      this.infoWindow = new AMap.InfoWindow({
+          isCustom: true,  //使用自定义窗体
+          content: this.createInfoWindow(),
+          offset: new AMap.Pixel(0, -35)
+      });
       this.trafficLayer.setMap(this.map);
       this.isTraffic(true)
       this.map.add(this.overlayGroups);
       this.map.add(this.overlayGroups1);
+
+  }
+  //设置信息窗口的内容
+  createInfoWindow(name,data){
+    let content=`
+      <div class="myinfobox">
+        <div class="titfont">
+          <div class="infoimg"></div>
+          ${name}
+        </div>
+        <div class="line-lsi">
+          <div class="tithear">线路:</div>
+          <div style="flex:1">${data}</div>
+          
+         </div>
+      </div>
+    `
+
+    return content
+
+  }
+  //查询站点
+  searchStation(data,position){
+
+    var station = new AMap.StationSearch({
+        pageIndex: 1, //页码
+        pageSize: 60, //单页显示结果条数
+        city: '上海'   //确定搜索城市
+    });
+    station.search(data, (status, result)=> {
+        if (status === 'complete' && result.info === 'OK') {
+          let startr='',arg=[]
+            
+            result.stationInfo[0].buslines.forEach(iteam=>{
+              arg.push(iteam.name.split('(')[0])
+            })
+            
+            startr=arg.join(',')
+            console.log(startr)
+            this.infoWindow.setContent(this.createInfoWindow(data,startr))
+            setTimeout(()=>{
+              this.infoWindow.open(this.map,position);
+            },200)
+            
+            // console.log(result.stationInfo[0].name)
+        } else {
+            
+        }
+    });
 
   }
   setHeatemap(val){
@@ -67,27 +126,41 @@ export default class Map {
   addPolygon(data) {
     this.polygonThree = new AMap.Polygon({
       path: data,
-      fillColor: 'red',
+      fillColor: '#144D95',
       strokeOpacity: 1,
       fillOpacity: 0.5,
-      strokeColor: '#144D95',
-      strokeWeight: 1,
+      strokeWeight: 0,
        zIndex: 200,
     });
-    this.polygonThree.on('mouseover', () => {
-      this.polygonThree.setOptions({
-        fillOpacity: 0.7,
-        fillColor: '#7bccc4'
-      })
-    })
-    this.polygonThree.on('mouseout', () => {
-      this.polygonThree.setOptions({
-        fillOpacity: 0.5,
-        fillColor: '#ccebc5'
-
-      })
-    })
     this.map.add(this.polygonThree);
+  }
+  addPolygon1(data) {
+    console.log(data)
+    this.polygonThree1 = new AMap.Polygon({
+      path: data,
+      fillColor: '#144D95',
+      strokeOpacity: 1,
+      fillOpacity: 0.5,
+      strokeWeight: 0,
+       zIndex: 200,
+    });
+    this.map.add(this.polygonThree1);
+  }
+
+  addPolygon2(data) {
+    console.log(data)
+    if(this.polygonThree2){
+      this.map.remove(this.polygonThree2)
+    }
+    this.polygonThree2= new AMap.Polygon({
+      path: data,
+      fillColor: '#144D95',
+      strokeOpacity: 1,
+      fillOpacity: 0.5,
+      strokeWeight: 0,
+       zIndex: 200,
+    });
+    this.map.add(this.polygonThree2);
   }
 
   //公交专用道
@@ -95,27 +168,46 @@ export default class Map {
 
   }
 //客运走廊
-  passCorrline(path){
-    this.kyLinedata = new AMap.Polyline({
+  passCorrline(data){
+    let lines=[]
+    data.forEach(iteam=>{
+      let kyLinedata = new AMap.Polyline({
         path: path,
-        strokeColor: "#BE7322",
+        strokeColor: "#35A594",
         strokeOpacity: 1,
         strokeWeight: 8,
         strokeStyle: "solid",
       })
-      this.map.add(this.kyLinedata);
+      lines.push(kyLinedata)
+      this.map.add(kyLinedata);
+
+    })
+    return lines
+  
   }
+
+ 
 
   //客运走廊的公交站点内
   addGjMarker(data,type) {
     let markers=[]
     data.forEach(iteam=>{
       let marker = new AMap.Marker({
-          icon: type==1?require('../assets/image/icon_dt.png'):require('../assets/image/icon_gj.png'),
+        icon:new AMap.Icon({
+          image:type==1?require('../assets/image/icon_dt.png'):('https://a.amap.com/jsapi_demos/static/resource/img/pin.png'),
+          size:new AMap.Size(32,32),
+          imageSize:new AMap.Size(32,32)
+       }),
           position: [type==1?iteam.lon:iteam.longitude,type==1?iteam.lat:iteam.latitude],
           offset: new AMap.Pixel(-13, -30)
       });
       marker.setMap(this.map);
+      marker.on('click',  ()=> {
+          this.searchStation(iteam.stationName,marker.getPosition()) 
+          
+          
+          
+      });
       markers.push(marker)
     })
     return markers
@@ -144,7 +236,7 @@ export default class Map {
       }];
     this.mass = new AMap.MassMarks(datapoint, {
         opacity: 0.8,
-        zIndex: 10,
+        zIndex: 60,
         cursor: 'pointer',
         style: style[0]
     });
@@ -175,6 +267,13 @@ export default class Map {
   addOverlayGroup3(Groups){
     this.keyunLaneGroups.addOverlays(Groups)
   }
+    //客运走廊的线
+    addOverlayGroup4(Groups){
+      this.kyLineOver.addOverlays(Groups)
+    }
+  
+
+
 
   //公交专用道
   polylineBus(){
@@ -211,12 +310,13 @@ export default class Map {
             strokeWeight: 1,
             map:this.map,
             strokeOpacity: 0.1,
-            fillOpacity: 1,
+            fillOpacity: 0.5,
             // 线样式还支持 'dashed'
             fillColor: 'rgba(23,145,252,0.1)',
             zIndex: 10,
         })
         circleAll.push(circle)
+        
       }
      
     })

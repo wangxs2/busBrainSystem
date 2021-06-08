@@ -2,21 +2,22 @@
   <div class="busStop-box">
     <div class="search-box">
       <div style="margin-right:0.8vw">行政区域</div>
-      <el-select style="margin-right:1.5vw" size="small" v-model="value" placeholder="请选择">
+      <el-select style="margin-right:1.5vw" filterable @change="getpatharea" size="small" v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          :key="item.constantName"
+          :label="item.constantName"
+          :value="item.constantName"
         ></el-option>
       </el-select>
+
 
       <el-autocomplete
         class="inline-input"
         size="small"
         v-model="state2"
         :fetch-suggestions="querySearch"
-        placeholder="请输入内容"
+        placeholder="请输入站点"
         :trigger-on-focus="false"
         @select="handleSelect"
       ></el-autocomplete>
@@ -78,28 +79,7 @@ export default {
   components: {},
   data() {
     return {
-      options: [
-        {
-          value: "选项1",
-          label: "曹路"
-        },
-        {
-          value: "选项2",
-          label: "金桥"
-        },
-        {
-          value: "选项3",
-          label: "川沙"
-        },
-        {
-          value: "选项4",
-          label: "唐镇"
-        },
-        {
-          value: "选项5",
-          label: "南汇"
-        }
-      ],
+      options: [],
       value: "",
       state2: "",
       typelst:[
@@ -114,6 +94,14 @@ export default {
       isbtn:1,
       point:1,
       isheat:1,
+      data:[
+        [116.40537166077495,39.89448780861658],
+        [116.412076,39.899135],
+        [116.41191599778595,39.9012153530144],
+        [116.410445,39.901759999999996],
+        [116.40542400000001,39.89969299999999],
+        [116.40537166077495,39.89448780861658]
+      ]
     };
   },
   beforeCreate() {},
@@ -121,7 +109,6 @@ export default {
     this.pointAll()
   },
   mounted() {
-    
   },
   methods: {
     querySearch(queryString, cb) {
@@ -130,7 +117,6 @@ export default {
         ? restaurants.filter(this.createFilter(queryString))
         : restaurants;
       // 调用 callback 返回建议列表的数据
-      console.log(results)
       results.forEach(iteam=>{
         iteam.value=iteam.stationName
       })
@@ -141,14 +127,23 @@ export default {
           return (restaurant.stationName.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
         };
       },
-  
     handleSelect(item) {
-      console.log(item);
     },
     tobtn(row){
       this.isbtn=row.id
       this.$emit('changefun',{
           isbtn:row.id
+      })
+    },
+    getpatharea(){
+      console.log('获取')
+      let arr=[]
+      this.options.forEach(iteam=>{
+        if(this.value==iteam.constantName){
+          arr=JSON.parse(iteam.num)
+          console.log(arr)
+        }
+        this.$store.commit('SET_THREEMAP2', arr)
       })
     },
     allpoint(){
@@ -157,11 +152,9 @@ export default {
       }else{
         this.point=1
       }
-      console.log(this.point)
       this.$emit('changefun',{
           ispoint:this.point
       })
-
     },
     allheat(){
       if(this.isheat==1){
@@ -190,20 +183,41 @@ export default {
               this.$store.commit('SET_LOADING',false)
             },2000)
         }
-        
       });  
-
       this.$fetchGet("indicator/stationCoverArea").then(res => {
-        console.log(res.result.geo300.num) 
-        let arrdata=JSON.parse(res.result.geo300.num)
-        let bigDate=[]
-        arrdata.forEach(iteam=>{
-          let org=[]
-          org.push(iteam)
-          bigDate.push(org)
+        // let arrdata=JSON.parse(res.result.geo300.num)
+        // let bigDate=[]
+        // arrdata.forEach(iteam=>{
+        //   let org=[]
+        //   org.push(iteam)
+        //   bigDate.push(org)
+        // })
+        // this.$store.commit('SET_THREEMAP', bigDate)
+        let testar=[],alouy=[],bigDate=[],bigDate1=[]
+         for(let key  in res.result){
+           if(key!=='res300'||key!=='res500'){
+             if(key.indexOf("300") != -1){
+               testar.push(res.result[key])
+             }
+             if(key.indexOf("500") != -1){
+               alouy.push(res.result[key])
+             }
+           }
+         }
+         
+         this.options=testar.concat(alouy)
+        testar.forEach(iteam=>{
+          if(iteam.num!=="["&&JSON.parse(iteam.num).length>0){
+            bigDate.push(JSON.parse(iteam.num))
+          }
         })
-         console.log(bigDate)
+        alouy.forEach(iteam=>{
+          if(iteam.num!=="["&&JSON.parse(iteam.num).length>0){
+            bigDate1.push(JSON.parse(iteam.num))
+          }
+        })
         this.$store.commit('SET_THREEMAP', bigDate)
+        this.$store.commit('SET_THREEMAP1', bigDate1)
         
       });
      
