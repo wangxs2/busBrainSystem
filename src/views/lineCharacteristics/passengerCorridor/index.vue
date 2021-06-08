@@ -102,13 +102,14 @@ export default {
     setTimeout(()=>{
       this.$store.commit('SET_LOADING',false)
     },1000)
+    this.getkyzlData()
     
 
    
 
   },
   mounted() {
-      this.getkyzlData()
+      
   },
   methods: {
       //站点显示信息窗口
@@ -150,12 +151,9 @@ export default {
                 });
                 sdata.push(obj)
             }
-            console.log(this.removal(allStation1))
-            console.log(res.result.corridorList)
             this.$store.commit('SET_KEYUNDATA', this.removal(allStation1))
             this.$store.commit('SET_KEYUNDATA1', this.removal(allStation))
-            console.log(this.setTwo(res.result.corridorList))
-            // this.$store.commit('SET_KEYUNDATA2', res.result.corridorList) 
+            this.setTwo(res.result.corridorList)
             this.mlinedata=mdata
             this.slinedata=sdata
         });
@@ -163,19 +161,28 @@ export default {
     setTwo(data){
         let data2=[]
         data.forEach(iteam=>{
-            iteam.lonlat1=iteam.lonlat.split(' ')
-            let arr=[]
-            iteam.lonlat1.forEach(itam=>{
-                itam=[itam]
-                console.log(itam)
-            })
-            
+            iteam.lonlat1=this.setSz(iteam.lonlat.replace(/[\r\n]/g,"").split(' '))
             data2.push(iteam)
-           
         })
-       
-         console.log(data2)
+        this.$store.commit('SET_KEYUNDATA2',data2)
+    },
+    setSz(baseArray){
+        let len = baseArray.length;
+        let n = 1; //假设每行显示4个
+        let lineNum = len % n === 0 ? len / n : Math.floor( (len / n) + 1 );
+        let res = [];
+        for (let i = 0; i < lineNum; i++) {
+            // slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。且原始数组不会被修改。
+            let temp = baseArray.slice(i*n, i*n+n);
+            let art=[]
+            temp[0].split(',').forEach(iru=>{
+                art.push(parseFloat(iru))
+            })
+            res.push(art);
+        }
         
+        return res
+
     },
     //
     removal(arr){

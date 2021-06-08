@@ -83,7 +83,6 @@ export default {
     },
   },
   created(){
-    console.log(this.separateArr(this.datapunl,2).join(' '))
   },
   mounted(){
      MyMap = new Map({ el: "lineCharacteristics" });
@@ -117,10 +116,10 @@ export default {
              if(MyMap.mass){
                 MyMap.isMass(false)
               }
-              if(MyMap.kyLinedata){
-                MyMap.kyLinedata.hide()
-               MyMap.keyunLaneGroups.hide()
-              }
+              if(MyMap.keyunLaneGroups.getOverlays().length>0){
+                 MyMap.keyunLaneGroups.hide()
+                  MyMap.kyLineOver.hide()
+                }
               
               break;
           case "公交站点":
@@ -128,47 +127,45 @@ export default {
               if(MyMap.mass){
                 MyMap.isMass(true)
               }
-               if(MyMap.kyLinedata){
-                MyMap.kyLinedata.hide()
-               MyMap.keyunLaneGroups.hide()
-              }
+              if(MyMap.keyunLaneGroups.getOverlays().length>0){
+                 MyMap.keyunLaneGroups.hide()
+                  MyMap.kyLineOver.hide()
+                }
               break;
           case "公交线路网":
               MyMap.isTraffic(false)
               if(MyMap.mass){
                 MyMap.isMass(false)
               }
-               if(MyMap.kyLinedata){
-                MyMap.kyLinedata.hide()
-               MyMap.keyunLaneGroups.hide()
-              }
+             if(MyMap.keyunLaneGroups.getOverlays().length>0){
+                 MyMap.keyunLaneGroups.hide()
+                  MyMap.kyLineOver.hide()
+                }
               break;
           case "公交专用道":
               MyMap.isTraffic(false)
               if(MyMap.mass){
                 MyMap.isMass(false)
               }
-               if(MyMap.kyLinedata){
-                MyMap.kyLinedata.hide()
-               MyMap.keyunLaneGroups.hide()
-              }
+               if(MyMap.keyunLaneGroups.getOverlays().length>0){
+                 MyMap.keyunLaneGroups.hide()
+                  MyMap.kyLineOver.hide()
+                }
               MyMap.heatmap.hide()
               break;
           case "客运走廊":
-            console.log('来了')
               MyMap.isTraffic(false)
               if(MyMap.mass){
                 MyMap.isMass(false)
               }
               MyMap.heatmap.hide()
               let strky=MyMap.keyunLaneGroups.getOverlays()
+              console.log('走到客运走廊')
+              console.log(strky.length)
                if(strky.length>0){
-                  MyMap.kyLinedata.show()
                   MyMap.keyunLaneGroups.show()
-                  // MyMap.keyunLaneGroups.show()
+                  MyMap.kyLineOver.show()
                 }else{
-                   MyMap.passCorrline(this.separateArr(this.kyline,2))
-                   console.log(this.$store.getters.keyunData)
                     MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData,2))
                     MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData1,1))
                     MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))

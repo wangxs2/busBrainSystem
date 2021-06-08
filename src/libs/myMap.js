@@ -172,7 +172,7 @@ export default class Map {
     let lines=[]
     data.forEach(iteam=>{
       let kyLinedata = new AMap.Polyline({
-        path: path,
+        path: iteam.lonlat1,
         strokeColor: "#35A594",
         strokeOpacity: 1,
         strokeWeight: 8,
