@@ -27,7 +27,7 @@
       <div @click="allpoint" :class="point==1?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">站点分布</div>
       <div style="margin-left:1.8vw">站点覆盖区域 </div>
       <div class="qhbtn">
-        <div :class="isbtn==iteam.id?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
+        <div :class="isbtn==iteam.name?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}米</div>
       </div>
     </div>
 
@@ -39,33 +39,33 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_1.png" />
             站点总数
           </div>
-          <div>264条</div>
+          <div>{{restaurants.length}}条</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
-            300米站点覆盖面积
+            {{isbtn}}米站点覆盖面积
           </div>
           <div>4422.75公里</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
-            300米站点覆盖率
+            {{isbtn}}米站点覆盖率
           </div>
           <div>2.42</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
-            300米站点覆盖面积
+            {{isbtn}}米站点覆盖面积
           </div>
           <div>10.14</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
-            300米站点覆盖率
+            {{isbtn}}米站点覆盖率
           </div>
           <div>3650.5公里</div>
         </div>
@@ -80,18 +80,20 @@ export default {
   data() {
     return {
       options: [],
+      restaurants:[],
       value: "",
       state2: "",
       typelst:[
         {
-          name:'300米',
+          name:'300',
           id:1
         },{
-          name:'500米',
+          name:'500',
           id:2
         }
       ],
-      isbtn:1,
+      listMsg:{},
+      isbtn:300,
       point:1,
       isheat:1,
       data:[
@@ -130,9 +132,9 @@ export default {
     handleSelect(item) {
     },
     tobtn(row){
-      this.isbtn=row.id
+      this.isbtn=row.name
       this.$emit('changefun',{
-          isbtn:row.id
+          isbtn:row.name
       })
     },
     getpatharea(){
@@ -184,7 +186,10 @@ export default {
             },2000)
         }
       });  
-      this.$fetchGet("indicator/stationCoverArea").then(res => {
+      this.$fetchGet("indicator/stationCoverArea",{
+        radius:this.isbtn
+      }).then(res => {
+        this.listMsg=res.result.res
         // let arrdata=JSON.parse(res.result.geo300.num)
         // let bigDate=[]
         // arrdata.forEach(iteam=>{
@@ -195,29 +200,26 @@ export default {
         // this.$store.commit('SET_THREEMAP', bigDate)
         let testar=[],alouy=[],bigDate=[],bigDate1=[]
          for(let key  in res.result){
-           if(key!=='res300'||key!=='res500'){
-             if(key.indexOf("300") != -1){
-               testar.push(res.result[key])
-             }
-             if(key.indexOf("500") != -1){
-               alouy.push(res.result[key])
-             }
+           if(key!=='res'){
+             testar.push(res.result[key])
            }
          }
          
-         this.options=testar.concat(alouy)
-        testar.forEach(iteam=>{
-          if(iteam.num!=="["&&JSON.parse(iteam.num).length>0){
-            bigDate.push(JSON.parse(iteam.num))
-          }
-        })
-        alouy.forEach(iteam=>{
-          if(iteam.num!=="["&&JSON.parse(iteam.num).length>0){
-            bigDate1.push(JSON.parse(iteam.num))
-          }
-        })
-        this.$store.commit('SET_THREEMAP', bigDate)
-        this.$store.commit('SET_THREEMAP1', bigDate1)
+         
+        //  this.options=testar.concat(alouy)
+        // testar.forEach(iteam=>{
+        //   let org=[]
+        //   org.push(eval(iteam.num))
+        //    bigDate.push(eval(iteam.num))
+        // })
+        // alouy.forEach(iteam=>{
+        //   if(iteam.num!=="["&&JSON.parse(iteam.num).length>0){
+        //     bigDate1.push(JSON.parse(iteam.num))
+        //   }
+        // })
+        
+        // this.$store.commit('SET_THREEMAP', bigDate)
+        // this.$store.commit('SET_THREEMAP1', bigDate1)
         
       });
      

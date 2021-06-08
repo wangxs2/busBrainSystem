@@ -153,6 +153,7 @@ export default {
             }
             this.$store.commit('SET_KEYUNDATA', this.removal(allStation1))
             this.$store.commit('SET_KEYUNDATA1', this.removal(allStation))
+            // console.log(this.$store.getters.keyunData)
             this.setTwo(res.result.corridorList)
             this.mlinedata=mdata
             this.slinedata=sdata

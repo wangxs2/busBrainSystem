@@ -1,8 +1,8 @@
 <template>
   <div class="lineCharacteristicsc" id="lineCharacteristics">
-    <div style="margin-top:100px;position:fixed;z-index:100">
+    <!-- <div style="margin-top:100px;position:fixed;z-index:100">
         <el-button @click="judgeradius" type="primary">主要按钮</el-button>
-    </div>
+    </div> -->
     <router-view @changefun="sonClick"></router-view>
   </div>
 </template>
@@ -41,12 +41,11 @@ export default {
        if(val){
          MyMap.isTraffic(false)
          MyMap.pointAll3(val.slice(1,1000))
-         MyMap.threeCircle(val,300)
+        //  MyMap.threeCircle(val,300)
           //  MyMap.addPolygon(this.$store.getters.threeMap)
           MyMap.addOverlayGroup(MyMap.threeCircle(val.slice(1,50),300))
-          this.radiusAll=MyMap.threeCircle(val.slice(1,50),300)
-          console.log(this.radiusAll)
-        //  
+          // this.radiusAll=MyMap.threeCircle(val.slice(1,50),300)
+          // console.log(this.radiusAll)
          
        }
       },
@@ -61,8 +60,6 @@ export default {
               MyMap.polygonThree.hide()
           }
           MyMap.addPolygon2(val)
-
-
        }
       },
     },
@@ -70,7 +67,9 @@ export default {
     '$store.getters.keyunData':{
       handler(val,oldval){
        if(val){
-         this.judgeRoute(val)
+          MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData,2))
+          MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData1,1))
+          MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
        }
       },
     },
@@ -94,27 +93,48 @@ export default {
   methods:{
     //判断圆的面积
     judgeradius(){
-      console.log(MyMap.mass.getData())
-      console.log(this.radiusAll[0])
-      console.log(this.radiusAll[0].contains([121.588339, 31.242512]))
-      this.radiusAll.forEach(iteam=>{
-        let arr=[]
-        this.$store.getters.userStation.forEach(itam=>{
-            if(iteam.contains(itam.lnglat)){
-              arr.push(itam)
-            }
+      
+      let dataAll=this.group(this.$store.getters.userStation,100)
+      console.log(dataAll)
+      let myar=[],myar1=[]
+      dataAll.forEach(iteam=>{
+        myar.push(this.judeRadius(iteam))
+        console.log(myar)
+        myar.forEach(itam=>{
+         myar1.push(itam)
         })
-          console.log(arr)
       })
-      // this.radiusAll.forEach(iteam.contains([121.588339, 31.242512]))
+      console.log(myar1)
+       //第一次遍历数组
+        
+    },
+    judeRadius(arr){
+      for(var i=0;i<arr.length;i++){
+            for(var j=i+1;j<arr.length;j++){
+                if(MyMap.juradius(arr[i].lnglat,arr[j].lnglat)<300){
+                  arr.splice(i,1)
+                }
+            }
+        }
+        return arr
 
+    },
+    group(array, subGroupLength) {
+        let index = 0;
+        let newArray = [];
+        while(index < array.length) {
+            newArray.push(array.slice(index, index += subGroupLength));
+        }
+        return newArray;
     },
     judgeRoute(val){
       switch(val.name) {
           case "道路网":
             MyMap.isTraffic(true)
+            MyMap.infoWindow.close()
              if(MyMap.mass){
                 MyMap.isMass(false)
+                MyMap.overlayGroups.hide()
               }
               if(MyMap.keyunLaneGroups.getOverlays().length>0){
                  MyMap.keyunLaneGroups.hide()
@@ -124,8 +144,10 @@ export default {
               break;
           case "公交站点":
               MyMap.isTraffic(false)
+              MyMap.infoWindow.close()
               if(MyMap.mass){
                 MyMap.isMass(true)
+                MyMap.overlayGroups.show()
               }
               if(MyMap.keyunLaneGroups.getOverlays().length>0){
                  MyMap.keyunLaneGroups.hide()
@@ -134,8 +156,10 @@ export default {
               break;
           case "公交线路网":
               MyMap.isTraffic(false)
+              MyMap.infoWindow.close()
               if(MyMap.mass){
                 MyMap.isMass(false)
+                MyMap.overlayGroups.hide()
               }
              if(MyMap.keyunLaneGroups.getOverlays().length>0){
                  MyMap.keyunLaneGroups.hide()
@@ -144,8 +168,10 @@ export default {
               break;
           case "公交专用道":
               MyMap.isTraffic(false)
+              MyMap.infoWindow.close()
               if(MyMap.mass){
                 MyMap.isMass(false)
+                MyMap.overlayGroups.hide()
               }
                if(MyMap.keyunLaneGroups.getOverlays().length>0){
                  MyMap.keyunLaneGroups.hide()
@@ -157,6 +183,7 @@ export default {
               MyMap.isTraffic(false)
               if(MyMap.mass){
                 MyMap.isMass(false)
+                MyMap.overlayGroups.hide()
               }
               MyMap.heatmap.hide()
               let strky=MyMap.keyunLaneGroups.getOverlays()
@@ -166,6 +193,7 @@ export default {
                   MyMap.keyunLaneGroups.show()
                   MyMap.kyLineOver.show()
                 }else{
+                  console.log(this.$store.getters.keyunData)
                     MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData,2))
                     MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData1,1))
                     MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
@@ -288,7 +316,7 @@ export default {
   .titfont{
     display: flex;
     align-items: center;
-    font-size: vw(22);
+    font-size: vw(20);
     color: #00FFFF;
     font-weight: bold;
     width: 100%;

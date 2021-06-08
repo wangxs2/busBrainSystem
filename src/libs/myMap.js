@@ -39,6 +39,10 @@ export default class Map {
        this.map.on("moveend", () => {
         
        })
+      // let RoadNet= new AMap.TileLayer.RoadNet({
+      //    map:this.map
+      //  })
+     
       this.trafficLayer = new AMap.TileLayer.Traffic({
             zIndex: 10,
             // autoRefresh:true,
@@ -103,13 +107,11 @@ export default class Map {
             })
             
             startr=arg.join(',')
-            console.log(startr)
             this.infoWindow.setContent(this.createInfoWindow(data,startr))
             setTimeout(()=>{
               this.infoWindow.open(this.map,position);
             },200)
             
-            // console.log(result.stationInfo[0].name)
         } else {
             
         }
@@ -117,7 +119,6 @@ export default class Map {
 
   }
   setHeatemap(val){
-    console.log(this.heatmap)
     this.heatmap.setDataSet({
       data: val,
       max: 100
@@ -135,7 +136,6 @@ export default class Map {
     this.map.add(this.polygonThree);
   }
   addPolygon1(data) {
-    console.log(data)
     this.polygonThree1 = new AMap.Polygon({
       path: data,
       fillColor: '#144D95',
@@ -148,7 +148,6 @@ export default class Map {
   }
 
   addPolygon2(data) {
-    console.log(data)
     if(this.polygonThree2){
       this.map.remove(this.polygonThree2)
     }
@@ -194,7 +193,7 @@ export default class Map {
     data.forEach(iteam=>{
       let marker = new AMap.Marker({
         icon:new AMap.Icon({
-          image:type==1?require('../assets/image/icon_dt.png'):('https://a.amap.com/jsapi_demos/static/resource/img/pin.png'),
+          image:type==1?require('../assets/image/icon_dt1.png'):require('../assets/image/icon_gj1.png'),
           size:new AMap.Size(32,32),
           imageSize:new AMap.Size(32,32)
        }),
@@ -211,6 +210,31 @@ export default class Map {
       markers.push(marker)
     })
     return markers
+  }
+
+
+  //判断距离的
+  juradius(lnglat,lnglat1){
+    let marker = new AMap.Marker({
+      icon:new AMap.Icon({
+        image:'',
+     }),
+        position: lnglat,
+    });
+
+    let marker1 = new AMap.Marker({
+      icon:new AMap.Icon({
+        image:'',
+     }),
+        position: lnglat1,
+    });
+
+    var p1 = marker.getPosition();
+    var p2 = marker1.getPosition();
+
+    var distance = Math.round(p1.distance(p2));
+    return distance
+
   }
 
 
