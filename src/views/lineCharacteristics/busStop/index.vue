@@ -129,7 +129,15 @@ export default {
           return (restaurant.stationName.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
         };
       },
-    handleSelect(item) {
+    handleSelect() {
+      console.log(this.state2)
+      
+      this.$fetchGet("/indicator/stationDetail",{
+        code:'',
+        direction:""
+      }).then(res => {
+
+      })
     },
     tobtn(row){
       this.isbtn=row.name

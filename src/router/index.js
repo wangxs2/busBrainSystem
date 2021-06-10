@@ -9,6 +9,12 @@ import busStop from '@/views/lineCharacteristics/busStop/index' //公交站点
 import busLane from '@/views/lineCharacteristics/busLane/index'  //公交专用道
 import passengerCorridor from '@/views/lineCharacteristics/passengerCorridor/index' //客运走廊
 
+import passengerAnalysis from '@/views/passengerAnalysis/index'   //客流分析
+import linePassenger from '@/views/passengerAnalysis/linePassenger/index' //线路客流
+import sectionPassenger from '@/views/passengerAnalysis/sectionPassenger/index'  //断面客流
+import stationPassenger from '@/views/passengerAnalysis/stationPassenger/index' //站点客流
+import regionPassenger from '@/views/passengerAnalysis/regionPassenger/index' //区域客流
+
 import forgetPwd from '@/views/forgetPwd/index'
 Vue.use(Router)
 export const constantRouterMap = [
@@ -55,6 +61,35 @@ export const constantRouterMap = [
             path: '/lineCharacteristics/passengerCorridor',
             name: '客运走廊',
             component: passengerCorridor,
+            
+          }
+        ]
+
+      },
+      {
+        path: '/passengerAnalysis',
+        name: '客流分析',
+        component: passengerAnalysis,
+        children: [
+          {
+            path: '/passengerAnalysis/linePassenger',
+            name: '线路客流',
+            component: linePassenger,
+          },
+          {
+            path: '/passengerAnalysis/sectionPassenger',
+            name: '断面客流',
+            component: sectionPassenger,
+          },
+          {
+            path: '/passengerAnalysis/stationPassenger',
+            name: '站点客流',
+            component: stationPassenger,
+            
+          },{ 
+            path: '/passengerAnalysis/regionPassenger',
+            name: '区域客流',
+            component: regionPassenger,
             
           }
         ]

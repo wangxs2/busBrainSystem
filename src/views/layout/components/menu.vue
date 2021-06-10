@@ -78,31 +78,31 @@ export default {
           name: "客流分析",
           id: 2,
           props: "icon-wdgl",
-          url: "/journal",
+          url: "/passengerAnalysis",
           children: [
             {
               name: "线路客流",
               id: 15,
               props: "icon-spxx",
-              url: "/lineCharacteristics/linelist"
+              url: "/passengerAnalysis/linePassenger"
             },
             {
               name: "断面客流",
               id: 16,
               props: "icon-spxx",
-              url: "/lineCharacteristics/linelist"
+              url: "/passengerAnalysis/sectionPassenger"
             },
             {
-              name: "公交站点",
+              name: "站点客流",
               id: 17,
               props: "icon-spxx",
-              url: "/lineCharacteristics/linelist"
+              url: "/passengerAnalysis/stationPassenger"
             },
             {
-              name: "公交专用道",
+              name: "区域客流",
               id: 18,
               props: "icon-spxx",
-              url: "/lineCharacteristics/linelist"
+              url: "/passengerAnalysis/regionPassenger"
             }
           ]
         },

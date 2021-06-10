@@ -10,6 +10,7 @@
 <script>
 import Map from "@/libs/myMap.js";
 let MyMap = null; // 地图实例
+let dataLine=require('./car.js')
 export default {
   data(){
     return{
@@ -40,10 +41,10 @@ export default {
       handler(val,oldval){
        if(val){
          MyMap.isTraffic(false)
-         MyMap.pointAll3(val.slice(1,1000))
+         MyMap.pointAll3(val.slice(1,50))
         //  MyMap.threeCircle(val,300)
           //  MyMap.addPolygon(this.$store.getters.threeMap)
-          MyMap.addOverlayGroup(MyMap.threeCircle(val.slice(1,50),300))
+          // MyMap.addOverlayGroup(MyMap.threeCircle(val.slice(1,50),300))
           // this.radiusAll=MyMap.threeCircle(val.slice(1,50),300)
           // console.log(this.radiusAll)
          
@@ -82,15 +83,38 @@ export default {
     },
   },
   created(){
+   
+    // console.log(yuarr)
+    
+    
   },
   mounted(){
      MyMap = new Map({ el: "lineCharacteristics" });
+    // MyMap.passCorrline1([yuarr])
     let nowroute=this.$route
     // let arr=[]
     // MyMap.addPolygon(arr)
     this.judgeRoute(nowroute)
   },
   methods:{
+     setSz(baseArray){
+        let len = baseArray.length;
+        let n = 1; //假设每行显示4个
+        let lineNum = len % n === 0 ? len / n : Math.floor( (len / n) + 1 );
+        let res = [];
+        for (let i = 0; i < lineNum; i++) {
+            // slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。且原始数组不会被修改。
+            let temp = baseArray.slice(i*n, i*n+n);
+            let art=[]
+            temp[0].split(',').forEach(iru=>{
+                art.push(parseFloat(iru))
+            })
+            res.push(art);
+        }
+        
+        return res
+
+    },
     //判断圆的面积
     judgeradius(){
       

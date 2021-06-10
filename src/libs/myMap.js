@@ -185,6 +185,23 @@ export default class Map {
   
   }
 
+//测试
+  passCorrline1(data){
+    data.forEach(iteam=>{
+      let kyLinedata = new AMap.Polyline({
+        path: iteam,
+        strokeColor: "#35A594",
+        strokeOpacity: 1,
+        strokeWeight: 8,
+        strokeStyle: "solid",
+      })
+      this.map.add(kyLinedata);
+
+    })
+  
+  }
+
+
  
 
   //客运走廊的公交站点内
@@ -237,8 +254,6 @@ export default class Map {
 
   }
 
-
-
   // 显示/隐藏 道路网
    isTraffic(flag) {
     flag ? this.trafficLayer.show() : this.trafficLayer.hide()
@@ -253,7 +268,7 @@ export default class Map {
   pointAll3(datapoint,type){
     var style = [
       {
-          url: require('../assets/image/alpoint.png'),
+          url: require('../assets/image/alpoint1.png'),
           anchor: new AMap.Pixel(6, 6),
           size: new AMap.Size(11, 11),
           zIndex: 3,

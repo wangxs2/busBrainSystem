@@ -126,7 +126,7 @@ export default {
   .routelist{
     position:absolute;
     left:0;
-    top:vw(70);
+    top:vh(70);
     width:100%;
     height:vw(70);
     z-index:10;
