@@ -211,13 +211,11 @@ export default {
               }
               MyMap.heatmap.hide()
               let strky=MyMap.keyunLaneGroups.getOverlays()
-              console.log('走到客运走廊')
-              console.log(strky.length)
+              
                if(strky.length>0){
                   MyMap.keyunLaneGroups.show()
                   MyMap.kyLineOver.show()
                 }else{
-                  console.log(this.$store.getters.keyunData)
                     MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData,2))
                     MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData1,1))
                     MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))

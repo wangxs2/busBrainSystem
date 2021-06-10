@@ -116,4 +116,44 @@ color: #dae4ff !important;
   background: rgba(69, 120, 255, 1) !important;
   color: #ffffff !important;
 }
+.el-range-editor--small .el-range-input{
+  background: rgba(26, 66, 118, 0.2) !important;
+   color: #dae4ff !important;
+}
+.el-date-editor .el-range-separator{
+  color: #dae4ff !important;
+}
+.el-picker-panel__body{
+   background: rgba(26, 66, 118,1) !important;
+    border:none !important;
+     color: #dae4ff !important;
+  box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 1) inset !important;
+
+}
+.el-picker-panel{
+  border:none !important;
+}
+.el-date-range-picker__content.is-left{
+  border-right:1px solid rgba(39, 182, 255, 0.5)!important;
+}
+.el-picker-panel__icon-btn{
+  color: #ffffff !important;
+}
+.el-picker-panel__icon-btn:hover{
+  
+  color: #409EFF !important;
+}
+.el-date-table td.next-month, .el-date-table td.prev-month{
+  color:#7e8186!important;
+}
+.el-date-table{
+  font-size:16px!important;
+}
+.el-date-table td.in-range div, .el-date-table td.in-range div:hover, .el-date-table.is-week-mode .el-date-table__row.current div, .el-date-table.is-week-mode .el-date-table__row:hover div{
+   background: rgba(16, 56, 100, 1) !important;
+}
+.el-date-table th{
+  border-bottom:1px solid rgba(39, 182, 255, 0.5)!important;
+  color: #dae4ff !important;
+}
 </style>

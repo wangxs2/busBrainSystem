@@ -130,13 +130,10 @@ export default {
         };
       },
     handleSelect() {
-      console.log(this.state2)
-      
       this.$fetchGet("/indicator/stationDetail",{
         code:'',
         direction:""
       }).then(res => {
-
       })
     },
     tobtn(row){

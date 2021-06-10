@@ -2,17 +2,17 @@
   <div class="passengerAnalysis">
     
       <div v-show="$route.name!=='断面客流'" class="passengerMap" id="passengerMap">
-        <div class="searchbox">
+        <!-- <div class="searchbox">
           <el-select :popper-append-to-body="false" size="small" @change="lins()" v-model="value" placeholder="请选择">
             <el-option
               v-for="(item,index) in options"
               :key="index"
-              :label="item"
-              :value="item">
+              :label="item.name"
+              :value="item.name">
             </el-option>
           </el-select>
           <el-button size="mini" type="success" plain @click="allData">发送线路数据</el-button>
-        </div>
+        </div> -->
         
       </div>
       <router-view></router-view>
@@ -31,18 +31,35 @@ export default {
     }
 
   },
-  mounted(){
-    console.log(dataLine.arrline)
-    this.options=dataLine.arrline
-     MyMap = new Map({ el: "passengerMap" });
+  watch:{
+    '$route':{
+      handler(val,oldval){
+        if(val){
+          this.judgeRoute(val)
+        }
+      },
+    },
 
-    // let Mydata= MyMap.lineSearch()
- 
+  },
+  mounted(){
+    // this.options=dataLine.arrline
+    MyMap = new Map({ el: "passengerMap" });
+    this.judgeRoute(this.$route)
   },
   methods:{
-    lins(){
-  
+    qchh(){
+        var result = [];
+        var obj = {};
+        for(var i =0; i<arr.length; i++){
+            if(!obj[arr[i].key]){
+              result.push(arr[i]);
+              obj[arr[i].key] = true;
+            }
+        }
+        console.log(result);
 
+    },
+    lins(){
        MyMap.linesearch.search(this.value, (status, result)=> {
         if (status === 'complete' && result.info === 'OK') {
              let str=result.lineInfo[0].path
@@ -71,11 +88,11 @@ export default {
       let arpoy=[]
       this.options.forEach(iteam=>{
         let obj={
-          routeName:iteam,
+          routeName:iteam.name,
           geom:'',
           lineLength:'',
         }
-        MyMap.linesearch.search(iteam, (status, result)=> {
+        MyMap.linesearch.search(iteam.name, (status, result)=> {
         if (status === 'complete' && result.info === 'OK') {
           let str=result.lineInfo[0].path
                let arrpo=[]
@@ -86,13 +103,13 @@ export default {
                 obj.lineLength=result.lineInfo[0].distance
                 arpoy.push(obj)
             } else {
+              console.log(iteam)
             }
         });
 
       })
 
         setTimeout(()=>{
-          console.log(arpoy)
           this.$fetchPost("route/approve",arpoy,'json').then(res=>{
           })
 
@@ -101,8 +118,28 @@ export default {
      
     },
     pushLine(){
-      
-    }
+    },
+    judgeRoute(val){
+      switch(val.name) {
+          case "站点客流":
+            
+              break;
+          case "公交站点":
+           
+              break;
+          case "公交线路网":
+           
+              break;
+          case "公交专用道":
+             
+              break;
+          case "客运走廊":
+            
+            
+              break;
+          default:
+          } 
+    },
   }
 };
 </script>

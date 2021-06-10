@@ -13,6 +13,7 @@
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3vw;">站点</div>
       <el-autocomplete
         class="inline-input"
+        style="width:12vw"
         size="small"
         v-model="state2"
         :fetch-suggestions="querySearch"
@@ -49,16 +50,31 @@ export default {
           ],
           value1:'',
           value:'',
-          state2:''
+          state2:'',
+          allStation:[],
         }
     },
     created() {
-      setTimeout(()=>{
-      this.$store.commit('SET_LOADING',false)
-      },1000)
+      this.getAllData()
     },
-    mounted() {},
+    mounted() {
+    },
     methods: {
+      getAllData(){
+          this.$fetchGet("passenger/all",{
+            radius:this.isbtn
+          }).then(res => {
+             for(let key  in res.result){
+                this.allStation.push(res.result[key])
+              }
+              console.log(this.allStation)
+            setTimeout(()=>{
+            this.$store.commit('SET_LOADING',false)
+            },500)
+
+          })
+
+      },
       querySearch(){
 
       },
