@@ -29,10 +29,14 @@ const user = {
     isbtn:1,
     allStation:{},//站点客流
     dataArrLine:[],
+    stationHeat:[],//站点客流的热力图
   },
   mutations: {
     SET_KLSTATION:(state, allStation) => { //站点客流
       state.allStation = allStation
+    },
+    SET_HEATSTATION:(state, stationHeat) => { //站点客流热力图
+      state.stationHeat = stationHeat
     },
     SET_ARRLINE:(state, dataArrLine) => { //公交线网
       state.dataArrLine = dataArrLine

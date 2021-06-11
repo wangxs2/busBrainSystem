@@ -33,6 +33,22 @@ export default class Map {
         pageSize: 1,
         extensions: 'all'
     });
+    this.map.plugin(["AMap.HeatMap"],  ()=> {      //加载热力图插件
+      this.zdklMapOption.heat = new AMap.HeatMap(this.map, {
+              opacity: [0, 0.8], zIndex: 110,
+              gradient: {
+                  0.5: '#3EFF8F',
+                  0.65: '#67E8FF',
+                  0.7: '#1CD1FF',
+                  0.95: '#FFEE0E',
+                  1.0: '#FF5E41'
+              }
+          }
+      );
+      //在地图对象叠加热力图
+      // this.zdklMapOption.heat.setDataSet({data: heatOption, max: zdklMapOption.heatMaxCount}); //设置热力图数据集
+    
+  });
 
   }
 

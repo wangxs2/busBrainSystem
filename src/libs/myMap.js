@@ -24,10 +24,10 @@ export default class Map {
             mapLayers: [[new AMap.TileLayer()], [new AMap.TileLayer.Satellite()]],// 图层类型 0标准图层 1卫星图层 , new AMap.TileLayer.RoadNet()
             trafficLayer:null,//道路网
             colors:{
-              '1-4':"#34b000",
-              '4-6':"#FECB00",
-              '6-8':"#FF2A2A",
-              '8+':"#B10400",
+              '1-2':"#34b000",
+              '2-4':"#FECB00",
+              '4-6':"#FF2A2A",
+              '6+':"#B10400",
             },
             // linePaths:[
             //   {

@@ -155,9 +155,14 @@ export default {
       switch(val.name) {
           case "站点客流":
             let stationkl=this.$store.getters.allStation;
+            let heatOption=this.$store.getters.stationHeat;
              for(let key  in stationkl){
                 MyMap.xrhld(key,stationkl[key],this.styleStition[key])
               }
+              setTimeout(()=>{
+                MyMap.zdklMapOption.heat.setDataSet({data: heatOption, max: 100})
+              },1000)
+             
 
               break;
           case "公交站点":
@@ -183,6 +188,9 @@ export default {
           MyMap.zdklMapOption.mass[row.isStation.value].hide()
         }
       }
+      if(row){
+
+      }
     },
   }
 };
@@ -192,7 +200,6 @@ export default {
   .el-select-dropdown,.el-popper{
   max-width:800px !important;
   left:0px!important;
-
 }
 }
 </style>

@@ -46,6 +46,10 @@
 import base64 from "@/libs/base.js";
 import store from "@/stores";
 import { _debounce } from "@/libs/public.js";
+import {
+  getCookie,
+  delCookie
+} from '@/libs/util'
 export default {
   data() {
     let check = (rule, value, callback) => {
@@ -129,6 +133,21 @@ export default {
       "/embed/dashboard/" +
       token +
       "#bordered=true&titled=true";
+
+
+
+    if(getCookie('meauindexnow')){
+      delCookie('meauindexnow')
+    }
+
+
+
+
+
+
+
+
+      
   },
   methods: {
     //记住密码

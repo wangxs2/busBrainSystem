@@ -17,7 +17,6 @@
         <div v-if="getRouterName.name!==item.name" @click="deleroute(item,index)" style="font-size:12px;margin-left:0.5vw"  class="fontroute iconfont iconguanbi"></div>
       </div>
    </div>
-    
   </div>
 </template>
 
@@ -49,7 +48,7 @@ export default {
   
   },
   mounted(){
- 
+
   },
    watch:{
     myallroute:{

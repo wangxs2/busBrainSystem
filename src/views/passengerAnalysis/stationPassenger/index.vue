@@ -53,7 +53,9 @@
         <div><span style="color:#00FFFF">{{stationroll[iteam.value]==undefined?0:stationroll[iteam.value].length}}</span>个</div>
       </div>
       <div style="margin-top:1.4vh;display:flex;align-items: center;color:#00FFFF;font-weight: bold;">
-        <img style="margin-right:0.4vw" width="18" height="18" src="@/assets/image/fxktrue.png" /> 热力图
+        <img @click="toheat()" v-if='isheat' style="margin-right:0.4vw" width="18" height="18" src="@/assets/image/fxktrue.png" />
+        <img @click="toheat()" v-if='!isheat' style="margin-right:0.4vw" width="18" height="18" src="@/assets/image/fxkfalse.png" />
+         热力图
       </div>
     </div>
 
@@ -117,7 +119,8 @@ export default {
               img:require('@/assets/image/icon_red.png')
             }
           ],
-          stationroll:{}
+          stationroll:{},
+          isheat:true
         }
     },
     created() {
@@ -128,11 +131,21 @@ export default {
     methods: {
       getAllData(){
           this.$fetchGet("passenger/all").then(res => {
+            let arrheat=[]
             this.stationroll=res.result
-            console.log(this.stationroll)
+             for(let key  in this.stationroll){
+                this.stationroll[key].forEach(station=>{
+                  arrheat.push({
+                    lng: station.lnglat[0],
+                    lat: station.lnglat[1],
+                    count: station.sd,
+                  })
+                })
+              }
+            this.$store.commit('SET_HEATSTATION', arrheat)
             this.$store.commit('SET_KLSTATION', res.result)
             setTimeout(()=>{
-            this.$store.commit('SET_LOADING',false)
+              this.$store.commit('SET_LOADING',false)
             },500)
           })
 
@@ -142,6 +155,12 @@ export default {
       },
       handleSelect(){
 
+      },
+      toheat(){
+        this.isheat=!this.isheat
+         this.$emit('changeKl',{
+            isheat:this.isheat
+        })
       },
       toShow(row,index){
         this.tlstation[index].isxz=!this.tlstation[index].isxz

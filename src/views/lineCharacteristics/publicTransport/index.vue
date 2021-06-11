@@ -73,16 +73,16 @@
       <div style="text-align:center">线网颜色说明(条)</div>
       <div class="lkicon-box">
         <div class="lkicon-itam">
-          <div class="lk1"></div>1-4
+          <div class="lk1"></div>1-2
         </div>
         <div class="lkicon-itam">
-          <div class="lk1 lk2"></div>5-6
+          <div class="lk1 lk2"></div>2-4
         </div>
         <div class="lkicon-itam">
-          <div class="lk1 lk3"></div>7-8
+          <div class="lk1 lk3"></div>4-6
         </div>
          <div class="lkicon-itam">
-          <div class="lk1 lk4"></div>大于8
+          <div class="lk1 lk4"></div>大于6
         </div>
       </div>
     </div>

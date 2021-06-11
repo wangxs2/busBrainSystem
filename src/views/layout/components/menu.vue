@@ -26,7 +26,10 @@
 <script>
 import { mapGetters } from "vuex";
 import menuItem from "./menuItem";
-
+import {
+  getCookie,
+  delCookie
+} from '@/libs/util'
 export default {
   name: "menuNav",
   components: {
@@ -132,9 +135,15 @@ export default {
   created() {
     
   },
+  mounted(){
+    if(getCookie('meauindexnow')){
+      this.meauindex=getCookie('meauindexnow')
+    }
+  },
   methods: {
     changemenu(command){
        this.meauindex = command.n
+       document.cookie = "meauindexnow=" + this.meauindex;
       this.$router.push(command.iteam.url);
     }
   }
