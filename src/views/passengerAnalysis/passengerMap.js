@@ -112,6 +112,77 @@ export default class Map {
     this.overlayGroups.addOverlay(Groups)
   }
 
+
+  getSearchLine(busLineName){
+
+    //实例化公交线路查询类，只取回一条路线
+    if(!this.linesearch){
+      this.linesearch = new AMap.LineSearch({
+            pageIndex: 1,
+            city: '北京',
+            pageSize: 1,
+            extensions: 'all'
+        });
+    }
+    //搜索“536”相关公交线路
+    this.linesearch.search(busLineName, (status, result)=> {
+        this.map.clearMap()
+        if (status === 'complete' && result.info === 'OK') {
+            var lineArr = result.lineInfo;
+            var lineNum = result.lineInfo.length;
+            if (lineNum == 0) {
+            } else {
+                for (var i = 0; i < lineNum; i++) {
+                    var pathArr = lineArr[i].path;
+                    var stops = lineArr[i].via_stops;
+                    var startPot = stops[0].location;
+                    var endPot = stops[stops.length - 1].location;
+                    if (i == 0) //作为示例，只绘制一条线路
+                    this.drawbusLine(startPot, endPot, pathArr);
+                
+                }
+              }
+        } else {
+            alert(result);
+        }
+    });
+
+  }
+
+
+  drawbusLine(startPot, endPot, BusArr) {
+    //绘制起点，终点
+    new AMap.Marker({
+        map: this.map,
+        position: startPot, //基点位置
+        icon: "https://webapi.amap.com/theme/v1.3/markers/n/start.png",
+        zIndex: 10,
+        anchor: 'bottom-center',
+    });
+    new AMap.Marker({
+        map: this.map,
+        position: endPot, //基点位置
+        icon: "https://webapi.amap.com/theme/v1.3/markers/n/end.png",
+        zIndex: 10,
+        anchor: 'bottom-center',
+    });
+    //绘制乘车的路线
+    let busPolyline = new AMap.Polyline({
+        map: this.map,
+        path: BusArr,
+        strokeColor: "#50C0FF",//线颜色
+        strokeOpacity: 0.8,//线透明度
+        isOutline:true,
+        outlineColor:'#50C0FF',
+        showDir:true,
+        strokeWeight:10//线宽
+    });
+    // 将 busPolyline 显示在地图中心并自动缩放地图到合适级别。
+    // true表示需要动画过程，[60,200,60,60]表示上下左右避让像素
+    this.map.setFitView(busPolyline, true, [60,200,60,60]);
+  
+}
+
   
 
 

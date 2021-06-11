@@ -202,6 +202,10 @@ export default {
       }else if(row.isheat==false){
         MyMap.zdklMapOption.heat.hide()
       }
+
+      if(row.toLine){
+        MyMap.getSearchLine(row.toLine)
+      }
     },
   }
 };

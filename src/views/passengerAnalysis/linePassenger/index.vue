@@ -1,27 +1,71 @@
 <template>
   <div class="linePassenger">
+      <div class="search-box">
+      <div style="margin-right:0.6vw;width:3vw;">时间</div>
+      <el-date-picker
+        v-model="value1"
+        size="small"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期">
+      </el-date-picker>
+      <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.6vw;">线路名称</div>
+      <el-select size="small" @change="toLine()" v-model="value" placeholder="请选择">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.name"
+          :value="item.name">
+        </el-option>
+      </el-select>
+    
+    
+    </div>
   </div>
 </template>
 
 <script>
+let dataLine=require('../dataLine.js')
 export default {
     
     data(){
         return {
-
+            options:[],
+            value1:'',
+            value:""
         }
     },
     created() {
-        console.log(456)
+        this.options=dataLine.arrline
         setTimeout(()=>{
-        this.$store.commit('SET_LOADING',false)
+         this.$store.commit('SET_LOADING',false)
         },1000)
     },
     mounted() {},
     methods: {
-        tomeay(row) {
-        this.islist = row.id;
+     
+        toLine(){
+            this.$emit('changeKl',{
+                toLine:this.value
+            })
+
         }
     }
 };
 </script>
+<style lang="scss" scoped>
+.linePassenger{
+  .search-box {
+    background: rgba(12, 38, 104, 0.7);
+    box-sizing: border-box;
+    padding: vh(10) vw(16);
+    position: absolute;
+    top: vh(130);
+    left: vw(20);
+    display: flex;
+    align-items: center;
+    color: #dae4ff;
+  }
+}
+</style>
