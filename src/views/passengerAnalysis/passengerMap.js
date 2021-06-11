@@ -45,10 +45,10 @@ export default class Map {
           cursor: 'pointer',
           style: style
       });
-      var marker = new AMap.Marker({content: ' ', map: zdklMap});
+      var marker = new AMap.Marker({content: ' ', map: this.map});
       this.zdklMapOption.mass[massIndex].on('mouseover', function (e) {
           marker.setPosition(e.data.lnglat);
-          marker.setLabel({content: e.data.name})
+          marker.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>`})
       });
       this.zdklMapOption.mass[massIndex].on('mouseout', function (e) {
           marker.setPosition(e.data.lnglat);
@@ -57,7 +57,7 @@ export default class Map {
       // this.zdklMapOption.mass[massIndex].on('click', function (e) {
       //     StopDetail.showMarker(zdklMap, e.data.id, beginDate, endDate);
       // });
-      this.zdklMapOption.mass[massIndex].setMap(zdklMap);
+      this.zdklMapOption.mass[massIndex].setMap(this.map);
   }
 
   

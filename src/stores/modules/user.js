@@ -27,8 +27,16 @@ const user = {
     constructionCode: '', // 项目code
     constructionName: '',
     isbtn:1,
+    allStation:{},//站点客流
+    dataArrLine:[],
   },
   mutations: {
+    SET_KLSTATION:(state, allStation) => { //站点客流
+      state.allStation = allStation
+    },
+    SET_ARRLINE:(state, dataArrLine) => { //公交线网
+      state.dataArrLine = dataArrLine
+    },
     SET_BTNAUTH: (state, isbtn) => { //子路由的传值300米
       state.isbtn = isbtn
     },

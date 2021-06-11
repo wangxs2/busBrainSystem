@@ -179,6 +179,7 @@ export default {
                 }
               break;
           case "公交线路网":
+              
               MyMap.isTraffic(false)
               MyMap.infoWindow.close()
               if(MyMap.mass){
@@ -189,6 +190,12 @@ export default {
                  MyMap.keyunLaneGroups.hide()
                   MyMap.kyLineOver.hide()
                 }
+                setTimeout(()=>{
+                  
+                  MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
+                },1000)
+              
+              
               break;
           case "公交专用道":
               MyMap.isTraffic(false)

@@ -15,7 +15,7 @@
         </div> -->
         
       </div>
-      <router-view></router-view>
+      <router-view @changeKl="klsonClick"></router-view>
   </div>
 </template>
 
@@ -27,7 +27,39 @@ export default {
   data(){
     return{
       options:[],
-      value:""
+      value:"",
+      styleStition:{
+        '0-500':{
+                url: require('@/assets/image/icon_cyan.png'),
+                anchor: new AMap.Pixel(15,15),
+                size: new AMap.Size(30,30)
+              },
+        '500-1000':{
+                url: require('@/assets/image/icon_blue.png'),
+                anchor: new AMap.Pixel(15,15),
+                size: new AMap.Size(30,30)
+              },
+        '1000-2000':{
+                url: require('@/assets/image/icon_green.png'),
+                anchor: new AMap.Pixel(15,15),
+                size: new AMap.Size(30,30)
+              },
+        '2000-3000':{
+                url: require('@/assets/image/icon_yellow.png'),
+                anchor: new AMap.Pixel(15,15),
+                size: new AMap.Size(30,30)
+              },
+        '3000-4000':{
+                url: require('@/assets/image/icon_purple.png'),
+                anchor: new AMap.Pixel(15,15),
+                size: new AMap.Size(30,30)
+              },
+        '4000+':{
+               url: require('@/assets/image/icon_red.png'),
+                anchor: new AMap.Pixel(15,15),
+                size: new AMap.Size(30,30)
+        }
+      }
     }
 
   },
@@ -122,7 +154,11 @@ export default {
     judgeRoute(val){
       switch(val.name) {
           case "站点客流":
-            
+            let stationkl=this.$store.getters.allStation;
+             for(let key  in stationkl){
+                MyMap.xrhld(key,stationkl[key],this.styleStition[key])
+              }
+
               break;
           case "公交站点":
            
@@ -134,11 +170,19 @@ export default {
              
               break;
           case "客运走廊":
-            
-            
               break;
           default:
           } 
+    },
+    klsonClick(row){
+      console.log(row)
+      if(row.isStation){
+        if(row.isStation.isxz){
+          MyMap.zdklMapOption.mass[row.isStation.value].show()
+        }else{
+          MyMap.zdklMapOption.mass[row.isStation.value].hide()
+        }
+      }
     },
   }
 };

@@ -12,6 +12,7 @@ export default class Map {
             polygonThree:null,//300
             polygonThree1:null,//500
             polygonThree2:null,//500
+            pathSimplifierIns:null,
             overlayGroups:new AMap.OverlayGroup(),//站点300米和500米的集合
             overlayGroups1:new AMap.OverlayGroup(),//站点300米和500米的集合
             busLaneGroups:new AMap.OverlayGroup(),//公交专用道
@@ -22,6 +23,21 @@ export default class Map {
             mapCenter: [121.460752,31.011182], // 默认地图中心点
             mapLayers: [[new AMap.TileLayer()], [new AMap.TileLayer.Satellite()]],// 图层类型 0标准图层 1卫星图层 , new AMap.TileLayer.RoadNet()
             trafficLayer:null,//道路网
+            colors:{
+              '1-4':"#34b000",
+              '4-6':"#FECB00",
+              '6-8':"#FF2A2A",
+              '8+':"#B10400",
+            },
+            // linePaths:[
+            //   {
+            //     name:'45',
+            //     path:[[121.490051, 31.144892],[121.498367, 31.146238]]
+            //   },{
+            //     name:'45',
+            //     path:[[121.512024, 31.202855],[121.57309, 31.348091]]
+            //   }
+            // ]
         }
     }
       // 方法调用
@@ -59,6 +75,84 @@ export default class Map {
             }
         }); 
       })   //在地图对象叠加热力图
+
+      AMapUI.load(['ui/misc/PathSimplifier', 'lib/$', 'lib/utils'], (PathSimplifier, $, utils)=> {
+        if (!PathSimplifier.supportCanvas) {
+            alert('当前环境不支持 Canvas！');
+            return;
+        }
+
+        let color
+        this.pathSimplifierIns = new PathSimplifier({
+          zIndex: 200,
+          map: this.map, //所属的地图实例
+          getPath: function (pathData, pathIndex) {
+              return pathData.path;
+          },
+          getHoverTitle: function (pathData, pathIndex, pointIndex) {
+             
+          },
+          renderOptions: {
+              pathLineStyle: {
+                  dirArrowStyle: true
+              },
+              getPathStyle:  (pathItem, zoom)=> {
+                color = this.colors[pathItem.pathData.name];
+                  return {
+                      pathLineStyle: {
+                          strokeStyle: color,
+                          borderWidth: 0,
+                          lineWidth: 3
+                      },
+                      pathLineSelectedStyle: {
+                          lineWidth: 0,
+                          borderWidth: 0,
+                          strokeStyle: null
+                      },
+                      pathNavigatorStyle: {
+                          fillStyle: color
+                      },
+                      startPointStyle: {
+                          radius: 0,
+                          fillStyle: '#109618',
+                          lineWidth: 0,
+                          strokeStyle: '#eeeeee'
+                      },
+                      endPointStyle: {
+                          radius: 0,
+                          fillStyle: '#dc3912',
+                          lineWidth: 0,
+                          strokeStyle: '#eeeeee'
+                      },
+                      keyPointHoverStyle: {
+                          radius: 4,
+                          fillStyle: 'rgba(0, 0, 0, 0)',
+                          lineWidth: 0,
+                          strokeStyle: '#ffa500'
+                      },
+                      pathLineHoverStyle: {
+                          lineWidth: 0,
+                          strokeStyle: 'rgba(204, 63, 88,1)',
+                          borderWidth: 0,
+                          borderStyle: '#00000000',
+                          dirArrowStyle: false
+                      }
+                  };
+              }
+          }
+      });
+
+      window.pathSimplifierIns = this.pathSimplifierIns;
+      // this.pathSimplifierIns.setData(this.linePaths);
+
+      //initRoutesContainer(d);
+      function onload() {
+          this.pathSimplifierIns.renderLater();
+      }
+
+      function onerror(e) {
+      }
+  });
 
       this.infoWindow = new AMap.InfoWindow({
           isCustom: true,  //使用自定义窗体
@@ -182,9 +276,7 @@ export default class Map {
 
     })
     return lines
-  
   }
-
 //测试
   passCorrline1(data){
     data.forEach(iteam=>{
@@ -200,10 +292,6 @@ export default class Map {
     })
   
   }
-
-
- 
-
   //客运走廊的公交站点内
   addGjMarker(data,type) {
     let markers=[]
@@ -228,8 +316,6 @@ export default class Map {
     })
     return markers
   }
-
-
   //判断距离的
   juradius(lnglat,lnglat1){
     let marker = new AMap.Marker({
@@ -263,15 +349,14 @@ export default class Map {
   isMass(flag) {
     flag ? this.mass.show() : this.mass.hide()
   }
-
    //渲染站点
   pointAll3(datapoint,type){
     var style = [
       {
-          url: require('../assets/image/alpoint1.png'),
-          anchor: new AMap.Pixel(6, 6),
-          size: new AMap.Size(11, 11),
-          zIndex: 3,
+        url: require('../assets/image/alpoint1.png'),
+        anchor: new AMap.Pixel(6, 6),
+        size: new AMap.Size(11, 11),
+        zIndex: 3,
       }];
     this.mass = new AMap.MassMarks(datapoint, {
         opacity: 0.8,

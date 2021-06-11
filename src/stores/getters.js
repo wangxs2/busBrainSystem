@@ -27,6 +27,8 @@ const getters = {
   keyunData1: state => state.user.keyunData1,
   keyunData2: state => state.user.keyunData2,
   constructionCode: state => state.user.constructionCode,
-  constructionName: state => state.user.constructionName
+  constructionName: state => state.user.constructionName,
+  allStation: state => state.user.allStation,
+  dataArrLine: state => state.user.dataArrLine,
 }
 export default getters

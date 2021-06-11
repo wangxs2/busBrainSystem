@@ -195,15 +195,96 @@ export default {
   },
   beforeCreate() {},
   created() {
-     setTimeout(()=>{
-      this.$store.commit('SET_LOADING',false)
-    },1000)
+    this.getAllLine()
+     
   },
   mounted() {},
 
   methods: {
     tomeay(row) {
       this.islist = row.id;
+    },
+    getAllLine(){
+      this.$fetchGet("route/lineSegment").then(res => {
+        let dataArr=[]
+        for(let key  in res.result){
+          let obj={
+            name:key,
+            path1:''
+          }
+
+          obj.path1=res.result[key]
+          dataArr.push(obj)
+          
+        }
+        dataArr.forEach(iteam=>{
+          iteam.path2=[]
+          iteam.path1.forEach(itam=>{
+             iteam.path2.push([[itam.split(' ')[0]],[itam.split(' ')[1]]])
+           })
+
+        })
+        
+        dataArr.forEach(team=>{
+          team.path5=[]
+            team.path2.forEach(iu=>{
+              let arr=[]
+              iu.forEach(iy=>{
+                let arr1=[]
+               
+                 iy[0].split(',').forEach(iru=>{
+                    arr1.push(parseFloat(iru))
+                 })
+                 arr.push(arr1)
+                
+              })
+              team.path5.push(arr)
+            })
+        })
+        dataArr.forEach(iuy=>{
+          iuy.path=[]
+          iuy.path5.forEach(ity=>{
+            let obj={
+              name:iuy.name,
+              path:ity
+            }
+            iuy.path.push(obj)
+          })
+        })
+        let lastArr=[]
+        dataArr.forEach(ol=>{
+          ol.path.forEach(opl=>{
+            lastArr.push(opl)
+          })
+        })
+        console.log(lastArr)
+        this.$store.commit('SET_ARRLINE',lastArr)
+        setTimeout(()=>{
+          this.$store.commit('SET_LOADING',false)
+        },500)
+
+      })
+    },
+    setSz(baseArray){
+      let len = baseArray.length;
+      let n = 1; //假设每行显示4个
+      let lineNum = len % n === 0 ? len / n : Math.floor( (len / n) + 1 );
+      let res = [];
+      for (let i = 0; i < lineNum; i++) {
+          // slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。且原始数组不会被修改。
+          let temp = baseArray.slice(i*n, i*n+n);
+          let art=[]
+          temp[0].split(',').forEach(iru=>{
+              art.push(parseFloat(iru))
+          })
+          res.push(art);
+      }
+      
+      return res
+
+    },
+    clAllline(){
+
     }
   }
 };
