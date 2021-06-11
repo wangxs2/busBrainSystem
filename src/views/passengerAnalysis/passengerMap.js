@@ -8,6 +8,7 @@ export default class Map {
             el: data.el, // 地图容器
             datar:{},
             linesearch:null,
+            overlayGroups:new AMap.OverlayGroup(),//区域客流站点集合
             zdklMapOption : { // 站点客流 - 地图覆盖物参数
               mass: {}, // 海量点数据
               heat: '', // 热力图数据
@@ -33,6 +34,8 @@ export default class Map {
         pageSize: 1,
         extensions: 'all'
     });
+    this.map.add(this.overlayGroups);
+
     this.map.plugin(["AMap.HeatMap"],  ()=> {      //加载热力图插件
       this.zdklMapOption.heat = new AMap.HeatMap(this.map, {
               opacity: [0, 0.8], zIndex: 110,
@@ -54,7 +57,7 @@ export default class Map {
 
 
     //渲染不同的海量点
-     xrhld(massIndex, data, style) {
+  xrhld(massIndex, data, style) {
       this.zdklMapOption.mass[massIndex] = new AMap.MassMarks(data, {
           opacity: 0.8,
           zIndex: 111,
@@ -74,6 +77,39 @@ export default class Map {
       //     StopDetail.showMarker(zdklMap, e.data.id, beginDate, endDate);
       // });
       this.zdklMapOption.mass[massIndex].setMap(this.map);
+  }
+
+
+  getRegionMark(datas){
+    let markers=[]
+    datas.forEach(iteam=>{
+      let iconm=''
+      if(iteam.regionStatus<101){
+        iconm=require('../../assets/image/reginmark.png')
+      }else if(iteam.regionStatus>100 && iteam.regionStatus<201){
+        iconm=require('../../assets/image/reginmark.png')
+      }
+    // console.log(iconm)
+      var marker = new AMap.Marker({
+          position: [iteam.centerLongitude,iteam.centerLatitude],
+          // 将 html 传给 content background: url(icon)
+          content: `<div class="regionMark" style="background: url(${iconm})">
+          <div> ${iteam.regionName}</div>
+          <div> ${iteam.regionStatus}人</div>
+         
+          </div>`,
+          // 以 icon 的 [center bottom] 为原点
+          offset: new AMap.Pixel(-13, -30)
+      });
+      markers.push(marker)
+    })
+    return markers
+    
+
+  }
+   //区域客流 范围集合
+  addOverlayGroup(Groups){
+    this.overlayGroups.addOverlay(Groups)
   }
 
   

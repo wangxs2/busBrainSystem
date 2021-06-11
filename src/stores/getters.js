@@ -31,5 +31,6 @@ const getters = {
   allStation: state => state.user.allStation,
   dataArrLine: state => state.user.dataArrLine,
   stationHeat: state => state.user.stationHeat,
+  regionData: state => state.user.regionData,
 }
 export default getters

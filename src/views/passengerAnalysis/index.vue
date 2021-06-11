@@ -156,16 +156,25 @@ export default {
           case "站点客流":
             let stationkl=this.$store.getters.allStation;
             let heatOption=this.$store.getters.stationHeat;
-             for(let key  in stationkl){
-                MyMap.xrhld(key,stationkl[key],this.styleStition[key])
-              }
               setTimeout(()=>{
+                for(let key  in stationkl){
+                  MyMap.xrhld(key,stationkl[key],this.styleStition[key])
+                }
                 MyMap.zdklMapOption.heat.setDataSet({data: heatOption, max: 100})
               },1000)
-             
-
               break;
-          case "公交站点":
+          case "区域客流":
+            if(MyMap.zdklMapOption.heat.getDataSet()){
+              MyMap.zdklMapOption.heat.hide()
+              for(let key  in this.$store.getters.allStation){
+                  MyMap.zdklMapOption.mass[key].hide()
+                }
+            }
+            console.log(this.$store.getters.regionData)
+            setTimeout(()=>{
+                MyMap.addOverlayGroup(MyMap.getRegionMark(this.$store.getters.regionData))
+              },1000)
+           
            
               break;
           case "公交线路网":
@@ -188,8 +197,10 @@ export default {
           MyMap.zdklMapOption.mass[row.isStation.value].hide()
         }
       }
-      if(row){
-
+      if(row.isheat==true){
+        MyMap.zdklMapOption.heat.show()
+      }else if(row.isheat==false){
+        MyMap.zdklMapOption.heat.hide()
       }
     },
   }
@@ -202,6 +213,19 @@ export default {
   left:0px!important;
 }
 }
+.regionMark{
+  width: vw(178);
+  height: vw(178);
+  // background-image: radial-gradient(circle, rgb(49, 144, 228) 0%, rgb(41, 122, 204) 30%, rgb(29, 84, 166) 70%);
+  border-radius:50%;
+  // background: url("~@/assets/image/reginmark.png");
+    background-size: 100% 100%;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 </style>
 <style lang="scss" scoped>
 .passengerAnalysis{

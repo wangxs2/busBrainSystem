@@ -196,7 +196,7 @@ export default {
     right: vw(20);
     width: vw(300);
     height: vh(424);
-    background: rgba(26, 66, 118, 0.2);
+    background: rgba(26, 66, 118, 1);
     border: 1px solid rgba(39, 182, 255, 0.5);
     border-radius: 2px;
     display:flex;
