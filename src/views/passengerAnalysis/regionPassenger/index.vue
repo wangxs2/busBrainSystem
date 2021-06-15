@@ -16,15 +16,15 @@
     <div class="lkicon">
       <div style="text-align:center">区域客流数：</div>
       <div class="lk"></div>
-      <div style="margin-top:0.2vh">0-100</div>
+      <div style="margin-top:0.2vh">0-1000</div>
       <div class="lk lk1"></div>
-      <div style="margin-top:0.2vh">101-200</div>
+      <div style="margin-top:0.2vh">1001-10000</div>
       <div class="lk lk2"></div>
-      <div style="margin-top:0.2vh">201-300</div>
+      <div style="margin-top:0.2vh">10001-20000</div>
       <div class="lk lk3"></div>
-      <div style="margin-top:0.2vh">301-400</div>
-      <div class="lk lk4"></div>
-      <div style="margin-top:0.2vh">401-500</div>
+      <div style="margin-top:0.2vh">20001-30000</div>
+      <div style="margin-top:0.2vh" class="lk lk4"></div>
+      <div >大于30000</div>
     </div>
     <div class="rightlinemsg">
       <div class="tit">区域分布概况</div>
@@ -34,8 +34,8 @@
       </div>
       <div class="tablbox">
         <div class="bttit bttit1" v-for="(item,n) in lineaData" :key="n">
-          <div>{{n+1}}</div>
-          <div>{{item.name}}</div>
+          <div>{{item.regionName}}</div>
+          <div>{{item.sd+item.sp}}</div>
         </div>
       </div>
     </div>
@@ -47,92 +47,7 @@ export default {
      data(){
         return {
           value1:'',
-          lineaData: [
-        {
-          name: "919",
-          id: 1
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        }
-      ]
+          lineaData: []
         }
     },
     created() {
@@ -145,11 +60,29 @@ export default {
       this.islist = row.id;
       },
       getRegionData(){
-        this.$fetchGet("/passenger/region").then(res => {
-          this.$store.commit('SET_REGIONDATA', res.result)
-           setTimeout(()=>{
+        this.$fetchGet("/passenger/regionPassenger").then(res => {
+          this.$fetchGet("/passenger/region").then(resall => {
+            res.result.forEach(iteam=>{
+              resall.result.forEach(itam=>{
+                if(iteam.regionName==itam.regionName){
+                  iteam.centerLatitude=itam.centerLatitude
+                  iteam.centerLongitude=itam.centerLongitude
+                  iteam.polygonGeom=itam.polygonGeom
+                }
+              })
+            })
+            console.log(res.result)
+            this.lineaData=res.result
+            this.$store.commit('SET_REGIONDATA', res.result)
+            setTimeout(()=>{
             this.$store.commit('SET_LOADING',false)
             },500)
+
+          })
+          // this.$store.commit('SET_REGIONDATA', res.result)
+          //  setTimeout(()=>{
+          //   this.$store.commit('SET_LOADING',false)
+          //   },500)
 
         })
       },
@@ -182,9 +115,11 @@ export default {
     padding: vh(8) vw(20);
     display:flex;
     align-items: center;
+    justify-content: space-between;
+    font-size:vw(16);
     .lk{
       width: vw(14);
-      height: vw(14);
+      height: vh(14);
       background: #00D8FF;
       margin-left:vw(8);
       margin-right:vw(4);
@@ -235,7 +170,9 @@ export default {
       // padding:0 vw(30);
       // padding-right: vw(10);
       font-size:vw(18);
-      margin-top: vh(10);
+      margin-left:vw(8);
+      margin-right:vw(8);
+      margin-top: vh(16);
       div {
         flex: 1;
         text-align: center;
@@ -249,6 +186,7 @@ export default {
       color:#ffffff;
       margin-top: vh(0);
       cursor: pointer;
+      font-size:vw(16);
     }
     .bttit1:hover {
       background: rgba(93, 137, 255, 0.1);
@@ -258,11 +196,12 @@ export default {
       flex: 1;
       box-sizing: border-box;
       margin-right: vw(10);
-      margin-left: vw(8);
+      // margin-left: vw(8);
       overflow: hidden;
       overflow-y: scroll;
       margin-top: vh(12);
       margin-bottom: vh(30);
+      
     }
   }
 }

@@ -86,37 +86,37 @@ export default {
               name:'0-500',
               value:'0-500',
               isxz:true,
-              img:require('@/assets/image/icon_cyan.png')
+              img:require('@/assets/image/cyan.png')
             },
             {
               name:'501-1000',
               value:'500-1000',
               isxz:true,
-              img:require('@/assets/image/icon_blue.png')
+              img:require('@/assets/image/blue1.png')
             },
             {
               name:'1001-2000',
               value:'1000-2000',
               isxz:false,
-              img:require('@/assets/image/icon_green.png')
+              img:require('@/assets/image/green1.png')
             },
             {
               name:'2001-3000',
               value:'2000-3000',
               isxz:true,
-              img:require('@/assets/image/icon_yellow.png')
+              img:require('@/assets/image/yellow1.png')
             },
             {
               name:'3001-4000',
               value:'3000-4000',
               isxz:true,
-              img:require('@/assets/image/icon_purple.png')
+              img:require('@/assets/image/icon_purple1.png')
             },
             {
               name:'4000+',
               value:'4000+',
               isxz:true,
-              img:require('@/assets/image/icon_red.png')
+              img:require('@/assets/image/icon_red1.png')
             }
           ],
           stationroll:{},

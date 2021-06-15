@@ -30,34 +30,34 @@ export default {
       value:"",
       styleStition:{
         '0-500':{
-                url: require('@/assets/image/icon_cyan.png'),
-                anchor: new AMap.Pixel(15,15),
-                size: new AMap.Size(30,30)
+                url: require('@/assets/image/cyan.png'),
+                anchor: new AMap.Pixel(6,6),
+                size: new AMap.Size(11,11)
               },
         '500-1000':{
-                url: require('@/assets/image/icon_blue.png'),
-                anchor: new AMap.Pixel(15,15),
-                size: new AMap.Size(30,30)
+                url: require('@/assets/image/blue1.png'),
+                anchor: new AMap.Pixel(6,6),
+                size: new AMap.Size(11,11)
               },
         '1000-2000':{
-                url: require('@/assets/image/icon_green.png'),
-                anchor: new AMap.Pixel(15,15),
-                size: new AMap.Size(30,30)
+                url: require('@/assets/image/green1.png'),
+                anchor: new AMap.Pixel(6,6),
+                size: new AMap.Size(11,11)
               },
         '2000-3000':{
-                url: require('@/assets/image/icon_yellow.png'),
-                anchor: new AMap.Pixel(15,15),
-                size: new AMap.Size(30,30)
+                url: require('@/assets/image/yellow1.png'),
+                anchor: new AMap.Pixel(6,6),
+                size: new AMap.Size(11,11)
               },
         '3000-4000':{
-                url: require('@/assets/image/icon_purple.png'),
-                anchor: new AMap.Pixel(15,15),
-                size: new AMap.Size(30,30)
+                url: require('@/assets/image/icon_purple1.png'),
+                anchor: new AMap.Pixel(6,6),
+                size: new AMap.Size(11,11)
               },
         '4000+':{
-               url: require('@/assets/image/icon_red.png'),
-                anchor: new AMap.Pixel(15,15),
-                size: new AMap.Size(30,30)
+               url: require('@/assets/image/icon_red1.png'),
+                anchor: new AMap.Pixel(6,6),
+                size: new AMap.Size(11,11)
         }
       }
     }
@@ -69,6 +69,16 @@ export default {
         if(val){
           this.judgeRoute(val)
         }
+      },
+    },
+    '$store.getters.allStation':{
+      handler(val,oldval){
+       if(val){
+        for(let key  in val){
+            MyMap.xrhld(key,val[key],this.styleStition[key])
+          }
+         
+       }
       },
     },
 
@@ -99,8 +109,6 @@ export default {
               str.forEach(iteam=>{
                 arrpo.push([iteam.lng,iteam.lat])
               })
-           
-         
               let data=[
                   { 
                     routeName: this.value,
@@ -170,7 +178,6 @@ export default {
                   MyMap.zdklMapOption.mass[key].hide()
                 }
             }
-            console.log(this.$store.getters.regionData)
             setTimeout(()=>{
                 MyMap.addOverlayGroup(MyMap.getRegionMark(this.$store.getters.regionData))
               },1000)

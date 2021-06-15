@@ -41,7 +41,7 @@ export default {
       handler(val,oldval){
        if(val){
          MyMap.isTraffic(false)
-         MyMap.pointAll3(val.slice(1,50))
+         MyMap.pointAll3(val)
         //  MyMap.threeCircle(val,300)
           //  MyMap.addPolygon(this.$store.getters.threeMap)
           // MyMap.addOverlayGroup(MyMap.threeCircle(val.slice(1,50),300))
@@ -315,9 +315,9 @@ export default {
 <style lang="scss">
 .amap-info-contentContainer{
   .myinfobox{
-  width: vw(316);
+  width: vw(342);
   height:100%;
-  background: url("~@/assets/image/tk_bj.png");
+  background: url("~@/assets/image/tk_bj1.png");
   background-size: 100% 100%;
   box-sizing: border-box;
   padding: vh(10) vw(26);
