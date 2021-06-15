@@ -40,7 +40,9 @@ export default {
     '$store.getters.userStation':{
       handler(val,oldval){
        if(val){
-         MyMap.isTraffic(false)
+         if(MyMap.trafficLayer){
+            MyMap.isTraffic(false)
+         }
          MyMap.pointAll3(val)
         //  MyMap.threeCircle(val,300)
           //  MyMap.addPolygon(this.$store.getters.threeMap)
@@ -154,6 +156,9 @@ export default {
     judgeRoute(val){
       switch(val.name) {
           case "道路网":
+            if(MyMap.infoWindow){
+              MyMap.infoWindow.close()
+            }
             MyMap.isTraffic(true)
             MyMap.infoWindow.close()
              if(MyMap.mass){
@@ -163,12 +168,19 @@ export default {
               if(MyMap.keyunLaneGroups.getOverlays().length>0){
                  MyMap.keyunLaneGroups.hide()
                   MyMap.kyLineOver.hide()
-                }
+            }
+
+             if(MyMap.pathSimplifierIns){
+                MyMap.pathSimplifierIns.setData(null)
+              }
               
               break;
           case "公交站点":
+          
               MyMap.isTraffic(false)
+                 if(MyMap.infoWindow){
               MyMap.infoWindow.close()
+            }
               if(MyMap.mass){
                 MyMap.isMass(true)
                 MyMap.overlayGroups.show()
@@ -177,11 +189,16 @@ export default {
                  MyMap.keyunLaneGroups.hide()
                   MyMap.kyLineOver.hide()
                 }
+                if(MyMap.pathSimplifierIns){
+                MyMap.pathSimplifierIns.setData(null)
+              }
               break;
           case "公交线路网":
               
               MyMap.isTraffic(false)
+                 if(MyMap.infoWindow){
               MyMap.infoWindow.close()
+            }
               if(MyMap.mass){
                 MyMap.isMass(false)
                 MyMap.overlayGroups.hide()
@@ -193,6 +210,7 @@ export default {
                 setTimeout(()=>{
                   
                   MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
+                  MyMap.pathSimplifierIns.show()
                 },1000)
               
               
@@ -208,13 +226,22 @@ export default {
                  MyMap.keyunLaneGroups.hide()
                   MyMap.kyLineOver.hide()
                 }
+              if(MyMap.pathSimplifierIns){
+                MyMap.pathSimplifierIns.setData(null)
+              }
               MyMap.heatmap.hide()
               break;
           case "客运走廊":
               MyMap.isTraffic(false)
+                 if(MyMap.infoWindow){
+                  MyMap.infoWindow.close()
+                }
               if(MyMap.mass){
                 MyMap.isMass(false)
                 MyMap.overlayGroups.hide()
+              }
+                if(MyMap.pathSimplifierIns){
+                MyMap.pathSimplifierIns.setData(null)
               }
               MyMap.heatmap.hide()
               let strky=MyMap.keyunLaneGroups.getOverlays()
@@ -287,9 +314,11 @@ export default {
       if(row.isinfobtn){
         MyMap.searchStation(row.isinfobtn.stationName,[row.isinfobtn.longitude==undefined?row.isinfobtn.lon:row.isinfobtn.longitude,row.isinfobtn.latitude==undefined?row.isinfobtn.lat:row.isinfobtn.latitude]) 
       }
-
-      
-      
+      if(row.stattiondetail){
+        MyMap.infoWindow.setContent(MyMap.createInfoWindow(2,row.stattiondetail))
+        MyMap.infoWindow.open(MyMap.map,[row.stattiondetail.longitude,row.stattiondetail.latitude]);
+        MyMap.map.getFitZoomAndCenterByBounds([row.stattiondetail.longitude,row.stattiondetail.latitude],[0,0,0,0])
+      }
     },
     separateArr(data, n) {
           //获取要切割的数组的长度
@@ -303,11 +332,6 @@ export default {
           }
           return res;
       },
-
-     
-
-    
-    
   }
   
 }
@@ -315,46 +339,61 @@ export default {
 <style lang="scss">
 .amap-info-contentContainer{
   .myinfobox{
-  width: vw(342);
-  height:100%;
-  background: url("~@/assets/image/tk_bj1.png");
-  background-size: 100% 100%;
-  box-sizing: border-box;
-  padding: vh(10) vw(26);
-  font-size: vw(16);
-  padding-bottom: vh(34);
-  display: flex;
-  flex-direction: column;
-  .infoimg{
-    width: vw(48);
-    height: vw(48);
-    background: url("~@/assets/image/gf_icon.png");
-    background-size: 100% 100%;
-  }
-  .line-lsi{
+    width: vw(342);
+    height:100%;
+    // background: url("~@/assets/image/tk_bj1.png");
+    // background-size: 100% 100%;
+    border:1px solid rgba(0, 255, 255, 0.65);
+    background: rgba(0, 49, 61, 0.5);
+    box-sizing: border-box;
+    padding: vh(10) vw(26);
+    font-size: vw(16);
+    padding-bottom: vh(34);
     display: flex;
-    justify-content: flex-start;
-    width: 100%;
-    flex: 1;
-    .tithear{
-      width: vw(42);
-      height:vh(20);
-      display: inline-block;
+    flex-direction: column;
+    .infoimg{
+      width: vw(48);
+      height: vw(48);
+      background: url("~@/assets/image/gf_icon.png");
+      background-size: 100% 100%;
+    }
+    .line-lsi{
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      flex: 1;
+      .tithear{
+        width: vw(42);
+        height:vh(20);
+        display: inline-block;
+      }
+    }
+    .itean-lsi{
+      margin-bottom:0.2vh;
+    }
+    .titfont{
+      display: flex;
+      align-items: center;
+      font-size: vw(20);
+      color: #00FFFF;
+      font-weight: bold;
+      width: 100%;
+      height: vh(30);
+      margin: vh(16) vw(0);
+      margin-left: vw(-12);
+      margin-top: vh(4);
     }
   }
-  .titfont{
-    display: flex;
-    align-items: center;
-    font-size: vw(20);
-    color: #00FFFF;
-    font-weight: bold;
-    width: 100%;
-    height: vh(30);
-    margin: vh(10) vw(0);
-    margin-left: vw(-12);
-    margin-top: vh(18);
+  .myinfobox:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+    border-top: 12px solid  rgba(0, 255, 255, 0.65);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    transform: translateX(-50%);
   }
-}
 
 }
 </style>

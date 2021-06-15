@@ -1,3 +1,4 @@
+import * as http from './http'
 export default class Map {
     constructor(data) {
         Object.assign(this, this.data(data))
@@ -142,7 +143,7 @@ export default class Map {
           }
       });
 
-      window.pathSimplifierIns = this.pathSimplifierIns;
+      // window.pathSimplifierIns = this.pathSimplifierIns;
       // this.pathSimplifierIns.setData(this.linePaths);
 
       //initRoutesContainer(d);
@@ -165,9 +166,16 @@ export default class Map {
       this.map.add(this.overlayGroups1);
 
   }
+  //is显示公交线网
+  ispathSimp(){
+    
+    this.pathSimplifierIns.hide()
+  }
   //设置信息窗口的内容
-  createInfoWindow(name,data){
-    let content=`
+  createInfoWindow(type,name,data){
+    let content=''
+    if(type==1){
+      content=`
       <div class="myinfobox">
         <div class="titfont">
           <div class="infoimg"></div>
@@ -180,6 +188,23 @@ export default class Map {
          </div>
       </div>
     `
+
+    }else if(type==2){
+      content=`
+      <div class="myinfobox">
+        <div class="titfont">
+          <div class="infoimg"></div>
+          ${name.stationName}
+        </div>
+        <div class="line-lsi1">
+          <div class="itean-lsi">经度:${name.lnglat[0]}</div>
+          <div class="">维度:${name.lnglat[1]}</div>
+         
+          
+         </div>
+      </div>
+    `
+    }
 
     return content
 
@@ -200,10 +225,11 @@ export default class Map {
               arg.push(iteam.name.split('(')[0])
             })
             
-            startr=arg.join(',')
-            this.infoWindow.setContent(this.createInfoWindow(data,startr))
+            startr=arg.join('、')
+            this.infoWindow.setContent(this.createInfoWindow(1,data,startr))
             setTimeout(()=>{
               this.infoWindow.open(this.map,position);
+              
             },200)
             
         } else {
@@ -303,15 +329,16 @@ export default class Map {
           imageSize:new AMap.Size(32,32)
        }),
           position: [type==1?iteam.lon:iteam.longitude,type==1?iteam.lat:iteam.latitude],
+          cursor: 'pointer',
           offset: new AMap.Pixel(-13, -30)
       });
-      marker.setMap(this.map);
-      marker.on('click',  ()=> {
-          this.searchStation(iteam.stationName,marker.getPosition()) 
-          
-          
-          
+      
+      marker.on('click',  (e)=> {
+        console.log(4784)
+        console.log(e.data)
+        this.searchStation(iteam.stationName,marker.getPosition()) 
       });
+      marker.setMap(this.map);
       markers.push(marker)
     })
     return markers
@@ -373,6 +400,18 @@ export default class Map {
         marker.setPosition(e.data.lnglat);
         marker.setLabel({content:null})
     });
+    this.mass.on('click',  (e)=> {
+      console.log(e.data)
+      http.fetchGet('indicator/stationDetail',{
+        code:e.data.stationName,
+        direction:e.data.routeDirection
+      }).then(res=>{
+        console.log(res)
+        this.infoWindow.setContent(this.createInfoWindow(2,res.result))
+        this.infoWindow.open(this.map,[e.data.longitude,e.data.latitude]);
+        this.map.getFitZoomAndCenterByBounds([e.data.longitude,e.data.latitude],[150, 60, 100, 60])
+      })
+  });
     this.mass.setMap(this.map);
   }
   //300mi 范围集合

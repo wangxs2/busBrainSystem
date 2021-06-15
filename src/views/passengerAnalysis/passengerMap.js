@@ -85,7 +85,7 @@ export default class Map {
     let markers = []
     datas.forEach(iteam => {
       let iconm = ''
-      console.log(iteam.sd + iteam.sp)
+      
       if ((iteam.sd + iteam.sp) < 1001) {
         iconm = require('../../assets/image/blue.png')
       } else if ((iteam.sd + iteam.sp) > 1000 && (iteam.sd + iteam.sp) < 10001) {
@@ -114,7 +114,7 @@ export default class Map {
       });
 
       marker.on('mouseover', (e) => {
-        console.log(e.target.getExtData())
+        
         if (e.target.getExtData()) {
           let str = e.target.getExtData().iteam.polygonGeom.replace("POLYGON((", "");
           let str1 = str.replace("))", "");
@@ -169,7 +169,7 @@ export default class Map {
   }
   //区域客流 范围集合
   addOverlayGroup(Groups) {
-    this.overlayGroups.addOverlay(Groups)
+    this.overlayGroups.addOverlays(Groups)
   }
 
 

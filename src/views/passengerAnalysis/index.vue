@@ -71,16 +71,16 @@ export default {
         }
       },
     },
-    '$store.getters.allStation':{
-      handler(val,oldval){
-       if(val){
-        for(let key  in val){
-            MyMap.xrhld(key,val[key],this.styleStition[key])
-          }
+    // '$store.getters.allStation':{
+    //   handler(val,oldval){
+    //    if(val){
+    //     for(let key  in val){
+    //         MyMap.xrhld(key,val[key],this.styleStition[key])
+    //       }
          
-       }
-      },
-    },
+    //    }
+    //   },
+    // },
 
   },
   mounted(){
@@ -143,17 +143,13 @@ export default {
                 obj.lineLength=result.lineInfo[0].distance
                 arpoy.push(obj)
             } else {
-              console.log(iteam)
+              
             }
         });
 
       })
 
-        setTimeout(()=>{
-          this.$fetchPost("route/approve",arpoy,'json').then(res=>{
-          })
-
-        },30000)
+        
 
      
     },
@@ -169,13 +165,19 @@ export default {
                   MyMap.xrhld(key,stationkl[key],this.styleStition[key])
                 }
                 MyMap.zdklMapOption.heat.setDataSet({data: heatOption, max: 100})
-              },1000)
+              },500)
+             if(MyMap.overlayGroups.getOverlays().length>0){
+               MyMap.overlayGroups.hide()
+             }
               break;
           case "区域客流":
             if(MyMap.zdklMapOption.heat.getDataSet()){
               MyMap.zdklMapOption.heat.hide()
+              console.log(this.$store.getters.allStation)
               for(let key  in this.$store.getters.allStation){
                   MyMap.zdklMapOption.mass[key].hide()
+                  // MyMap.zdklMapOption.mass[key].setData(null)
+                  console.log(MyMap.zdklMapOption.mass[key])
                 }
             }
             setTimeout(()=>{
@@ -196,7 +198,6 @@ export default {
           } 
     },
     klsonClick(row){
-      console.log(row)
       if(row.isStation){
         if(row.isStation.isxz){
           MyMap.zdklMapOption.mass[row.isStation.value].show()

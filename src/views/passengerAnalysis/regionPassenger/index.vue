@@ -71,7 +71,7 @@ export default {
                 }
               })
             })
-            console.log(res.result)
+          
             this.lineaData=res.result
             this.$store.commit('SET_REGIONDATA', res.result)
             setTimeout(()=>{

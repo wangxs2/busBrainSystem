@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-  <div class="bityu">公交大脑</div>
+  
     <div class="login-content">
       <div class="title-form">
         <div class="title">用户登录</div>
@@ -25,12 +25,12 @@
               <span v-if="pswFlag" class="error-message">{{pswMess}}</span>
             </el-form-item>
             <div class="passwordSa">
-              <el-checkbox v-model="checked" @change="rememberPasswordS">记住用户名</el-checkbox>
+              <!-- <el-checkbox v-model="checked" @change="rememberPasswordS">记住用户名</el-checkbox> -->
               <!-- <span style="cursor: pointer" @click="forget">忘记密码?</span> -->
             </div>
             <el-form-item style="margin-bottom:0;margin-top:18px">
             <!-- @click="login('loginForm')" -->
-              <el-button :loading="subLoad" type="primary" @click="tologin()">登录</el-button>
+              <el-button :loading="subLoad" style="background: #4578FF;" type="primary" @click="login('loginForm')">登录</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -84,8 +84,8 @@ export default {
       pswFlag: false,
       loginForm: {
         // 登录数据
-        username: "",
-        password: ""
+        username: "1229320501@qq.com",
+        password: "999999999"
       },
       loginRules: {
         username: [{ required: true, trigger: "blur", validator: check }],
@@ -200,41 +200,52 @@ export default {
       // this.$router.push("/lineCharacteristics");
     },
     login: _debounce(function(formName) {
-      // this.$refs[formName].validate(valid => {
-      //   if (valid) {
-      //     this.subLoad = true;
-      //     this.$fetchPost("sys/login", this.loginForm, 'json')
-      //       .then(res => {
-      //         this.subLoad = false;
-      //         if (res.code == 200) {
-      //           document.cookie = "flag=true";
-      //           document.cookie = "user=" + res.result.userInfo.id;
-      //           document.cookie = "userName=" + res.result.userInfo.username;
-      //           document.cookie = "Token=" + res.result.token;
-      //           document.cookie = "roleid=" + res.result.role[0].id;
-      //           document.cookie = "realname=" + res.result.userInfo.realname;
-      //           document.cookie = "orgname=" + res.result.org[0].name;
-      //           document.cookie = "realcode=" +  res.result.role[0].code;
-      //           this.$store.commit('SET_TOKEN', res.result.token)
-      //           this.$store.commit("SET_ID", res.result.userInfo.id);
-      //           this.$store.commit("SET_USERINFO", res.result.userInfo);
-      //           this.$store.commit("SET_NAME", res.result.userInfo.username);
-      //           this.$store.commit("SET_REALNAME", res.result.userInfo.realname);
-      //           this.$store.commit("SET_ROLES", res.result.org);
-      //           localStorage.setItem("userNameSa", this.loginForm.username);
-      //           this.$store.commit("SET_ROLEID", res.result.role[0].id);
-      //           this.$store.commit("SET_ROLECODE", res.result.role[0].code);
-      //            this.$router.push("/lineCharacteristics");
-      //           this.$message.success(res.message)
-      //         } else {
-      //           this.$message.error(res.message)
-      //         }
-      //       })
-      //       .catch(res => {
-      //         this.subLoad = false;
-      //       });
-      //   }
-      // });
+       let b=new base64()
+       let timeNumber = new Date().getTime();
+        this.loginForm.password = b.encode(
+            timeNumber +
+            "&" +
+            b.encode(this.loginForm.password) +
+            "&" +
+            timeNumber
+          ); //加密
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.subLoad = true;
+          this.$fetchPost("/login", this.loginForm)
+            .then(res => {
+              this.subLoad = false;
+              if (res.status == 'success') {
+                console.log(789)
+                // document.cookie = "flag=true";
+                // document.cookie = "user=" + res.result.userInfo.id;
+                // document.cookie = "userName=" + res.result.userInfo.username;
+                // document.cookie = "Token=" + res.result.token;
+                // document.cookie = "roleid=" + res.result.role[0].id;
+                // document.cookie = "realname=" + res.result.userInfo.realname;
+                // document.cookie = "orgname=" + res.result.org[0].name;
+                // document.cookie = "realcode=" +  res.result.role[0].code;
+                // this.$store.commit('SET_TOKEN', res.result.token)
+                // this.$store.commit("SET_ID", res.result.userInfo.id);
+                // this.$store.commit("SET_USERINFO", res.result.userInfo);
+                // this.$store.commit("SET_NAME", res.result.userInfo.username);
+                // this.$store.commit("SET_REALNAME", res.result.userInfo.realname);
+                // this.$store.commit("SET_ROLES", res.result.org);
+                // localStorage.setItem("userNameSa", this.loginForm.username);
+                // this.$store.commit("SET_ROLEID", res.result.role[0].id);
+                // this.$store.commit("SET_ROLECODE", res.result.role[0].code);
+                //  this.$router.push("/lineCharacteristics");
+                this.$message.success('登陆成功')
+                this.$router.push("/lineCharacteristics/roadDistribution");
+              } else {
+                this.$message.error(res.message)
+              }
+            })
+            .catch(res => {
+              this.subLoad = false;
+            });
+        }
+      });
     }, 300),
     forget() {
       //忘记密码
@@ -245,15 +256,15 @@ export default {
 </script>
 <style lang="scss">
 .login .login-content .title-form .input-form .el-form-item .el-input{
-  background: rgba(26, 66, 118, 0.2) !important;
-   border: 1px solid #27B6FF !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border:none!important;
+  //  border: 1px solid #5D89FF !important;
     // box-shadow: 0px 0px vh(6) rgba(39, 182, 255, 0.8) inset !important;
 }
 .login {
   .el-input__inner {
    background: rgba(26, 66, 118, 0.2) !important;
-    color: #dae4ff !important;
-   
+    // color: #dae4ff !important;
       line-height: vh(44);
     height: vh(44);
   }
@@ -292,10 +303,9 @@ export default {
       margin-bottom: vh(16);
     }
   .login-content {
-    width: vw(564);
-    height: vh(512);
-    background: url("~@/assets/image/dlk.png");
-    background-size: 100% 100%;
+    width: vw(449);
+    height: vh(400);
+    margin-top: vh(100);
     .title-form {
       display: flex;
       flex-direction: column;
@@ -303,12 +313,11 @@ export default {
       width: 100%;
       height:100%;
       .title {
-        font-size: vw(36);
-        font-family: FZZhengHeiS-EB-GB;
-        font-weight: 400;
+        font-size: vw(28);
+        font-family: Microsoft YaHei;
         color: #ffffff;
         text-align: center;
-        margin-top: vh(90);
+        margin-top: vh(46);
         margin-bottom: 0;
       }
       .input-form {

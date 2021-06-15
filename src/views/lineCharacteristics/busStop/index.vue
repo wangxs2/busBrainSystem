@@ -129,11 +129,14 @@ export default {
           return (restaurant.stationName.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
         };
       },
-    handleSelect() {
+    handleSelect(iteam) {
       this.$fetchGet("/indicator/stationDetail",{
-        code:'',
-        direction:""
+        code:iteam.stationName,
+        direction:iteam.routeDirection
       }).then(res => {
+        this.$emit('changefun',{
+          stattiondetail:res.result
+      })
       })
     },
     tobtn(row){
@@ -143,12 +146,10 @@ export default {
       })
     },
     getpatharea(){
-      console.log('获取')
       let arr=[]
       this.options.forEach(iteam=>{
         if(this.value==iteam.constantName){
           arr=JSON.parse(iteam.num)
-          console.log(arr)
         }
         this.$store.commit('SET_THREEMAP2', arr)
       })
