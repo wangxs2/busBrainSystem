@@ -113,13 +113,11 @@
       </el-row>
       <div class="tabbottom">
         <el-pagination
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="query.page"
-          :page-sizes="[10, 20, 50, 100]"
           :page-size="query.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next"
           :total="total"
         ></el-pagination>
       </div>
@@ -341,7 +339,7 @@ export default {
       this.tabLoading = true;
       this.$fetchGet("auths", this.query).then(res => {
         let tabdata = res.list;
-
+        this.$store.commit('SET_LOADING',false)
         $.each(tabdata, (index, item) => {
           if (item.pid == 1) {
             item.parentname = "无";
@@ -565,7 +563,7 @@ export default {
 
 <style lang="scss" scoped>
 .contentPage {
-  background: #e3e9f3;
+  background: #000022;
   .contentBorder {
     // width: 100%;
     height: 100%;
@@ -574,7 +572,7 @@ export default {
       text-align: right;
       width: 100%;
       height: 50px;
-      background: #fff;
+      background: rgba(12, 38, 104,0.8);
       padding: 10px;
       box-sizing: border-box;
     }
@@ -588,13 +586,17 @@ export default {
         margin-right: 10px;
         overflow-x: hidden;
         overflow-y: auto;
-        background-color: #fff;
+        background-color:rgba(0, 0, 34,0.1);
         .el-tree {
-          color: #000;
+          color: #ffffff;
+          background-color:rgba(0, 0, 34,0.1);
+        }
+        .el-tree-node .is-current .is-focusable{
+          background-color:rgba(25, 79, 149, 1);
         }
       }
       .authTab {
-        background-color: #fff;
+        // background-color: #fff;
       }
     }
   }

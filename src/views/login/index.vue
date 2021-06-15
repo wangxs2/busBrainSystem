@@ -217,8 +217,8 @@ export default {
               this.subLoad = false;
               if (res.status == 'success') {
                 console.log(789)
-                // document.cookie = "flag=true";
-                // document.cookie = "user=" + res.result.userInfo.id;
+                document.cookie = "flag=true";
+                document.cookie = "user=" + res.info.id;
                 // document.cookie = "userName=" + res.result.userInfo.username;
                 // document.cookie = "Token=" + res.result.token;
                 // document.cookie = "roleid=" + res.result.role[0].id;
@@ -236,7 +236,7 @@ export default {
                 // this.$store.commit("SET_ROLECODE", res.result.role[0].code);
                 //  this.$router.push("/lineCharacteristics");
                 this.$message.success('登陆成功')
-                this.$router.push("/lineCharacteristics/roadDistribution");
+                this.$router.push("/system/users");
               } else {
                 this.$message.error(res.message)
               }

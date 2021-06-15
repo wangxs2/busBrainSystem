@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/views/layout/index'
 import login from '@/views/login/index'
+
+import HOME from '@/views/home/index'
 import lineCharacteristics from '@/views/lineCharacteristics/index'
 import roadDistribution from '@/views/lineCharacteristics/roadDistribution/index'
 import publicTransport from '@/views/lineCharacteristics/publicTransport/index'   //公交线路
@@ -28,86 +30,91 @@ export const constantRouterMap = [
     component: forgetPwd
   },
   {
-    path: '/layout',
-    name: Layout,
-    component: Layout,
-    children: [
-      {
-        path: '/lineCharacteristics',
-        name: '线网特征',
-        component: lineCharacteristics,
-        children: [
-          {
-            path: '/lineCharacteristics/roadDistribution',
-            name: '道路网',
-            component: roadDistribution,
-          },
-          {
-            path: '/lineCharacteristics/publicTransport',
-            name: '公交线路网',
-            component: publicTransport,
-          },
-          {
-            path: '/lineCharacteristics/busStop',
-            name: '公交站点',
-            component: busStop,
+    path: '/home',
+    name: '首页',
+    component: HOME
+  },
+  // {
+  //   path: '/layout',
+  //   name: Layout,
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: '/lineCharacteristics',
+  //       name: '线网特征',
+  //       component: lineCharacteristics,
+  //       children: [
+  //         {
+  //           path: '/lineCharacteristics/roadDistribution',
+  //           name: '道路网',
+  //           component: roadDistribution,
+  //         },
+  //         {
+  //           path: '/lineCharacteristics/publicTransport',
+  //           name: '公交线路网',
+  //           component: publicTransport,
+  //         },
+  //         {
+  //           path: '/lineCharacteristics/busStop',
+  //           name: '公交站点',
+  //           component: busStop,
             
-          },{ 
-            path: '/lineCharacteristics/busLane',
-            name: '公交专用道',
-            component: busLane,
+  //         },{ 
+  //           path: '/lineCharacteristics/busLane',
+  //           name: '公交专用道',
+  //           component: busLane,
             
-          },{
-            path: '/lineCharacteristics/passengerCorridor',
-            name: '客运走廊',
-            component: passengerCorridor,
+  //         },{
+  //           path: '/lineCharacteristics/passengerCorridor',
+  //           name: '客运走廊',
+  //           component: passengerCorridor,
             
-          }
-        ]
+  //         }
+  //       ]
 
-      },
-      {
-        path: '/passengerAnalysis',
-        name: '客流分析',
-        component: passengerAnalysis,
-        children: [
-          {
-            path: '/passengerAnalysis/linePassenger',
-            name: '线路客流',
-            component: linePassenger,
-          },
-          {
-            path: '/passengerAnalysis/sectionPassenger',
-            name: '断面客流',
-            component: sectionPassenger,
-          },
-          {
-            path: '/passengerAnalysis/stationPassenger',
-            name: '站点客流',
-            component: stationPassenger,
+  //     },
+  //     {
+  //       path: '/passengerAnalysis',
+  //       name: '客流分析',
+  //       component: passengerAnalysis,
+  //       children: [
+  //         {
+  //           path: '/passengerAnalysis/linePassenger',
+  //           name: '线路客流',
+  //           component: linePassenger,
+  //         },
+  //         {
+  //           path: '/passengerAnalysis/sectionPassenger',
+  //           name: '断面客流',
+  //           component: sectionPassenger,
+  //         },
+  //         {
+  //           path: '/passengerAnalysis/stationPassenger',
+  //           name: '站点客流',
+  //           component: stationPassenger,
             
-          },{ 
-            path: '/passengerAnalysis/regionPassenger',
-            name: '区域客流',
-            component: regionPassenger,
+  //         },{ 
+  //           path: '/passengerAnalysis/regionPassenger',
+  //           name: '区域客流',
+  //           component: regionPassenger,
             
-          }
-        ]
+  //         }
+  //       ]
 
-      }
-    ]
+  //     }
+  //   ]
 
-  }
+  // }
 
 ]
 
 export const asyncRouterMap = [{
   path: '',
-  component: ''
-  // component: Layout
+  // component: ''
+  component: Layout
 }]
 
 export default new Router({
-  // scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })

@@ -30,7 +30,6 @@
             <el-table
               :data="roleTabData"
               stripe
-              border
               style="width: 100%"
               :height="$store.getters.docHeight"
             >
@@ -111,13 +110,11 @@
 
       <div class="tabbottom">
         <el-pagination
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="query.page"
-          :page-sizes="[10, 20, 50, 100]"
           :page-size="query.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next"
           :total="total"
         ></el-pagination>
       </div>
@@ -634,7 +631,7 @@ export default {
 
 <style lang="scss" scoped>
 .contentPage {
-  background: #e3e9f3;
+  background: #000022;
   .contentBorder {
     // width: 100%;
     height: 100%;
@@ -643,7 +640,7 @@ export default {
       text-align: right;
       width: 100%;
       height: 50px;
-      background: #fff;
+      background: rgba(12, 38, 104,0.8);
       padding: 10px;
       box-sizing: border-box;
     }

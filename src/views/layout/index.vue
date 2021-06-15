@@ -11,12 +11,12 @@
        <menu-nav></menu-nav>
      </div>
    </div>
-   <div class="routelist">
+   <!-- <div class="routelist">
      <div  :class="getRouterName.name==item.name?'parallelogram parallelogram1':'parallelogram'" v-for="(item,index) in quc($store.getters.userRole)" :key="index">
        <div @click="topath(item)" class="fontroute">{{ item.name }}</div>
         <div v-if="getRouterName.name!==item.name" @click="deleroute(item,index)" style="font-size:12px;margin-left:0.5vw"  class="fontroute iconfont iconguanbi"></div>
       </div>
-   </div>
+   </div> -->
   </div>
 </template>
 

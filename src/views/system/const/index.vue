@@ -21,7 +21,6 @@
           <div v-loading="typeLoading" element-loading-text="拼命加载中">
             <el-table
               :data="typeTabData"
-              border
               style="width: 100%"
               :height="$store.getters.docHeight-35"
             >
@@ -52,9 +51,8 @@
                 @size-change="typeSizeChange"
                 @current-change="typeCurrentChange"
                 :current-page="query.page"
-                :page-sizes="[10, 20, 50, 100]"
                 :page-size="query.pageSize"
-                layout="total, sizes, prev, pager, next, jumper"
+                layout="total, prev, pager, next"
                 :total="typeTotal"
               ></el-pagination>
             </div>
@@ -83,13 +81,11 @@
             </el-table>
             <div class="tabbottom">
               <el-pagination
-                background
                 @size-change="constSizeChange"
                 @current-change="constCurrentChange"
                 :current-page="constQuery.page"
-                :page-sizes="[10, 20, 50, 100]"
                 :page-size="constQuery.pageSize"
-                layout="total, sizes, prev, pager, next, jumper"
+                layout="total, prev, pager, next"
                 :total="constTotal"
               ></el-pagination>
             </div>
@@ -498,7 +494,7 @@ export default {
 
 <style lang="scss" scoped>
 .contentPage {
-  background: #e3e9f3;
+  background: #000022;
   .contentBorder {
     // width: 100%;
     height: 100%;
@@ -507,7 +503,7 @@ export default {
       text-align: right;
       width: 100%;
       height: 50px;
-      background: #fff;
+      background: rgba(12, 38, 104,0.8);
       padding: 10px;
       box-sizing: border-box;
     }

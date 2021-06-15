@@ -10,7 +10,8 @@ import {
 } from '@/libs/util'
 const _import = require('@/router/_import_' + process.env.NODE_ENV)
 // console.log(process.env.NODE_ENV)
-const localList = `,
+const localList = `
+,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
 ` //本地列表 注意最后加逗号
 
 /**
@@ -90,6 +91,8 @@ const permission = {
           asyncRouterMap[0].children = filterAsyncRouter(menuData.slice(0))
           let routerData = asyncRouterMap
           commit('SET_MENU', menuData)
+          console.log(menuData)
+          console.log(routerData)
           commit('SET_ROUTERS', routerData)
           resolve({
             menuData,

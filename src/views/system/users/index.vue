@@ -33,7 +33,6 @@
             <el-table
               :data="roleTabData"
               stripe
-              border
               style="width: 100%"
               :height="$store.getters.docHeight - 35"
             >
@@ -112,13 +111,11 @@
 
       <div class="tabbottom">
         <el-pagination
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="query.page"
-          :page-sizes="[10, 20, 50, 100]"
           :page-size="query.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next"
           :total="total"
         ></el-pagination>
       </div>
@@ -225,7 +222,7 @@
       <el-table
         highlight-current-row
         border
-        style="width: 100%; margin-top: 10px"
+        style="width: 100%; margin-top: 10px;"
         :data="roleAllotTab"
       >
         <el-table-column
@@ -428,6 +425,7 @@ export default {
       //获取所有角色
       this.$fetchGet("roles/idAndName").then(res => {
         this.allRole = res;
+        this.$store.commit('SET_LOADING',false)
       });
     },
     getorgsTree () {
@@ -469,7 +467,7 @@ export default {
               item.roleNameList.push(items.name)
             })
             item.orgs.forEach(items => {
-              items.orgId = (items.path.split(',')).map(Number)
+              items.orgId = items.path!==null?(items.path.split(',')).map(Number):""
               item.orgs1.push(items.orgId)
               item.orgNameList.push(items.name)
             })
@@ -748,7 +746,7 @@ export default {
 
 <style lang="scss" scoped>
 .contentPage {
-  background: #e3e9f3;
+  background: #000022;
   .contentBorder {
     // width: 100%;
     height: 100%;
@@ -757,7 +755,7 @@ export default {
       text-align: right;
       width: 100%;
       height: 50px;
-      background: #fff;
+      background: rgba(12, 38, 104,0.8);
       padding: 10px;
       box-sizing: border-box;
     }

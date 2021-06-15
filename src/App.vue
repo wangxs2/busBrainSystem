@@ -84,13 +84,16 @@ body,
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(93, 137, 255, 0.7);
 }
-
-.el-input__inner {
+.topAdd{
+  .el-input__inner {
   background: rgba(26, 66, 118, 0.2) !important;
   color: #dae4ff !important;
   border: 1px solid #27B6FF !important;
   box-shadow: 0px 0px vh(6) rgba(39, 182, 255, 0.8) inset !important;
 }
+
+}
+
 .el-select-dropdown {
   background: rgba(26, 66, 118, 1) !important;
   border: 1px solid #27B6FF !important;
@@ -130,6 +133,21 @@ color: #dae4ff !important;
   box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 1) inset !important;
 
 }
+ .tabbottom{
+    margin-top:vh(6);
+    .el-pagination{
+      text-align:right !important;
+      .el-pagination__total{
+        color:#ffffff;
+      }
+    }
+    .el-pagination button:disabled{
+      background: #000022;
+    }
+    .el-pager li{
+      background: #000022;
+    }
+  }
 .el-picker-panel{
   border:none !important;
 }
@@ -155,5 +173,40 @@ color: #dae4ff !important;
 .el-date-table th{
   border-bottom:1px solid rgba(39, 182, 255, 0.5)!important;
   color: #dae4ff !important;
+}
+
+.el-table{
+   background: #000022!important;
+ 
+   
+}
+.el-table th, .el-table tr{
+  background: #000022!important;
+  color:#ffffff !important;
+}
+.el-table--striped .el-table__body tr.el-table__row--striped td{
+  background: #000022!important;
+}
+.el-table td, .el-table th.is-leaf{
+  border-bottom:none!important;
+}
+// .el-table__header-wrapper{
+//  box-shadow: 0px 0px 10px #ffffff inset !important;
+//   thead{
+//     tr{
+//       box-shadow: 0px 0px 10px #ffffff inset !important;
+//     }
+    
+//   }
+  
+// }
+.el-table__body tr.hover-row.current-row>td, .el-table__body tr.hover-row.el-table__row--striped.current-row>td, .el-table__body tr.hover-row.el-table__row--striped>td, .el-table__body tr.hover-row>td{
+  background: rgba(25, 79, 149, 1) !important;
+}
+.el-tree-node:focus>.el-tree-node__content{
+  background: rgba(25, 79, 149, 1) !important;
+}
+.el-tree-node:hover>.el-tree-node__content{
+  background: rgba(25, 79, 149, 1) !important;
 }
 </style>

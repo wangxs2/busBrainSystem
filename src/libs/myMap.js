@@ -297,6 +297,9 @@ export default class Map {
         strokeWeight: 8,
         strokeStyle: "solid",
       })
+      kyLinedata.on('click',(e)=>{
+        console.log("我是谁")
+      })
       lines.push(kyLinedata)
       this.map.add(kyLinedata);
 
@@ -311,6 +314,7 @@ export default class Map {
         strokeColor: "#35A594",
         strokeOpacity: 1,
         strokeWeight: 8,
+        zIndex:20,
         strokeStyle: "solid",
       })
       this.map.add(kyLinedata);
@@ -322,24 +326,24 @@ export default class Map {
   addGjMarker(data,type) {
     let markers=[]
     data.forEach(iteam=>{
-      let marker = new AMap.Marker({
-        icon:new AMap.Icon({
-          image:type==1?require('../assets/image/icon_dt1.png'):require('../assets/image/icon_gj1.png'),
-          size:new AMap.Size(32,32),
-          imageSize:new AMap.Size(32,32)
-       }),
+      let markerky = new AMap.Marker({
+          icon:new AMap.Icon({
+              image:type==1?require('../assets/image/icon_dt1.png'):require('../assets/image/icon_gj1.png'),
+              size:new AMap.Size(32,32),
+              imageSize:new AMap.Size(32,32)
+          }),
           position: [type==1?iteam.lon:iteam.longitude,type==1?iteam.lat:iteam.latitude],
+          map:this.map,
           cursor: 'pointer',
+          zIndex:500,
           offset: new AMap.Pixel(-13, -30)
       });
-      
-      marker.on('click',  (e)=> {
-        console.log(4784)
-        console.log(e.data)
-        this.searchStation(iteam.stationName,marker.getPosition()) 
+      markerky.on('click', (e) => {
+        console.log(78952)
+        // this.searchStation(iteam.stationName,marker.getPosition()) 
       });
-      marker.setMap(this.map);
-      markers.push(marker)
+      // marker.setMap(this.map);
+      markers.push(markerky)
     })
     return markers
   }
@@ -429,6 +433,9 @@ export default class Map {
    //客运走廊的点
   addOverlayGroup3(Groups){
     this.keyunLaneGroups.addOverlays(Groups)
+    this.keyunLaneGroups.on('click',(e)=>{
+      console.log(788)
+    })
   }
     //客运走廊的线
     addOverlayGroup4(Groups){
