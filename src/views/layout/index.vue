@@ -12,9 +12,10 @@
      </div>
    </div>
    <div class="routelist">
-     <div  :class="getRouterName.name==item.name?'parallelogram parallelogram1':'parallelogram'" v-for="(item,index) in quc($store.getters.userRole)" :key="index">
+     <!-- {{getRouterName}} -->
+     <div  :class="getRouterName==item.name?'parallelogram parallelogram1':'parallelogram'" v-for="(item,index) in quc($store.getters.routehistroy)" :key="index">
        <div @click="topath(item)" class="fontroute">{{ item.name }}</div>
-        <div v-if="getRouterName.name!==item.name" @click="deleroute(item,index)" style="font-size:12px;margin-left:0.5vw"  class="fontroute iconfont iconguanbi"></div>
+        <div v-if="getRouterName!==item.name" @click="deleroute(item,index)" style="font-size:12px;margin-left:0.5vw"  class="fontroute iconfont iconguanbi"></div>
       </div>
    </div>
   </div>
@@ -30,11 +31,12 @@ export default {
   },
   computed: {
     getRouterName:  function() {
-     return this.$route.matched.slice(2)[0]
+      // console.log(this.$route)
+     return this.$route.matched[2].name
     },
-    myallroute:function(){
-      return this.quc(this.$store.getters.userRole)
-    },
+    // myallroute:function(){
+    //   return this.quc(this.$store.getters.userRole)
+    // },
     
   },
    data () {
@@ -43,21 +45,13 @@ export default {
       loading: true
     };
   },
- 
   created () {
-  
   },
   mounted(){
-
   },
    watch:{
-    myallroute:{
-      handler(val,oldval){
-      },
-    },
     '$route':{
       handler(val,oldval){
-       
        if(val){
          
        }
@@ -67,22 +61,15 @@ export default {
   watch: {
   },
   methods: {
-
     quc(arrays){
+      console.log(this.$store.getters.routehistroy)
       var result = [];
-
       var obj = {};
-
       for(var i =0; i<arrays.length; i++){
-
           if(!obj[arrays[i].name]){
-
             result.push(arrays[i]);
-
             obj[arrays[i].name] = true;
-
           }
-
       }
       return result
     },
@@ -90,9 +77,9 @@ export default {
       this.$router.push(row.path);
     },
     deleroute(row,index){
-      let arr=this.quc(this.$store.getters.userRole)
+      let arr=this.quc(this.$store.getters.routehistroy)
       let arr1=arr.splice(index,1)
-     this.$store.commit('SET_ROLES', arr)
+      this.$store.commit('SET_ROUTEHISTROY', arr)
     
     }
   }

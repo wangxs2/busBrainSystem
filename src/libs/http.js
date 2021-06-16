@@ -12,7 +12,7 @@ import {
 export const Axios = axios.create({
   baseURL:'/busbrain',
   // baseURL: "/api2db/",
-  timeout: 5000,
+  timeout: 30000,
   withCredentials: true // 是否允许带cookie这些
 });
 

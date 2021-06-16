@@ -14,7 +14,8 @@ const user = {
     roleCode: "",
     realname:'',
     heatData:[],
-    userRole: [], //用户路由记录
+    userRole: [],
+    routehistroy: [], //用户路由记录
     userStation: [], //站点的信息
     threeMap:[],//300米
     threeMap1:[],//300米
@@ -101,7 +102,11 @@ const user = {
     SET_ROLES: (state, userRole) => { //用户路由记录
       state.userRole = userRole
     },
-    SET_STATION: (state, userStation) => { //用户路由记录
+    SET_ROUTEHISTROY: (state, routehistroy) => { //用户路由记录
+      state.routehistroy = routehistroy
+    },
+    
+    SET_STATION: (state, userStation) => {
       state.userStation = userStation
     },
     SET_ROUTERNOW: (state, routerNow) => { //用户组织

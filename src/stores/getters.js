@@ -7,6 +7,7 @@ const getters = {
   ishuadata: state => state.user.ishuadata,
   roleCode: state => state.user.roleCode,
   roleId: state => state.user.roleId,
+  routehistroy: state => state.user.routehistroy,
   userInfo: state => state.user.userInfo,
   userName: state => state.user.userName,
   userRole: state => state.user.userRole,

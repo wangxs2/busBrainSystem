@@ -118,10 +118,6 @@ export default {
   },
   computed: {
     ...mapGetters(["menuData", "menuFlag"]),
-    sliceRouter: function() {
-      //把router第一个 / 截取掉
-      return this.$route.path.slice(1);
-    }
   },
   created() {
     

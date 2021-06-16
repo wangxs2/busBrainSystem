@@ -45,10 +45,7 @@ router.beforeEach((to, from, next) => {
   store.commit('SET_LOADING',true)
   let arour=[]
   let routenow = to.matched.slice(2)[0]
-  if (store.getters.userRole.length == 0) {
-    store.getters.userRole.push(to.matched.slice(2)[0])
-  }
-  store.getters.userRole.push(to.matched.slice(2)[0])
+  // store.commit('SET_ROLES', [])
   if (to.path === '/login') {
     next()
     return
@@ -62,7 +59,17 @@ router.beforeEach((to, from, next) => {
     return
   } else {
     store.commit('SET_CODEMEAU', getCookie('meaucode'))
-    console.log(getCookie('meaucode'))
+    console.log(store.getters.routehistroy)
+    if(store.getters.userRole[0]==undefined){
+      store.commit('SET_ROUTEHISTROY',[])
+    }
+    if (store.getters.userRole.length == 0) {
+      store.getters.routehistroy.push(to.matched[2])
+    }else if(to.matched[2]==undefined){
+      return
+    }else{
+      store.getters.routehistroy.push(to.matched[2])
+    }
     if (store.getters.userId !== getCookie('user') + '') {
       //判断是否拉取用户信息 权限
 

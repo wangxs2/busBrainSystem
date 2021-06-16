@@ -230,7 +230,7 @@ export default {
                 // this.$store.commit("SET_USERINFO", res.result.userInfo);
                 // this.$store.commit("SET_NAME", res.result.userInfo.username);
                 // this.$store.commit("SET_REALNAME", res.result.userInfo.realname);
-                // this.$store.commit("SET_ROLES", res.result.org);
+               
                 // localStorage.setItem("userNameSa", this.loginForm.username);
                 // this.$store.commit("SET_ROLEID", res.result.role[0].id);
                 // this.$store.commit("SET_ROLECODE", res.result.role[0].code);

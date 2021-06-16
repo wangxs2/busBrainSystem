@@ -36,10 +36,10 @@ export default {
   },
   mounted () {
     this.$nextTick(function () {
-      $('.containererrPage').height($(document).height() - 200);
-      window.onresize = function () {
-        $('.containererrPage').height($(document).height() - 200);
-      }
+      // $('.containererrPage').height($(document).height() - 200);
+      // window.onresize = function () {
+      //   $('.containererrPage').height($(document).height() - 200);
+      // }
     });
   },
   methods: {
@@ -53,9 +53,12 @@ export default {
 <style scoped>
 .containererrPage {
   width: 100%;
+  height:100%;
   background: #fff;
-  padding-top: 100px;
+  padding-top: 200px;
   box-sizing: border-box;
+   background: url("~@/assets/image/home/bj.png");
+    background-size: 100% 100%;
 }
 .errPage-container {
   width: 800px;
