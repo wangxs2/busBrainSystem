@@ -31,11 +31,13 @@ const user = {
     dataArrLine:[],
     stationHeat:[],//站点客流的热力图
     regionData:[],//区域客流
+  
   },
   mutations: {
     SET_KLSTATION:(state, allStation) => { //站点客流
       state.allStation = allStation
     },
+   
     SET_REGIONDATA:(state, regionData) => { //区域客流
       state.regionData = regionData
     },

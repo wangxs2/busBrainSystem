@@ -1,19 +1,10 @@
 <template>
   <div class="treeleft">
-    <!-- <div @click="show(item,n)" v-for="(item,n) in menuData" :key="item.id" class="one-meanu">
-      <div  :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
-      <div v-if="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>
-      <div class="sonmenu-box" v-show="meauindex==n">
-        <div class="son-name" v-for="(iteam,index) in item.children" :key="index">{{iteam.name}}</div>
-      </div>
-    </div>-->
-
     <el-dropdown @command="changemenu" v-for="(item,n) in menuData" :key="item.id">
       <div class="one-meanu">
         <div :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
         <div v-if="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>
       </div>
-
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item :command="{iteam,n}" v-for="(iteam) in item.children" :key="iteam.id">
           <div class="son-name">{{iteam.name}}</div>
@@ -136,8 +127,16 @@ export default {
     
   },
   mounted(){
+
     if(getCookie('meauindexnow')){
       this.meauindex=getCookie('meauindexnow')
+    }else{
+      let str=this.$route.matched[1].name
+      this.$store.getters.menuData.forEach((iteam,index)=>{
+          if(iteam.name==str){
+            this.meauindex=index
+          }
+      })
     }
   },
   methods: {

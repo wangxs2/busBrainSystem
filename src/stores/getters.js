@@ -32,5 +32,6 @@ const getters = {
   dataArrLine: state => state.user.dataArrLine,
   stationHeat: state => state.user.stationHeat,
   regionData: state => state.user.regionData,
+  codeMeau: state => state.permission.codeMeau,
 }
 export default getters

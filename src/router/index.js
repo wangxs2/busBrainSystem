@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Layout from '@/views/layout/index'
 import login from '@/views/login/index'
 
+import errorPage from '@/views/errorPage/index'
 import HOME from '@/views/home/index'
 import lineCharacteristics from '@/views/lineCharacteristics/index'
 import roadDistribution from '@/views/lineCharacteristics/roadDistribution/index'
@@ -28,6 +29,12 @@ export const constantRouterMap = [
     path: '/forgetPwd',
     name: 'forgetPwd',
     component: forgetPwd
+  },
+  {
+    
+    path: '/errorPage',
+    name: 'errorPage',
+    component: errorPage
   },
   {
     path: '/home',

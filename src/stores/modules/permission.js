@@ -11,7 +11,7 @@ import {
 const _import = require('@/router/_import_' + process.env.NODE_ENV)
 // console.log(process.env.NODE_ENV)
 const localList = `
-,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
+,/errorPage,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
 ` //本地列表 注意最后加逗号
 
 /**
@@ -23,7 +23,7 @@ function filterAsyncMenu (pid, json) {
     if (item.pid === pid) {
       if (localList.indexOf(item.url + ',') == -1 || item.url === '') {
         //判断是否本地页面 不是去错误页面
-        item.url = '/error'
+        item.url = '/errorPage'
       }
       arr.push(item)
       item.children = filterAsyncMenu(item.id, json)
@@ -65,8 +65,12 @@ const permission = {
     menuData: [], //菜单数据
     routers: constantRouterMap, //路由表
     addRouters: [], //动态路由表
+    codeMeau:'',//菜单的CODE
   },
   mutations: {
+    SET_CODEMEAU:(state, codeMeau) => { //菜单的CODE
+      state.codeMeau = codeMeau
+    },
     SET_MENU: (state, menuData) => { //菜单
       state.menuData = menuData
     },
@@ -82,7 +86,9 @@ const permission = {
     }) {
 
       return new Promise((resolve, reject) => {
-        fetchGet('auths/menu').then(res => {
+        fetchGet('auths/menu',{
+          code:state.codeMeau
+        }).then(res => {
           if (!res) {
             resolve(1)
             return

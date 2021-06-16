@@ -8,35 +8,35 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_1.png" />
             线路总数
           </div>
-          <div>264条</div>
+          <div>{{objline['线路总数']}}条</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
             线路总长
           </div>
-          <div>4422.75公里</div>
+          <div>{{objline['线路总长']}}公里</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
             线路重复系数
           </div>
-          <div>2.42</div>
+          <div>{{objline['线路重复系数']}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             线网密度
           </div>
-          <div>10.14</div>
+          <div>{{objline['线网密度(建成区)']}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
             线网长度
           </div>
-          <div>3650.5公里</div>
+          <div>{{objline['线网长度']}}公里</div>
         </div>
       </div>
     </div>
@@ -104,6 +104,7 @@ export default {
           id: 2
         }
       ],
+      objline:{},
       islist: 1,
       lineaData: [
         {
@@ -195,6 +196,7 @@ export default {
   },
   beforeCreate() {},
   created() {
+    this.getLinelength()
     this.getAllLine()
      
   },
@@ -205,6 +207,11 @@ export default {
       this.islist = row.id;
     },
     getAllLine(){
+      
+      this.$fetchGet("route/baseTotal").then(res =>{
+        this.objline=res.result
+
+      })
       this.$fetchGet("route/lineSegment").then(res => {
         let dataArr=[]
         for(let key  in res.result){
@@ -257,11 +264,16 @@ export default {
             lastArr.push(opl)
           })
         })
-        console.log(lastArr)
         this.$store.commit('SET_ARRLINE',lastArr)
         setTimeout(()=>{
           this.$store.commit('SET_LOADING',false)
         },500)
+
+      })
+    },
+    getLinelength(){ 
+      this.$fetchGet("route/baseLineMessage").then(res =>{
+        
 
       })
     },

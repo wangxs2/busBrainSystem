@@ -11,12 +11,12 @@
        <menu-nav></menu-nav>
      </div>
    </div>
-   <!-- <div class="routelist">
+   <div class="routelist">
      <div  :class="getRouterName.name==item.name?'parallelogram parallelogram1':'parallelogram'" v-for="(item,index) in quc($store.getters.userRole)" :key="index">
        <div @click="topath(item)" class="fontroute">{{ item.name }}</div>
         <div v-if="getRouterName.name!==item.name" @click="deleroute(item,index)" style="font-size:12px;margin-left:0.5vw"  class="fontroute iconfont iconguanbi"></div>
       </div>
-   </div> -->
+   </div>
   </div>
 </template>
 
@@ -53,7 +53,6 @@ export default {
    watch:{
     myallroute:{
       handler(val,oldval){
-        console.log(val,420141)
       },
     },
     '$route':{
@@ -100,6 +99,15 @@ export default {
 };
 </script>
 <style lang="scss">
+ .search-box{
+    .el-input__inner {
+      background: rgba(26, 66, 118, 0.2) !important;
+      color: #dae4ff !important;
+      border: 1px solid #27B6FF !important;
+      box-shadow: 0px 0px vh(6) rgba(39, 182, 255, 0.8) inset !important;
+    }
+
+ }
 </style>
 <style lang="scss" scoped>
 .layout{

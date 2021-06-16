@@ -53,6 +53,15 @@ export default {
        }
       },
     },
+    '$store.getters.dataArrLine':{
+      handler(val,oldval){
+       if(val){
+        MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
+        MyMap.pathSimplifierIns.show()
+       }
+      },
+
+    },
     '$store.getters.threeMap2':{
       handler(val,oldval){
        if(val){
@@ -176,11 +185,10 @@ export default {
               
               break;
           case "公交站点":
-          
               MyMap.isTraffic(false)
-                 if(MyMap.infoWindow){
-              MyMap.infoWindow.close()
-            }
+                if(MyMap.infoWindow){
+                  MyMap.infoWindow.close()
+                }
               if(MyMap.mass){
                 MyMap.isMass(true)
                 MyMap.overlayGroups.show()
@@ -190,8 +198,8 @@ export default {
                   MyMap.kyLineOver.hide()
                 }
                 if(MyMap.pathSimplifierIns){
-                MyMap.pathSimplifierIns.setData(null)
-              }
+                  MyMap.pathSimplifierIns.setData(null)
+                }
               break;
           case "公交线路网":
               
@@ -207,10 +215,8 @@ export default {
                  MyMap.keyunLaneGroups.hide()
                   MyMap.kyLineOver.hide()
                 }
-                setTimeout(()=>{
-                  
+               setTimeout(()=>{
                   MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
-                  MyMap.pathSimplifierIns.show()
                 },1000)
               
               

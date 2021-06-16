@@ -30,7 +30,7 @@
             </div>
             <el-form-item style="margin-bottom:0;margin-top:18px">
             <!-- @click="login('loginForm')" -->
-              <el-button :loading="subLoad" style="background: #4578FF;" type="primary" @click="login('loginForm')">登录</el-button>
+              <el-button :loading="subLoad" style="background: #4578FF;" type="primary" @click="login('loginForm')">登 录</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -236,9 +236,10 @@ export default {
                 // this.$store.commit("SET_ROLECODE", res.result.role[0].code);
                 //  this.$router.push("/lineCharacteristics");
                 this.$message.success('登陆成功')
-                this.$router.push("/system/users");
+                // this.$router.push("/system/users");
+                this.$router.push("/home");
               } else {
-                this.$message.error(res.message)
+                this.$message.error(res.info)
               }
             })
             .catch(res => {
@@ -255,17 +256,16 @@ export default {
 };
 </script>
 <style lang="scss">
-.login .login-content .title-form .input-form .el-form-item .el-input{
-  background: rgba(255, 255, 255, 0.06) !important;
-  border:none!important;
-  //  border: 1px solid #5D89FF !important;
-    // box-shadow: 0px 0px vh(6) rgba(39, 182, 255, 0.8) inset !important;
+.login .login-content .title-form .input-form .el-form-item .el-input[data-v-37dfd6fc]{
+   background: rgba(26, 66, 118, 0.2) !important;
+  border: none!important;
 }
 .login {
   .el-input__inner {
    background: rgba(26, 66, 118, 0.2) !important;
-    // color: #dae4ff !important;
+    border: 1px solid #5D89FF!important;
       line-height: vh(44);
+      color: #FFFFFF!important;
     height: vh(44);
   }
   .el-input__prefix {
@@ -317,12 +317,12 @@ export default {
         font-family: Microsoft YaHei;
         color: #ffffff;
         text-align: center;
-        margin-top: vh(46);
+        margin-top: vh(40);
         margin-bottom: 0;
       }
       .input-form {
         width: vw(360);
-        margin-top: vh(20);
+        margin-top: vh(35);
         .el-form-item {
           .el-input {
             position: relative;

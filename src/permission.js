@@ -61,6 +61,8 @@ router.beforeEach((to, from, next) => {
     next('/login')
     return
   } else {
+    store.commit('SET_CODEMEAU', getCookie('meaucode'))
+    console.log(getCookie('meaucode'))
     if (store.getters.userId !== getCookie('user') + '') {
       //判断是否拉取用户信息 权限
 
