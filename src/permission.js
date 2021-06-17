@@ -14,33 +14,8 @@ NProgress.configure({
   showSpinner: false
 })
 
-function quc(arrays){
-  var result = [];
-
-  var obj = {};
-
-  for(var i =0; i<arrays.length; i++){
-
-      if(!obj[arrays[i].name]){
-
-        result.push(arrays[i]);
-
-        obj[arrays[i].name] = true;
-
-      }
-
-  }
-  return result
-}
-
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条开始
- 
-  
-
-
-
-
   console.log('我在promise456')
   store.commit('SET_LOADING',true)
   let arour=[]
@@ -59,20 +34,9 @@ router.beforeEach((to, from, next) => {
     return
   } else {
     store.commit('SET_CODEMEAU', getCookie('meaucode'))
-    console.log(store.getters.routehistroy)
-    if(store.getters.userRole[0]==undefined){
-      store.commit('SET_ROUTEHISTROY',[])
-    }
-    if (store.getters.userRole.length == 0) {
-      store.getters.routehistroy.push(to.matched[2])
-    }else if(to.matched[2]==undefined){
-      return
-    }else{
-      store.getters.routehistroy.push(to.matched[2])
-    }
+    store.getters.routehistroy.push(to.matched[2])
     if (store.getters.userId !== getCookie('user') + '') {
       //判断是否拉取用户信息 权限
-
       store.commit('SET_ID', getCookie('user'))
       // store.commit('SET_NAME', getCookie('userName'))
       store

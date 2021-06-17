@@ -79,8 +79,10 @@ export default {
     '$store.getters.keyunData':{
       handler(val,oldval){
        if(val){
-          MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData,2))
-          MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData1,1))
+         let arr=this.$store.getters.keyunData.concat(this.$store.getters.keyunData1)
+         MyMap.addGjMarker(arr)
+          // MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData,2))
+          // MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData1,1))
           MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
        }
       },

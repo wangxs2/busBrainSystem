@@ -63,12 +63,14 @@ export default {
   methods: {
     quc(arrays){
       console.log(this.$store.getters.routehistroy)
+      let arryw=this.detauilun(arrays)
+      console.log(arryw)
       var result = [];
       var obj = {};
-      for(var i =0; i<arrays.length; i++){
-          if(!obj[arrays[i].name]){
-            result.push(arrays[i]);
-            obj[arrays[i].name] = true;
+      for(var i =0; i<arryw.length; i++){
+          if(!obj[arryw[i].name]){
+            result.push(arryw[i]);
+            obj[arryw[i].name] = true;
           }
       }
       return result
@@ -76,11 +78,25 @@ export default {
     topath(row){
       this.$router.push(row.path);
     },
+    //删掉undedined
+    detauilun(data){
+      let arr=[]
+      data.forEach((iteam,index)=>{
+        if(iteam!==undefined){
+          arr.push(iteam)
+
+        }
+        
+        
+      })
+      console.log(arr)
+      return arr
+
+    },
     deleroute(row,index){
       let arr=this.quc(this.$store.getters.routehistroy)
       let arr1=arr.splice(index,1)
       this.$store.commit('SET_ROUTEHISTROY', arr)
-    
     }
   }
 };

@@ -14,10 +14,12 @@ export default class Map {
             polygonThree1:null,//500
             polygonThree2:null,//500
             pathSimplifierIns:null,
+            
             overlayGroups:new AMap.OverlayGroup(),//站点300米和500米的集合
             overlayGroups1:new AMap.OverlayGroup(),//站点300米和500米的集合
             busLaneGroups:new AMap.OverlayGroup(),//公交专用道
             kyLinedata:null,
+            layerky:null,
             kyLineOver:new AMap.OverlayGroup(),//客运走廊
             keyunLaneGroups:new AMap.OverlayGroup(),//客运走廊
             map: null, // 地图实例
@@ -53,6 +55,13 @@ export default class Map {
         mapStyle:'amap://styles/d67717253a691e523956e9482ca38f1e',
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
+      this.layerky = new AMap.LabelsLayer({
+            zooms: [3, 20],
+            zIndex: 1000,
+            collision: false
+        });
+        // 将图层添加到地图
+      this.map.add(this.layerky);
        this.map.on("moveend", () => {
         
        })
@@ -295,6 +304,7 @@ export default class Map {
         strokeColor: "#35A594",
         strokeOpacity: 1,
         strokeWeight: 8,
+        zIndex:20,
         strokeStyle: "solid",
       })
       kyLinedata.on('click',(e)=>{
@@ -314,7 +324,7 @@ export default class Map {
         strokeColor: "#35A594",
         strokeOpacity: 1,
         strokeWeight: 8,
-        zIndex:20,
+     
         strokeStyle: "solid",
       })
       this.map.add(kyLinedata);
@@ -323,29 +333,34 @@ export default class Map {
   
   }
   //客运走廊的公交站点内
-  addGjMarker(data,type) {
-    let markers=[]
+  addGjMarker(data) {
+    let markers = [];
     data.forEach(iteam=>{
-      let markerky = new AMap.Marker({
-          icon:new AMap.Icon({
-              image:type==1?require('../assets/image/icon_dt1.png'):require('../assets/image/icon_gj1.png'),
-              size:new AMap.Size(32,32),
-              imageSize:new AMap.Size(32,32)
-          }),
-          position: [type==1?iteam.lon:iteam.longitude,type==1?iteam.lat:iteam.latitude],
-          map:this.map,
-          cursor: 'pointer',
-          zIndex:500,
-          offset: new AMap.Pixel(-13, -30)
-      });
-      markerky.on('click', (e) => {
-        console.log(78952)
-        // this.searchStation(iteam.stationName,marker.getPosition()) 
-      });
-      // marker.setMap(this.map);
-      markers.push(markerky)
+
+      var curPosition = iteam.lnglat;
+      var curData = {
+          position: curPosition,
+          icon: {
+            type: 'image',
+            image: iteam.type=="mmap"?require('../assets/image/icon_dt1.png'):require('../assets/image/icon_gj1.png'),
+            size: [32,32],
+             imageSize:new AMap.Size(32,32),
+            anchor: 'bottom-center',
+          }
+      };
+      var labelMarker = new AMap.LabelMarker(curData);
+
+      markers.push(labelMarker);
+
+      labelMarker.on('click', (e) => {
+         console.log('客运走廊的点')
+        this.searchStation(iteam.stationName,curPosition) 
+      });
+
     })
-    return markers
+    this.layerky.add(markers);
+
+   
   }
   //判断距离的
   juradius(lnglat,lnglat1){
@@ -433,9 +448,6 @@ export default class Map {
    //客运走廊的点
   addOverlayGroup3(Groups){
     this.keyunLaneGroups.addOverlays(Groups)
-    this.keyunLaneGroups.on('click',(e)=>{
-      console.log(788)
-    })
   }
     //客运走廊的线
     addOverlayGroup4(Groups){

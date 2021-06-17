@@ -10,7 +10,7 @@
             <div class="zhandian" v-for="(iteam,n) in slinedata" :key="n">
                 <div class="zhnadiason" style="margin-right:0.2vw">{{iteam.name}}</div>
                 <div class="zhnadiason zhnadiason1">
-                    <div class='zhnadiasonla' @click="datastation(itam)" v-for="(itam,index) in removal(iteam.station)" :key="index">
+                    <div class='zhnadiasonla' @click="datastation(itam)" v-for="(itam,index) in (iteam.station)" :key="index">
                         {{itam.stationName}}
                     </div>
                 </div>
@@ -26,7 +26,7 @@
             <div class="zhandian" v-for="(iteam,n) in mlinedata" :key="n">
                 <div class="zhnadiason" style="margin-right:0.2vw">{{iteam.name}}</div>
                 <div class="zhnadiason zhnadiason1">
-                    <div class='zhnadiasonla' @click="datastation(itam)" v-for="(itam,index) in removal(iteam.station)" :key="index">
+                    <div class='zhnadiasonla' @click="datastation(itam)" v-for="(itam,index) in (iteam.station)" :key="index">
                         {{itam.stationName}}
                     </div>
                 </div>
@@ -56,43 +56,7 @@ export default {
   },
   data() {
     return {
-      lineData:[
-          {
-              name:'81路',
-              station:[
-                  {
-                      name:'昌邑路桃林路'
-                  },{
-                      name:'通耀路耀龙路'
-                  },{
-                      name:'金苏路新金桥路'
-                  },{
-                      name:'小路'
-                  },
-              ]
-          },
-          {
-              name:'上川专线',
-              station:[
-                  {
-                      name:'老北门'
-                  },{
-                      name:'真南路'
-                  }
-              ]
-          },
-          {
-              name:'上川专线',
-              station:[
-                  {
-                      name:'老北门'
-                  },{
-                      name:'真南路'
-                  }
-              ]
-          }
-
-      ],
+      lineData:[],
       mlinedata:{},
       slinedata:{},
     };
@@ -138,6 +102,8 @@ export default {
                 obj.name=key
                 obj.station=(res.result.mmap[key])
                 obj.station.forEach(element => {
+                    element.lnglat=[element.lon,element.lat]
+                    element.type="mmap"
                     allStation.push(element)
                 });
                 mdata.push(obj)
@@ -147,12 +113,14 @@ export default {
                 obj.name=key
                 obj.station=(res.result.smap[key])
                  obj.station.forEach(element => {
+                     element.type="smap"
+                     element.lnglat=[element.longitude,element.latitude]
                     allStation1.push(element)
                 });
                 sdata.push(obj)
             }
-            this.$store.commit('SET_KEYUNDATA', this.removal(allStation1))
-            this.$store.commit('SET_KEYUNDATA1', this.removal(allStation))
+            this.$store.commit('SET_KEYUNDATA', (allStation1))
+            this.$store.commit('SET_KEYUNDATA1', (allStation))
             // console.log(this.$store.getters.keyunData)
             this.setTwo(res.result.corridorList)
             this.mlinedata=mdata
