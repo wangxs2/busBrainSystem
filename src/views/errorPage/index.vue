@@ -57,8 +57,8 @@ export default {
   background: #fff;
   padding-top: 200px;
   box-sizing: border-box;
-   background: url("~@/assets/image/home/bj.png");
-    background-size: 100% 100%;
+  background: url("~@/assets/image/home/bj.png");
+  background-size: 100% 100%;
 }
 .errPage-container {
   width: 800px;
