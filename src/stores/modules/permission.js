@@ -9,7 +9,6 @@ import {
   getCookie
 } from '@/libs/util'
 const _import = require('@/router/_import_' + process.env.NODE_ENV)
-// console.log(process.env.NODE_ENV)
 const localList = `
 ,/errorPage,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/passengerCorridor,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
 /passengerAnalysis,/passengerAnalysis/linePassenger,/passengerAnalysis/sectionPassenger,/passengerAnalysis/stationPassenger,/passengerAnalysis/regionPassenger,
@@ -52,8 +51,6 @@ function filterAsyncRouter (menusaData) {
       obj.component = _import('errorPage/index')
     } else {
       obj.path = item.url
-      // console.log(item.url)
-      // console.log(item.url.slice(1))
       obj.component = _import(item.url.slice(1) + '/index')
     }
     obj.name = item.name
@@ -98,8 +95,6 @@ const permission = {
           asyncRouterMap[0].children = filterAsyncRouter(menuData.slice(0))
           let routerData = asyncRouterMap
           commit('SET_MENU', menuData)
-          console.log(menuData)
-          console.log(routerData)
           commit('SET_ROUTERS', routerData)
           resolve({
             menuData,

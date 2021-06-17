@@ -530,7 +530,6 @@ export default {
       this.dialogform = true;
     },
     updateAuth (row) {
-      console.log(row)
       //更新权限
       this.timeFlag = 0;
       this.isAction = "update";

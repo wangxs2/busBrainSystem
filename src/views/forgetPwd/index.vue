@@ -230,7 +230,6 @@ export default {
       if (userPhone) {
         this.disabledBtn = true
         this.$fetchGet('traffic-investment/sys/sendVeriCode', { number: this.phoneDxForm.number }).then(res => {
-          console.log(res)
           if (res.code == 200) {
             this.$message.success(res.message)
           } else {
@@ -253,7 +252,6 @@ export default {
         if (valid) {
           this.$fetchGet('traffic-investment/sys/checkVeriCode', { number: this.phoneDxForm.number, veriCode: this.phoneDxForm.veriCode }).then(res => {
             this.subLoadDxCode = false
-            console.log(res)
             if (res.code == 200) {
               this.resetPwd = false
               this.username = res.result.username

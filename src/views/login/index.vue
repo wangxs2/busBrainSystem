@@ -100,7 +100,6 @@ export default {
     }
   },
   created(){
-    console.log(new Date().getDate())
     document.cookie = "metabase.SESSION=" + 'bbbdab37-2391-4bb9-87cf-7577228638f07879';
   },
   mounted() {
@@ -216,7 +215,6 @@ export default {
             .then(res => {
               this.subLoad = false;
               if (res.status == 'success') {
-                console.log(789)
                 document.cookie = "flag=true";
                 document.cookie = "user=" + res.info.id;
                 // document.cookie = "userName=" + res.result.userInfo.username;

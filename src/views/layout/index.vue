@@ -31,7 +31,6 @@ export default {
   },
   computed: {
     getRouterName:  function() {
-      // console.log(this.$route)
      return this.$route.matched[2].name
     },
     // myallroute:function(){
@@ -62,9 +61,7 @@ export default {
   },
   methods: {
     quc(arrays){
-      console.log(this.$store.getters.routehistroy)
       let arryw=this.detauilun(arrays)
-      console.log(arryw)
       var result = [];
       var obj = {};
       for(var i =0; i<arryw.length; i++){
@@ -89,7 +86,6 @@ export default {
         
         
       })
-      console.log(arr)
       return arr
 
     },

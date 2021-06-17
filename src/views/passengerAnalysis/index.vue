@@ -98,7 +98,6 @@ export default {
               obj[arr[i].key] = true;
             }
         }
-        console.log(result);
 
     },
     lins(){
@@ -173,11 +172,8 @@ export default {
           case "区域客流":
             if(MyMap.zdklMapOption.heat.getDataSet()){
               MyMap.zdklMapOption.heat.hide()
-              console.log(this.$store.getters.allStation)
               for(let key  in this.$store.getters.allStation){
                   MyMap.zdklMapOption.mass[key].hide()
-                  // MyMap.zdklMapOption.mass[key].setData(null)
-                  console.log(MyMap.zdklMapOption.mass[key])
                 }
             }
             setTimeout(()=>{

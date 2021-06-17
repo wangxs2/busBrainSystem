@@ -97,7 +97,6 @@ export default class Map {
       } else if ((iteam.sd + iteam.sp) > 30000) {
         iconm = require('../../assets/image/red.png')
       }
-      // console.log(iconm)
       var marker = new AMap.Marker({
         position: [iteam.centerLongitude, parseFloat(iteam.centerLatitude)],
         // 将 html 传给 content background: url(icon)

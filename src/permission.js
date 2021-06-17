@@ -16,7 +16,6 @@ NProgress.configure({
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条开始
-  console.log('我在promise456')
   store.commit('SET_LOADING',true)
   let arour=[]
   let routenow = to.matched.slice(2)[0]
@@ -42,7 +41,6 @@ router.beforeEach((to, from, next) => {
       store
         .dispatch('GenerateRoutes')
         .then(res => {
-          // console.log(res)
           if (res == 1) {
             Message.error({
               message: '权限错误,请重新登录！'

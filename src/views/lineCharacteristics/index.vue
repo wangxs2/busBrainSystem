@@ -44,11 +44,7 @@ export default {
             MyMap.isTraffic(false)
          }
          MyMap.pointAll3(val)
-        //  MyMap.threeCircle(val,300)
-          //  MyMap.addPolygon(this.$store.getters.threeMap)
-          // MyMap.addOverlayGroup(MyMap.threeCircle(val.slice(1,50),300))
-          // this.radiusAll=MyMap.threeCircle(val.slice(1,50),300)
-          // console.log(this.radiusAll)
+      
          
        }
       },
@@ -79,10 +75,8 @@ export default {
     '$store.getters.keyunData':{
       handler(val,oldval){
        if(val){
-         let arr=this.$store.getters.keyunData.concat(this.$store.getters.keyunData1)
-         MyMap.addGjMarker(arr)
-          // MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData,2))
-          // MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData1,1))
+          let arr=this.$store.getters.keyunData.concat(this.$store.getters.keyunData1)
+          MyMap.addGjMarker(arr)
           MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
        }
       },
@@ -97,7 +91,6 @@ export default {
   },
   created(){
    
-    // console.log(yuarr)
     
     
   },
@@ -132,16 +125,13 @@ export default {
     judgeradius(){
       
       let dataAll=this.group(this.$store.getters.userStation,100)
-      console.log(dataAll)
       let myar=[],myar1=[]
       dataAll.forEach(iteam=>{
         myar.push(this.judeRadius(iteam))
-        console.log(myar)
         myar.forEach(itam=>{
          myar1.push(itam)
         })
       })
-      console.log(myar1)
        //第一次遍历数组
         
     },
@@ -172,18 +162,21 @@ export default {
             }
             MyMap.isTraffic(true)
             MyMap.infoWindow.close()
-             if(MyMap.mass){
-                MyMap.isMass(false)
+            if(MyMap.mass){
+                console.log('测试是否进来了道路网')
+                MyMap.mass.hide()
                 MyMap.overlayGroups.hide()
-              }
-              if(MyMap.keyunLaneGroups.getOverlays().length>0){
-                 MyMap.keyunLaneGroups.hide()
+                MyMap.polygonLine.hide()
+            }
+            if(MyMap.kyLineOver.getOverlays().length>0){
+                 MyMap.layerky.hide()
                   MyMap.kyLineOver.hide()
+                  MyMap.overlayGroups.hide()
             }
 
-             if(MyMap.pathSimplifierIns){
+            if(MyMap.pathSimplifierIns){
                 MyMap.pathSimplifierIns.setData(null)
-              }
+            }
               
               break;
           case "公交站点":
@@ -192,31 +185,34 @@ export default {
                   MyMap.infoWindow.close()
                 }
               if(MyMap.mass){
-                MyMap.isMass(true)
+                // MyMap.isMass(true)
+                MyMap.mass.show()
                 MyMap.overlayGroups.show()
               }
-              if(MyMap.keyunLaneGroups.getOverlays().length>0){
-                 MyMap.keyunLaneGroups.hide()
+              if(MyMap.kyLineOver){
+                 MyMap.layerky.hide()
                   MyMap.kyLineOver.hide()
-                }
-                if(MyMap.pathSimplifierIns){
+              }
+              if(MyMap.pathSimplifierIns){
                   MyMap.pathSimplifierIns.setData(null)
-                }
+              }
               break;
           case "公交线路网":
               
-              MyMap.isTraffic(false)
+            MyMap.isTraffic(false)
                  if(MyMap.infoWindow){
               MyMap.infoWindow.close()
             }
               if(MyMap.mass){
-                MyMap.isMass(false)
+                MyMap.mass.hide()
                 MyMap.overlayGroups.hide()
+                // MyMap.overlayGroups.hide()
+                MyMap.polygonLine.hide()
               }
-             if(MyMap.keyunLaneGroups.getOverlays().length>0){
-                 MyMap.keyunLaneGroups.hide()
+            if(MyMap.kyLineOver.getOverlays().length>0){
+                 MyMap.layerky.hide()
                   MyMap.kyLineOver.hide()
-                }
+              }
                setTimeout(()=>{
                   MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
                 },1000)
@@ -226,14 +222,20 @@ export default {
           case "公交专用道":
               MyMap.isTraffic(false)
               MyMap.infoWindow.close()
+              //隐藏公交站点里面的数据
               if(MyMap.mass){
-                MyMap.isMass(false)
+                console.log('测试是否进来了公交专用道')
+                MyMap.mass.hide()
+                // MyMap.overlayGroups.hide()
                 MyMap.overlayGroups.hide()
+                MyMap.polygonLine.hide()
               }
-               if(MyMap.keyunLaneGroups.getOverlays().length>0){
-                 MyMap.keyunLaneGroups.hide()
-                  MyMap.kyLineOver.hide()
-                }
+              //隐藏客运走廊里面的数据
+              if(MyMap.kyLineOver.getOverlays().length>0){
+                MyMap.layerky.hide()
+                MyMap.kyLineOver.hide()
+              }
+              //隐藏公交线网里面的数据
               if(MyMap.pathSimplifierIns){
                 MyMap.pathSimplifierIns.setData(null)
               }
@@ -241,64 +243,38 @@ export default {
               break;
           case "客运走廊":
               MyMap.isTraffic(false)
-                 if(MyMap.infoWindow){
+              if(MyMap.infoWindow){
                   MyMap.infoWindow.close()
-                }
-              if(MyMap.mass){
-                MyMap.isMass(false)
-                MyMap.overlayGroups.hide()
               }
-                if(MyMap.pathSimplifierIns){
+              if(MyMap.mass){
+                console.log('测试是否进来了客运走廊')
+                console.log(MyMap.mass)
+                MyMap.mass.hide()
+                MyMap.overlayGroups.hide()
+                // MyMap.overlayGroups.hide()
+                MyMap.polygonLine.hide()
+              }
+               //隐藏公交线网里面的数据
+              if(MyMap.pathSimplifierIns){
                 MyMap.pathSimplifierIns.setData(null)
               }
               MyMap.heatmap.hide()
-              let strky=MyMap.keyunLaneGroups.getOverlays()
+              let strky=MyMap.kyLineOver.getOverlays()
               
                if(strky.length>0){
-                  MyMap.keyunLaneGroups.show()
+                  MyMap.layerky.show()
                   MyMap.kyLineOver.show()
                 }else{
-                    MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData,2))
-                    MyMap.addOverlayGroup3(MyMap.addGjMarker(this.$store.getters.keyunData1,1))
+                   let arr=this.$store.getters.keyunData.concat(this.$store.getters.keyunData1)
+                    MyMap.addGjMarker(arr)
                     MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
                 }
-            
               break;
           default:
           } 
     },
     sonClick(row){
-      // if(row.isbtn&&row.isbtn==1){
-      //   MyMap.overlayGroups.show()
-      //  MyMap.overlayGroups1.hide()
-      // }else if(row.isbtn==2){
-      //   let str=MyMap.overlayGroups1.getOverlays()
-      //   if(str.length>0){
-      //     MyMap.overlayGroups.hide()
-      //     MyMap.overlayGroups1.show()
-      //   }else{
-      //     MyMap.overlayGroups.hide()
-      //     MyMap.addOverlayGroup1(MyMap.threeCircle(this.$store.getters.userStation.slice(1,2),500))
-      //   }
-      // }
-
-
-      if(row.isbtn==1){
-        MyMap.polygonThree.show()
-        MyMap.polygonThree1.hide()
-      }else if(row.isbtn==2){
-        if(MyMap.polygonThree1){
-          MyMap.polygonThree.hide()
-          MyMap.polygonThree1.show()
-        }else{
-          MyMap.polygonThree.hide()
-          MyMap.addPolygon1(this.$store.getters.threeMap1)
-        }
-
-      }
-
-
-
+ 
 
       if(row.ispoint==1){
         MyMap.isMass(true)
@@ -327,6 +303,20 @@ export default {
         MyMap.infoWindow.open(MyMap.map,[row.stattiondetail.longitude,row.stattiondetail.latitude]);
         MyMap.map.getFitZoomAndCenterByBounds([row.stattiondetail.longitude,row.stattiondetail.latitude],[0,0,0,0])
       }
+
+      if(row.adminArea){
+        MyMap.createPolygon(row.adminArea)
+        MyMap.addOverlayGroup(MyMap.threeCircle(this.$store.getters.userStation,300))
+
+
+       
+
+      }
+
+       if(row.isbtn){
+          MyMap.setRadius(row.isbtn)
+        }
+       
     },
     separateArr(data, n) {
           //获取要切割的数组的长度

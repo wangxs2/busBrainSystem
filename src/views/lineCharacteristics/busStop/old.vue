@@ -2,12 +2,12 @@
   <div class="busStop-box">
     <div class="search-box">
       <div style="margin-right:0.8vw">行政区域</div>
-      <el-select style="margin-right:1.5vw" clearable  filterable @change="getpatharea" size="small" v-model="value" placeholder="请选择">
+      <el-select style="margin-right:1.5vw" filterable @change="getpatharea" size="small" v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
-          :key="item.regionName"
-          :label="item.regionName"
-          :value="item.regionName"
+          :key="item.constantName"
+          :label="item.constantName"
+          :value="item.constantName"
         ></el-option>
       </el-select>
 
@@ -46,7 +46,7 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
             {{isbtn}}米站点覆盖面积
           </div>
-          <div>{{Number(listMsg.num).toFixed(2)}}{{listMsg.unit}}</div>
+          <div>4422.75公里</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
@@ -96,7 +96,6 @@ export default {
       isbtn:300,
       point:1,
       isheat:1,
-      adminArea:[],
       data:[
         [116.40537166077495,39.89448780861658],
         [116.412076,39.899135],
@@ -109,12 +108,9 @@ export default {
   },
   beforeCreate() {},
   created() {
-    
+    this.pointAll()
   },
   mounted() {
-    this.pointAll()
-    this.getAreaData()
-    this.getAreaLine()
   },
   methods: {
     querySearch(queryString, cb) {
@@ -145,36 +141,18 @@ export default {
     },
     tobtn(row){
       this.isbtn=row.name
-      this.getAreaData()
       this.$emit('changefun',{
           isbtn:row.name
       })
     },
     getpatharea(){
       let arr=[]
-      if(this.value==''){
-        this.$store.commit('SET_STATION',this.restaurants)
-      }else{
-
-        let obj={}
-        this.options.forEach(iut=>{
-          if(iut.regionName==this.value){
-            obj=iut
-          }
-        })
-        this.restaurants.forEach(iteam=>{
-          if(iteam.regionName==this.value){
-            arr.push(iteam)
-          }
-        })
-        this.$store.commit('SET_STATION',arr)
-        this.$emit('changefun',{
-            adminArea:obj
-        })
-
-      }
-      
-     
+      this.options.forEach(iteam=>{
+        if(this.value==iteam.constantName){
+          arr=JSON.parse(iteam.num)
+        }
+        this.$store.commit('SET_THREEMAP2', arr)
+      })
     },
     allpoint(){
       if(this.point==1){
@@ -196,32 +174,6 @@ export default {
           isheat:this.isheat
       })
     },
-    getAreaData(){
-     
-       this.$fetchGet("indicator/stationCoverArea",{
-        radius:this.isbtn
-      }).then(res => {
-        this.listMsg=res.result.res
-        console.log(this.listMsg.num)
-        // let testar=[],alouy=[],bigDate=[],bigDate1=[]
-        //  for(let key  in res.result){
-        //    if(key!=='res'){
-        //      testar.push(res.result[key])
-        //    }
-        //  }
-        //  this.options=testar
-      
-        
-      });
-
-    },
-    getAreaLine(){
-       this.options=[]
-      this.$fetchGet("passenger/region").then(res => {
-        this.options=res.result
-      })
-
-    },
     pointAll(){
       this.$fetchGet("indicator/stationList").then(res => {
         if(res.result&&res.result['站点的详细属性']){
@@ -240,7 +192,42 @@ export default {
             },2000)
         }
       });  
-     
+      this.$fetchGet("indicator/stationCoverArea",{
+        radius:this.isbtn
+      }).then(res => {
+        this.listMsg=res.result.res
+        // let arrdata=JSON.parse(res.result.geo300.num)
+        // let bigDate=[]
+        // arrdata.forEach(iteam=>{
+        //   let org=[]
+        //   org.push(iteam)
+        //   bigDate.push(org)
+        // })
+        // this.$store.commit('SET_THREEMAP', bigDate)
+        let testar=[],alouy=[],bigDate=[],bigDate1=[]
+         for(let key  in res.result){
+           if(key!=='res'){
+             testar.push(res.result[key])
+           }
+         }
+         
+         
+        //  this.options=testar.concat(alouy)
+        // testar.forEach(iteam=>{
+        //   let org=[]
+        //   org.push(eval(iteam.num))
+        //    bigDate.push(eval(iteam.num))
+        // })
+        // alouy.forEach(iteam=>{
+        //   if(iteam.num!=="["&&JSON.parse(iteam.num).length>0){
+        //     bigDate1.push(JSON.parse(iteam.num))
+        //   }
+        // })
+        
+        // this.$store.commit('SET_THREEMAP', bigDate)
+        // this.$store.commit('SET_THREEMAP1', bigDate1)
+        
+      });
      
     },
     

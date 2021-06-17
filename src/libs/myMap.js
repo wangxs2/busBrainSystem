@@ -9,19 +9,18 @@ export default class Map {
             el: data.el, // 地图容器
             mass:null,//海量点站点
             heatmap:null,//热力图
+            polygonLine:null,//行政区域的范围
             infoWindow:null,//信息窗口
             polygonThree:null,//300
             polygonThree1:null,//500
             polygonThree2:null,//500
             pathSimplifierIns:null,
-            
             overlayGroups:new AMap.OverlayGroup(),//站点300米和500米的集合
             overlayGroups1:new AMap.OverlayGroup(),//站点300米和500米的集合
             busLaneGroups:new AMap.OverlayGroup(),//公交专用道
             kyLinedata:null,
-            layerky:null,
-            kyLineOver:new AMap.OverlayGroup(),//客运走廊
-            keyunLaneGroups:new AMap.OverlayGroup(),//客运走廊
+            layerky:null,//客运走廊的点
+            kyLineOver:new AMap.OverlayGroup(),//客运走廊的线
             map: null, // 地图实例
             mapCenter: [121.460752,31.011182], // 默认地图中心点
             mapLayers: [[new AMap.TileLayer()], [new AMap.TileLayer.Satellite()]],// 图层类型 0标准图层 1卫星图层 , new AMap.TileLayer.RoadNet()
@@ -171,8 +170,8 @@ export default class Map {
       });
       this.trafficLayer.setMap(this.map);
       this.isTraffic(true)
-      this.map.add(this.overlayGroups);
-      this.map.add(this.overlayGroups1);
+      // this.map.add(this.overlayGroups);
+      // this.map.add(this.overlayGroups1);
 
   }
   //is显示公交线网
@@ -280,6 +279,7 @@ export default class Map {
     if(this.polygonThree2){
       this.map.remove(this.polygonThree2)
     }
+    console.log(data)
     this.polygonThree2= new AMap.Polygon({
       path: data,
       fillColor: '#144D95',
@@ -308,7 +308,6 @@ export default class Map {
         strokeStyle: "solid",
       })
       kyLinedata.on('click',(e)=>{
-        console.log("我是谁")
       })
       lines.push(kyLinedata)
       this.map.add(kyLinedata);
@@ -353,7 +352,6 @@ export default class Map {
       markers.push(labelMarker);
 
       labelMarker.on('click', (e) => {
-         console.log('客运走廊的点')
         this.searchStation(iteam.stationName,curPosition) 
       });
 
@@ -397,16 +395,18 @@ export default class Map {
   }
    //渲染站点
   pointAll3(datapoint,type){
+    if(this.mass){
+      this.mass.clear()
+    }
     var style = [
       {
         url: require('../assets/image/alpoint1.png'),
         anchor: new AMap.Pixel(6, 6),
         size: new AMap.Size(11, 11),
-        zIndex: 3,
+        zIndex: 20,
       }];
     this.mass = new AMap.MassMarks(datapoint, {
         opacity: 0.8,
-        zIndex: 60,
         cursor: 'pointer',
         style: style[0]
     });
@@ -420,12 +420,10 @@ export default class Map {
         marker.setLabel({content:null})
     });
     this.mass.on('click',  (e)=> {
-      console.log(e.data)
       http.fetchGet('indicator/stationDetail',{
         code:e.data.stationName,
         direction:e.data.routeDirection
       }).then(res=>{
-        console.log(res)
         this.infoWindow.setContent(this.createInfoWindow(2,res.result))
         this.infoWindow.open(this.map,[e.data.longitude,e.data.latitude]);
         this.map.getFitZoomAndCenterByBounds([e.data.longitude,e.data.latitude],[150, 60, 100, 60])
@@ -433,9 +431,44 @@ export default class Map {
   });
     this.mass.setMap(this.map);
   }
+  //行政区域的范围
+  createPolygon(path) {
+    // let isColor = row.regionBerths - row.sumBicycle
+    if(this.polygonLine){
+      this.map.remove(this.polygonLine)
+    }
+    this.polygonLine = new AMap.Polygon({
+      path: this.setTypedata(path),
+      cursor: "pointer",
+      strokeColor: "#35A594",
+      strokeWeight: 2,
+      bubble :true,
+      strokeOpacity: 1,
+      strokeStyle :'dashed',
+      fillOpacity:0.1,
+      zIndex: 10,
+    });
+    this.map.add(this.polygonLine);
+    this.map.setFitView(this.polygonLine)
+  }
+  setTypedata(row){
+    let str = row.polygonGeom.replace("POLYGON((", "");
+    let str1 = str.replace("))", "");
+    let arr = str1.split(",");
+    let path=[]
+    arr.forEach(iteam => {
+      path.push(
+        new AMap.LngLat(iteam.split(" ")[0], iteam.split(" ")[1])
+      );
+    });
+    return path
+  }
   //300mi 范围集合
   addOverlayGroup(Groups){
-    this.overlayGroups.addOverlay(Groups)
+    
+      this.overlayGroups.addOverlay(Groups)
+    
+    
   }
   //500mi
   addOverlayGroup1(Groups){
@@ -445,14 +478,11 @@ export default class Map {
   addOverlayGroup2(Groups){
     this.busLaneGroups.addOverlays(Groups)
   }
-   //客运走廊的点
-  addOverlayGroup3(Groups){
-    this.keyunLaneGroups.addOverlays(Groups)
-  }
+
     //客运走廊的线
-    addOverlayGroup4(Groups){
-      this.kyLineOver.addOverlays(Groups)
-    }
+  addOverlayGroup4(Groups){
+    this.kyLineOver.addOverlays(Groups)
+  }
   
 
 
@@ -477,46 +507,48 @@ export default class Map {
     return polyAll
   }
 
-  
+  setRadius(num){
+    if(this.overlayGroups.getOverlays().length>0){
+      this.overlayGroups.getOverlays().forEach(iteam=>{
+        iteam.forEach(itam=>{
+          itam.setRadius(num)
+        })
+        
+      })
+    }
+
+  }
   //300米的圆
   threeCircle(data,radius){
+    if(this.overlayGroups){
+      this.overlayGroups.getOverlays().forEach(iy=>{
+        this.map.remove(iy)
+      })
+    }
     let circleAll=[]
     data.forEach(iteam=>{
       if(iteam.longitude!=0&&iteam.latitude!=0&&iteam.longitude!=iteam.latitude){
         var circle = new AMap.Circle({
             center: [iteam.longitude,iteam.latitude],
             radius: radius, //半径
-            borderWeight: 1,
+            borderWeight: 0,
             strokeColor: "", 
             strokeOpacity: 1,
             strokeWeight: 1,
             map:this.map,
             strokeOpacity: 0.1,
-            fillOpacity: 0.5,
+            fillOpacity:1,
             // 线样式还支持 'dashed'
-            fillColor: 'rgba(23,145,252,0.1)',
+            fillColor: '#1A4276',
             zIndex: 10,
         })
+        this.map.add(circle);
         circleAll.push(circle)
         
       }
      
     })
     return circleAll
-
-    // let polygon = new AMap.Polygon({
-    //   path: data,
-    //   fillColor: '#144D95',
-    //   strokeOpacity: 1,
-    //   fillOpacity: 0.5,
-    //   strokeColor: '#144D95',
-    //   strokeWeight: 1,
-    // });
-    // return polygon
-
-
-
-
   }
 
 
