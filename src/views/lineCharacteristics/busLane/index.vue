@@ -19,7 +19,7 @@ export default {
   created() {
     setTimeout(()=>{
       this.$store.commit('SET_LOADING',false)
-    },2000)
+    },1000)
   
   },
   mounted() {

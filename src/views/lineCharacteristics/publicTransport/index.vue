@@ -63,8 +63,8 @@
       <div class="tablbox">
         <div class="bttit bttit1" v-for="(item,n) in lineaData" :key="n">
           <div>{{n+1}}</div>
-          <div>{{item.name}}</div>
-          <div>{{item.id}}</div>
+          <div>{{item.routeName}}</div>
+          <div>{{item.lineLength}}</div>
         </div>
       </div>
     </div>
@@ -106,92 +106,7 @@ export default {
       ],
       objline:{},
       islist: 1,
-      lineaData: [
-        {
-          name: "919",
-          id: 1
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        },
-        {
-          name: "790",
-          id: 42.8
-        }
-      ]
+      lineaData: []
     };
   },
   beforeCreate() {},
@@ -205,6 +120,7 @@ export default {
   methods: {
     tomeay(row) {
       this.islist = row.id;
+      this.lineaData=this.lineaData.reverse()
     },
     getAllLine(){
       
@@ -273,7 +189,7 @@ export default {
     },
     getLinelength(){ 
       this.$fetchGet("route/baseLineMessage").then(res =>{
-        
+        this.lineaData=res.result
 
       })
     },

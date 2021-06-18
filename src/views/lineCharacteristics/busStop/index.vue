@@ -39,35 +39,49 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_1.png" />
             站点总数
           </div>
-          <div>{{restaurants.length}}条</div>
+          <div>{{listMsg['站点总数']}}个</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
-            {{isbtn}}米站点覆盖面积
+            全区300米覆盖面积
           </div>
-          <div>{{Number(listMsg.num).toFixed(2)}}{{listMsg.unit}}</div>
+          <div>{{Number(listMsg['全区300米覆盖面积']).toFixed(2)}}平方公里</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
-            {{isbtn}}米站点覆盖率
+            建成区300米覆盖率
           </div>
-          <div>2.42</div>
+          <div>{{Number(listMsg['建成区300米覆盖率'])}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
-            {{isbtn}}米站点覆盖面积
+            总面积300米覆盖率
           </div>
-          <div>10.14</div>
+          <div>{{Number(listMsg['总面积300米覆盖率'])}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
-            {{isbtn}}米站点覆盖率
+            全区500米覆盖面积
           </div>
-          <div>3650.5公里</div>
+          <div>{{Number(listMsg['全区500米覆盖面积']).toFixed(2)}}平方公里</div>
+        </div>
+         <div class="itmsg">
+          <div class="itmsgs">
+            <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
+            建成区500米覆盖率
+          </div>
+          <div>{{Number(listMsg['建成区500米覆盖率'])}}</div>
+        </div>
+        <div class="itmsg">
+          <div class="itmsgs">
+            <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
+            总面积500米覆盖率
+          </div>
+          <div>{{Number(listMsg['总面积500米覆盖率'])}}</div>
         </div>
       </div>
     </div>
@@ -113,7 +127,6 @@ export default {
   },
   mounted() {
     this.pointAll()
-    this.getAreaData()
     this.getAreaLine()
   },
   methods: {
@@ -145,7 +158,6 @@ export default {
     },
     tobtn(row){
       this.isbtn=row.name
-      this.getAreaData()
       this.$emit('changefun',{
           isbtn:row.name
       })
@@ -197,19 +209,12 @@ export default {
       })
     },
     getAreaData(){
-     
        this.$fetchGet("indicator/stationCoverArea",{
         radius:this.isbtn
       }).then(res => {
         this.listMsg=res.result.res
         console.log(this.listMsg.num)
-        // let testar=[],alouy=[],bigDate=[],bigDate1=[]
-        //  for(let key  in res.result){
-        //    if(key!=='res'){
-        //      testar.push(res.result[key])
-        //    }
-        //  }
-        //  this.options=testar
+     
       
         
       });
@@ -240,6 +245,11 @@ export default {
             },2000)
         }
       });  
+
+
+      this.$fetchGet("indicator/stationBasicMessage").then(res => {
+        this.listMsg=res.result
+      })
      
      
     },
@@ -336,8 +346,8 @@ export default {
     top: vh(145);
     left: vw(20);
     width: vw(370);
-    height: vh(330);
-    background: url("~@/assets/image/msgLine.png");
+    height: vh(400);
+    background: url("~@/assets/image/bigline.png");
     background-size: 100% 100%;
     .tit {
       width: 100%;

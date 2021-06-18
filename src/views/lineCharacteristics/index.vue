@@ -43,6 +43,8 @@ export default {
          if(MyMap.trafficLayer){
             MyMap.isTraffic(false)
          }
+
+        //  this.judgeRoute(this.$route)
          MyMap.pointAll3(val)
       
          
@@ -76,17 +78,14 @@ export default {
       handler(val,oldval){
        if(val){
           let arr=this.$store.getters.keyunData.concat(this.$store.getters.keyunData1)
+          console.log(arr)
           MyMap.addGjMarker(arr)
           MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
        }
       },
     },
-    '$route':{
-      handler(val,oldval){
-       if(val){
-         this.judgeRoute(val)
-       }
-      },
+    '$route'(val,oldval){
+       this.judgeRoute(val)
     },
   },
   created(){
@@ -165,8 +164,13 @@ export default {
             if(MyMap.mass){
                 console.log('测试是否进来了道路网')
                 MyMap.mass.hide()
-                MyMap.overlayGroups.hide()
-                MyMap.polygonLine.hide()
+                // MyMap.overlayGroups.hide()
+                MyMap.map.remove(MyMap.polygonLine)
+                if(MyMap.overlayGroups){
+                  MyMap.overlayGroups.getOverlays().forEach(iy=>{
+                    MyMap.map.remove(iy)
+                  })
+                }
             }
             if(MyMap.kyLineOver.getOverlays().length>0){
                  MyMap.layerky.hide()
@@ -205,9 +209,12 @@ export default {
             }
               if(MyMap.mass){
                 MyMap.mass.hide()
-                MyMap.overlayGroups.hide()
-                // MyMap.overlayGroups.hide()
-                MyMap.polygonLine.hide()
+                  MyMap.map.remove(MyMap.polygonLine)
+                if(MyMap.overlayGroups){
+                  MyMap.overlayGroups.getOverlays().forEach(iy=>{
+                    MyMap.map.remove(iy)
+                  })
+                }
               }
             if(MyMap.kyLineOver.getOverlays().length>0){
                  MyMap.layerky.hide()
@@ -226,9 +233,12 @@ export default {
               if(MyMap.mass){
                 console.log('测试是否进来了公交专用道')
                 MyMap.mass.hide()
-                // MyMap.overlayGroups.hide()
-                MyMap.overlayGroups.hide()
-                MyMap.polygonLine.hide()
+                MyMap.map.remove(MyMap.polygonLine)
+                if(MyMap.overlayGroups){
+                  MyMap.overlayGroups.getOverlays().forEach(iy=>{
+                    MyMap.map.remove(iy)
+                  })
+                }
               }
               //隐藏客运走廊里面的数据
               if(MyMap.kyLineOver.getOverlays().length>0){
@@ -248,11 +258,13 @@ export default {
               }
               if(MyMap.mass){
                 console.log('测试是否进来了客运走廊')
-                console.log(MyMap.mass)
                 MyMap.mass.hide()
-                MyMap.overlayGroups.hide()
-                // MyMap.overlayGroups.hide()
-                MyMap.polygonLine.hide()
+                MyMap.map.remove(MyMap.polygonLine)
+                if(MyMap.overlayGroups){
+                  MyMap.overlayGroups.getOverlays().forEach(iy=>{
+                    MyMap.map.remove(iy)
+                  })
+                }
               }
                //隐藏公交线网里面的数据
               if(MyMap.pathSimplifierIns){

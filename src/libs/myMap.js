@@ -212,6 +212,8 @@ export default class Map {
          </div>
       </div>
     `
+    }else{
+      return
     }
 
     return content
@@ -341,7 +343,7 @@ export default class Map {
           position: curPosition,
           icon: {
             type: 'image',
-            image: iteam.type=="mmap"?require('../assets/image/icon_dt1.png'):require('../assets/image/icon_gj1.png'),
+            image: iteam.type=="mmap"?require('../assets/image/icon_dt1.png'):iteam.type=="smap"?require('../assets/image/icon_gj1.png'):'',
             size: [32,32],
              imageSize:new AMap.Size(32,32),
             anchor: 'bottom-center',
@@ -394,7 +396,7 @@ export default class Map {
     flag ? this.mass.show() : this.mass.hide()
   }
    //渲染站点
-  pointAll3(datapoint,type){
+  pointAll3(datapoint){
     if(this.mass){
       this.mass.clear()
     }
