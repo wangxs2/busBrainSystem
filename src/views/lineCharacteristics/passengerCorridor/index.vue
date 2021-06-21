@@ -103,7 +103,7 @@ export default {
                 obj.station=(res.result.mmap[key])
                 obj.station.forEach(element => {
                     element.lnglat=[element.lon,element.lat]
-                    element.type="mmap"
+                    element.style=0
                     allStation.push(element)
                 });
                 mdata.push(obj)
@@ -113,14 +113,14 @@ export default {
                 obj.name=key
                 obj.station=(res.result.smap[key])
                  obj.station.forEach(element => {
-                     element.type="smap"
+                     element.style=1
                      element.lnglat=[element.longitude,element.latitude]
                     allStation1.push(element)
                 });
                 sdata.push(obj)
             }
-            this.$store.commit('SET_KEYUNDATA', (allStation1))
-            this.$store.commit('SET_KEYUNDATA1', (allStation))
+            this.$store.commit('SET_KEYUNDATA', (allStation1.concat(allStation)))
+            // this.$store.commit('SET_KEYUNDATA1', (allStation))
             // console.log(this.$store.getters.keyunData)
             this.setTwo(res.result.corridorList)
             this.mlinedata=mdata

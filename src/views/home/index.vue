@@ -36,10 +36,10 @@
       <div class="lightson"></div>
     </div>
     <div class="left-home">
-      <div class="left-l23 left-l1" @click="toHome('LINE_DECIDE')">
-        公交线网优化决策系统
+      <div class="left-l23 left-l1" @click="toHome(1,'LINE_DECIDE')">
+        公交线网优化决策系统 
       </div>
-      <div class="left-l23 left-l2">
+      <div class="left-l23 left-l2" @click="toHome(2,'OBSERVATION')">
         公交大数据观测系统
       </div>
       <div class="left-l23 left-l3">
@@ -79,10 +79,15 @@ export default {
     loginout(){
       this.$router.push("/login");
     },
-    toHome(code){
+    toHome(name,code){
       this.$store.commit("SET_CODEMEAU", code);
       document.cookie = "meaucode=" + code;
-      this.$router.push("/lineCharacteristics/roadDistribution");
+      if(name==1){
+        this.$router.push("/lineCharacteristics/roadDistribution");
+      }else if(name==2){
+        this.$router.push("/system/users");
+      }
+      
     }
   }
 }

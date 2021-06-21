@@ -135,10 +135,8 @@ export default {
             name:key,
             path1:''
           }
-
           obj.path1=res.result[key]
           dataArr.push(obj)
-          
         }
         dataArr.forEach(iteam=>{
           iteam.path2=[]
@@ -147,7 +145,6 @@ export default {
            })
 
         })
-        
         dataArr.forEach(team=>{
           team.path5=[]
             team.path2.forEach(iu=>{

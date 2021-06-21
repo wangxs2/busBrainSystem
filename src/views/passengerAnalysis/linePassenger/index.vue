@@ -15,11 +15,14 @@
       <el-select size="small" filterable @change="toLine()" v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
-          :key="item.value"
-          :label="item.name"
-          :value="item.name">
+          :key="item.routeId"
+          :label="item.routeName"
+          :value="item.routeId">
         </el-option>
       </el-select>
+      <div class="qhbtn">
+      <div :class="isbtn==iteam.id?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
+      </div>
     
     
     </div>
@@ -27,49 +30,87 @@
 </template>
 
 <script>
-let dataLine=require('../dataLine.js')
 export default {
     
     data(){
         return {
             options:[],
             value1:[new Date(),new Date()],
-            value:"706"
+            value:"",
+            isbtn:0,
+            typelst:[
+              {
+                name:'上行',
+                id:0
+              },{
+                name:'下行',
+                id:1
+              }
+            ],
         }
     },
     created() {
-        this.options=dataLine.arrline
-        this.getLinepassenger()
-        
+      this.getAllline()
     },
     mounted() {},
     methods: {
      
       toLine(){
-          this.$emit('changeKl',{
-              toLine:this.value
-          })
+        
+        this.getLinepassenger()
 
+      },
+      tobtn(row){
+        this.isbtn=row.id
+        this.getLinepassenger()
+        
       },
       changeDate(){
         console.log(this.value1)
         this.getLinepassenger()
       },
+      getAllline(){ 
+        this.$fetchGet("route/routeList").then(res=>{
+          this.options=res.result
+            setTimeout(()=>{
+            this.$store.commit('SET_LOADING',false)
+            },200)
+        })
+      },
       getLinepassenger(){
 
-      this.$fetchGet("passenger/linePassenger",{
-        direction:0,
-        st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
-        et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
-        routeId:this.value
+        this.$fetchGet("passenger/linePassenger",{
+          direction:this.isbtn,
+          st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
+          et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
+          routeId:this.value
 
-      }).then(res => {
-
-
-        setTimeout(()=>{
-         this.$store.commit('SET_LOADING',false)
-        },200)
-      })
+        }).then(res => {
+            if(res.result['线路走向']){
+              let obj=res.result['线路走向']
+              obj.geom=this.setData(obj.geom)
+              
+              this.$emit('changeKl',{
+                toLine:obj,
+                toLinestation:res.result['线路站点列表']
+              })
+            }else{
+              this.$message({
+                  message: '无此线路信息!',
+                  type: 'warning'
+                });
+            }
+            
+        
+        })
+      },
+      setData(data){
+        let str=data.split(' ')
+        let arr=[]
+        str.forEach(iteam=>{
+          arr.push([Number(iteam.split(',')[0]),Number(iteam.split(',')[1])])
+        })
+        return arr
 
       },
     }
@@ -87,6 +128,35 @@ export default {
     display: flex;
     align-items: center;
     color: #dae4ff;
+    .qhbtn{
+      width: vw(120);
+      height: vh(36);
+      background: rgba(26, 66, 118, 0.2);
+      border: 1px solid #27B6FF;
+      border-radius: vw(18);
+      box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 1) inset;
+      display:flex;
+      align-items: center;
+      margin-left:vw(12);
+      .btnnow{
+        flex:1;
+        text-align:center;
+        height:100%;
+        line-height:vh(36);
+        cursor:pointer;
+      }
+      .btnnow:first-child{
+        border-top-left-radius:vw(18);
+        border-bottom-left-radius:vw(18);
+      }
+      .btnnow:last-child{
+        border-top-right-radius:vw(18);
+        border-bottom-right-radius:vw(18);
+      }
+      .activebtn{
+        background: #4578FF;
+      }
+    }
   }
 }
 </style>

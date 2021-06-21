@@ -208,24 +208,22 @@ export default {
           isheat:this.isheat
       })
     },
-    getAreaData(){
-       this.$fetchGet("indicator/stationCoverArea",{
-        radius:this.isbtn
-      }).then(res => {
-        this.listMsg=res.result.res
-        console.log(this.listMsg.num)
+    // getAreaData(){
+    //    this.$fetchGet("indicator/stationCoverArea",{
+    //     radius:this.isbtn
+    //   }).then(res => {
+    //     this.listMsg=res.result.res
+    //     console.log(this.listMsg.num)
      
       
         
-      });
+    //   });
 
-    },
+    // },
     getAreaLine(){
-       this.options=[]
       this.$fetchGet("passenger/region").then(res => {
         this.options=res.result
       })
-
     },
     pointAll(){
       this.$fetchGet("indicator/stationList").then(res => {
@@ -239,10 +237,11 @@ export default {
             heatOptionObj.lat = iteam.latitude;
             heatOption.push(heatOptionObj);
           })
+          console.log(heatOption)
           this.$store.commit('SET_HEATMAP',heatOption)
           setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)
-            },2000)
+            },500)
         }
       });  
 
@@ -346,7 +345,7 @@ export default {
     top: vh(145);
     left: vw(20);
     width: vw(370);
-    height: vh(400);
+    height: vh(420);
     background: url("~@/assets/image/bigline.png");
     background-size: 100% 100%;
     .tit {

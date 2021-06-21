@@ -16,12 +16,17 @@ NProgress.configure({
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条开始
+  console.log(to)
   store.commit('SET_LOADING',true)
   let arour=[]
   let routenow = to.matched.slice(2)[0]
   // store.commit('SET_ROLES', [])
   if (to.path === '/login') {
     next()
+    return
+  }
+  if (to.path === '/') {
+    next('/login')
     return
   }
   if (to.path === '/home') {

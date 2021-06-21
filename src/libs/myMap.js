@@ -11,15 +11,12 @@ export default class Map {
             heatmap:null,//热力图
             polygonLine:null,//行政区域的范围
             infoWindow:null,//信息窗口
-            polygonThree:null,//300
-            polygonThree1:null,//500
-            polygonThree2:null,//500
             pathSimplifierIns:null,
             overlayGroups:new AMap.OverlayGroup(),//站点300米和500米的集合
             overlayGroups1:new AMap.OverlayGroup(),//站点300米和500米的集合
             busLaneGroups:new AMap.OverlayGroup(),//公交专用道
             kyLinedata:null,
-            layerky:null,//客运走廊的点
+            kymass:null,//客运走廊的点
             kyLineOver:new AMap.OverlayGroup(),//客运走廊的线
             map: null, // 地图实例
             mapCenter: [121.460752,31.011182], // 默认地图中心点
@@ -54,13 +51,8 @@ export default class Map {
         mapStyle:'amap://styles/d67717253a691e523956e9482ca38f1e',
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
-      this.layerky = new AMap.LabelsLayer({
-            zooms: [3, 20],
-            zIndex: 1000,
-            collision: false
-        });
-        // 将图层添加到地图
-      this.map.add(this.layerky);
+    
+      
        this.map.on("moveend", () => {
         
        })
@@ -169,7 +161,7 @@ export default class Map {
           offset: new AMap.Pixel(0, -35)
       });
       this.trafficLayer.setMap(this.map);
-      this.isTraffic(true)
+      // this.isTraffic(true)
       // this.map.add(this.overlayGroups);
       // this.map.add(this.overlayGroups1);
 
@@ -254,45 +246,7 @@ export default class Map {
       max: 100
   });
   }
-  addPolygon(data) {
-    this.polygonThree = new AMap.Polygon({
-      path: data,
-      fillColor: '#144D95',
-      strokeOpacity: 1,
-      fillOpacity: 0.5,
-      strokeWeight: 0,
-       zIndex: 200,
-    });
-    this.map.add(this.polygonThree);
-  }
-  addPolygon1(data) {
-    this.polygonThree1 = new AMap.Polygon({
-      path: data,
-      fillColor: '#144D95',
-      strokeOpacity: 1,
-      fillOpacity: 0.5,
-      strokeWeight: 0,
-       zIndex: 200,
-    });
-    this.map.add(this.polygonThree1);
-  }
-
-  addPolygon2(data) {
-    if(this.polygonThree2){
-      this.map.remove(this.polygonThree2)
-    }
-    console.log(data)
-    this.polygonThree2= new AMap.Polygon({
-      path: data,
-      fillColor: '#144D95',
-      strokeOpacity: 1,
-      fillOpacity: 0.5,
-      strokeWeight: 0,
-       zIndex: 200,
-    });
-    this.map.add(this.polygonThree2);
-  }
-
+  
   //公交专用道
   busLane(){
 
@@ -335,30 +289,36 @@ export default class Map {
   }
   //客运走廊的公交站点内
   addGjMarker(data) {
-    let markers = [];
-    data.forEach(iteam=>{
 
-      var curPosition = iteam.lnglat;
-      var curData = {
-          position: curPosition,
-          icon: {
-            type: 'image',
-            image: iteam.type=="mmap"?require('../assets/image/icon_dt1.png'):iteam.type=="smap"?require('../assets/image/icon_gj1.png'):'',
-            size: [32,32],
-             imageSize:new AMap.Size(32,32),
-            anchor: 'bottom-center',
-          }
-      };
-      var labelMarker = new AMap.LabelMarker(curData);
+    let style = [{
+        url: require('../assets/image/icon_dt1.png'),
+        anchor: new AMap.Pixel(16, 16),
+        size: new AMap.Size(32,32),
+        zIndex: 3,
+      }, {
+        url: require('../assets/image/icon_gj1.png'),
+        anchor: new AMap.Pixel(16,16),
+        size: new AMap.Size(32,32),
+        zIndex: 2,
+      }];
 
-      markers.push(labelMarker);
+      this.kymass = new AMap.MassMarks(data, {
+          opacity: 0.8,
+          zIndex: 111,
+          cursor: 'pointer',
+          style: style
+      });
+      this.kymass.on('click', (e) => {
+            this.searchStation(e.data.stationName,e.data.lnglat) 
+         });
 
-      labelMarker.on('click', (e) => {
-        this.searchStation(iteam.stationName,curPosition) 
-      });
+      this.kymass.setMap(this.map);
 
-    })
-    this.layerky.add(markers);
+
+
+
+
+
 
    
   }
@@ -387,7 +347,7 @@ export default class Map {
   }
 
   // 显示/隐藏 道路网
-   isTraffic(flag) {
+  isTraffic(flag) {
     flag ? this.trafficLayer.show() : this.trafficLayer.hide()
   }
 
@@ -451,7 +411,7 @@ export default class Map {
       zIndex: 10,
     });
     this.map.add(this.polygonLine);
-    this.map.setFitView(this.polygonLine)
+    this.map.setFitView(this.polygonLine,true)
   }
   setTypedata(row){
     let str = row.polygonGeom.replace("POLYGON((", "");

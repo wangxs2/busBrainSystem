@@ -10,6 +10,7 @@ export default class Map {
       linesearch: null,
       polygonLine: null,
       overlayGroups: new AMap.OverlayGroup(),//区域客流站点集合
+      overlayGroups1: new AMap.OverlayGroup(),//线路客流站点集合
       zdklMapOption: { // 站点客流 - 地图覆盖物参数
         mass: {}, // 海量点数据
         heat: '', // 热力图数据
@@ -36,7 +37,7 @@ export default class Map {
       extensions: 'all'
     });
     this.map.add(this.overlayGroups);
-
+    
     this.map.plugin(["AMap.HeatMap"], () => {      //加载热力图插件
       this.zdklMapOption.heat = new AMap.HeatMap(this.map, {
         opacity: [0, 0.8], zIndex: 110,
@@ -80,7 +81,7 @@ export default class Map {
     this.zdklMapOption.mass[massIndex].setMap(this.map);
   }
 
-
+  //区域客流的数据
   getRegionMark(datas) {
     let markers = []
     datas.forEach(iteam => {
@@ -131,13 +132,6 @@ export default class Map {
         this.map.remove(this.polygonLine);
         
       });
-
-
-
-
-      
-
-
       markers.push(marker)
     })
     return markers
@@ -208,37 +202,68 @@ export default class Map {
 
   }
 
+   //线路客流绘制公交线
+  drawbusLine(BusArr,datas) {
 
-  drawbusLine(startPot, endPot, BusArr) {
-    //绘制起点，终点
-    new AMap.Marker({
-      map: this.map,
-      position: startPot, //基点位置
-      icon: "https://webapi.amap.com/theme/v1.3/markers/n/start.png",
-      zIndex: 10,
-      anchor: 'bottom-center',
-    });
-    new AMap.Marker({
-      map: this.map,
-      position: endPot, //基点位置
-      icon: "https://webapi.amap.com/theme/v1.3/markers/n/end.png",
-      zIndex: 10,
-      anchor: 'bottom-center',
-    });
+    if(this.busPolyline){
+      this.map.remove(this.busPolyline)
+      this.overlayGroups1.clearOverlays()
+    }
+    let markers = []
+    datas.forEach(iteam => {
+      var marker = new AMap.Marker({
+        position: [iteam.longitude,iteam.latitude],
+        icon:new AMap.Icon({
+          image:require('../../assets/image/orange1.png'),
+          size: [24,24],
+          imageSize : [24,24],
+         }),
+        offset: new AMap.Pixel(-36, -24),
+        cursor: 'pointer',
+        extData: { iteam }
+      })
+
+
+
+      var marker1 = new AMap.Marker({
+        content: ' ', 
+        offset :new AMap.Pixel(-12, -12),
+      zIndex: 50, map: this.map});
+      marker.on('mouseover',  (e)=> {
+        marker1.setPosition([iteam.longitude,iteam.latitude]);
+        marker1.setLabel({content: `
+        <div class='lineklbox'>
+          <div style="color: #00FFFF;font-size: 28px;margin-bottom:18px">${BusArr.routeName}</div>
+          <div style="margin-bottom:18px;font-size: 18px">${datas[0].stationName}→${datas[datas.length-1].stationName}</div>
+          <div style="color: #00FFFF;font-size: 22px;margin-bottom:18px">${iteam.stationName}</div>
+          <div style="margin-bottom:18px;font-size: 18px">上车人数 ：${iteam.sd}</div>
+          <div style="margin-bottom:8px;font-size: 18px">下车人数 ：${iteam.sp}</div>
+        </div>
+        `})
+      });
+      marker.on('mouseout',  (e)=> {
+        marker1.setLabel({content:null})
+      });
+      markers.push(marker)
+    })
+    this.overlayGroups1.addOverlays(markers)
+    this.map.add(this.overlayGroups1);
+   
     //绘制乘车的路线
-    let busPolyline = new AMap.Polyline({
+    this.busPolyline = new AMap.Polyline({
       map: this.map,
-      path: BusArr,
+      path: BusArr.geom,
       strokeColor: "#50C0FF",//线颜色
       strokeOpacity: 0.8,//线透明度
       isOutline: true,
       outlineColor: '#50C0FF',
       showDir: true,
+      lineJoin :'round',
+      lineCap :'round',
       strokeWeight: 10//线宽
     });
-    // 将 busPolyline 显示在地图中心并自动缩放地图到合适级别。
-    // true表示需要动画过程，[60,200,60,60]表示上下左右避让像素
-    this.map.setFitView(busPolyline, true, [60, 200, 60, 60]);
+
+    this.map.setFitView(this.busPolyline, true, [60, 200, 60, 60]);
 
   }
 

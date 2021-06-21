@@ -21,7 +21,6 @@
 
 <script>
 import Map from "./passengerMap.js";
-let dataLine=require('./dataLine.js')
 let MyMap = null; // 地图实例
 export default {
   data(){
@@ -208,7 +207,9 @@ export default {
       }
 
       if(row.toLine){
-        MyMap.getSearchLine(row.toLine)
+        MyMap.drawbusLine(row.toLine,row.toLinestation)
+        // MyMap.getSearchLine(row.toLine)
+
       }
     },
   }
@@ -217,9 +218,22 @@ export default {
 <style  lang="scss">
 .passengerAnalysis{
   .el-select-dropdown,.el-popper{
-  max-width:800px !important;
-  left:0px!important;
-}
+    max-width:800px !important;
+    left:0px!important;
+  }
+  .amap-marker-label{
+    border:none!important;
+    background:none!important;
+  }
+  .lineklbox{
+    // width:vw(390);
+    // height:vw(320);
+    box-sizing:border-box;
+    padding:18px 18px;
+    background:rgba(0, 49, 61, 1)!important;
+    border: 1px solid #00FFFF;
+    
+  }
 }
 .regionMark{
   width: vw(178);

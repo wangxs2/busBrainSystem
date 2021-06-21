@@ -8,6 +8,10 @@ import {
 import {
   getCookie
 } from '@/libs/util'
+import {
+  Message
+} from 'element-ui'
+import router from '../../router/index'
 const _import = require('@/router/_import_' + process.env.NODE_ENV)
 const localList = `
 ,/errorPage,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/passengerCorridor,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
@@ -87,9 +91,14 @@ const permission = {
         fetchGet('auths/menu',{
           code:state.codeMeau
         }).then(res => {
-          if (!res) {
-            resolve(1)
-            return
+          if (res.length==0) {
+            Message.error({
+              message: '没有此权限！'
+            })
+            router.replace({
+              path: '/login?flag=true'
+            })
+
           }
           let menuData = filterAsyncMenu(1000, res.slice(0))
           asyncRouterMap[0].children = filterAsyncRouter(menuData.slice(0))

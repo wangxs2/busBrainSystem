@@ -30,24 +30,25 @@ export default {
       31.117525,121.569985,31.117819,121.575414,31.11911],
       datapunl:[121.505658,31.244205,121.506055,31.243343,121.506344,31.2431,121.507138,31.242902,121.507428,31.242801,121.507573,31.242668,121.508399,31.241467,121.508379,31.241501,121.509914,31.23918,121.51118,31.237089,121.513197,31.233983,121.514125,31.23252,121.514913,31.230828,121.515589,31.229213,121.517139,31.225474,121.517703,31.223534,121.518529,31.220882,121.518706,31.220185,121.518894,31.219378,121.51899,31.218001,121.518641,31.213666,121.518609,31.213092,121.518389,31.212487,121.518094,31.211817,121.516721,31.210101,121.516276,31.209431,121.515074,31.206977,121.51354,31.203067,121.512472,31.200539,121.51111,31.198474,121.508487,31.195175,121.507505,31.193697,121.503712,31.186864,121.502623,31.184919,121.501545,31.183418,121.498621,31.180187,121.497565,31.179407,121.496427,31.178906,121.495714,31.1787,121.494614,31.178516],
       radiusAll:[]
-   
     }
   },
    computed: {
     
   },
   watch:{
+    '$route':{
+      handler:function(val,oldval){
+        console.log(val)
+        console.log('我进来了route')
+       this.judgeRoute(val)
+      } ,
+      deep:true,
+      immediate: true
+    },
     '$store.getters.userStation':{
       handler(val,oldval){
        if(val){
-         if(MyMap.trafficLayer){
-            MyMap.isTraffic(false)
-         }
-
-        //  this.judgeRoute(this.$route)
          MyMap.pointAll3(val)
-      
-         
        }
       },
     },
@@ -60,33 +61,16 @@ export default {
       },
 
     },
-    '$store.getters.threeMap2':{
+    '$store.getters.keyunData2':{
       handler(val,oldval){
        if(val){
-         if(MyMap.polygonThree1){
-            MyMap.polygonThree1.hide()
-          }
-          if(MyMap.polygonThree){
-              MyMap.polygonThree.hide()
-          }
-          MyMap.addPolygon2(val)
-       }
-      },
-    },
-         
-    '$store.getters.keyunData':{
-      handler(val,oldval){
-       if(val){
-          let arr=this.$store.getters.keyunData.concat(this.$store.getters.keyunData1)
-          console.log(arr)
-          MyMap.addGjMarker(arr)
+         console.log('我进来了keyunData2')
+          MyMap.addGjMarker(this.$store.getters.keyunData)
           MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
        }
       },
     },
-    '$route'(val,oldval){
-       this.judgeRoute(val)
-    },
+   
   },
   created(){
    
@@ -95,10 +79,7 @@ export default {
   },
   mounted(){
      MyMap = new Map({ el: "lineCharacteristics" });
-    // MyMap.passCorrline1([yuarr])
     let nowroute=this.$route
-    // let arr=[]
-    // MyMap.addPolygon(arr)
     this.judgeRoute(nowroute)
   },
   methods:{
@@ -154,6 +135,7 @@ export default {
         return newArray;
     },
     judgeRoute(val){
+      console.log(val.name)
       switch(val.name) {
           case "道路网":
             if(MyMap.infoWindow){
@@ -164,7 +146,6 @@ export default {
             if(MyMap.mass){
                 console.log('测试是否进来了道路网')
                 MyMap.mass.hide()
-                // MyMap.overlayGroups.hide()
                 MyMap.map.remove(MyMap.polygonLine)
                 if(MyMap.overlayGroups){
                   MyMap.overlayGroups.getOverlays().forEach(iy=>{
@@ -173,7 +154,7 @@ export default {
                 }
             }
             if(MyMap.kyLineOver.getOverlays().length>0){
-                 MyMap.layerky.hide()
+                 MyMap.kymass.hide()
                   MyMap.kyLineOver.hide()
                   MyMap.overlayGroups.hide()
             }
@@ -185,16 +166,15 @@ export default {
               break;
           case "公交站点":
               MyMap.isTraffic(false)
-                if(MyMap.infoWindow){
+              if(MyMap.infoWindow){
                   MyMap.infoWindow.close()
-                }
+              }
               if(MyMap.mass){
-                // MyMap.isMass(true)
                 MyMap.mass.show()
                 MyMap.overlayGroups.show()
               }
-              if(MyMap.kyLineOver){
-                 MyMap.layerky.hide()
+              if(MyMap.kymass){
+                 MyMap.kymass.hide()
                   MyMap.kyLineOver.hide()
               }
               if(MyMap.pathSimplifierIns){
@@ -202,11 +182,14 @@ export default {
               }
               break;
           case "公交线路网":
-              
             MyMap.isTraffic(false)
-                 if(MyMap.infoWindow){
-              MyMap.infoWindow.close()
-            }
+              if(MyMap.kymass){
+                 MyMap.kymass.hide()
+                MyMap.kyLineOver.hide()
+              }
+              if(MyMap.infoWindow){
+                  MyMap.infoWindow.close()
+                }
               if(MyMap.mass){
                 MyMap.mass.hide()
                   MyMap.map.remove(MyMap.polygonLine)
@@ -216,13 +199,10 @@ export default {
                   })
                 }
               }
-            if(MyMap.kyLineOver.getOverlays().length>0){
-                 MyMap.layerky.hide()
-                  MyMap.kyLineOver.hide()
-              }
-               setTimeout(()=>{
-                  MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
-                },1000)
+          
+              //  setTimeout(()=>{
+              //     MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
+              //   },1000)
               
               
               break;
@@ -241,8 +221,8 @@ export default {
                 }
               }
               //隐藏客运走廊里面的数据
-              if(MyMap.kyLineOver.getOverlays().length>0){
-                MyMap.layerky.hide()
+              if(MyMap.kymass){
+                MyMap.kymass.hide()
                 MyMap.kyLineOver.hide()
               }
               //隐藏公交线网里面的数据
@@ -271,16 +251,7 @@ export default {
                 MyMap.pathSimplifierIns.setData(null)
               }
               MyMap.heatmap.hide()
-              let strky=MyMap.kyLineOver.getOverlays()
               
-               if(strky.length>0){
-                  MyMap.layerky.show()
-                  MyMap.kyLineOver.show()
-                }else{
-                   let arr=this.$store.getters.keyunData.concat(this.$store.getters.keyunData1)
-                    MyMap.addGjMarker(arr)
-                    MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
-                }
               break;
           default:
           } 
