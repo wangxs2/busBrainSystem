@@ -15,6 +15,7 @@ const user = {
     realname:'',
     heatData:[],
     userRole: [],
+    codeMeau:'',//菜单的CODE
     routehistroy: [], //用户路由记录
     userStation: [], //站点的信息
     threeMap:[],//300米
@@ -38,7 +39,9 @@ const user = {
     SET_KLSTATION:(state, allStation) => { //站点客流
       state.allStation = allStation
     },
-   
+    SET_CODEMEAU:(state, codeMeau) => { //菜单的CODE
+      state.codeMeau = codeMeau
+    },
     SET_REGIONDATA:(state, regionData) => { //区域客流
       state.regionData = regionData
     },
@@ -105,7 +108,6 @@ const user = {
     SET_ROUTEHISTROY: (state, routehistroy) => { //用户路由记录
       state.routehistroy = routehistroy
     },
-    
     SET_STATION: (state, userStation) => {
       state.userStation = userStation
     },

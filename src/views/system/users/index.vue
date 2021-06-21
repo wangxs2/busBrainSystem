@@ -33,6 +33,7 @@
             <el-table
               :data="roleTabData"
               stripe
+              header-row-class-name="systemheader"
               style="width: 100%"
               :height="$store.getters.docHeight - 35"
             >

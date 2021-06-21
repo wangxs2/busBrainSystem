@@ -10,9 +10,20 @@
      <div class="menu-box">
        <menu-nav></menu-nav>
      </div>
+     <div class="userName">
+        <el-dropdown @command="handleCommand">
+          <div class="userName1">
+            <img src="@/assets/image/home/icon_yh.png" alt="" srcset="">
+            admin
+          </div>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item  command="a">返回首页</el-dropdown-item>
+            <el-dropdown-item  command="b">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
    </div>
    <div class="routelist">
-     <!-- {{getRouterName}} -->
      <div  :class="getRouterName==item.name?'parallelogram parallelogram1':'parallelogram'" v-for="(item,index) in quc($store.getters.routehistroy)" :key="index">
        <div @click="topath(item)" class="fontroute">{{ item.name }}</div>
         <div v-if="getRouterName!==item.name" @click="deleroute(item,index)" style="font-size:12px;margin-left:0.5vw"  class="fontroute iconfont iconguanbi"></div>
@@ -24,6 +35,9 @@
 <script>
 import menuNav from "./components/menu";
 import appMain from "./components/appMain";
+import {
+  delCookie
+} from '@/libs/util'
 export default {
   components: {
    menuNav,
@@ -47,6 +61,7 @@ export default {
   created () {
   },
   mounted(){
+  
   },
    watch:{
     '$route':{
@@ -60,6 +75,22 @@ export default {
   watch: {
   },
   methods: {
+    handleCommand(command) {
+      
+      if(command=='b'){
+        delCookie("meaucode")
+        setTimeout(()=>{
+          this.$router.push("/login");
+        },500)
+      }else{
+       
+         setTimeout(()=>{
+          this.$router.push("/home");
+        },500)
+        
+      }
+      
+    },
     quc(arrays){
       let arryw=this.detauilun(arrays)
       var result = [];
@@ -113,6 +144,7 @@ export default {
   width:100%;
   height:100%;
   position:relative;
+  background: #000022;
   .header-box{
     position:absolute;
     left:0;
@@ -122,7 +154,22 @@ export default {
     background:url('~@/assets/image/top_bj.png');
     background-size:100% 100%;
     box-sizing:border-box;
-    padding-left:vw(940);
+    padding-left:vw(880);
+    .userName{
+      position: absolute;
+      right: vw(30);
+      top: vw(14);
+      cursor: pointer;
+      .userName1{
+        font-size: 16px;
+        color: #27B6FF;
+        display: flex;
+        align-items: center;
+      }
+       img{
+          margin-right: vw(10);
+        }
+    }
     // z-index:5;
     .menu-box{
       width:100%;

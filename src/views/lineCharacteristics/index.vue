@@ -38,8 +38,7 @@ export default {
   watch:{
     '$route':{
       handler:function(val,oldval){
-        console.log(val)
-        console.log('我进来了route')
+  
        this.judgeRoute(val)
       } ,
       deep:true,
@@ -64,7 +63,6 @@ export default {
     '$store.getters.keyunData2':{
       handler(val,oldval){
        if(val){
-         console.log('我进来了keyunData2')
           MyMap.addGjMarker(this.$store.getters.keyunData)
           MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
        }
@@ -135,16 +133,14 @@ export default {
         return newArray;
     },
     judgeRoute(val){
-      console.log(val.name)
       switch(val.name) {
           case "道路网":
-            if(MyMap.infoWindow){
+          
+            MyMap.isTraffic(true)
+              if(MyMap.infoWindow){
               MyMap.infoWindow.close()
             }
-            MyMap.isTraffic(true)
-            MyMap.infoWindow.close()
             if(MyMap.mass){
-                console.log('测试是否进来了道路网')
                 MyMap.mass.hide()
                 MyMap.map.remove(MyMap.polygonLine)
                 if(MyMap.overlayGroups){
@@ -208,10 +204,11 @@ export default {
               break;
           case "公交专用道":
               MyMap.isTraffic(false)
-              MyMap.infoWindow.close()
+               if(MyMap.infoWindow){
+                MyMap.infoWindow.close()
+              }
               //隐藏公交站点里面的数据
               if(MyMap.mass){
-                console.log('测试是否进来了公交专用道')
                 MyMap.mass.hide()
                 MyMap.map.remove(MyMap.polygonLine)
                 if(MyMap.overlayGroups){
@@ -237,7 +234,6 @@ export default {
                   MyMap.infoWindow.close()
               }
               if(MyMap.mass){
-                console.log('测试是否进来了客运走廊')
                 MyMap.mass.hide()
                 MyMap.map.remove(MyMap.polygonLine)
                 if(MyMap.overlayGroups){
@@ -284,15 +280,12 @@ export default {
       if(row.stattiondetail){
         MyMap.infoWindow.setContent(MyMap.createInfoWindow(2,row.stattiondetail))
         MyMap.infoWindow.open(MyMap.map,[row.stattiondetail.longitude,row.stattiondetail.latitude]);
-        MyMap.map.getFitZoomAndCenterByBounds([row.stattiondetail.longitude,row.stattiondetail.latitude],[0,0,0,0])
+        MyMap.map.setZoomAndCenter(16,[row.stattiondetail.longitude,row.stattiondetail.latitude])
       }
 
       if(row.adminArea){
         MyMap.createPolygon(row.adminArea)
         MyMap.addOverlayGroup(MyMap.threeCircle(this.$store.getters.userStation,300))
-
-
-       
 
       }
 

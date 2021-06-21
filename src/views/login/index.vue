@@ -84,7 +84,7 @@ export default {
       pswFlag: false,
       loginForm: {
         // 登录数据
-        username: "1229320501@qq.com",
+        username: "dsg",
         password: "999999999"
       },
       loginRules: {
@@ -133,20 +133,8 @@ export default {
       token +
       "#bordered=true&titled=true";
 
+    
 
-
-    if(getCookie('meauindexnow')){
-      delCookie('meauindexnow')
-    }
-
-
-
-
-
-
-
-
-      
   },
   methods: {
     //记住密码
@@ -224,7 +212,7 @@ export default {
                 // document.cookie = "orgname=" + res.result.org[0].name;
                 // document.cookie = "realcode=" +  res.result.role[0].code;
                 // this.$store.commit('SET_TOKEN', res.result.token)
-                // this.$store.commit("SET_ID", res.result.userInfo.id);
+                this.$store.commit("SET_ID", res.info.id);
                 // this.$store.commit("SET_USERINFO", res.result.userInfo);
                 // this.$store.commit("SET_NAME", res.result.userInfo.username);
                 // this.$store.commit("SET_REALNAME", res.result.userInfo.realname);

@@ -1,3 +1,4 @@
+import * as http from '../../libs/http'
 export default class Map {
   constructor(data) {
     Object.assign(this, this.data(data))
@@ -9,6 +10,7 @@ export default class Map {
       datar: {},
       linesearch: null,
       polygonLine: null,
+      infoWindow:null,//信息窗口
       overlayGroups: new AMap.OverlayGroup(),//区域客流站点集合
       overlayGroups1: new AMap.OverlayGroup(),//线路客流站点集合
       zdklMapOption: { // 站点客流 - 地图覆盖物参数
@@ -30,14 +32,13 @@ export default class Map {
       mapStyle: 'amap://styles/d67717253a691e523956e9482ca38f1e',
       expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
     })
-    this.linesearch = new AMap.LineSearch({
-      pageIndex: 1,
-      city: '上海',
-      pageSize: 1,
-      extensions: 'all'
-    });
-    this.map.add(this.overlayGroups);
     
+    this.map.add(this.overlayGroups);
+    this.infoWindow = new AMap.InfoWindow({
+      isCustom: true,  //使用自定义窗体
+      content: this.createInfoWindow(),
+      offset: new AMap.Pixel(0, -35)
+    });
     this.map.plugin(["AMap.HeatMap"], () => {      //加载热力图插件
       this.zdklMapOption.heat = new AMap.HeatMap(this.map, {
         opacity: [0, 0.8], zIndex: 110,
@@ -67,18 +68,57 @@ export default class Map {
       style: style
     });
     var marker = new AMap.Marker({ content: ' ', map: this.map });
+    var marker1 = new AMap.Marker({ content: ' <div class="myinfobox"></div> ', map: this.map,anchor :"top-center" });
     this.zdklMapOption.mass[massIndex].on('mouseover', function (e) {
       marker.setPosition(e.data.lnglat);
-      marker.setLabel({ content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>` })
+      marker.setLabel({ content: `<div style='{background:"#ffffff","color":rgba(26, 66, 118, 1)}'>${e.data.stationName}</div>` })
     });
     this.zdklMapOption.mass[massIndex].on('mouseout', function (e) {
       marker.setPosition(e.data.lnglat);
       marker.setLabel({ content: null })
     });
-    // this.zdklMapOption.mass[massIndex].on('click', function (e) {
-    //     StopDetail.showMarker(zdklMap, e.data.id, beginDate, endDate);
-    // });
+    this.zdklMapOption.mass[massIndex].on('click',  (e)=> {
+      http.fetchGet('indicator/stationDetail',{
+        code:e.data.stationName,
+        direction:e.data.routeDirection
+      }).then(res=>{
+        // marker1.setPosition(e.data.lnglat);
+        // marker1.setLabel({ content: this.createInfoWindow(res.result) })
+        this.map.setZoomAndCenter(16,e.data.lnglat,true)
+        this.infoWindow.setContent(this.createInfoWindow(res.result))
+        this.infoWindow.open(this.map,e.data.lnglat);
+        // this.map.setZoomAndCenter(15,[e.data.longitude,e.data.latitude],true)
+      })
+        // StopDetail.showMarker(zdklMap, e.data.id, beginDate, endDate);
+    });
     this.zdklMapOption.mass[massIndex].setMap(this.map);
+  }
+
+
+  //设置信息窗口的内容
+  createInfoWindow(data){
+    let content=''
+    if(data){
+      content=`
+      <div  class="myinfobox">
+        <div class="titfont">
+          <div  class="infoimg"></div>
+          ${data.stationName}
+        </div>
+        <div class="line-lsi1">
+          <div class="itean-lsi" style="margin-bottom:12px">经度:${data.lnglat[0]}</div>
+          <div class="">维度:${data.lnglat[1]}</div>
+         
+          
+         </div>
+      </div>
+    `
+    }
+   
+    
+
+    return content
+
   }
 
   //区域客流的数据
@@ -88,20 +128,25 @@ export default class Map {
       let iconm = ''
       
       if ((iteam.sd + iteam.sp) < 1001) {
-        iconm = require('../../assets/image/blue.png')
+        // iconm = require('../../assets/image/blue.png')
+        iconm = '#00D8FF'
       } else if ((iteam.sd + iteam.sp) > 1000 && (iteam.sd + iteam.sp) < 10001) {
-        iconm = require('../../assets/image/violet.png')
+        // iconm = require('../../assets/image/violet.png')
+        iconm = '#9000FF'
       } else if ((iteam.sd + iteam.sp) > 10000 && (iteam.sd + iteam.sp) < 20001) {
-        iconm = require('../../assets/image/orange.png')
+        // iconm = require('../../assets/image/orange.png')
+        iconm = '#FF9100'
       } else if ((iteam.sd + iteam.sp) > 20000 && (iteam.sd + iteam.sp) < 30001) {
-        iconm = require('../../assets/image/reginmark.png')
+        // iconm = require('../../assets/image/reginmark.png')
+        iconm = '#FF00FF'
       } else if ((iteam.sd + iteam.sp) > 30000) {
-        iconm = require('../../assets/image/red.png')
+        // iconm = require('../../assets/image/red.png')
+        iconm = '#FF4200'
       }
       var marker = new AMap.Marker({
         position: [iteam.centerLongitude, parseFloat(iteam.centerLatitude)],
-        // 将 html 传给 content background: url(icon)
-        content: `<div class="regionMark" style="background: url(${iconm})">
+        // 将 html 传给 content background: url(icon) url(${iconm})
+        content: `<div class="regionMark" style="background:${iconm}">
           <div> ${iteam.regionName}</div>
           <div> 上车 ${iteam.sd}</div>
           <div> 下车 ${iteam.sp}</div>
@@ -109,14 +154,36 @@ export default class Map {
           </div>`,
         // 以 icon 的 [center bottom] 为原点
         offset: new AMap.Pixel(-13, -30),
+        zIndex: 10,
         cursor: 'pointer',
         extData: { iteam }
       });
 
-      marker.on('mouseover', (e) => {
+      // marker.on('click', (e) => {
         
-        if (e.target.getExtData()) {
-          let str = e.target.getExtData().iteam.polygonGeom.replace("POLYGON((", "");
+      //   if (e.target.getExtData()) {
+      //     let str = e.target.getExtData().iteam.polygonGeom.replace("POLYGON((", "");
+      //     let str1 = str.replace("))", "");
+      //     let arr = str1.split(",");
+      //     let path=[]
+      //     arr.forEach(iteam => {
+      //       path.push(
+      //         new AMap.LngLat(iteam.split(" ")[0], iteam.split(" ")[1])
+      //       );
+      //     });
+
+      //     this.createPolygon(path)
+      //   }
+      // });
+      // marker.on('mouseout', (e) => {
+      //   this.map.remove(this.polygonLine);
+        
+      // });
+      marker.on('click', (e) => {
+        this.map.setFitView(marker,false)
+      })
+
+      let str =iteam.polygonGeom.replace("POLYGON((", "");
           let str1 = str.replace("))", "");
           let arr = str1.split(",");
           let path=[]
@@ -125,15 +192,41 @@ export default class Map {
               new AMap.LngLat(iteam.split(" ")[0], iteam.split(" ")[1])
             );
           });
-          this.createPolygon(path)
-        }
-      });
-      marker.on('mouseout', (e) => {
-        this.map.remove(this.polygonLine);
-        
-      });
+
+        let polygonLine = new AMap.Polygon({
+          path: path,
+          cursor: "pointer",
+          strokeColor: "#35A594",
+          strokeWeight: 2,
+          strokeOpacity: 1,
+          fillOpacity: 0.2,
+          zIndex: 50,
+          map:this.map
+        });
+
+        polygonLine.on('mouseover', (e) => {
+         
+          e.target.setOptions({
+            strokeColor: "#FF00FF",
+            fillColor : "#FF00FF",
+          })
+
+          // this.map.setFitView(polygonLine,false)
+
+        })
+        polygonLine.on('mouseout', (e) => {
+         
+          e.target.setOptions({
+            strokeColor: "#35A594",
+            fillColor : "#35A594",
+          })
+
+        })
+      
       markers.push(marker)
+      markers.push(polygonLine)
     })
+    this.map.setFitView(markers,false)
     return markers
 
 
@@ -152,6 +245,7 @@ export default class Map {
       zIndex: 50,
     });
     this.map.add(this.polygonLine);
+    this.map.setFitView(this.polygonLine,false)
     
   }
   addnew(Overlay) {

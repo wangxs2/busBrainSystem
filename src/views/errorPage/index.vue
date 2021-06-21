@@ -1,28 +1,13 @@
 <template>
   <div class="containererrPage">
     <div class="errPage-container">
-      <el-button @click="back"
-                 icon='arrow-left'
-                 class="pan-back-btn">返回</el-button>
-      <el-row>
-        <el-col :span="12">
-          <h1 class="text-jumbo text-ginormous">Oops!</h1>
-          <h2>该页面正在开发中，敬请期待</h2>
-          <h6>&nbsp;</h6>
-          <ul class="list-unstyled">
-            <li>或者你可以去:</li>
-            <li class="link-type">
-              <router-link to="/clean/home">首页</router-link>
-            </li>
-          </ul>
-        </el-col>
-        <el-col :span="12">
-          <!-- <img :src="errGif"
-               width="313"
-               height="428"
-               alt="Girl has dropped her ice cream."> -->
-        </el-col>
-      </el-row>
+      <div>该页面正在开发中，敬请期待……</div>
+      <div style="flex:1"></div>
+      <div>
+        <el-button style="width:5vw" type="primary" size="mini" ><router-link to="/home">首页</router-link></el-button>
+        <el-button @click="back" style="width:5vw;margin-left:1vw" type="primary" size="mini" >返回</el-button>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -50,19 +35,27 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .containererrPage {
   width: 100%;
   height:100%;
   background: #fff;
   padding-top: 200px;
   box-sizing: border-box;
-  background: url("~@/assets/image/home/bj.png");
+  background: url("~@/assets/image/404_bj.png");
   background-size: 100% 100%;
 }
 .errPage-container {
-  width: 800px;
+  width: vw(540);
+  height:vw(540);
+   background: url("~@/assets/image/404.png");
+  background-size: 100% 100%;
   margin: 0 auto;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding:vw(120) 0;
 }
 .pan-back-btn {
   background: #008489;

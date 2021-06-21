@@ -1,6 +1,9 @@
 <template>
   <div class="homePage">
     <div class="userName">
+      <img src="@/assets/image/home/settig.png" alt="" srcset="">
+      <div @click="toHome(10,'MAIN')">权限设置</div>
+      <div class="lineName"></div>
       <img src="@/assets/image/home/icon_yh.png" alt="" srcset="">
       admin
       <div class="lineName"></div>
@@ -75,18 +78,29 @@
 export default {
   props: {
   },
+   mounted() {
+    //  this.$store.commit("SET_CODEMEAU", '')
+    //  document.cookie = "meaucode=" + '';
+    //  console.log('在首页',this.$store.getters.codeMeau)
+   },
   methods:{
     loginout(){
       this.$router.push("/login");
     },
     toHome(name,code){
       this.$store.commit("SET_CODEMEAU", code);
+      // console.log(this.$store.getters.codeMeau)
       document.cookie = "meaucode=" + code;
-      if(name==1){
+      setTimeout(()=>{
+        if(name==1){
         this.$router.push("/lineCharacteristics/roadDistribution");
-      }else if(name==2){
-        this.$router.push("/system/users");
-      }
+        }else if(name==2){
+          this.$router.push("/realNetwork/vehicleCar");
+        }else if(name==10){
+          this.$router.push("/system/users");
+        }
+      },500)
+      
       
     }
   }
@@ -207,7 +221,7 @@ export default {
         height: 20px;
         background: rgba(39, 182, 255, 0.4);
         opacity: 0.3;
-        margin:  0 vw(21);
+        margin:  0 vw(18);
       }
       img{
         margin-right: vw(10);

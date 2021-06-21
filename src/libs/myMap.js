@@ -314,6 +314,8 @@ export default class Map {
 
       this.kymass.setMap(this.map);
 
+      // this.map.setFitView(this.kymass,true)
+
 
 
 
@@ -348,7 +350,11 @@ export default class Map {
 
   // 显示/隐藏 道路网
   isTraffic(flag) {
-    flag ? this.trafficLayer.show() : this.trafficLayer.hide()
+    if(this.trafficLayer){
+      flag ? this.trafficLayer.show() : this.trafficLayer.hide()
+    }else{
+      return
+    }
   }
 
   // 显示/隐藏 站点
@@ -388,7 +394,7 @@ export default class Map {
       }).then(res=>{
         this.infoWindow.setContent(this.createInfoWindow(2,res.result))
         this.infoWindow.open(this.map,[e.data.longitude,e.data.latitude]);
-        this.map.getFitZoomAndCenterByBounds([e.data.longitude,e.data.latitude],[150, 60, 100, 60])
+        this.map.setZoomAndCenter(16,[e.data.longitude,e.data.latitude],true)
       })
   });
     this.mass.setMap(this.map);
@@ -444,6 +450,7 @@ export default class Map {
     //客运走廊的线
   addOverlayGroup4(Groups){
     this.kyLineOver.addOverlays(Groups)
+
   }
   
 

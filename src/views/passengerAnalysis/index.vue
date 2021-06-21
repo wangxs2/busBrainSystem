@@ -2,18 +2,6 @@
   <div class="passengerAnalysis">
     
       <div v-show="$route.name!=='断面客流'" class="passengerMap" id="passengerMap">
-        <!-- <div class="searchbox">
-          <el-select :popper-append-to-body="false" size="small" @change="lins()" v-model="value" placeholder="请选择">
-            <el-option
-              v-for="(item,index) in options"
-              :key="index"
-              :label="item.name"
-              :value="item.name">
-            </el-option>
-          </el-select>
-          <el-button size="mini" type="success" plain @click="allData">发送线路数据</el-button>
-        </div> -->
-        
       </div>
       <router-view @changeKl="klsonClick"></router-view>
   </div>
@@ -70,20 +58,28 @@ export default {
         }
       },
     },
-    // '$store.getters.allStation':{
-    //   handler(val,oldval){
-    //    if(val){
-    //     for(let key  in val){
-    //         MyMap.xrhld(key,val[key],this.styleStition[key])
-    //       }
+    '$store.getters.regionData':{
+      handler(val,oldval){
+        if(val){
+          MyMap.addOverlayGroup(MyMap.getRegionMark(val))
+        }
+      },
+    },
+    '$store.getters.allStation':{
+      handler(val,oldval){
+       if(val){
+         let heatOption=this.$store.getters.stationHeat;
+        for(let key  in val){
+            MyMap.xrhld(key,val[key],this.styleStition[key])
+          }
+         MyMap.zdklMapOption.heat.setDataSet({data: heatOption, max: 100})
          
-    //    }
-    //   },
-    // },
+       }
+      },
+    },
 
   },
   mounted(){
-    // this.options=dataLine.arrline
     MyMap = new Map({ el: "passengerMap" });
     this.judgeRoute(this.$route)
   },
@@ -99,29 +95,6 @@ export default {
         }
 
     },
-    lins(){
-       MyMap.linesearch.search(this.value, (status, result)=> {
-        if (status === 'complete' && result.info === 'OK') {
-             let str=result.lineInfo[0].path
-               let arrpo=[]
-              str.forEach(iteam=>{
-                arrpo.push([iteam.lng,iteam.lat])
-              })
-              let data=[
-                  { 
-                    routeName: this.value,
-                    geom: arrpo.join(' '),
-                    lineLength: result.lineInfo[0].distance,
-                  }
-                ]
-                this.$fetchPost("route/approve",data,'json').then(res=>{
-                 })
-            } else {
-            }
-        });
-     
-
-    },
     allData(){
       let arpoy=[]
       this.options.forEach(iteam=>{
@@ -130,20 +103,6 @@ export default {
           geom:'',
           lineLength:'',
         }
-        MyMap.linesearch.search(iteam.name, (status, result)=> {
-        if (status === 'complete' && result.info === 'OK') {
-          let str=result.lineInfo[0].path
-               let arrpo=[]
-              str.forEach(iteam=>{
-                arrpo.push([iteam.lng,iteam.lat])
-              })
-                obj.geom=arrpo.join(' ')
-                obj.lineLength=result.lineInfo[0].distance
-                arpoy.push(obj)
-            } else {
-              
-            }
-        });
 
       })
 
@@ -156,17 +115,10 @@ export default {
     judgeRoute(val){
       switch(val.name) {
           case "站点客流":
-            let stationkl=this.$store.getters.allStation;
-            let heatOption=this.$store.getters.stationHeat;
-              setTimeout(()=>{
-                for(let key  in stationkl){
-                  MyMap.xrhld(key,stationkl[key],this.styleStition[key])
-                }
-                MyMap.zdklMapOption.heat.setDataSet({data: heatOption, max: 100})
-              },500)
-             if(MyMap.overlayGroups.getOverlays().length>0){
-               MyMap.overlayGroups.hide()
-             }
+           
+            if(MyMap.overlayGroups.getOverlays().length>0){
+              MyMap.overlayGroups.hide()
+            }
               break;
           case "区域客流":
             if(MyMap.zdklMapOption.heat.getDataSet()){
@@ -175,11 +127,6 @@ export default {
                   MyMap.zdklMapOption.mass[key].hide()
                 }
             }
-            setTimeout(()=>{
-                MyMap.addOverlayGroup(MyMap.getRegionMark(this.$store.getters.regionData))
-              },1000)
-           
-           
               break;
           case "公交线路网":
            
@@ -216,6 +163,65 @@ export default {
 };
 </script>
 <style  lang="scss">
+.amap-info-contentContainer{
+  .myinfobox{
+    width: vw(342);
+    height:100%;
+    // background: url("~@/assets/image/tk_bj1.png");
+    // background-size: 100% 100%;
+    border:1px solid rgba(0, 255, 255, 0.65);
+    background: rgba(0, 49, 61, 0.5);
+    box-sizing: border-box;
+    padding: vh(10) vw(26);
+    font-size: vw(16);
+    padding-bottom: vh(34);
+    display: flex;
+    flex-direction: column;
+    .infoimg{
+      width: vw(48);
+      height: vw(48);
+      background: url("~@/assets/image/gf_icon.png");
+      background-size: 100% 100%;
+    }
+    .line-lsi{
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      flex: 1;
+      .tithear{
+        width: vw(42);
+        height:vh(20);
+        display: inline-block;
+      }
+    }
+    .itean-lsi{
+      margin-bottom:0.2vh;
+    }
+    .titfont{
+      display: flex;
+      align-items: center;
+      font-size: vw(20);
+      color: #00FFFF;
+      font-weight: bold;
+      width: 100%;
+      height: vh(30);
+      margin: vh(16) vw(0);
+      margin-left: vw(-12);
+      margin-top: vh(4);
+    }
+  }
+  .myinfobox:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+    border-top: 12px solid  rgba(0, 255, 255, 0.65);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    transform: translateX(-50%);
+  }
+
+}
 .passengerAnalysis{
   .el-select-dropdown,.el-popper{
     max-width:800px !important;
@@ -236,8 +242,8 @@ export default {
   }
 }
 .regionMark{
-  width: vw(178);
-  height: vw(178);
+  width: vw(100);
+  height: vw(100);
   // background-image: radial-gradient(circle, rgb(49, 144, 228) 0%, rgb(41, 122, 204) 30%, rgb(29, 84, 166) 70%);
   border-radius:50%;
   // background: url("~@/assets/image/reginmark.png");

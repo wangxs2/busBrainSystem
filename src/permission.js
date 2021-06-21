@@ -16,20 +16,27 @@ NProgress.configure({
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条开始
-  console.log(to)
+  console.log(from)
   store.commit('SET_LOADING',true)
   let arour=[]
   let routenow = to.matched.slice(2)[0]
   // store.commit('SET_ROLES', [])
   if (to.path === '/login') {
+    store.commit('SET_ROUTEHISTROY', [])
+    store.commit('SET_ID', '')
     next()
     return
   }
   if (to.path === '/') {
+    store.commit('SET_ROUTEHISTROY', [])
+    store.commit('SET_ID', '')
     next('/login')
     return
   }
   if (to.path === '/home') {
+    store.commit('SET_ROUTEHISTROY', [])
+    store.commit('SET_ID', '')
+    delCookie("meaucode")
     next()
     return
   }
@@ -37,12 +44,15 @@ router.beforeEach((to, from, next) => {
     next('/login')
     return
   } else {
-    store.commit('SET_CODEMEAU', getCookie('meaucode'))
+    
     store.getters.routehistroy.push(to.matched[2])
+    console.log(getCookie('meaucode'))
+    console.log(store.getters.codeMeau)
     if (store.getters.userId !== getCookie('user') + '') {
       //判断是否拉取用户信息 权限
+      console.log('l拉取菜单的信息！！！')
       store.commit('SET_ID', getCookie('user'))
-      // store.commit('SET_NAME', getCookie('userName'))
+      // store.commit('SET_CODEMEAU', getCookie('meaucode'))
       store
         .dispatch('GenerateRoutes')
         .then(res => {

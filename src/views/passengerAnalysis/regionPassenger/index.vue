@@ -44,7 +44,7 @@
 
 <script>
 export default {
-     data(){
+    data(){
         return {
           value1:'',
           lineaData: []

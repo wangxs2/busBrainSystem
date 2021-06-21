@@ -11,11 +11,13 @@ import {
 import {
   Message
 } from 'element-ui'
+import user from './user'
 import router from '../../router/index'
 const _import = require('@/router/_import_' + process.env.NODE_ENV)
 const localList = `
 ,/errorPage,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/passengerCorridor,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
 /passengerAnalysis,/passengerAnalysis/linePassenger,/passengerAnalysis/sectionPassenger,/passengerAnalysis/stationPassenger,/passengerAnalysis/regionPassenger,
+/realNetwork,/realNetwork/vehicleCar,/networkExcellent,/networkExcellent/annualPlan,/operServices,/operServices/repetitionRactor,
 ` //本地列表 注意最后加逗号
 
 /**
@@ -67,12 +69,10 @@ const permission = {
     menuData: [], //菜单数据
     routers: constantRouterMap, //路由表
     addRouters: [], //动态路由表
-    codeMeau:'',//菜单的CODE
+    
   },
   mutations: {
-    SET_CODEMEAU:(state, codeMeau) => { //菜单的CODE
-      state.codeMeau = codeMeau
-    },
+   
     SET_MENU: (state, menuData) => { //菜单
       state.menuData = menuData
     },
@@ -86,19 +86,21 @@ const permission = {
       commit,
       state
     }) {
-
+      // console.log(user.state.codeMeau)
       return new Promise((resolve, reject) => {
         fetchGet('auths/menu',{
-          code:state.codeMeau
+          code:getCookie('meaucode')
         }).then(res => {
           if (res.length==0) {
             Message.error({
               message: '没有此权限！'
             })
-            router.replace({
-              path: '/login?flag=true'
-            })
-
+            setTimeout(()=>{
+              router.replace({
+                path: '/login?flag=true'
+              })
+            },500)
+            return
           }
           let menuData = filterAsyncMenu(1000, res.slice(0))
           asyncRouterMap[0].children = filterAsyncRouter(menuData.slice(0))

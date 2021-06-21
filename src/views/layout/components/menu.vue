@@ -40,21 +40,16 @@ export default {
   },
   mounted(){
 
-    if(getCookie('meauindexnow')){
-      this.meauindex=getCookie('meauindexnow')
-    }else{
-      let str=this.$route.matched[1].name
+    let str=this.$route.matched[1].name
       this.$store.getters.menuData.forEach((iteam,index)=>{
           if(iteam.name==str){
             this.meauindex=index
           }
       })
-    }
   },
   methods: {
     changemenu(command){
        this.meauindex = command.n
-       document.cookie = "meauindexnow=" + this.meauindex;
       this.$router.push(command.iteam.url);
     }
   }
