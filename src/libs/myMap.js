@@ -342,10 +342,8 @@ export default class Map {
 
     var p1 = marker.getPosition();
     var p2 = marker1.getPosition();
-
     var distance = Math.round(p1.distance(p2));
     return distance
-
   }
 
   // 显示/隐藏 道路网

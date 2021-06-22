@@ -3,16 +3,17 @@
      <div class="search-box">
 
       <div style="margin-right:0.6vw;margin-left:0.1vw;width:3.5vw;">线路名称</div>
-      <el-select style="width:40%" size="small" v-model="value" placeholder="请选择">
+      <el-select style="width:40%" size="small" filterable @change="getDetail" v-model="value" placeholder="请选择">
         <el-option
-          v-for="item in lineaData"
-          :key="item.routeName"
+          v-for="(item,n) in lineaData"
+          :key="n"
           :label="item.routeName"
           :value="item.routeName">
         </el-option>
       </el-select>
       <div style="margin-right:0.6vw;margin-left:1vw;width:3.5vw;">阈值设置</div>
-      <el-input style="width:40%"  size="small" v-model="input" placeholder="请输入内容"></el-input>
+      <!-- @blur="getDetail" -->
+      <el-input style="width:40%"   size="small" v-model="input" @input="getDetail1" placeholder="请输入0-1阈值"></el-input>
     </div>
     <div class="rightlinemsg">
       <div class="tit">线路重复系数</div>
@@ -23,7 +24,7 @@
       <div class="tablbox">
         <div class="bttit bttit1" v-for="(item,n) in lineaData" :key="n">
           <div>{{item.routeName}}</div>
-          <div>{{item.coefficient}}</div>
+          <div>{{item.coefficient.toFixed(2)}}</div>
         </div>
       </div>
     </div>
@@ -35,10 +36,10 @@
 export default {
    data(){
         return {
-          value1:'',
+          value:'',
           input:'',
           lineaData: [],
-
+          allData: [],
         }
     },
     created(){
@@ -48,13 +49,59 @@ export default {
       getData(){
           
           this.$fetchGet("route/lineCoefficient").then(res => {
+            res.result.forEach(iteam=>{
+              iteam.coefficient=Number(iteam.coefficient)
+            })
+            this.allData=res.result;
             this.lineaData=res.result;
             setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)
             },200)
 
           })
-        }
+      },
+      getDetail(){
+          this.$fetchGet("route/baseLineDetail",{
+            routeName:this.value
+          }).then(res => {
+            this.allData.forEach(itam=>{
+              if(itam.routeName==res.result[0].routeName){
+                res.result[0].coefficient=itam.coefficient
+              }
+            })
+              res.result[0].geom=this.setData(res.result[0].geom)
+              this.$emit('changeoper',{
+               operLine:res.result[0],
+               typeline:1
+              })
+          })
+       
+
+      },
+      getDetail1(){
+        if(this.input==''){
+            this.lineaData=this.allData
+        }else{
+            let arr=[]
+          this.allData.forEach(itam=>{
+              if(itam.coefficient>this.input){
+                arr.push(itam)
+              }
+            })
+            this.lineaData=arr
+         }
+
+
+      },
+      setData(data){
+        let str=data.split(' ')
+        let arr=[]
+        str.forEach(iteam=>{
+          arr.push([Number(iteam.split(',')[0]),Number(iteam.split(',')[1])])
+        })
+        return arr
+
+      },
     }
   
 }

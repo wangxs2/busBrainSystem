@@ -9,7 +9,7 @@
 
 <script>
 import Map from "@/libs/myMap.js";
-let MyMap = null; // 地图实例
+let MyMapLine = null; // 地图实例
 let dataLine=require('./car.js')
 export default {
   data(){
@@ -47,15 +47,15 @@ export default {
     '$store.getters.userStation':{
       handler(val,oldval){
        if(val){
-         MyMap.pointAll3(val)
+         MyMapLine.pointAll3(val)
        }
       },
     },
     '$store.getters.dataArrLine':{
       handler(val,oldval){
        if(val){
-        MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
-        MyMap.pathSimplifierIns.show()
+        MyMapLine.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
+        MyMapLine.pathSimplifierIns.show()
        }
       },
 
@@ -63,8 +63,8 @@ export default {
     '$store.getters.keyunData2':{
       handler(val,oldval){
        if(val){
-          MyMap.addGjMarker(this.$store.getters.keyunData)
-          MyMap.addOverlayGroup4(MyMap.passCorrline(this.$store.getters.keyunData2))
+          MyMapLine.addGjMarker(this.$store.getters.keyunData)
+          MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
        }
       },
     },
@@ -76,7 +76,7 @@ export default {
     
   },
   mounted(){
-     MyMap = new Map({ el: "lineCharacteristics" });
+     MyMapLine = new Map({ el: "lineCharacteristics" });
     let nowroute=this.$route
     this.judgeRoute(nowroute)
   },
@@ -99,31 +99,31 @@ export default {
         return res
 
     },
-    //判断圆的面积
-    judgeradius(){
+    // //判断圆的面积
+    // judgeradius(){
       
-      let dataAll=this.group(this.$store.getters.userStation,100)
-      let myar=[],myar1=[]
-      dataAll.forEach(iteam=>{
-        myar.push(this.judeRadius(iteam))
-        myar.forEach(itam=>{
-         myar1.push(itam)
-        })
-      })
-       //第一次遍历数组
+    //   let dataAll=this.group(this.$store.getters.userStation,100)
+    //   let myar=[],myar1=[]
+    //   dataAll.forEach(iteam=>{
+    //     myar.push(this.judeRadius(iteam))
+    //     myar.forEach(itam=>{
+    //      myar1.push(itam)
+    //     })
+    //   })
+    //    //第一次遍历数组
         
-    },
-    judeRadius(arr){
-      for(var i=0;i<arr.length;i++){
-            for(var j=i+1;j<arr.length;j++){
-                if(MyMap.juradius(arr[i].lnglat,arr[j].lnglat)<300){
-                  arr.splice(i,1)
-                }
-            }
-        }
-        return arr
+    // },
+    // judeRadius(arr){
+    //   for(var i=0;i<arr.length;i++){
+    //         for(var j=i+1;j<arr.length;j++){
+    //             if(MyMapLine.juradius(arr[i].lnglat,arr[j].lnglat)<300){
+    //               arr.splice(i,1)
+    //             }
+    //         }
+    //     }
+    //     return arr
 
-    },
+    // },
     group(array, subGroupLength) {
         let index = 0;
         let newArray = [];
@@ -136,117 +136,129 @@ export default {
       switch(val.name) {
           case "道路网":
           
-            MyMap.isTraffic(true)
-              if(MyMap.infoWindow){
-              MyMap.infoWindow.close()
+            MyMapLine.isTraffic(true)
+              if(MyMapLine.infoWindow){
+              MyMapLine.infoWindow.close()
             }
-            if(MyMap.mass){
-                MyMap.mass.hide()
-                MyMap.map.remove(MyMap.polygonLine)
-                if(MyMap.overlayGroups){
-                  MyMap.overlayGroups.getOverlays().forEach(iy=>{
-                    MyMap.map.remove(iy)
+            if(MyMapLine.mass){
+                MyMapLine.mass.hide()
+                MyMapLine.map.remove(MyMapLine.polygonLine)
+                if(MyMapLine.overlayGroups){
+                  MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+                    MyMapLine.map.remove(iy)
                   })
                 }
             }
-            if(MyMap.kyLineOver.getOverlays().length>0){
-                 MyMap.kymass.hide()
-                  MyMap.kyLineOver.hide()
-                  MyMap.overlayGroups.hide()
+            if(MyMapLine.kyLineOver.getOverlays().length>0){
+                 MyMapLine.kymass.hide()
+                  MyMapLine.kyLineOver.hide()
+                  MyMapLine.overlayGroups.hide()
             }
 
-            if(MyMap.pathSimplifierIns){
-                MyMap.pathSimplifierIns.setData(null)
+            if(MyMapLine.pathSimplifierIns){
+                MyMapLine.pathSimplifierIns.setData(null)
             }
               
               break;
           case "公交站点":
-              MyMap.isTraffic(false)
-              if(MyMap.infoWindow){
-                  MyMap.infoWindow.close()
+             
+              if(MyMapLine.infoWindow){
+                  MyMapLine.infoWindow.close()
               }
-              if(MyMap.mass){
-                MyMap.mass.show()
-                MyMap.overlayGroups.show()
+               if(MyMapLine.trafficLayer){
+                  MyMapLine.isTraffic(false)
               }
-              if(MyMap.kymass){
-                 MyMap.kymass.hide()
-                  MyMap.kyLineOver.hide()
+              if(MyMapLine.mass){
+                MyMapLine.mass.show()
+                MyMapLine.overlayGroups.show()
               }
-              if(MyMap.pathSimplifierIns){
-                  MyMap.pathSimplifierIns.setData(null)
+              if(MyMapLine.kymass){
+                 MyMapLine.kymass.hide()
+                  MyMapLine.kyLineOver.hide()
+              }
+              if(MyMapLine.pathSimplifierIns){
+                  MyMapLine.pathSimplifierIns.setData(null)
               }
               break;
           case "公交线路网":
-            MyMap.isTraffic(false)
-              if(MyMap.kymass){
-                 MyMap.kymass.hide()
-                MyMap.kyLineOver.hide()
+           
+              if(MyMapLine.kymass){
+                 MyMapLine.kymass.hide()
+                MyMapLine.kyLineOver.hide()
               }
-              if(MyMap.infoWindow){
-                  MyMap.infoWindow.close()
+               if(MyMapLine.trafficLayer){
+                  MyMapLine.isTraffic(false)
+              }
+              if(MyMapLine.infoWindow){
+                  MyMapLine.infoWindow.close()
                 }
-              if(MyMap.mass){
-                MyMap.mass.hide()
-                  MyMap.map.remove(MyMap.polygonLine)
-                if(MyMap.overlayGroups){
-                  MyMap.overlayGroups.getOverlays().forEach(iy=>{
-                    MyMap.map.remove(iy)
+              if(MyMapLine.mass){
+                MyMapLine.mass.hide()
+                  MyMapLine.map.remove(MyMapLine.polygonLine)
+                if(MyMapLine.overlayGroups){
+                  MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+                    MyMapLine.map.remove(iy)
                   })
                 }
               }
           
               //  setTimeout(()=>{
-              //     MyMap.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
+              //     MyMapLine.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
               //   },1000)
               
               
               break;
           case "公交专用道":
-              MyMap.isTraffic(false)
-               if(MyMap.infoWindow){
-                MyMap.infoWindow.close()
+              
+               if(MyMapLine.infoWindow){
+                MyMapLine.infoWindow.close()
+              }
+               if(MyMapLine.trafficLayer){
+                  MyMapLine.isTraffic(false)
               }
               //隐藏公交站点里面的数据
-              if(MyMap.mass){
-                MyMap.mass.hide()
-                MyMap.map.remove(MyMap.polygonLine)
-                if(MyMap.overlayGroups){
-                  MyMap.overlayGroups.getOverlays().forEach(iy=>{
-                    MyMap.map.remove(iy)
+              if(MyMapLine.mass){
+                MyMapLine.mass.hide()
+                MyMapLine.map.remove(MyMapLine.polygonLine)
+                if(MyMapLine.overlayGroups){
+                  MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+                    MyMapLine.map.remove(iy)
                   })
                 }
               }
               //隐藏客运走廊里面的数据
-              if(MyMap.kymass){
-                MyMap.kymass.hide()
-                MyMap.kyLineOver.hide()
+              if(MyMapLine.kymass){
+                MyMapLine.kymass.hide()
+                MyMapLine.kyLineOver.hide()
               }
               //隐藏公交线网里面的数据
-              if(MyMap.pathSimplifierIns){
-                MyMap.pathSimplifierIns.setData(null)
+              if(MyMapLine.pathSimplifierIns){
+                MyMapLine.pathSimplifierIns.setData(null)
               }
-              MyMap.heatmap.hide()
+              MyMapLine.heatmap.hide()
               break;
           case "客运走廊":
-              MyMap.isTraffic(false)
-              if(MyMap.infoWindow){
-                  MyMap.infoWindow.close()
+              
+              if(MyMapLine.infoWindow){
+                  MyMapLine.infoWindow.close()
               }
-              if(MyMap.mass){
-                MyMap.mass.hide()
-                MyMap.map.remove(MyMap.polygonLine)
-                if(MyMap.overlayGroups){
-                  MyMap.overlayGroups.getOverlays().forEach(iy=>{
-                    MyMap.map.remove(iy)
+              if(MyMapLine.trafficLayer){
+                  MyMapLine.isTraffic(false)
+              }
+              if(MyMapLine.mass){
+                MyMapLine.mass.hide()
+                MyMapLine.map.remove(MyMapLine.polygonLine)
+                if(MyMapLine.overlayGroups){
+                  MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+                    MyMapLine.map.remove(iy)
                   })
                 }
               }
                //隐藏公交线网里面的数据
-              if(MyMap.pathSimplifierIns){
-                MyMap.pathSimplifierIns.setData(null)
+              if(MyMapLine.pathSimplifierIns){
+                MyMapLine.pathSimplifierIns.setData(null)
               }
-              MyMap.heatmap.hide()
+              MyMapLine.heatmap.hide()
               
               break;
           default:
@@ -256,41 +268,41 @@ export default {
  
 
       if(row.ispoint==1){
-        MyMap.isMass(true)
+        MyMapLine.isMass(true)
       }else if(row.ispoint==2){
-        MyMap.isMass(false)
+        MyMapLine.isMass(false)
       }
 
       if(row.isheat==1){
-        MyMap.heatmap.hide()
+        MyMapLine.heatmap.hide()
       }else if(row.isheat==2){
-        let arr=MyMap.heatmap.getDataSet()
+        let arr=MyMapLine.heatmap.getDataSet()
         if(arr){
-          MyMap.heatmap.show()
+          MyMapLine.heatmap.show()
         }else{
-          MyMap.setHeatemap(this.$store.getters.heatData)
+          MyMapLine.setHeatemap(this.$store.getters.heatData)
         }
         
       }
 
 
       if(row.isinfobtn){
-        MyMap.searchStation(row.isinfobtn.stationName,[row.isinfobtn.longitude==undefined?row.isinfobtn.lon:row.isinfobtn.longitude,row.isinfobtn.latitude==undefined?row.isinfobtn.lat:row.isinfobtn.latitude]) 
+        MyMapLine.searchStation(row.isinfobtn.stationName,[row.isinfobtn.longitude==undefined?row.isinfobtn.lon:row.isinfobtn.longitude,row.isinfobtn.latitude==undefined?row.isinfobtn.lat:row.isinfobtn.latitude]) 
       }
       if(row.stattiondetail){
-        MyMap.infoWindow.setContent(MyMap.createInfoWindow(2,row.stattiondetail))
-        MyMap.infoWindow.open(MyMap.map,[row.stattiondetail.longitude,row.stattiondetail.latitude]);
-        MyMap.map.setZoomAndCenter(16,[row.stattiondetail.longitude,row.stattiondetail.latitude])
+        MyMapLine.infoWindow.setContent(MyMapLine.createInfoWindow(2,row.stattiondetail))
+        MyMapLine.infoWindow.open(MyMapLine.map,[row.stattiondetail.longitude,row.stattiondetail.latitude]);
+        MyMapLine.map.setZoomAndCenter(16,[row.stattiondetail.longitude,row.stattiondetail.latitude])
       }
 
       if(row.adminArea){
-        MyMap.createPolygon(row.adminArea)
-        MyMap.addOverlayGroup(MyMap.threeCircle(this.$store.getters.userStation,300))
+        MyMapLine.createPolygon(row.adminArea)
+        MyMapLine.addOverlayGroup(MyMapLine.threeCircle(this.$store.getters.userStation,300))
 
       }
 
        if(row.isbtn){
-          MyMap.setRadius(row.isbtn)
+          MyMapLine.setRadius(row.isbtn)
         }
        
     },

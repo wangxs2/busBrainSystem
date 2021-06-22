@@ -11,6 +11,7 @@ export default class Map {
       linesearch: null,
       polygonLine: null,
       infoWindow:null,//信息窗口
+      busPolyline: null,
       overlayGroups: new AMap.OverlayGroup(),//区域客流站点集合
     
     }
@@ -35,6 +36,41 @@ export default class Map {
       offset: new AMap.Pixel(0, -35)
     });
 
+
+  }
+
+   //线路重复系数公交线
+   drawbusLine(BusArr,type) {
+    if(this.busPolyline){
+      this.map.remove(this.busPolyline)
+     
+    }
+    let num=Math.round((BusArr.geom.length)/2)
+    //线路重复系数公交线
+    this.busPolyline = new AMap.Polyline({
+      map: this.map,
+      path: BusArr.geom,
+      strokeColor: "#50C0FF",//线颜色
+      strokeOpacity: 0.8,//线透明度
+      isOutline: true,
+      outlineColor: '#50C0FF',
+      showDir: true,
+      lineJoin :'round',
+      lineCap :'round',
+      cursor:'pointer',
+      strokeWeight: 10//线宽
+    });
+    var marker = new AMap.Marker({ content: ' ', map: this.map });
+    this.busPolyline.on('mouseover',  (e)=> {
+      marker.setPosition(BusArr.geom[num]);
+      marker.setLabel({ content: `<div style='box-shadow: 0px 0px 10px rgba(0, 49, 61, 0.8) inset;background:rgba(0, 49, 61, 0.6);border: 1px solid #00FFFF;padding:10px 16px;border-radius:8px;font-size:18px;color:#ffffff'>${type==1?"重复系数："+BusArr.coefficient:"线路长度："+BusArr.lineLength}</div>` })
+
+    })
+    this.busPolyline.on('mouseout',  (e)=> {
+      marker.setLabel({ content: `` })
+    })
+
+    this.map.setFitView(this.busPolyline, true, [60, 200, 60, 60]);
 
   }
 

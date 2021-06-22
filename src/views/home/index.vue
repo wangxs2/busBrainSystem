@@ -244,31 +244,30 @@ export default {
         background: url("~@/assets/image/home/1.png");
         background-size: 100% 100%;
         cursor:pointer;
-        
       }
-     
-   
       .left-l1:hover{
-        
         animation: lightleft 10s linear infinite;
       }
        @-webkit-keyframes lightleft{
         0% {
           opacity: 0.5;
-          transform: scale(1,1);
+          transform: scale(0.6,1);
            transform:translateX(-60px);
           background: url("~@/assets/image/home/1.png");
+          background-size: 100% 100%;
           }
           5% {
            opacity: 1;
            transform: scale(1,1);
             transform:translateY(0px);
            background: url("~@/assets/image/home/1_pressed.png");
+           background-size: 100% 100%;
           }
           100%{
             opacity: 1;
            transform: scale(1,1);
            background: url("~@/assets/image/home/1_pressed.png");
+           background-size: 100% 100%;
           }
 
       }
