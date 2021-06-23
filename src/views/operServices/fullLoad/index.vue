@@ -1,5 +1,5 @@
 <template>
-  <div class="sectionPassenger">
+  <div class="personTime">
     <div class="search-box">
 
       <div style="margin-right:0.6vw;width:3vw;">时间</div>
@@ -137,7 +137,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.sectionPassenger{
+.personTime{
 .el-pagination .btn-next, .el-pagination .btn-prev{
   background: transparent !important;
   color: #ffffff !important;
@@ -150,7 +150,7 @@ export default {
 
 </style>
 <style lang="scss" scoped>
-.sectionPassenger{
+.personTime{
   .search-box {
     background: rgba(12, 38, 104, 0.7);
     box-sizing: border-box;

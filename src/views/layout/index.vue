@@ -6,7 +6,7 @@
     element-loading-background="rgba(0, 0, 0, 0.6)"
   >
    <app-main></app-main>
-   <div class="header-box">
+   <div :class="typeclass()">
      <div class="menu-box">
        <menu-nav></menu-nav>
      </div>
@@ -36,7 +36,8 @@
 import menuNav from "./components/menu";
 import appMain from "./components/appMain";
 import {
-  delCookie
+  delCookie,
+  getCookie
 } from '@/libs/util'
 export default {
   components: {
@@ -72,9 +73,19 @@ export default {
       },
     },
   },
-  watch: {
-  },
+  
   methods: {
+    typeclass(){
+      console.log(7744)
+      if(getCookie('meaucode')=='LINE_DECIDE'){
+        return 'header-box'
+      }else if(getCookie('meaucode')=='OBSERVATION'){
+        return 'header-box header-box1'
+      }else if(getCookie('meaucode')=='MAIN'){
+        return 'header-box header-box2'
+      }
+
+    },
     handleCommand(command) {
       
       if(command=='b'){
@@ -175,6 +186,12 @@ export default {
       width:100%;
      height:100%;
     }
+  }
+  .header-box1{
+    background:url('~@/assets/image/2_top_bj.png');
+  }
+  .header-box2{
+    background:url('~@/assets/image/xtgl_top_bj.png');
   }
   .routelist{
     position:absolute;

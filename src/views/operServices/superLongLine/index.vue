@@ -22,7 +22,7 @@
         <div>线路长度(km)</div>
       </div>
       <div class="tablbox">
-        <div class="bttit bttit1" v-for="(item,n) in lineaData" :key="n">
+        <div :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData"  :key="n">
           <div>{{item.routeName}}</div>
           <div>{{item.lineLength}}</div>
         </div>
@@ -38,6 +38,7 @@ export default {
         return {
           value:'',
           input:'',
+          nowindex:-1,
           lineaData: [],
           allData:[],
         }
@@ -75,6 +76,14 @@ export default {
               
          
 
+      },
+      toDetail(data,index){
+          this.nowindex=index
+          data.geom=this.setData(data.geom)
+          this.$emit('changeoper',{
+            operLine:data,
+            typeline:2
+        })
       },
       getDetail1(){
         if(this.input==''){
@@ -174,7 +183,15 @@ export default {
       font-size:vw(16);
     }
     .bttit1:hover {
-      background: rgba(93, 137, 255, 0.1);
+      background: rgba(93, 137, 255, 0.2);
+      color:#27B6FF;
+      font-weight:bold;
+      box-shadow: 0px 0px vh(6) rgba(69, 120, 255, 0.6) inset;
+    }
+    .bttit2{
+        background: rgba(93, 137, 255, 0.2);
+      color:#27B6FF;
+      font-weight:bold;
       box-shadow: 0px 0px vh(6) rgba(69, 120, 255, 0.6) inset;
     }
     .tablbox {

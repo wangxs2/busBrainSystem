@@ -3,7 +3,7 @@
     <div class="search-box">
 
       <div style="margin-right:0vw;margin-left:1.8vw;width:3vw;">年份</div>
-      <el-select size="small" v-model="value" placeholder="请选择">
+      <el-select size="small" style="margin-right:0.4vw" v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -11,27 +11,50 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-button  type="primary" size="small" style="margin-left:0.4vw" >Excel导入</el-button>
+      <el-upload
+        class="upload-demo"
+        action="/busbrain/adjust-plan/importExcel"
+        :on-change="handleChange"
+        :on-success="successFile"
+        :show-file-list="false"
+        :file-list="fileList">
+        <el-button size="small" type="primary">Excel导入</el-button>
+      </el-upload>
+      <el-button size="small" style="margin-left: 0.6vw" @click="detilAll"  type="primary">批量删除</el-button>
     </div>
-    <div class="table-data">
+    <div class="table-data"  v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(12, 38, 104, 0.2)">
       <div class="table-header">
-        <div>线路名称</div>
-        <div>所属公司</div>
-        <div>调整方式</div>
-        <div>实施年份</div>
-        <div>推进情况</div>
+        <div style="width:5%;cursor:pointer">
+          <img @click="isshowdelete=!isshowdelete" v-if="!isshowdelete"  src="@/assets/image/fxkfalse.png" alt="" srcset="">
+          <img @click="isshowdelete=!isshowdelete" v-if="isshowdelete" src="@/assets/image/fxktrue.png" alt="" srcset="">
+        </div>
+        <div style="width:15%">线路名称</div>
+        <div style="width:20%">所属公司</div>
+        <div style="width:20%">调整方式</div>
+        <div style="width:10%">实施年份</div>
+        <div style="width:20%">推进情况</div>
+        <div style="width:10%">操作</div>
       </div>
       <div class="table-contain">
-        <div class="tableTr"   v-for="item in 40">
-          <div>{{item}}</div>
-          <div>上海巴士公交有限公司</div>
-          <div>修改线路 </div>
-          <div>2019</div>
-          <div>重复率降低20%</div>
+        <div class="tableTr"   v-for="(item,index) in alldata" :key="index">
+          <div style="width:5%">
+            <img @click="changeShow(item)" v-if="!item.isdetail" src="@/assets/image/fxkfalse.png" alt="" srcset="">
+            <img @click="changeShow(item)"  v-if="item.isdetail" src="@/assets/image/fxktrue.png" alt="" srcset="">
+          </div>
+          <div style="width:15%">{{item.routeName}}</div>
+          <div style="width:20%">{{item.company}}</div>
+          <div style="width:20%">{{item.mainContent}} </div>
+          <div style="width:10%">{{item.finishTime==null?'':item.finishTime.slice(0,4)}}</div>
+          <div style="width:20%">{{item.classify}}</div>
+          <div style="width:10%"> <el-button size="mini" type="warning">修改</el-button></div>
         </div>
+        <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
       </div>
     </div>
-    <div class="tabbottom">
+    <div class="tabbottom" v-if="alldata.length!==0">
       <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -57,13 +80,36 @@ export default {
               value:'2020',
             }
           ],
+          isshowdelete:false,
           value:'2021',
+          loading:true,
           query:{
             pageNo:1,
-            pageSize:20,
+            pageSize:20, 
           },
-          total:100,
+          alldata:[],
+          fileList:[],
+          total:null,
+          allids:''
         }
+   },
+   watch:{
+     "isshowdelete":function(val,old){
+       console.log(val)
+       if(val==true){
+         let arr=[]
+          this.alldata.forEach(iteam=>{
+            iteam.isdetail=true
+            arr.push(iteam.id)
+          })
+          this.allids=arr.join(',')
+       }else{
+           this.alldata.forEach(iteam=>{
+            iteam.isdetail=false
+          })
+          this.allids=''
+       }
+     },
    },
     created(){
       
@@ -73,6 +119,42 @@ export default {
 
     },
     methods:{
+      successFile(res){
+        console.log(res)
+        if(res.code==200){
+          this.$message({
+            showClose: true,
+            message: '导入成功！',
+            type: 'success'
+          });
+          this.getData();
+        }
+      },
+      detilAll(){
+          this.loading=true
+          let arr=[]
+          this.alldata.forEach(iteam=>{
+            if(iteam.isdetail==true){
+              arr.push(iteam.id)
+            }
+          })
+          this.allids=arr.join(',')
+          this.$fetchDelete("adjust-plan/deleteBatch",{ids:this.allids}).then(res => {
+            if(res.code==200){
+              this.$message({
+                showClose: true,
+                message: '删除成功！',
+                type: 'success'
+              });
+              this.getData();
+              this.isshowdelete=false
+            }
+          })
+
+      },
+      changeShow(row){
+        row.isdetail=!row.isdetail
+      },
       handleSizeChange (val) {
         //分页 选择每页条数
         this.query.pageSize = val;
@@ -83,9 +165,19 @@ export default {
         this.query.pageNo = val;
         this.getData();
       },
+      handleChange(file, fileList) {
+        this.loading=true
+        // this.fileList = fileList.slice(-3);
+      },
       getData(){
-        
+        this.loading=true
         this.$fetchGet("adjust-plan/list",this.query).then(res => {
+          res.result.list.forEach(iteam=>{
+            iteam.isdetail=false
+          })
+          this.alldata=res.result.list
+          this.total=res.result.total
+          this.loading=false
           setTimeout(()=>{
             this.$store.commit('SET_LOADING',false)
           },200)
@@ -146,7 +238,8 @@ export default {
       box-sizing: border-box;
       padding: 0 vw(20);
       div{
-        flex:1;
+        // flex:1;
+        text-align:left;
       }
     }
     .table-contain{
@@ -165,13 +258,15 @@ export default {
         padding: 0 vw(20);
         cursor:pointer;
         div{
-          flex:1;
+          // flex:1;
+           text-align:left;
         }
 
       }
       .tableTr:hover {
         background:rgba(12, 38, 104, 0.5);
         color: #4578FF;
+        font-weight:bold;
       } 
       .tableTr:nth-child(even){
         background:rgba(12, 38, 104, 0.2)

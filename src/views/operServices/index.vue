@@ -1,6 +1,6 @@
 <template>
   <div class="operServices">
-    <div class="operMap" id="operMap">
+    <div class="operMap" v-show="$route.name!=='百公里人次辅助决策'&&$route.name!=='满载率辅助决策'" id="operMap">
       </div>
     <router-view @changeoper="klsonClick"></router-view>
   </div>

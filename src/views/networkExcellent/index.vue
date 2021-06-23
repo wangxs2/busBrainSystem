@@ -8,10 +8,10 @@
 
 <script>
 import Map from "./networkMap.js";
-let MyMap = null; // 地图实例
+let ntMyMap = null; // 地图实例
 export default {
  mounted(){
-    MyMap = new Map({ el: "networkMap" });
+    ntMyMap = new Map({ el: "networkMap" });
   },
   
 }
