@@ -1,6 +1,6 @@
 <template>
   <div class="treeleft">
-    <el-dropdown @command="changemenu" v-for="(item,n) in menuData" :key="item.id">
+    <el-dropdown placement="bottom-start" @command="changemenu" v-for="(item,n) in menuData" :key="item.id">
       <div class="one-meanu">
         <div :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
         <div v-if="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>

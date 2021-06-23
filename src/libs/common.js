@@ -46,7 +46,7 @@ export default {
     /* *
      *@method 引入axios
      */
-    // Vue.prototype.$axios = Axios;
+    Vue.prototype.$axios = http.Axios;
     Vue.prototype.$fetchGet = http.fetchGet;
     Vue.prototype.$fetchPost = http.fetchPost;
     Vue.prototype.$fetchPut = http.fetchPut;

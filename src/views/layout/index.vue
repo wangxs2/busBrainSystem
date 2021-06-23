@@ -11,7 +11,7 @@
        <menu-nav></menu-nav>
      </div>
      <div class="userName">
-        <el-dropdown @command="handleCommand">
+        <el-dropdown placement="bottom-start" @command="handleCommand">
           <div class="userName1">
             <img src="@/assets/image/home/icon_yh.png" alt="" srcset="">
             admin
@@ -123,10 +123,7 @@ export default {
       data.forEach((iteam,index)=>{
         if(iteam!==undefined){
           arr.push(iteam)
-
         }
-        
-        
       })
       return arr
 
@@ -196,7 +193,7 @@ export default {
   .routelist{
     position:absolute;
     left:0;
-    top:vh(70);
+    top:vw(70);
     width:100%;
     height:vw(70);
     z-index:10;
