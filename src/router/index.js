@@ -118,7 +118,8 @@ export const constantRouterMap = [
 export const asyncRouterMap = [{
   path: '',
   // component: ''
-  component: Layout
+  component: Layout,
+  name: 'Layout',
 }]
 
 export default new Router({

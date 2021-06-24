@@ -16,7 +16,6 @@ NProgress.configure({
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条开始
-  console.log(from)
   store.commit('SET_LOADING',true)
   let arour=[]
   let routenow = to.matched.slice(2)[0]
@@ -47,8 +46,6 @@ router.beforeEach((to, from, next) => {
   } else {
     
     store.getters.routehistroy.push(to.matched[2])
-    console.log(getCookie('meaucode'))
-    console.log(store.getters.codeMeau)
     if (store.getters.userId !== getCookie('user') + '') {
       //判断是否拉取用户信息 权限
       console.log('l拉取菜单的信息！！！')

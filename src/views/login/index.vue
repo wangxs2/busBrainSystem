@@ -221,7 +221,11 @@ export default {
                 // this.$store.commit("SET_ROLEID", res.result.role[0].id);
                 // this.$store.commit("SET_ROLECODE", res.result.role[0].code);
                 //  this.$router.push("/lineCharacteristics");
-                this.$message.success('登陆成功')
+                this.$message({
+                  duration: 1000,
+                  message: '登陆成功',
+                  type: 'success'
+                });
                 // this.$router.push("/system/users");
                 this.$router.push("/home");
               } else {

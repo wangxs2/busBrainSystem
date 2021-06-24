@@ -50,9 +50,12 @@ export default {
         }
     },
     created() {
+     
+      
+    },
+    mounted() {
       this.getAllline()
     },
-    mounted() {},
     methods: {
      
       toLine(){
@@ -66,19 +69,32 @@ export default {
         
       },
       changeDate(){
-        console.log(this.value1)
+       
         this.getLinepassenger()
       },
       getAllline(){ 
         this.$fetchGet("route/routeList").then(res=>{
           this.options=res.result
-            setTimeout(()=>{
-            this.$store.commit('SET_LOADING',false)
-            },200)
+         
+
+         if(this.$route.query.idName){
+            this.options.forEach(iteam=>{
+              if(iteam.routeName==this.$route.query.idName){
+                this.value=iteam.routeId
+                this.getLinepassenger()
+              }
+            })
+
+          }else{
+               setTimeout(()=>{
+                this.$store.commit('SET_LOADING',false)
+                },200)
+
+          }
         })
       },
       getLinepassenger(){
-
+        this.$store.commit('SET_LOADING',true)
         this.$fetchGet("passenger/linePassenger",{
           direction:this.isbtn,
           st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
@@ -100,6 +116,8 @@ export default {
                   type: 'warning'
                 });
             }
+
+            this.$store.commit('SET_LOADING',false)
             
         
         })

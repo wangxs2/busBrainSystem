@@ -12,6 +12,7 @@ export default class Map {
       polygonLine: null,
       infoWindow:null,//信息窗口
       busPolyline: null,
+      mapCenter: [121.460752,31.011182], // 默认地图中心点
       overlayGroups: new AMap.OverlayGroup(),//区域客流站点集合
     
     }

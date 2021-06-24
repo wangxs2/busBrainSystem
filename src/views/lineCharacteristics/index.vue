@@ -148,6 +148,7 @@ export default {
                  
                   if(MyMapLine.polygonLine){
                     MyMapLine.polygonLine.hide()
+                   
                     MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
                       MyMapLine.map.remove(iy)
                     })

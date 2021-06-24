@@ -10,7 +10,14 @@ export default class Map {
       datar: {},
       linesearch: null,
       polygonLine: null,
+      mapCenter: [121.460752,31.011182], // 默认地图中心点
       infoWindow:null,//信息窗口
+      ijsa:{
+        sp:4,
+        sd:4,
+        route:'45,12',
+        lnglat:[1,1]
+      },
       overlayGroups: new AMap.OverlayGroup(),//区域客流站点集合
       overlayGroups1: new AMap.OverlayGroup(),//线路客流站点集合
       zdklMapOption: { // 站点客流 - 地图覆盖物参数
@@ -36,9 +43,11 @@ export default class Map {
     this.map.add(this.overlayGroups);
     this.infoWindow = new AMap.InfoWindow({
       isCustom: true,  //使用自定义窗体
-      content: this.createInfoWindow(),
+      content: this.createInfoWindow(this.ijsa),
       offset: new AMap.Pixel(0, -35)
     });
+    this.infoWindow.open(this.mapCenter)
+    console.log(this.infoWindow)
     this.map.plugin(["AMap.HeatMap"], () => {      //加载热力图插件
       this.zdklMapOption.heat = new AMap.HeatMap(this.map, {
         opacity: [0, 0.8], zIndex: 110,
@@ -61,6 +70,9 @@ export default class Map {
 
   //渲染不同的海量点
   xrhld(massIndex, data, style) {
+    if(this.zdklMapOption.mass[massIndex]){
+      this.zdklMapOption.mass[massIndex].clear()
+    }
     this.zdklMapOption.mass[massIndex] = new AMap.MassMarks(data, {
       opacity: 0.8,
       zIndex: 111,
@@ -99,6 +111,10 @@ export default class Map {
   createInfoWindow(data){
     let content=''
     if(data){
+      let str=''
+      if(data.route){
+        str =this.getStationLisLinesDomStr(data.route.split(','))
+      }
       content=`
       <div  class="myinfobox">
         <div class="titfont">
@@ -106,9 +122,11 @@ export default class Map {
           ${data.stationName}
         </div>
         <div class="line-lsi1">
-          <div class="itean-lsi" style="margin-bottom:12px">经度:${data.lnglat[0]}</div>
-          <div class="">维度:${data.lnglat[1]}</div>
-         
+          <div class="itean-lsi" style="margin-bottom:6px">经度:${data.lnglat[0]}</div>
+          <div class="" style="margin-bottom:6px">维度:${data.lnglat[1]}</div>
+          <div class="" style="margin-bottom:6px">上车:${data.sp}</div>
+          <div class="" style="margin-bottom:6px">下车:${data.sd}</div>
+          <div class=" " style="margin-bottom:6px">经过线路:${str}</div>
           
          </div>
       </div>
@@ -119,6 +137,16 @@ export default class Map {
 
     return content
 
+  }
+
+  getStationLisLinesDomStr(data) {
+      var domStr = '';
+      for (var i = 0; i < data.length; i++) {
+          var lineDom = `<span data-code="${data[i]}" class="unclick-stations-lis">${data[i]}</span>`
+          domStr += lineDom
+      }
+      // domStr = domStr.substring(0, domStr.length - 1);
+      return domStr;
   }
 
   //区域客流的数据

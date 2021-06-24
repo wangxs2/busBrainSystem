@@ -68,12 +68,9 @@ export default {
     '$store.getters.allStation':{
       handler(val,oldval){
        if(val){
-         let heatOption=this.$store.getters.stationHeat;
         for(let key  in val){
             MyMap.xrhld(key,val[key],this.styleStition[key])
           }
-         MyMap.zdklMapOption.heat.setDataSet({data: heatOption, max: 100})
-         
        }
       },
     },
@@ -81,7 +78,9 @@ export default {
   },
   mounted(){
     MyMap = new Map({ el: "passengerMap" });
-    this.judgeRoute(this.$route)
+    this.judgeRoute(this.$route);
+     
+     
   },
   methods:{
     qchh(){
@@ -115,26 +114,59 @@ export default {
     judgeRoute(val){
       switch(val.name) {
           case "站点客流":
-           
+         
+            if(MyMap.busPolyline){
+              MyMap.busPolyline.hide()
+              MyMap.overlayGroups1.hide()
+            }
             if(MyMap.overlayGroups.getOverlays().length>0){
               MyMap.overlayGroups.hide()
             }
+           
+            if(MyMap.infoWindow){
+              MyMap.infoWindow.open()
+            }
               break;
           case "区域客流":
-            if(MyMap.zdklMapOption.heat.getDataSet()){
-              MyMap.zdklMapOption.heat.hide()
+            if(this.$store.getters.allStation){
+             
               for(let key  in this.$store.getters.allStation){
                   MyMap.zdklMapOption.mass[key].hide()
                 }
+
+              if(MyMap.zdklMapOption.heat.getDataSet()){
+                 MyMap.zdklMapOption.heat.hide()
+              }
+            }
+            if(MyMap.busPolyline){
+              MyMap.busPolyline.hide()
+              MyMap.overlayGroups1.hide()
+            }
+            if(MyMap.infoWindow){
+              MyMap.infoWindow.close()
             }
               break;
-          case "公交线路网":
+          case "线路客流":
+           
+            if(this.$store.getters.allStation){
+              if(MyMap.zdklMapOption.heat.getDataSet()){
+                 MyMap.zdklMapOption.heat.hide()
+              }
+              for(let key  in this.$store.getters.allStation){
+                console.log("是否隐藏了")
+                  MyMap.zdklMapOption.mass[key].hide()
+                }
+            }
+            if(MyMap.overlayGroups.getOverlays().length>0){
+              MyMap.overlayGroups.hide()
+            }
+            if(MyMap.infoWindow){
+              MyMap.infoWindow.close()
+            }
            
               break;
-          case "公交专用道":
+          case "断面客流":
              
-              break;
-          case "客运走廊":
               break;
           default:
           } 
@@ -148,7 +180,9 @@ export default {
         }
       }
       if(row.isheat==true){
-        MyMap.zdklMapOption.heat.show()
+        let heatOption=this.$store.getters.stationHeat;
+        console.log(MyMap.zdklMapOption.heat)
+        MyMap.zdklMapOption.heat.setDataSet({data: heatOption, max: 100})
       }else if(row.isheat==false){
         MyMap.zdklMapOption.heat.hide()
       }
@@ -223,6 +257,15 @@ export default {
 
 }
 .passengerAnalysis{
+  .unclick-stations-lis{
+    cursor:pointer;
+    text-decoration:underline;
+    color:#4578FF;
+    margin-right:0.4vw;
+  }
+  .unclick-stations-lis:hover{
+    color: #00FFFF;
+  }
   .el-select-dropdown,.el-popper{
     max-width:800px !important;
     left:0px!important;

@@ -7,6 +7,7 @@
         size="small"
         type="daterange"
         range-separator="至"
+        @change="getAllData()"
         start-placeholder="开始日期"
         end-placeholder="结束日期">
       </el-date-picker>
@@ -22,12 +23,12 @@
         @select="handleSelect"
       ></el-autocomplete>
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3vw;">时段</div>
-      <el-select size="small" v-model="value" placeholder="请选择">
+      <el-select size="small" @change="getAllData()" v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.value"
           :label="item.name"
-          :value="item.value">
+          :value="item.name">
         </el-option>
       </el-select>
     </div>
@@ -77,7 +78,7 @@ export default {
               value:2
             }
           ],
-          value1:'',
+          value1:[new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
           value:'',
           state2:'',
           allStation:[],
@@ -120,17 +121,42 @@ export default {
             }
           ],
           stationroll:{},
-          isheat:true
+          isheat:false,
+          idName:'',
+          restaurants:[],
         }
     },
     created() {
       this.getAllData()
     },
+    watch:{
+      
+    },
     mounted() {
+      this.$nextTick( ()=> {
+           $(".passengerAnalysis").on("click", ".unclick-stations-lis", e => {
+            this.testroute($(e.target).data("code"))
+          })
+
+      })
+   
     },
     methods: {
+      testroute(val){
+        this.$router.push({
+          path:'/passengerAnalysis/linePassenger',
+          query:{
+            idName:val
+          }
+          });
+      },
       getAllData(){
-          this.$fetchGet("passenger/all").then(res => {
+        this.$store.commit('SET_LOADING',true)
+          this.$fetchGet("passenger/all",{
+            st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
+            et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
+            type:this.value
+          }).then(res => {
             let arrheat=[]
             this.stationroll=res.result
              for(let key  in this.stationroll){
@@ -150,11 +176,31 @@ export default {
           })
 
       },
-      querySearch(){
-
+      querySearch(queryString, cb) {
+        var restaurants = this.restaurants;
+        var results = queryString
+          ? restaurants.filter(this.createFilter(queryString))
+          : restaurants;
+        // 调用 callback 返回建议列表的数据
+        results.forEach(iteam=>{
+          iteam.value=iteam.stationName
+        })
+        cb(results);
       },
-      handleSelect(){
-
+      createFilter(queryString) {
+          return (restaurant) => {
+            return (restaurant.stationName.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+          };
+        },
+      handleSelect(iteam) {
+        this.$fetchGet("/indicator/stationDetail",{
+          code:iteam.stationName,
+          direction:iteam.routeDirection
+        }).then(res => {
+          this.$emit('changefun',{
+            stattiondetail:res.result
+        })
+        })
       },
       toheat(){
         this.isheat=!this.isheat
