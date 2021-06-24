@@ -112,10 +112,18 @@ export default {
   beforeCreate() {},
   created() {
     this.getLinelength()
-    this.getAllLine()
+     this.getAllLine()
+   
+    
      
   },
-  mounted() {},
+  mounted() {
+    // if(this.$store.getters.dataArrLine.length!==0){
+    //    this.$store.commit('SET_LOADING',false)
+    // }else{
+    //   this.getAllLine()
+    // }
+  },
 
   methods: {
     tomeay(row) {

@@ -63,13 +63,11 @@ export default {
   },
   beforeCreate() {},
   created() {
-    setTimeout(()=>{
-      this.$store.commit('SET_LOADING',false)
-    },1000)
-    this.getkyzlData()
+    // setTimeout(()=>{
+    //   this.$store.commit('SET_LOADING',false)
+    // },1000)
     
-
-   
+   this.getkyzlData()
 
   },
   mounted() {
@@ -125,6 +123,7 @@ export default {
             this.setTwo(res.result.corridorList)
             this.mlinedata=mdata
             this.slinedata=sdata
+            this.$store.commit('SET_LOADING',false)
         });
     },
     setTwo(data){

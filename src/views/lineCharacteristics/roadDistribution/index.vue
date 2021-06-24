@@ -25,9 +25,7 @@ export default {
   },
   beforeCreate() {},
   created() {
-     setTimeout(()=>{
-        this.$store.commit('SET_LOADING',false)
-      },1000)
+    this.$store.commit('SET_LOADING',false)
   },
   mounted() {
   },

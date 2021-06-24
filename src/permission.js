@@ -37,6 +37,7 @@ router.beforeEach((to, from, next) => {
     store.commit('SET_ROUTEHISTROY', [])
     store.commit('SET_ID', '')
     delCookie("meaucode")
+    delCookie("reagonName")
     next()
     return
   }

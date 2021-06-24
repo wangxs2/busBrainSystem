@@ -38,36 +38,39 @@ export default {
   watch:{
     '$route':{
       handler:function(val,oldval){
-  
-       this.judgeRoute(val)
-      } ,
+       this.judgeRouteLine(val)
+      },
       deep:true,
       immediate: true
     },
-    '$store.getters.userStation':{
-      handler(val,oldval){
-       if(val){
-         MyMapLine.pointAll3(val)
-       }
-      },
-    },
+    // '$store.getters.userStation':{
+    //   handler(val,oldval){
+    //    if(val.length>0){
+
+         
+    //      MyMapLine.pointAll3(val)
+    //    }
+    //   },
+    //   deep:true,
+    //   immediate: true
+    // },
     '$store.getters.dataArrLine':{
       handler(val,oldval){
-       if(val){
+       if(val.length>0){
         MyMapLine.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
         MyMapLine.pathSimplifierIns.show()
        }
       },
 
     },
-    '$store.getters.keyunData2':{
-      handler(val,oldval){
-       if(val){
-          MyMapLine.addGjMarker(this.$store.getters.keyunData)
-          MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
-       }
-      },
-    },
+    // '$store.getters.keyunData2':{
+    //   handler(val,oldval){
+    //    if(val){
+    //       MyMapLine.addGjMarker(this.$store.getters.keyunData)
+    //       MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
+    //    }
+    //   },
+    // },
    
   },
   created(){
@@ -78,7 +81,7 @@ export default {
   mounted(){
      MyMapLine = new Map({ el: "lineCharacteristics" });
     let nowroute=this.$route
-    this.judgeRoute(nowroute)
+    this.judgeRouteLine(nowroute)
   },
   methods:{
      setSz(baseArray){
@@ -132,58 +135,68 @@ export default {
         }
         return newArray;
     },
-    judgeRoute(val){
+    judgeRouteLine(val){
       switch(val.name) {
           case "道路网":
-          
-            MyMapLine.isTraffic(true)
+            if(MyMapLine){
+              MyMapLine.isTraffic(true)
               if(MyMapLine.infoWindow){
-              MyMapLine.infoWindow.close()
-            }
-            if(MyMapLine.mass){
-                MyMapLine.mass.hide()
-                MyMapLine.map.remove(MyMapLine.polygonLine)
-                if(MyMapLine.overlayGroups){
-                  MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
-                    MyMapLine.map.remove(iy)
-                  })
-                }
-            }
-            if(MyMapLine.kyLineOver.getOverlays().length>0){
-                 MyMapLine.kymass.hide()
+                MyMapLine.infoWindow.close()
+              }
+              if(MyMapLine.massall){
+                  MyMapLine.massall.hide()
+                 
+                  if(MyMapLine.polygonLine){
+                    MyMapLine.polygonLine.hide()
+                    MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+                      MyMapLine.map.remove(iy)
+                    })
+                  }
+              }
+              if(MyMapLine.kymassnew){
+                  MyMapLine.kymassnew.hide()
                   MyMapLine.kyLineOver.hide()
-                  MyMapLine.overlayGroups.hide()
-            }
+              }
 
-            if(MyMapLine.pathSimplifierIns){
-                MyMapLine.pathSimplifierIns.setData(null)
+              if(MyMapLine.pathSimplifierIns){
+                  MyMapLine.pathSimplifierIns.setData(null)
+              }
             }
               
               break;
           case "公交站点":
-             
-              if(MyMapLine.infoWindow){
-                  MyMapLine.infoWindow.close()
-              }
-               if(MyMapLine.trafficLayer){
-                  MyMapLine.isTraffic(false)
-              }
-              if(MyMapLine.mass){
-                MyMapLine.mass.show()
-                MyMapLine.overlayGroups.show()
-              }
-              if(MyMapLine.kymass){
-                 MyMapLine.kymass.hide()
-                  MyMapLine.kyLineOver.hide()
-              }
-              if(MyMapLine.pathSimplifierIns){
-                  MyMapLine.pathSimplifierIns.setData(null)
-              }
+             if(MyMapLine){
+                if(MyMapLine.infoWindow){
+                    MyMapLine.infoWindow.close()
+                }
+                if(MyMapLine.trafficLayer){
+                    MyMapLine.isTraffic(false)
+                }
+                if(MyMapLine.massall){
+                  MyMapLine.massall.show()
+                  if(MyMapLine.polygonLine){
+                    MyMapLine.polygonLine.show()
+                  }
+                }else{
+                  MyMapLine.pointAll3(this.$store.getters.userStation)
+                }
+                if(MyMapLine.kymassnew){
+                  MyMapLine.kymassnew.hide()
+                    MyMapLine.kyLineOver.hide()
+                }
+                if(MyMapLine.pathSimplifierIns){
+                    MyMapLine.pathSimplifierIns.setData(null)
+                }
+                // if(this.$store.getters.userStation){
+                //   // MyMapLine.pointAll3(this.$store.getters.userStation)
+                // }
+                
+             }
               break;
           case "公交线路网":
-           
-              if(MyMapLine.kymass){
-                 MyMapLine.kymass.hide()
+           if(MyMapLine){
+              if(MyMapLine.kymassnew){
+                 MyMapLine.kymassnew.hide()
                 MyMapLine.kyLineOver.hide()
               }
                if(MyMapLine.trafficLayer){
@@ -192,15 +205,16 @@ export default {
               if(MyMapLine.infoWindow){
                   MyMapLine.infoWindow.close()
                 }
-              if(MyMapLine.mass){
-                MyMapLine.mass.hide()
-                  MyMapLine.map.remove(MyMapLine.polygonLine)
-                if(MyMapLine.overlayGroups){
+              if(MyMapLine.massall){
+                MyMapLine.massall.hide()
+                if(MyMapLine.polygonLine){
+                  MyMapLine.polygonLine.hide()
                   MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
                     MyMapLine.map.remove(iy)
                   })
                 }
               }
+           }
           
               //  setTimeout(()=>{
               //     MyMapLine.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
@@ -209,56 +223,67 @@ export default {
               
               break;
           case "公交专用道":
-              
-               if(MyMapLine.infoWindow){
-                MyMapLine.infoWindow.close()
-              }
-               if(MyMapLine.trafficLayer){
-                  MyMapLine.isTraffic(false)
-              }
-              //隐藏公交站点里面的数据
-              if(MyMapLine.mass){
-                MyMapLine.mass.hide()
-                MyMapLine.map.remove(MyMapLine.polygonLine)
-                if(MyMapLine.overlayGroups){
-                  MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
-                    MyMapLine.map.remove(iy)
-                  })
+              if(MyMapLine){
+                if(MyMapLine.infoWindow){
+                  MyMapLine.infoWindow.close()
                 }
+                if(MyMapLine.trafficLayer){
+                    MyMapLine.isTraffic(false)
+                }
+                //隐藏公交站点里面的数据
+                if(MyMapLine.massall){
+                  MyMapLine.massall.hide()
+                  
+                  if(MyMapLine.polygonLine){
+                    MyMapLine.polygonLine.hide()
+                    MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+                      MyMapLine.map.remove(iy)
+                    })
+                  }
+                }
+                //隐藏客运走廊里面的数据
+                if(MyMapLine.kymassnew){
+                  MyMapLine.kymassnew.hide()
+                  MyMapLine.kyLineOver.hide()
+                }
+                //隐藏公交线网里面的数据
+                if(MyMapLine.pathSimplifierIns){
+                  MyMapLine.pathSimplifierIns.setData(null)
+                }
+                MyMapLine.heatmap.hide()
               }
-              //隐藏客运走廊里面的数据
-              if(MyMapLine.kymass){
-                MyMapLine.kymass.hide()
-                MyMapLine.kyLineOver.hide()
-              }
-              //隐藏公交线网里面的数据
-              if(MyMapLine.pathSimplifierIns){
-                MyMapLine.pathSimplifierIns.setData(null)
-              }
-              MyMapLine.heatmap.hide()
               break;
           case "客运走廊":
-              
-              if(MyMapLine.infoWindow){
-                  MyMapLine.infoWindow.close()
-              }
-              if(MyMapLine.trafficLayer){
-                  MyMapLine.isTraffic(false)
-              }
-              if(MyMapLine.mass){
-                MyMapLine.mass.hide()
-                MyMapLine.map.remove(MyMapLine.polygonLine)
-                if(MyMapLine.overlayGroups){
-                  MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
-                    MyMapLine.map.remove(iy)
-                  })
+              if(MyMapLine){
+                if(MyMapLine.infoWindow){
+                    MyMapLine.infoWindow.close()
                 }
+                if(MyMapLine.trafficLayer){
+                    MyMapLine.isTraffic(false)
+                }
+                if(MyMapLine.massall){
+                  MyMapLine.massall.hide()
+                  if(MyMapLine.polygonLine){
+                    MyMapLine.polygonLine.hide()
+                    MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+                      MyMapLine.map.remove(iy)
+                    })
+                  }
+                }
+                if(MyMapLine.kymassnew){
+                 
+                  MyMapLine.kymassnew.show()
+                  MyMapLine.kyLineOver.show()
+                }else{
+                  MyMapLine.addGjMarker(this.$store.getters.keyunData)
+                  MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
+                }
+                //隐藏公交线网里面的数据
+                if(MyMapLine.pathSimplifierIns){
+                  MyMapLine.pathSimplifierIns.setData(null)
+                }
+                MyMapLine.heatmap.hide()
               }
-               //隐藏公交线网里面的数据
-              if(MyMapLine.pathSimplifierIns){
-                MyMapLine.pathSimplifierIns.setData(null)
-              }
-              MyMapLine.heatmap.hide()
               
               break;
           default:
@@ -295,9 +320,13 @@ export default {
         MyMapLine.map.setZoomAndCenter(16,[row.stattiondetail.longitude,row.stattiondetail.latitude])
       }
 
-      if(row.adminArea){
-        MyMapLine.createPolygon(row.adminArea)
-        MyMapLine.addOverlayGroup(MyMapLine.threeCircle(this.$store.getters.userStation,300))
+      if(row.stationdata){
+        MyMapLine.pointAll3(row.stationdata)
+        if(row.adminArea){
+          MyMapLine.createPolygon(row.adminArea)
+          MyMapLine.addOverlayGroup(MyMapLine.threeCircle(row.stationdata,300))
+        }
+       
 
       }
 

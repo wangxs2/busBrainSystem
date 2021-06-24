@@ -10,8 +10,6 @@
           :value="item.regionName"
         ></el-option>
       </el-select>
-
-
       <el-autocomplete
         class="inline-input"
         size="small"
@@ -21,7 +19,6 @@
         :trigger-on-focus="false"
         @select="handleSelect"
       ></el-autocomplete>
-
       <div class="clearbtn" style="margin-left:0.8vw">清除</div>
       <div @click="allheat" :class="isheat==2?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">热力图</div>  
       <div @click="allpoint" :class="point==1?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">站点分布</div>
@@ -30,7 +27,6 @@
         <div :class="isbtn==iteam.name?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}米</div>
       </div>
     </div>
-
     <div class="leftlinemsg">
       <div class="tit">基本指标</div>
       <div class="itmsg-box">
@@ -89,6 +85,10 @@
 </template>
 
 <script>
+import {
+  getCookie,
+  delCookie
+} from '@/libs/util'
 export default {
   components: {},
   data() {
@@ -123,10 +123,19 @@ export default {
   },
   beforeCreate() {},
   created() {
+    if(getCookie('reagonName')){
+      this.value=getCookie('reagonName')
+    }
     
   },
   mounted() {
-    this.pointAll()
+    if(this.$store.getters.userStation.length!==0){
+      this.restaurants=this.$store.getters.userStation
+       this.$store.commit('SET_LOADING',false)
+      //  this.restaurants=
+    }else{
+      this.pointAll()
+    }
     this.getAreaLine()
   },
   methods: {
@@ -165,9 +174,15 @@ export default {
     getpatharea(){
       let arr=[]
       if(this.value==''){
-        this.$store.commit('SET_STATION',this.restaurants)
+        // this.$store.commit('SET_STATION',this.restaurants)
+         this.$emit('changefun',{
+            adminArea:'',
+            stationdata:this.restaurants
+        })
+        delCookie("reagonName")
       }else{
-
+       
+        document.cookie = "reagonName=" + this.value;
         let obj={}
         this.options.forEach(iut=>{
           if(iut.regionName==this.value){
@@ -179,9 +194,10 @@ export default {
             arr.push(iteam)
           }
         })
-        this.$store.commit('SET_STATION',arr)
+        // this.$store.commit('SET_STATION',arr)
         this.$emit('changefun',{
-            adminArea:obj
+            adminArea:obj,
+            stationdata:arr
         })
 
       }
@@ -213,16 +229,15 @@ export default {
     //     radius:this.isbtn
     //   }).then(res => {
     //     this.listMsg=res.result.res
-    //     console.log(this.listMsg.num)
-     
-      
-        
     //   });
 
     // },
     getAreaLine(){
       this.$fetchGet("passenger/region").then(res => {
         this.options=res.result
+      })
+      this.$fetchGet("indicator/stationBasicMessage").then(res => {
+        this.listMsg=res.result
       })
     },
     pointAll(){
@@ -237,7 +252,6 @@ export default {
             heatOptionObj.lat = iteam.latitude;
             heatOption.push(heatOptionObj);
           })
-          console.log(heatOption)
           this.$store.commit('SET_HEATMAP',heatOption)
           setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)
@@ -246,9 +260,7 @@ export default {
       });  
 
 
-      this.$fetchGet("indicator/stationBasicMessage").then(res => {
-        this.listMsg=res.result
-      })
+      
      
      
     },

@@ -76,7 +76,7 @@ export default {
   
   methods: {
     typeclass(){
-      console.log(7744)
+      
       if(getCookie('meaucode')=='LINE_DECIDE'){
         return 'header-box'
       }else if(getCookie('meaucode')=='OBSERVATION'){

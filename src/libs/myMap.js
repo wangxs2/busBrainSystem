@@ -7,16 +7,15 @@ export default class Map {
     data(data) {
         return {
             el: data.el, // 地图容器
-            mass:null,//海量点站点
+            massall:null,//海量点站点
             heatmap:null,//热力图
             polygonLine:null,//行政区域的范围
             infoWindow:null,//信息窗口
             pathSimplifierIns:null,
             overlayGroups:new AMap.OverlayGroup(),//站点300米和500米的集合
-            overlayGroups1:new AMap.OverlayGroup(),//站点300米和500米的集合
             busLaneGroups:new AMap.OverlayGroup(),//公交专用道
             kyLinedata:null,
-            kymass:null,//客运走廊的点
+            kymassnew:null,//客运走廊的点
             kyLineOver:new AMap.OverlayGroup(),//客运走廊的线
             map: null, // 地图实例
             mapCenter: [121.460752,31.011182], // 默认地图中心点
@@ -162,8 +161,6 @@ export default class Map {
       });
       this.trafficLayer.setMap(this.map);
       // this.isTraffic(true)
-      // this.map.add(this.overlayGroups);
-      // this.map.add(this.overlayGroups1);
 
   }
   //is显示公交线网
@@ -302,19 +299,19 @@ export default class Map {
         zIndex: 2,
       }];
 
-      this.kymass = new AMap.MassMarks(data, {
+      this.kymassnew = new AMap.MassMarks(data, {
           opacity: 0.8,
           zIndex: 111,
           cursor: 'pointer',
           style: style
       });
-      this.kymass.on('click', (e) => {
+      this.kymassnew.on('click', (e) => {
             this.searchStation(e.data.stationName,e.data.lnglat) 
          });
 
-      this.kymass.setMap(this.map);
+      this.kymassnew.setMap(this.map);
 
-      // this.map.setFitView(this.kymass,true)
+      // this.map.setFitView(this.kymassnew,true)
 
 
 
@@ -357,35 +354,36 @@ export default class Map {
 
   // 显示/隐藏 站点
   isMass(flag) {
-    flag ? this.mass.show() : this.mass.hide()
+    flag ? this.massall.show() : this.massall.hide()
   }
    //渲染站点
   pointAll3(datapoint){
-    if(this.mass){
-      this.mass.clear()
+    if(this.massall){
+      this.massall.clear()
     }
-    var style = [
+    let style = [
       {
         url: require('../assets/image/alpoint1.png'),
         anchor: new AMap.Pixel(6, 6),
         size: new AMap.Size(11, 11),
         zIndex: 20,
       }];
-    this.mass = new AMap.MassMarks(datapoint, {
+    this.massall = new AMap.MassMarks(datapoint, {
         opacity: 0.8,
         cursor: 'pointer',
         style: style[0]
     });
-    var marker = new AMap.Marker({content: ' ', map: this.map});
-    this.mass.on('mouseover',  (e)=> {
+    this.massall.setMap(this.map);
+    let marker = new AMap.Marker({content: ' ', map: this.map});
+    this.massall.on('mouseover',  (e)=> {
         marker.setPosition(e.data.lnglat);
         marker.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>`})
     });
-    this.mass.on('mouseout',  (e)=> {
+    this.massall.on('mouseout',  (e)=> {
         marker.setPosition(e.data.lnglat);
         marker.setLabel({content:null})
     });
-    this.mass.on('click',  (e)=> {
+    this.massall.on('click',  (e)=> {
       http.fetchGet('indicator/stationDetail',{
         code:e.data.stationName,
         direction:e.data.routeDirection
@@ -394,8 +392,8 @@ export default class Map {
         this.infoWindow.open(this.map,[e.data.longitude,e.data.latitude]);
         this.map.setZoomAndCenter(16,[e.data.longitude,e.data.latitude],true)
       })
-  });
-    this.mass.setMap(this.map);
+   });
+    
   }
   //行政区域的范围
   createPolygon(path) {
@@ -436,10 +434,10 @@ export default class Map {
     
     
   }
-  //500mi
-  addOverlayGroup1(Groups){
-    this.overlayGroups1.addOverlay(Groups)
+  isGroups(flag) {
+    flag ? this.overlayGroups.show() : this.overlayGroups.hide()
   }
+ 
   //公交专用道
   addOverlayGroup2(Groups){
     this.busLaneGroups.addOverlays(Groups)
