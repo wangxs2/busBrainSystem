@@ -43,17 +43,17 @@ export default {
       deep:true,
       immediate: true
     },
-    // '$store.getters.userStation':{
-    //   handler(val,oldval){
-    //    if(val.length>0){
+    '$store.getters.userStation':{
+      handler(val,oldval){
+       if(val.length>0){
 
          
-    //      MyMapLine.pointAll3(val)
-    //    }
-    //   },
-    //   deep:true,
-    //   immediate: true
-    // },
+         MyMapLine.pointAll3(val)
+       }
+      },
+      deep:true,
+      immediate: true
+    },
     '$store.getters.dataArrLine':{
       handler(val,oldval){
        if(val.length>0){
@@ -63,14 +63,14 @@ export default {
       },
 
     },
-    // '$store.getters.keyunData2':{
-    //   handler(val,oldval){
-    //    if(val){
-    //       MyMapLine.addGjMarker(this.$store.getters.keyunData)
-    //       MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
-    //    }
-    //   },
-    // },
+    '$store.getters.keyunData2':{
+      handler(val,oldval){
+       if(val){
+          MyMapLine.addGjMarker(this.$store.getters.keyunData)
+          MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
+       }
+      },
+    },
    
   },
   created(){
@@ -173,14 +173,15 @@ export default {
                 if(MyMapLine.trafficLayer){
                     MyMapLine.isTraffic(false)
                 }
-                if(MyMapLine.massall){
-                  MyMapLine.massall.show()
-                  if(MyMapLine.polygonLine){
-                    MyMapLine.polygonLine.show()
-                  }
-                }else{
-                  MyMapLine.pointAll3(this.$store.getters.userStation)
-                }
+                // if(MyMapLine.massall){
+                //   MyMapLine.massall.show()
+                //   if(MyMapLine.polygonLine){
+                //     MyMapLine.polygonLine.show()
+                //   }
+                // }
+                // else{
+                //   MyMapLine.pointAll3(this.$store.getters.userStation)
+                // }
                 if(MyMapLine.kymassnew){
                   MyMapLine.kymassnew.hide()
                     MyMapLine.kyLineOver.hide()
@@ -271,14 +272,12 @@ export default {
                     })
                   }
                 }
-                if(MyMapLine.kymassnew){
+                // if(MyMapLine.kymassnew){
                  
-                  MyMapLine.kymassnew.show()
-                  MyMapLine.kyLineOver.show()
-                }else{
-                  MyMapLine.addGjMarker(this.$store.getters.keyunData)
-                  MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
-                }
+                //   MyMapLine.kymassnew.show()
+                //   MyMapLine.kyLineOver.show()
+                // }
+               
                 //隐藏公交线网里面的数据
                 if(MyMapLine.pathSimplifierIns){
                   MyMapLine.pathSimplifierIns.setData(null)

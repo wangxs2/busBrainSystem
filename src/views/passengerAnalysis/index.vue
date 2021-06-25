@@ -79,10 +79,29 @@ export default {
   mounted(){
     MyMap = new Map({ el: "passengerMap" });
     this.judgeRoute(this.$route);
-     
-     
+    // this.getTest()
   },
   methods:{
+    getTest(){
+      this.$fetchGet("route/baseLineMessage").then(res=>{  
+        this.options=res.result
+        res.result.forEach(ite=>{
+          ite.geom=this.setData(ite.geom)
+        })
+        // console.log(res.result)
+        MyMap.createPolygon(res.result)
+      })
+
+    },
+    setData(data){
+        let str=data.split(' ')
+        let arr=[]
+        str.forEach(iteam=>{
+          arr.push([Number(iteam.split(',')[0]),Number(iteam.split(',')[1])])
+        })
+        return arr
+
+      },
     qchh(){
         var result = [];
         var obj = {};

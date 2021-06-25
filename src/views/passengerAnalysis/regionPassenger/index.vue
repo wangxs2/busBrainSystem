@@ -97,7 +97,7 @@ export default {
     box-sizing: border-box;
     padding: vh(10) vw(16);
     position: absolute;
-    top: vh(130);
+    top: vh(138);
     left: vw(20);
     display: flex;
     align-items: center;
@@ -105,7 +105,7 @@ export default {
   }
   .lkicon {
     position: absolute;
-    top: vh(120);
+    top: vh(140);
     right: vw(12);
     background: rgba(26, 66, 118, 0.2);
     border: 1px solid #27b6ff;
@@ -140,7 +140,7 @@ export default {
   }
   .rightlinemsg{
     position: absolute;
-    top: vh(180);
+    top: vh(190);
     right: vw(20);
     width: vw(300);
     height: vh(864);

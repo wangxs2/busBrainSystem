@@ -129,13 +129,7 @@ export default {
     
   },
   mounted() {
-    if(this.$store.getters.userStation.length!==0){
-      this.restaurants=this.$store.getters.userStation
-       this.$store.commit('SET_LOADING',false)
-      //  this.restaurants=
-    }else{
-      this.pointAll()
-    }
+    this.pointAll()
     this.getAreaLine()
   },
   methods: {
@@ -282,7 +276,7 @@ export default {
     box-sizing: border-box;
     padding: vh(10) vw(16);
     position: absolute;
-    top: vh(70);
+    top: vh(76);
     left: vw(20);
     display: flex;
     align-items: center;

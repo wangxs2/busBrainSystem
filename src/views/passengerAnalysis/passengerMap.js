@@ -256,24 +256,25 @@ export default class Map {
     })
     this.map.setFitView(markers,false)
     return markers
-
-
   }
-
-
-  createPolygon(path) {
+  createPolygon(data) {
     // let isColor = row.regionBerths - row.sumBicycle
-    this.polygonLine = new AMap.Polygon({
-      path: path,
-      cursor: "pointer",
-      strokeColor: "#35A594",
-      strokeWeight: 2,
-      strokeOpacity: 1,
-      fillOpacity: 0.4,
-      zIndex: 50,
-    });
-    this.map.add(this.polygonLine);
-    this.map.setFitView(this.polygonLine,false)
+    
+    data.forEach((iteam,index)=>{
+      let colors=index<90?'#3eaaba':(index>90&&index<160)?'#d53838':(index>160&&index<220)?'#e5d887':'#f06f59'
+      let polygonLine = new AMap.Polyline({
+        path: iteam.geom,
+        strokeColor: colors,
+        strokeOpacity: 1,
+        strokeWeight:5,
+        zIndex:20,
+        strokeStyle: "solid",
+      });
+      this.map.add(polygonLine);
+
+    })
+    
+    // this.map.setFitView(this.polygonLine,false)
     
   }
   addnew(Overlay) {

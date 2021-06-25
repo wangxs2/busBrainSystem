@@ -30,18 +30,13 @@ export default {
       
     },
     judgeRoute(val){
-      console.log(val.name,123)
       switch(val.name) {
           case "线路重复系数辅助决策":
-            console.log('线路重复系数辅助决策')
-            console.log(MyMapper)
-            console.log(456)
             if(MyMapper.busPolyline){
               MyMapper.map.remove(MyMapper.busPolyline)
             }
               break;
           case "超长线路辅助决策":
-            console.log('超长线路辅助决策')
             if(MyMapper.busPolyline){
              MyMapper.map.remove(MyMapper.busPolyline)
             }

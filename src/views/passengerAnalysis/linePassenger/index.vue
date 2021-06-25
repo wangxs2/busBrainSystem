@@ -59,24 +59,18 @@ export default {
     methods: {
      
       toLine(){
-        
         this.getLinepassenger()
-
       },
       tobtn(row){
         this.isbtn=row.id
         this.getLinepassenger()
-        
       },
       changeDate(){
-       
         this.getLinepassenger()
       },
       getAllline(){ 
         this.$fetchGet("route/routeList").then(res=>{
           this.options=res.result
-         
-
          if(this.$route.query.idName){
             this.options.forEach(iteam=>{
               if(iteam.routeName==this.$route.query.idName){
@@ -89,7 +83,6 @@ export default {
                setTimeout(()=>{
                 this.$store.commit('SET_LOADING',false)
                 },200)
-
           }
         })
       },
@@ -116,10 +109,7 @@ export default {
                   type: 'warning'
                 });
             }
-
             this.$store.commit('SET_LOADING',false)
-            
-        
         })
       },
       setData(data){
@@ -141,7 +131,7 @@ export default {
     box-sizing: border-box;
     padding: vh(10) vw(16);
     position: absolute;
-    top: vh(130);
+    top: vh(138);
     left: vw(20);
     display: flex;
     align-items: center;

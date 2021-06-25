@@ -72,6 +72,18 @@ export default {
        }
       },
     },
+    '$store.getters.routehistroy':{
+      handler(val,oldval){
+       if(val){
+         let arrlen=this.quc(this.$store.getters.routehistroy)
+         if(arrlen.length>10){
+           let arr1=arrlen.shift()
+           console.log(arrlen)
+           this.$store.commit('SET_ROUTEHISTROY', arrlen)
+         }
+       }
+      },
+    },
   },
   
   methods: {
@@ -201,7 +213,9 @@ export default {
     display:flex;
     box-sizing:border-box;
     padding-left:vw(30);
-
+    padding-right:vw(30);
+    overflow: hidden;
+    // overflow-x: scroll;
     .parallelogram {   
       // width:vw(160);
       height: vh(30);
@@ -224,6 +238,7 @@ export default {
       cursor:pointer;
       padding:0 vw(16);
       margin-right:vw(12);
+      white-space:nowrap;
       .fontroute{
          transform:skew(30deg);
         -webkit-transform: skew(30deg);
@@ -236,6 +251,11 @@ export default {
     .parallelogram1{
       background: rgba(254, 203, 0, 0.3);
       border-image: linear-gradient(0deg, #FECB00, #FAC801) 10 10;
+    }
+    .parallelogram:hover{
+      background: rgba(254, 203, 0, 0.3);
+      border-image: linear-gradient(0deg, #FECB00, #FAC801) 10 10;
+      font-weight:bold;
     }
   }
   .appMain{
