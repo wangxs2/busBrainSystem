@@ -98,7 +98,7 @@ export default {
             {
               name:'1001-2000',
               value:'1000-2000',
-              isxz:false,
+              isxz:true,
               img:require('@/assets/image/green1.png')
             },
             {

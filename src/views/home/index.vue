@@ -1,6 +1,8 @@
 <template>
   <div class="homePage">
     <div class="userName">
+      <img src="@/assets/image/home/lurl.png" alt="" srcset="">
+      <div style="margin-right:2vw" @click="toXinpage()"> 定时任务管理  </div>
       <img src="@/assets/image/home/settig.png" alt="" srcset="">
       <div @click="toHome(10,'MAIN')">权限设置</div>
       <div class="lineName"></div>
@@ -86,6 +88,12 @@ export default {
   methods:{
     loginout(){
       this.$router.push("/login");
+    },
+    toXinpage(){
+       window.open(
+        `/busbrain/main.shtml#task/index.shtml`
+      );
+
     },
     toHome(name,code){
       this.$store.commit("SET_CODEMEAU", code);
@@ -216,6 +224,10 @@ export default {
       display: flex;
       align-items: center;
       cursor: pointer;
+      a{
+        color: #27B6FF;
+        margin-right:vw(20);
+      }
       .lineName{
         width: 2px;
         height: 20px;

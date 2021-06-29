@@ -168,7 +168,7 @@ export default {
     getpatharea(){
       let arr=[]
       if(this.value==''){
-        // this.$store.commit('SET_STATION',this.restaurants)
+      
          this.$emit('changefun',{
             adminArea:'',
             stationdata:this.restaurants
@@ -188,7 +188,7 @@ export default {
             arr.push(iteam)
           }
         })
-        // this.$store.commit('SET_STATION',arr)
+        
         this.$emit('changefun',{
             adminArea:obj,
             stationdata:arr

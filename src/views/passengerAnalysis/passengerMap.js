@@ -153,6 +153,7 @@ export default class Map {
   getRegionMark(datas) {
     let markers = []
     datas.forEach(iteam => {
+      if(iteam.polygonGeom){
       let iconm = ''
       
       if ((iteam.sd + iteam.sp) < 1001) {
@@ -176,10 +177,11 @@ export default class Map {
         // 将 html 传给 content background: url(icon) url(${iconm})
         content: `<div class="regionMark" style="background:${iconm}">
           <div> ${iteam.regionName}</div>
-          <div> 上车 ${iteam.sd}</div>
-          <div> 下车 ${iteam.sp}</div>
+           <div> 上车 ${iteam.sd}</div>
+           <div> 下车 ${iteam.sp}</div>
          
           </div>`,
+          
         // 以 icon 的 [center bottom] 为原点
         offset: new AMap.Pixel(-13, -30),
         zIndex: 10,
@@ -247,19 +249,33 @@ export default class Map {
           e.target.setOptions({
             strokeColor: "#35A594",
             fillColor : "#35A594",
+            fillOpacity: 0.2,
           })
 
         })
       
       markers.push(marker)
       markers.push(polygonLine)
+    }
     })
     this.map.setFitView(markers,false)
     return markers
   }
+  testpou(path){
+    let polygonLine = new AMap.Polygon({
+      path: path,
+      cursor: "pointer",
+      strokeColor: "#35A594",
+      strokeWeight: 2,
+      strokeOpacity: 1,
+      fillOpacity: 0.2,
+      zIndex: 50,
+      map:this.map
+    });
+
+  }
   createPolygon(data) {
     // let isColor = row.regionBerths - row.sumBicycle
-    
     data.forEach((iteam,index)=>{
       let colors=index<90?'#3eaaba':(index>90&&index<160)?'#d53838':(index>160&&index<220)?'#e5d887':'#f06f59'
       let polygonLine = new AMap.Polyline({
@@ -355,6 +371,7 @@ export default class Map {
       marker.on('mouseover',  (e)=> {
         marker1.setPosition([iteam.longitude,iteam.latitude]);
         marker1.setLabel({content: `
+      
         <div class='lineklbox'>
           <div style="color: #00FFFF;font-size: 28px;margin-bottom:18px">${BusArr.routeName}</div>
           <div style="margin-bottom:18px;font-size: 18px">${datas[0].stationName}→${datas[datas.length-1].stationName}</div>

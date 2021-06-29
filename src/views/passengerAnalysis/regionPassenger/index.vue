@@ -46,24 +46,33 @@
 export default {
     data(){
         return {
-          value1:'',
-          lineaData: []
+          value1:[new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
+         
+          lineaData: [],
+
         }
     },
     created() {
            
       this.getRegionData()
+     
+
     },
     mounted() {},
     methods: {
       tomeay(row) {
       this.islist = row.id;
       },
+    
       getRegionData(){
-        this.$fetchGet("/passenger/regionPassenger").then(res => {
+        this.$fetchGet("/passenger/regionPassenger",{
+            st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
+            et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
+        }).then(res => {
           this.$fetchGet("/passenger/region").then(resall => {
             res.result.forEach(iteam=>{
               resall.result.forEach(itam=>{
+
                 if(iteam.regionName==itam.regionName){
                   iteam.centerLatitude=itam.centerLatitude
                   iteam.centerLongitude=itam.centerLongitude
