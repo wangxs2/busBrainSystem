@@ -10,8 +10,6 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期">
       </el-date-picker>
-    
-    
     </div>
     <div class="lkicon">
       <div style="text-align:center">区域客流数：</div>
@@ -47,9 +45,7 @@ export default {
     data(){
         return {
           value1:[new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
-         
           lineaData: [],
-
         }
     },
     created() {
