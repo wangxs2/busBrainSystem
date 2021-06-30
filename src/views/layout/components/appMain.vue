@@ -11,6 +11,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .asmin{
-  // padding-top:vw(55);
+  padding-top:vw(70);
 }
 </style>

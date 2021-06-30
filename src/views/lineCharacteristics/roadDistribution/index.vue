@@ -1,5 +1,5 @@
 <template>
-  <div class="roadDistribution-box">
+  <div class="roadDistribution-box" id="roadDistribution">
     <div class="lkicon">
       <div style=" display:flex;align-items:center;justify-content:space-around">
         畅通
@@ -19,8 +19,7 @@ export default {
   },
   data() {
     return {
-    
-       
+      mapRoad:null,
     };
   },
   beforeCreate() {},
@@ -28,9 +27,22 @@ export default {
     this.$store.commit('SET_LOADING',false)
   },
   mounted() {
+    this.initMap()
   },
-
   methods: {
+    initMap(){
+      aimap.accessToken = "UFJGhyFdSzvm0ZbecYglp6CssgnDK7PZ";
+      aimap.baseApiUrl = "https://location-dev.newayz.com";
+      this.mapRoad = new aimap.Map({
+          container: 'roadDistribution',
+          center: [121.612846, 31.205494],
+          zoom: 14,
+          minZoom: 3,
+          maxZoom: 20,
+          style: "aimap://styles/aimap/dark-v3",
+          localIdeographFontFamily: "'Microsoft YaHei'",
+      });
+    }
   }
 };
 </script>
@@ -39,8 +51,10 @@ export default {
 
 <style lang="scss" scoped>
 .roadDistribution-box {
+  width:100%;
+  height:100%;
   box-sizing: border-box;
-  margin-top:vw(70);
+  // margin-top:vw(70);
    position:relative;
   z-index:10;
   .lkicon{
@@ -56,7 +70,7 @@ export default {
     border-radius: 2px;
     box-sizing: border-box;
     padding:vh(8) vw(20);
-   
+    z-index:10;
     .lk1{
       width: vw(40);
       height: vh(12);

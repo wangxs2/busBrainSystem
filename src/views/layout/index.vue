@@ -56,7 +56,7 @@ export default {
    data () {
     return {
       myRouterName:[],
-      loading: true
+      loading: false
     };
   },
   created () {

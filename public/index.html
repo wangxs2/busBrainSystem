@@ -3,11 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <meta http-equiv="X-Frame-Options" content="deny"> -->
-    <!-- <meta http-equiv="X-Frame-Options" content="sameorigin"> -->
-    <!-- <meta http-equiv="Content-Security-Policy" content="frame-src http://101.231.47.117:50009">  -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!-- <link rel="icon" href="<%= BASE_URL %>favicon.ico"> -->
+    <link rel='stylesheet' href='https://location-dev.newayz.com/aimap-gl-js/v1.3.10/aimap-gl.css' />
     <title>公交大脑</title>
     <style>
       .amap-logo,.amap-copyright{
@@ -20,9 +18,7 @@
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app">
-      <script type="text/javascript"
-            src="https://webapi.amap.com/maps?v=2.0&key=37e2d7a58a3f8897326b9b0250254eef&plugin=AMap.StationSearch,AMap.LineSearch"></script>
-      <script src="https://webapi.amap.com/ui/1.1/main.js"></script>
+      <script src="https://location-dev.newayz.com/aimap-gl-js/v1.3.10/aimap-gl.js"></script>
     </div>
     <!-- built files will be auto injected -->
   </body>

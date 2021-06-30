@@ -11,7 +11,7 @@ import common from './libs/common.js' //自定义包
 import moment from 'moment'//导入文件
 Vue.prototype.$moment = moment;//赋值使用
 import animated from 'animate.css'
-
+aimap.accessToken = "申请的key";
 Vue.use(animated)
 
 Vue.use(ElementUI);
