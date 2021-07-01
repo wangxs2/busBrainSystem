@@ -60,10 +60,10 @@
     </div>
 
     <div class="erach-box" id="echstation"  
-    v-loading="echload"
-    element-loading-text="拼命加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.6)"></div>
+      v-loading="echload"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.6)"></div>
 
 
 
