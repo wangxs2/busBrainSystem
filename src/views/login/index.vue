@@ -286,7 +286,7 @@ export default {
   width: 100%;
   height: 100%;
   background: url("~@/assets/image/dl_bj.png");
-    background-size: 100% 100%;
+  background-size: 100% 100%;
     .bityu{
       font-size: vw(42);
       font-weight: bold;

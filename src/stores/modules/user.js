@@ -4,7 +4,7 @@ import {
 const user = {
   state: {
     userId: "",
-    aloading:true,
+    aloading:false,
     roleId: "",
     userName: '',
     ishuadata:2,//从项目材料回来是否刷新

@@ -6,8 +6,8 @@
   </div>
 </template>
 <script>
-import Map from "./passengerMap.js";
-let MyMap = null; // 地图实例
+// import Map from "./passengerMap.js";
+// let MyMap = null; // 地图实例
 export default {
   data(){
     return{
@@ -49,33 +49,33 @@ export default {
     }
   },
   watch:{
-    '$route':{
-      handler(val,oldval){
-        if(val){
-          this.judgeRoute(val)
-        }
-      },
-    },
-    '$store.getters.regionData':{
-      handler(val,oldval){
-        if(val){
-          MyMap.addOverlayGroup(MyMap.getRegionMark(val))
-        }
-      },
-    },
-    '$store.getters.allStation':{
-      handler(val,oldval){
-       if(val){
-        for(let key  in val){
-            MyMap.xrhld(key,val[key],this.styleStition[key])
-          }
-       }
-      },
-    },
+    // '$route':{
+    //   handler(val,oldval){
+    //     if(val){
+    //       this.judgeRoute(val)
+    //     }
+    //   },
+    // },
+    // '$store.getters.regionData':{
+    //   handler(val,oldval){
+    //     if(val){
+    //       MyMap.addOverlayGroup(MyMap.getRegionMark(val))
+    //     }
+    //   },
+    // },
+    // '$store.getters.allStation':{
+    //   handler(val,oldval){
+    //    if(val){
+    //     for(let key  in val){
+    //         MyMap.xrhld(key,val[key],this.styleStition[key])
+    //       }
+    //    }
+    //   },
+    // },
   },
   mounted(){
-    MyMap = new Map({ el: "passengerMap" });
-    this.judgeRoute(this.$route);
+    // MyMap = new Map({ el: "passengerMap" });
+    // this.judgeRoute(this.$route);
     // this.getTest()
     //  console.log(this.testpoly(this.testdata))
     //   let pathou=this.testpoly(this.testdata)

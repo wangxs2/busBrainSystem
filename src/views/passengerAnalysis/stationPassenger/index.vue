@@ -7,7 +7,6 @@
         size="small"
         type="daterange"
         range-separator="至"
-        @change="getAllData()"
         start-placeholder="开始日期"
         end-placeholder="结束日期">
       </el-date-picker>
@@ -23,7 +22,7 @@
         @select="handleSelect"
       ></el-autocomplete>
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3vw;">时段</div>
-      <el-select size="small" @change="getAllData()" v-model="value" placeholder="请选择">
+      <el-select size="small"  v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -60,6 +59,12 @@
       </div>
     </div>
 
+    <div class="erach-box" id="echstation"  
+    v-loading="echload"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)"></div>
+
 
 
   </div>
@@ -69,6 +74,7 @@
 export default {
      data(){
         return {
+          echload:true,
           options:[
             {
               name:'工作日',
@@ -124,24 +130,139 @@ export default {
           isheat:false,
           idName:'',
           restaurants:[],
+          myChart:null,
         }
-    },
-    created() {
-      this.getAllData()
     },
     watch:{
       
     },
-    mounted() {
-      this.$nextTick( ()=> {
-           $(".passengerAnalysis").on("click", ".unclick-stations-lis", e => {
-            this.testroute($(e.target).data("code"))
-          })
-
-      })
+    created() {
+      // this.getAllData()
+      this.getechdata()
+    },
    
+    mounted() {
+      window.onresize = ()=> {
+        this.myChart.resize()
+      }
     },
     methods: {
+      initechart(data,data1){
+        this.myChart = this.$echarts.init(document.getElementById('echstation'));
+        this.myChart.setOption({
+          grid:{
+            top:60,
+            left:80,
+            right:40,
+            bottom:60,
+          },
+          tooltip:{
+            trigger: 'axis',
+            formatter:'客流量：{c}人次',
+            backgroundColor:'#144A8C',
+            borderWidth:0,
+            textStyle:{
+              color:'#D9EFFF',
+            }
+          },
+          title:{
+            text:"客流量/人次",
+            textStyle:{
+              color:'#DAE4FF',
+              fontWeight:'normal',
+              fontSize:16,
+              
+            },
+            top:26,
+            left:10,
+          },
+          color:['#836DF0'],
+          xAxis: {
+              type: 'category',
+              boundaryGap:false,
+              axisLabel:{
+                interval:0,
+                rotate:25 ,
+                color:"#D9EFFF",
+                borderType:"dashed",
+                borderColor:"#194F95",
+               
+              },
+              axisTick: {
+                show:false
+              },
+              splitLine:{
+                show:true,
+                lineStyle:{
+                  color:'#194F95',
+                  type:'dashed'
+                }
+              },
+              axisLine:{
+                lineStyle:{
+                  color:'#194F95',
+                  type:'dashed'
+                }
+              },
+              data: data
+          },
+          yAxis: {
+              type: 'value',
+              axisLabel:{
+                color:"#D9EFFF",
+                 borderType:"dashed",
+                borderColor:"#194F95",
+              },
+              splitLine:{
+                show:true,
+                lineStyle:{
+                  color:'#194F95',
+                  type:'dashed'
+                }
+              },
+              
+          },
+          series: [{
+              data:data1,
+              type: 'line',
+              smooth: true ,
+              legendHoverLink: true ,
+              showSymbol:false,
+              symbolSize: 10,
+              areaStyle: {
+                color: {
+                      type: 'linear',
+                      x: 0,
+                      y: 0,
+                      x2: 0,
+                      y2: 1,
+                      colorStops: [{
+                          offset: 0, color: 'rgba(131, 109, 240, 0.7)' // 0% 处的颜色
+                      },
+                      {
+                          offset: 0.08, color: 'rgba(131, 109, 240, 0.7)' // 100% 处的颜色
+                      },
+                      {
+                          offset: 1, color: 'rgba(131, 109, 240, 0)' // 100% 处的颜色
+                      }
+                      ],
+                      global: false // 缺省为 false
+                }
+              }
+          }]
+        });
+        this.echload=false
+      },
+      getechdata(){
+        let arr=[],arr1=[]
+        this.$fetchGet("passenger/dailyPassenger").then(res=>{
+          res.result.forEach(iteam=>{
+            arr.push(iteam.date)
+            arr1.push(iteam.sum)
+          })
+          this.initechart(arr,arr1)
+        })
+      },
       testroute(val){
         this.$router.push({
           path:'/passengerAnalysis/linePassenger',
@@ -151,7 +272,7 @@ export default {
           });
       },
       getAllData(){
-        this.$store.commit('SET_LOADING',true)
+        
           this.$fetchGet("passenger/all",{
             st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
             et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
@@ -230,7 +351,7 @@ export default {
     box-sizing: border-box;
     padding: vh(10) vw(16);
     position: absolute;
-    top: vh(130);
+    top: vh(62);
     left: vw(20);
     display: flex;
     align-items: center;
@@ -238,7 +359,7 @@ export default {
   }
   .stationBox{
     position: absolute;
-    top: vh(170);
+    top: vh(70);
     right: vw(20);
     width: vw(300);
     height: vh(424);
@@ -284,6 +405,16 @@ export default {
        align-items: center;
        margin-top:vh(20);
     }
+
+  }
+  .erach-box{
+    position: absolute;
+    bottom: vh(20);
+    left: vw(20);
+    width:vw(1880);
+    height:vh(312);
+    background: url("~@/assets/image/zdbj.png");
+    background-size: 100% 100%;
 
   }
 }

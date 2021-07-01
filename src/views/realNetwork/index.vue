@@ -7,11 +7,11 @@
 </template>
 
 <script>
-import Map from "./reanetMap.js";
-let ntMyMap = null; // 地图实例
+// import Map from "./reanetMap.js";
+// let ntMyMap = null; // 地图实例
 export default {
    mounted(){
-    ntMyMap = new Map({ el: "netrelMap" });
+    // ntMyMap = new Map({ el: "netrelMap" });
   },
   
 }
