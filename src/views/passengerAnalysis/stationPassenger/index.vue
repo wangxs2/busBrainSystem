@@ -61,6 +61,13 @@
     </div>
 
 
+    <div class="erach-box" id="echstation"  
+      v-loading="echload"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.6)"></div>
+
+
 
   </div>
 </template>
@@ -128,9 +135,9 @@ export default {
     },
     created() {
       this.getAllData()
+      this.getechdata()
     },
     watch:{
-      
     },
     mounted() {
       this.$nextTick( ()=> {
@@ -142,6 +149,123 @@ export default {
    
     },
     methods: {
+        initechart(data,data1){
+        this.myChart = this.$echarts.init(document.getElementById('echstation'));
+        this.myChart.setOption({
+          grid:{
+            top:60,
+            left:80,
+            right:40,
+            bottom:60,
+          },
+          tooltip:{
+            trigger: 'axis',
+            formatter:'客流量：{c}人次',
+            backgroundColor:'#144A8C',
+            borderWidth:0,
+            textStyle:{
+              color:'#D9EFFF',
+            }
+          },
+          title:{
+            text:"客流量/人次",
+            textStyle:{
+              color:'#DAE4FF',
+              fontWeight:'normal',
+              fontSize:16,
+              
+            },
+            top:26,
+            left:10,
+          },
+          color:['#836DF0'],
+          xAxis: {
+              type: 'category',
+              boundaryGap:false,
+              axisLabel:{
+                interval:0,
+                rotate:25 ,
+                color:"#D9EFFF",
+                borderType:"dashed",
+                borderColor:"#194F95",
+               
+              },
+              axisTick: {
+                show:false
+              },
+              splitLine:{
+                show:true,
+                lineStyle:{
+                  color:'#194F95',
+                  type:'dashed'
+                }
+              },
+              axisLine:{
+                lineStyle:{
+                  color:'#194F95',
+                  type:'dashed'
+                }
+              },
+              data: data
+          },
+          yAxis: {
+              type: 'value',
+              axisLabel:{
+                color:"#D9EFFF",
+                 borderType:"dashed",
+                borderColor:"#194F95",
+              },
+              splitLine:{
+                show:true,
+                lineStyle:{
+                  color:'#194F95',
+                  type:'dashed'
+                }
+              },
+              
+          },
+          series: [{
+              data:data1,
+              type: 'line',
+              smooth: true ,
+              legendHoverLink: true ,
+              showSymbol:false,
+              symbolSize: 10,
+              areaStyle: {
+                color: {
+                      type: 'linear',
+                      x: 0,
+                      y: 0,
+                      x2: 0,
+                      y2: 1,
+                      colorStops: [{
+                          offset: 0, color: 'rgba(131, 109, 240, 0.7)' // 0% 处的颜色
+                      },
+                      {
+                          offset: 0.08, color: 'rgba(131, 109, 240, 0.7)' // 100% 处的颜色
+                      },
+                      {
+                          offset: 1, color: 'rgba(131, 109, 240, 0)' // 100% 处的颜色
+                      }
+                      ],
+                      global: false // 缺省为 false
+                }
+              }
+          }]
+        });
+        this.echload=false
+      },
+      getechdata(){
+        let arr=[],arr1=[]
+        this.$fetchGet("passenger/dailyPassenger").then(res=>{
+          res.result.forEach(iteam=>{
+            arr.push(iteam.date)
+            arr1.push(iteam.sum)
+          })
+          this.initechart(arr,arr1)
+        })
+      },
+
       testroute(val){
         this.$router.push({
           path:'/passengerAnalysis/linePassenger',
@@ -286,5 +410,16 @@ export default {
     }
 
   }
+   .erach-box{
+    position: absolute;
+    bottom: vh(20);
+    left: vw(20);
+    width:vw(1880);
+    height:vh(312);
+    background: url("~@/assets/image/zdbj.png");
+    background-size: 100% 100%;
+
+  }
+
 }
 </style>

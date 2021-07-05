@@ -121,7 +121,7 @@ export default {
   },
   created(){
       this.getAreaLine()
-      this.getData()
+      // this.getData()
   },
   methods:{
       allpoint(){
@@ -149,19 +149,7 @@ export default {
       })
     },
     getData(){
-
-      // this.$axios.get("http://114.80.231.178:38888/BusData/templageCtrl/findgps",{
-      //   params:{
-      //     leftlon:120.626846,
-      //     rightlon:122.348953,
-      //     leftlat:31.529928,
-      //     rightlat:30.967558,
-      //     zoom:16
-      //   }
-      // }).then(res => {
-      //   this.listMsg=res.result
-      // })
-      this.$fetchGet("templageCtrl/findgps",{
+      this.$fetchGet("gps/list",{
           leftlon:120.626846,
           rightlon:122.348953,
           leftlat:31.529928,
@@ -169,7 +157,7 @@ export default {
           zoom:16
         }
       ).then(res => {
-        // this.options=res.result
+      
       })
 
     },

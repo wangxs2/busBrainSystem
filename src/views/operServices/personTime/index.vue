@@ -12,7 +12,7 @@
         end-placeholder="结束日期">
       </el-date-picker>
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.6vw;">线路名称</div>
-      <el-select size="small" filterable v-model="value" placeholder="请选择">
+      <el-select size="small"  @change="getData()" clearable  filterable v-model="query.lineName" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.routeId"
@@ -20,34 +20,34 @@
           :value="item.routeId">
         </el-option>
       </el-select>
+      <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.5vw;">阈值设置</div>
+      <el-input style="width:10%"  size="small" v-model="query.nums" @input="getData" placeholder="请输入阈值"></el-input>
     </div>
     <div class="table-data"  v-loading="loading"
-    element-loading-text="拼命加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(12, 38, 104, 0.2)">
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(12, 38, 104, 0.2)">
       <div class="table-header">
        
-        <div style="width:15%">上车站点</div>
-        <div style="width:20%">下车站点</div>
-        <div style="width:20%">线路数量(条)</div>
-        <div style="width:15%">客流(人)</div>
-        <div style="width:20%">平均乘车距离(km)</div>
-        <div style="width:10%">明细</div>
+        <div>线路名称</div>
+        <div>所属公司</div>
+        <div>线路等级</div>
+        <div>百公里人次</div>
+        
       </div>
       <div class="table-contain">
         <div class="tableTr"   v-for="(item,index) in alldata" :key="index">
          
-          <div style="width:15%">{{item.routeName}}</div>
-          <div style="width:20%">{{item.company}}</div>
-          <div style="width:20%">{{item.mainContent}} </div>
-          <div style="width:15%">{{item.finishTime==null?'':item.finishTime.slice(0,4)}}</div>
-          <div style="width:20%">{{item.classify}}</div>
-          <div style="width:10%;color:#00FFFF">查看明细</div>
+          <div >{{item.xlmc}}</div>
+          <div >{{item.company}}</div>
+          <div >{{item.company}}</div>
+          <div>{{item.baipass}}</div>
+          <!-- <div style="width:10%;color:#00FFFF">查看明细</div> -->
         </div>
         <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
       </div>
     </div>
-    <div class="tabbottom" v-if="alldata.length!==0">
+    <!-- <div class="tabbottom" v-if="alldata.length!==0">
       <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -56,7 +56,7 @@
           layout="total, prev, pager, next"
           :total="total"
         ></el-pagination>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -74,11 +74,13 @@ export default {
             }
           ],
           value:'',
-          value1:'',
+          value1:[new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
           loading:true,
           query:{
-            pageNo:1,
-            pageSize:20, 
+            st:'',
+            et:'',
+            lineName:'',
+            nums:''
           },
           alldata:[],
           options:[],
@@ -119,16 +121,20 @@ export default {
       },
       getData(){
         this.loading=true
-        this.$fetchGet("adjust-plan/list",this.query).then(res => {
-          res.result.list.forEach(iteam=>{
-            iteam.isdetail=false
-          })
-          this.alldata=res.result.list
-          this.total=res.result.total
+        this.$fetchGet("route/hundreds",{
+            st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
+            et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
+            lineName:this.query.lineName,
+            nums:this.query.nums
+        }).then(res => {
+          if(res.code==200){
+            this.alldata=res.result
+          }else{
+            this.alldata=[]
+            this.$message.error(res.message)
+          }
+          this.$store.commit('SET_LOADING',false)
           this.loading=false
-          setTimeout(()=>{
-            this.$store.commit('SET_LOADING',false)
-          },200)
 
         })
       }

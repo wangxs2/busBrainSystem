@@ -47,8 +47,8 @@
       <div class="left-l23 left-l2" @click="toHome(2,'OBSERVATION')">
         公交大数据观测系统
       </div>
-      <div class="left-l23 left-l3">
-        公交测试系统
+      <div class="left-l23 left-l3" @click="toHome(3,'OBSERVATION')">
+        公交行业数据管理子系统
       </div>
     </div>
     <div class="center-home">
@@ -77,6 +77,9 @@
 </template>
 
 <script>
+import {
+  getCookie
+} from '@/libs/util'
 export default {
   props: {
   },
@@ -96,6 +99,7 @@ export default {
 
     },
     toHome(name,code){
+      let test = window.location.href
       this.$store.commit("SET_CODEMEAU", code);
       // console.log(this.$store.getters.codeMeau)
       document.cookie = "meaucode=" + code;
@@ -106,6 +110,15 @@ export default {
           this.$router.push("/realNetwork/vehicleCar");
         }else if(name==10){
           this.$router.push("/system/users");
+        }else if(name==3){
+          // window.open(`http://10.1.30.204:50009/metabase.html?key${getCookie('metabase.SESSION')}`)
+            if(test.indexOf("10.1.30.204") != -1){
+              window.open(`http://10.1.30.204:50010/metabase.html?key${getCookie('metabase.SESSION')}`)
+            }else{
+              window.open(`http://101.231.47.117:50009/metabase.html?key${getCookie('metabase.SESSION')}`)
+
+              
+            }
         }
       },500)
       

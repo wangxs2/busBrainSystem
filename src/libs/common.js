@@ -4,7 +4,7 @@ import {
 } from 'element-ui';
 // import dialogs from '@/components/dialogs'
 
-import echarts from 'echarts' //引入echarts
+import * as echarts from 'echarts'; //引入echarts
 
 import * as http from './http'
 

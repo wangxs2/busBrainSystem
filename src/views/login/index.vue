@@ -205,6 +205,7 @@ export default {
               if (res.status == 'success') {
                 document.cookie = "flag=true";
                 document.cookie = "user=" + res.info.id;
+                document.cookie ="metabase.SESSION="+res.info.metabaseSession;
                 // document.cookie = "userName=" + res.result.userInfo.username;
                 // document.cookie = "Token=" + res.result.token;
                 // document.cookie = "roleid=" + res.result.role[0].id;

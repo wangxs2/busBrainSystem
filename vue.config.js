@@ -20,7 +20,7 @@ module.exports = {
     proxy: {
       '/busbrain/*': {
         // target: 'http://10.1.4.175:8001/traffic-investment',
-        // target: 'http://192.168.1.109:8004/api2db',
+        // target: 'http://10.1.30.204:50020/busbrain',
         target: 'http://101.231.47.117:50020/busbrain', // 测试
         changeOrigin: true,
         pathRewrite: {
