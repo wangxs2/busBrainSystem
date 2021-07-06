@@ -144,9 +144,7 @@ export default {
            $(".passengerAnalysis").on("click", ".unclick-stations-lis", e => {
             this.testroute($(e.target).data("code"))
           })
-
       })
-   
     },
     methods: {
         initechart(data,data1){

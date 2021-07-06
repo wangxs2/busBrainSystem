@@ -2,7 +2,7 @@
   <div class="networkExcellent">
       <div v-show="$route.name!=='年度计划'" class="networkMap" id="networkMap">
       </div>
-    <router-view></router-view>
+    <router-view @changnet="ntsonClick"></router-view>
   </div>
 </template>
 
@@ -13,6 +13,17 @@ export default {
  mounted(){
     ntMyMap = new Map({ el: "networkMap" });
   },
+  methods:{
+    ntsonClick(row){
+      if(row.operLine){
+        ntMyMap.drawbusLine(row.operLine,row.typeline)
+      }
+      if(row.saveLine==1){
+        ntMyMap.closepoly()
+      }
+      
+    },
+  }
   
 }
 </script>
@@ -21,7 +32,14 @@ export default {
 </style>
 <style lang="scss" scoped>
 .networkExcellent{
- 
+width: 100%;
+  height: 100%;
+   background:#000000;
+  position: relative;
+  .networkMap{
+    width: 100%;
+  height: 100%;
+  }
  
 }
 </style>

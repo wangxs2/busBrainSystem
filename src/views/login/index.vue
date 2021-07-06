@@ -132,9 +132,6 @@ export default {
       "/embed/dashboard/" +
       token +
       "#bordered=true&titled=true";
-
-    
-
   },
   methods: {
     //记住密码

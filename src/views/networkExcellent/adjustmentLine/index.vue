@@ -1,32 +1,33 @@
 <template>
   <div class="repetitionRactor">
      <div class="search-box">
-
-      <div style="margin-right:0.6vw;margin-left:0.1vw;width:3.5vw;">线路名称</div>
-      <el-select style="width:40%" size="small" filterable @change="getDetail" v-model="value" placeholder="请选择">
+      <div style="margin-right:0.6vw;width:5vw;">线路名称</div>
+      <el-select style="width:75%" size="small" filterable @change="getDetail" v-model="value" placeholder="请选择">
         <el-option
-          v-for="(item,n) in lineaData"
+          v-for="(item,n) in allData"
           :key="n"
           :label="item.routeName"
           :value="item.routeName">
         </el-option>
       </el-select>
-      <div style="margin-right:0.6vw;margin-left:1vw;width:3.5vw;">阈值设置</div>
-      <!-- @blur="getDetail" -->
-      <el-input style="width:40%"   size="small" v-model="input" @input="getDetail1" placeholder="请输入0-1阈值"></el-input>
+     <el-button style="width:5vw;margin-left:0.4vw;" @click="saveBtn()" type="primary" size="mini" >保存</el-button>
     </div>
     <div class="rightlinemsg">
-      <div class="tit">线路重复系数</div>
+      <div class="tit">版本记录</div>
       <div class="bttit">
-        <div>线路名称</div>
-        <div>线路重复系数</div>
+        <div>版本号</div>
+        <div>时间</div>
       </div>
       <div class="tablbox">
         <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
-          <div>{{item.routeName}}</div>
-          <div>{{item.coefficient.toFixed(2)}}</div>
+          <div>{{item.name}}</div>
+          <div>{{item.time}}</div>
         </div>
       </div>
+    </div>
+    <div class="lkicon">
+      <div class="lk1"></div>调整前
+      <div class="lk1 lk2"></div>调整后
     </div>
   </div>
 </template>
@@ -39,7 +40,12 @@ export default {
           value:'',
           input:'',
           nowindex:-1,
-          lineaData: [],
+          lineaData: [
+            {
+              name:'01-78',
+              time:'2021-12-10'
+            }
+          ],
           allData: [],
         }
     },
@@ -54,7 +60,7 @@ export default {
               iteam.coefficient=Number(iteam.coefficient)
             })
             this.allData=res.result;
-            this.lineaData=res.result;
+            // this.lineaData=res.result;
             setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)
             },200)
@@ -71,13 +77,18 @@ export default {
               }
             })
               res.result[0].geom=this.setData(res.result[0].geom)
-              this.$emit('changeoper',{
+              this.$emit('changnet',{
                operLine:res.result[0],
                typeline:1
               })
           })
        
 
+      },
+      saveBtn(){
+        this.$emit('changnet',{
+          saveLine:1
+        })
       },
        toDetail(data,index){
           this.nowindex=index
@@ -130,7 +141,7 @@ export default {
 <style lang="scss" scoped>
 .repetitionRactor{
   .search-box {
-    width:40%;
+    // width:40%;
     background: rgba(12, 38, 104, 0.7);
     box-sizing: border-box;
     padding: vh(10) vw(16);
@@ -143,11 +154,11 @@ export default {
   }
    .rightlinemsg{
     position: absolute;
-    top: vh(180);
+    top: vh(240);
     right: vw(20);
-    width: vw(300);
-    height: vh(864);
-    background: url("~@/assets/image/form_bj.png");
+    width: vw(314);
+    height: vh(350);
+    background: url("~@/assets/image/msgLine.png");
     // border:1px solid #ffffff;
     background-size: 100% 100%;
     overflow: hidden;
@@ -214,6 +225,32 @@ export default {
       margin-top: vh(12);
       margin-bottom: vh(30);
       
+    }
+  }
+
+  .lkicon{
+    position:absolute;
+    top:vh(180);
+    right:vw(26);
+    width: vw(270);
+    height: vh(40);
+    background: rgba(26, 66, 118, 0.2);
+    border: 1px solid #27B6FF;
+    box-shadow: 0px 0px vh(10) rgba(69, 120, 255, 1) inset;
+    opacity: 0.8;
+    border-radius: 2px;
+    box-sizing: border-box;
+    padding:vh(8) vw(20);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .lk1{
+      width: vw(50);
+      height: vh(6);
+      background: #00FFFF;
+    }
+    .lk2{
+      background: #A200FF;
     }
   }
  
