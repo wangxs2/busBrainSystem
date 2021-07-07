@@ -46,8 +46,6 @@ export default {
     '$store.getters.userStation':{
       handler(val,oldval){
        if(val.length>0){
-
-         
          MyMapLine.pointAll3(val)
        }
       },

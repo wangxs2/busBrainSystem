@@ -8,13 +8,15 @@ export default class Map {
     return {
       el: data.el, // 地图容器
       datar: {},
+      markers:[],
       linesearch: null,
       busPolyline: null,
       busPolyline1: null,
+      massall: null,
       polyEditor:null,
       polygonLine: null,
       infoWindow: null,//信息窗口
-      overlayGroups: new AMap.OverlayGroup(),//区域客流站点集合
+      overlayGroups: new AMap.OverlayGroup(),//调整方案站点集合
 
     }
   }
@@ -31,7 +33,7 @@ export default class Map {
       expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
     })
 
-    this.map.add(this.overlayGroups);
+    
     this.infoWindow = new AMap.InfoWindow({
       isCustom: true,  //使用自定义窗体
       content: '',
@@ -47,8 +49,16 @@ export default class Map {
       this.map.remove(this.busPolyline)
     }
     if (this.busPolyline1) {
-      this.map.remove(this.busPolyline)
+      this.map.remove(this.busPolyline1)
     }
+    if(this.markers){
+      this.overlayGroups.removeOverlays(this.markers)
+    }
+    if(this.polyEditor){
+      this.polyEditor.close();
+    }
+    
+    this.lineSearch(BusArr.routeName)
     let num = Math.round((BusArr.geom.length) / 2)
     //线路调整
     this.busPolyline = new AMap.Polyline({
@@ -88,6 +98,99 @@ export default class Map {
     this.polyEditor.close();
     
   }
+
+    //渲染站点
+  pointAll3(datapoint){
+      if(this.massall){
+        this.massall.clear()
+      }
+      let style = [
+        {
+          url: require('../../assets/image/alpoint1.png'),
+          anchor: new AMap.Pixel(6, 6),
+          size: new AMap.Size(11, 11),
+          zIndex: 20,
+        }];
+      this.massall = new AMap.MassMarks(datapoint, {
+          opacity: 0.8,
+          cursor: 'pointer',
+          style: style[0]
+      });
+      this.massall.setMap(this.map);
+      let marker = new AMap.Marker({content: ' ', map: this.map});
+      this.massall.on('mouseover',  (e)=> {
+          marker.setPosition(e.data.lnglat);
+          marker.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>`})
+      });
+      this.massall.on('mouseout',  (e)=> {
+          marker.setPosition(e.data.lnglat);
+          marker.setLabel({content:null})
+      });
+      
+  }
+
+
+  lineSearch(busLineName){
+
+    let  linesearch = new AMap.LineSearch({
+        pageIndex: 1,
+        city: '上海',
+        pageSize: 1,
+        extensions: 'all'
+    });
+
+    linesearch.search(busLineName, (status, result)=> {
+      if (status === 'complete' && result.info === 'OK') {
+          this.lineSearch_Callback(result);
+      } else {
+        
+      }
+    });
+
+  }
+
+
+  lineSearch_Callback(data) {
+    var lineArr = data.lineInfo;
+    var lineNum = data.lineInfo.length;
+    if (lineNum == 0) {
+    } else {
+      
+      let datas = data.lineInfo[0].via_stops
+      this.markers = []
+      datas.forEach(iteam => {
+        var marker = new AMap.Marker({
+          position: iteam.location,
+          icon:new AMap.Icon({
+            image:require('../../assets/image/orange1.png'),
+            size: [32,32],
+            imageSize : [32,32],
+           }),
+          offset: new AMap.Pixel(-16, -16),
+          extData:iteam,
+          cursor: 'pointer',
+        })
+        let marker1 = new AMap.Marker({content: ' ', map: this.map,offset: new AMap.Pixel(0, -20) });
+        marker.on('mouseover',  (e)=> {
+          marker1.setPosition(e.target.getPosition());
+          marker1.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.target.getExtData().name}</div>`})
+        });
+        marker.on('mouseout',  (e)=> {
+          marker1.setPosition(e.target.getPosition());
+          marker1.setLabel({content:null})
+        });
+        this.markers.push(marker)
+      })
+      this.overlayGroups.addOverlays(this.markers)
+      this.map.add(this.overlayGroups);
+      
+    }
+  }
+
+
+
+
+
 
 
 

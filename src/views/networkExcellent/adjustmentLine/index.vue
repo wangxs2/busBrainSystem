@@ -50,20 +50,16 @@ export default {
         }
     },
     created(){
+      this.pointAll()
       this.getData()
     },
     methods:{
       getData(){
-          
           this.$fetchGet("route/lineCoefficient").then(res => {
             res.result.forEach(iteam=>{
               iteam.coefficient=Number(iteam.coefficient)
             })
             this.allData=res.result;
-            // this.lineaData=res.result;
-            setTimeout(()=>{
-              this.$store.commit('SET_LOADING',false)
-            },200)
 
           })
       },
@@ -90,7 +86,7 @@ export default {
           saveLine:1
         })
       },
-       toDetail(data,index){
+      toDetail(data,index){
           this.nowindex=index
           this.$fetchGet("route/baseLineDetail",{
             routeName:data.routeName
@@ -131,6 +127,21 @@ export default {
         return arr
 
       },
+      pointAll(){
+        this.$fetchGet("indicator/stationList").then(res => {
+          if(res.result&&res.result['站点的详细属性']){
+            this.$store.commit('SET_STATION', res.result['站点的详细属性'])
+            setTimeout(()=>{
+                this.$store.commit('SET_LOADING',false)
+              },500)
+          }
+        });  
+
+
+      
+     
+     
+    },
     }
   
 }

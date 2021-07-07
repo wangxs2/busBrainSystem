@@ -10,6 +10,24 @@
 import Map from "./networkMap.js";
 let ntMyMap = null; // 地图实例
 export default {
+  data(){
+    return{
+      
+    }
+
+  },
+ watch:{
+  '$store.getters.userStation':{
+      handler(val,oldval){
+       if(val.length>0){
+         ntMyMap.pointAll3(val)
+       }
+      },
+      deep:true,
+      immediate: true
+    },
+
+ },
  mounted(){
     ntMyMap = new Map({ el: "networkMap" });
   },
