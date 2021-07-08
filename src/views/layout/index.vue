@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     getRouterName:  function() {
-     return this.$route.matched[2].name
+     return this.$route.matched[this.$route.matched.length-1].name
     },
     // myallroute:function(){
     //   return this.quc(this.$store.getters.userRole)

@@ -2,10 +2,10 @@
   <div class="treeleft">
     <el-dropdown placement="bottom-start" @command="changemenu" v-for="(item,n) in menuData" :key="item.id">
       <div class="one-meanu">
-        <div :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
+        <div @click="isFater(item,n)" :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
         <div v-if="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>
       </div>
-      <el-dropdown-menu slot="dropdown">
+      <el-dropdown-menu slot="dropdown" v-if="item.children && item.children.length">
         <el-dropdown-item :command="{iteam,n}" v-for="(iteam) in item.children" :key="iteam.id">
           <div class="son-name">{{iteam.name}}</div>
         </el-dropdown-item>
@@ -39,7 +39,6 @@ export default {
     
   },
   mounted(){
-
     let str=this.$route.matched[1].name
       this.$store.getters.menuData.forEach((iteam,index)=>{
           if(iteam.name==str){
@@ -49,8 +48,17 @@ export default {
   },
   methods: {
     changemenu(command){
-       this.meauindex = command.n
+      
+      this.meauindex = command.n
       this.$router.push(command.iteam.url);
+    },
+    isFater(row,n){
+      if(row.children.length==0){
+        this.meauindex = n
+        this.$router.push(row.url);
+      }else{
+        return
+      }
     }
   }
 };

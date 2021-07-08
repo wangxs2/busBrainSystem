@@ -44,8 +44,8 @@ router.beforeEach((to, from, next) => {
     next('/login')
     return
   } else {
-    
-    store.getters.routehistroy.push(to.matched[2])
+  
+    store.getters.routehistroy.push(to.matched[to.matched.length-1])
     if (store.getters.userId !== getCookie('user') + '') {
       //判断是否拉取用户信息 权限
       console.log('l拉取菜单的信息！！！')
