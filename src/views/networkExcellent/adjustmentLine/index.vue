@@ -179,6 +179,7 @@ export default {
     color: #dae4ff;
   }
   
+  
   .rightlinemsg{
     position: absolute;
     top: vh(240);
