@@ -29,6 +29,21 @@
       <div class="lk1"></div>调整前
       <div class="lk1 lk2"></div>调整后
     </div>
+    <div class="rightlinemsg rightlinemsg1">
+      <div class="tit">{{value}}</div>
+      <div class="bttit">
+        <div>指标</div>
+        <div>调整前</div>
+        <div>调整后</div>
+      </div>
+      <div class="tablbox">
+        <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
+          <div>{{item.name}}</div>
+          <div>{{item.time}}</div>
+          <div>时间</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -163,7 +178,8 @@ export default {
     align-items: center;
     color: #dae4ff;
   }
-   .rightlinemsg{
+  
+  .rightlinemsg{
     position: absolute;
     top: vh(240);
     right: vw(20);
@@ -237,6 +253,9 @@ export default {
       margin-bottom: vh(30);
       
     }
+  }
+  .rightlinemsg1{
+      top: vh(600);
   }
 
   .lkicon{

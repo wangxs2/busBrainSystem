@@ -4,22 +4,22 @@
 
       <div style="margin-right:0.6vw;width:3vw;">时间</div>
       <el-date-picker
-        v-model="value1"
-        size="small"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期">
+        v-model="query.date"
+        type="date"
+        placeholder="选择日期">
       </el-date-picker>
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.6vw;">线路名称</div>
-      <el-select size="small" filterable v-model="value" placeholder="请选择">
+      <el-select size="small" filterable v-model="query.lineName" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.routeId"
           :label="item.routeName"
-          :value="item.routeId">
+          :value="item.routeName">
         </el-option>
       </el-select>
+      <div class="qhbtn">
+        <div :class="query.direction==iteam.id?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
+      </div>
     </div>
     <div class="table-data"  v-loading="loading"
     element-loading-text="拼命加载中"
@@ -74,11 +74,20 @@ export default {
             }
           ],
           value:'',
-          value1:'',
+          typelst:[
+              {
+                name:'上行',
+                id:0
+              },{
+                name:'下行',
+                id:1
+              }
+            ],
           loading:true,
           query:{
-            pageNo:1,
-            pageSize:20, 
+            date:new Date(),
+            direction:0,
+            lineName:'961路'
           },
           alldata:[],
           options:[],
@@ -117,14 +126,22 @@ export default {
         this.loading=true
         // this.fileList = fileList.slice(-3);
       },
+       tobtn(row){
+        this.query.direction=row.id
+        this.getData()
+      },
       getData(){
         this.loading=true
-        this.$fetchGet("adjust-plan/list",this.query).then(res => {
+        this.$fetchGet("passenger/section",{
+            date:this.$moment(this.query.date).format("YYYY-MM-DD"),
+            direction:this.query.direction,
+            lineName:this.query.lineName
+        }).then(res => {
           res.result.list.forEach(iteam=>{
             iteam.isdetail=false
           })
           this.alldata=res.result.list
-          this.total=res.result.total
+          // this.total=res.result.total
           this.loading=false
           setTimeout(()=>{
             this.$store.commit('SET_LOADING',false)
@@ -163,6 +180,35 @@ export default {
     align-items: center;
     color: #dae4ff;
   }
+  .qhbtn{
+      width: vw(120);
+      height: vh(36);
+      background: rgba(26, 66, 118, 0.2);
+      border: 1px solid #27B6FF;
+      border-radius: vw(18);
+      box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 1) inset;
+      display:flex;
+      align-items: center;
+      margin-left:vw(12);
+      .btnnow{
+        flex:1;
+        text-align:center;
+        height:100%;
+        line-height:vh(36);
+        cursor:pointer;
+      }
+      .btnnow:first-child{
+        border-top-left-radius:vw(18);
+        border-bottom-left-radius:vw(18);
+      }
+      .btnnow:last-child{
+        border-top-right-radius:vw(18);
+        border-bottom-right-radius:vw(18);
+      }
+      .activebtn{
+        background: #4578FF;
+      }
+    }
   .table-data{
     position: absolute;
     width:98%;

@@ -109,7 +109,6 @@ export default {
             this.lineaData=arr
          }
 
-
       },
       setData(data){
         let str=data.split(' ')
