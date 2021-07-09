@@ -1,5 +1,5 @@
 <template>
-  <div class="homePage">
+  <div class="homePage" id="box">
     <div class="userName">
       <img src="@/assets/image/home/lurl.png" alt="" srcset="">
       <div style="margin-right:2vw" @click="toXinpage()"> 定时任务管理  </div>
@@ -87,6 +87,7 @@ export default {
     //  this.$store.commit("SET_CODEMEAU", '')
     //  document.cookie = "meaucode=" + '';
     //  console.log('在首页',this.$store.getters.codeMeau)
+    // this.initpoint()
    },
   methods:{
     loginout(){
@@ -96,6 +97,60 @@ export default {
        window.open(
         `/busbrain/main.shtml#task/index.shtml`
       );
+
+    },
+    initpoint(){
+        var box=document.getElementById("box");
+        var x;
+        var y;
+        // box.onmousemove=function(e){
+        // 	var e=e||window.event;
+        // 	 x=e.clientX-offset.left(box);
+        // 	 y=e.clientY-offset.top(box)+document.documentElement.scrollTop;
+        // 	if (y>550) {
+        // 		y=550
+        // 	};
+        // 	if (x>1150) {
+        // 		x=1150
+        // 	};
+        // 	if (y<50) {
+        // 		y=50
+        // 	};
+        // 	if (x<50) {
+        // 		x=50
+        // 	};
+        // 	roll.style.left=x-50+"px";
+        // 	roll.style.top=y-50+"px";
+        // };
+        var jiang=[
+
+          ];
+        var z=0;
+        var wig;
+        var hig;
+        var H;
+      function adds(){
+        z++;
+        if (z>60) {
+          clearInterval(time)
+        };
+        wig=Math.floor(Math.random()*101);
+        hig=Math.floor(Math.random()*1900);
+        H=Math.floor(Math.random()*540);
+        var node=document.createElement("div");
+        node.style.width=wig+"px";
+        node.style.height=wig+"px";
+        if (x==hig+wig) {
+          hig=x+100;
+          H=y+50;
+        };
+        node.style.left=hig+"px";
+        node.style.top=H+"px";
+        node.className="bluepoint";
+        box.appendChild(node);
+
+	};
+	 var time=setInterval(adds,3000);
 
     },
     toHome(name,code){
@@ -128,6 +183,19 @@ export default {
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss">
+  .bluepoint{
+      position: absolute;
+      background: url('./blue.png') center center/cover;
+      -webkit-animation:snowqwe 20s infinite linear;
+      z-index:1;
+    }
+    @-webkit-keyframes snowqwe{
+      to{
+        transform:translate(100px,300px) rotate(360deg) ;
+      }
+    }
+</style>
 <style scoped lang="scss">
 .homePage{
     width:100%;
@@ -143,6 +211,7 @@ export default {
     color: #DBE7FF;
     font-family: Microsoft YaHei;
     position: relative;
+    
     .lightLine{
       position: absolute;
       right: vw(100);
@@ -262,6 +331,7 @@ export default {
       }
     .left-home{
       text-align:center;
+      z-index:10;
       .left-l1{
         width:vw(648);
         height:vw(140);
@@ -642,6 +712,10 @@ export default {
         background: url("~@/assets/image/home/5_pressed.png");
       }
     }
+
+
+
+  
 }
 
 </style>

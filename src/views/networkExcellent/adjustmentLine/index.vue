@@ -1,5 +1,5 @@
 <template>
-  <div class="repetitionRactor">
+  <div class="repetitionRactor" id="adjustLine">
      <div class="search-box">
       <div style="margin-right:0.6vw;width:5vw;">线路名称</div>
       <el-select style="width:75%" size="small" filterable @change="getDetail" v-model="value" placeholder="请选择">
@@ -19,17 +19,18 @@
         <div>时间</div>
       </div>
       <div class="tablbox">
-        <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
-          <div>{{item.name}}</div>
+        <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in datavsion" :key="n">
+          <div>{{item.version}}</div>
           <div>{{item.time}}</div>
         </div>
+         <div style="text-align:center" v-if="datavsion.length==0">无调整信息</div>
       </div>
     </div>
     <div class="lkicon">
       <div class="lk1"></div>调整前
       <div class="lk1 lk2"></div>调整后
     </div>
-    <div class="rightlinemsg rightlinemsg1">
+    <div class="rightlinemsg rightlinemsg1" v-if="datavsion.length!==0">
       <div class="tit">{{value}}</div>
       <div class="bttit">
         <div>指标</div>
@@ -37,10 +38,10 @@
         <div>调整后</div>
       </div>
       <div class="tablbox">
-        <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
-          <div>{{item.name}}</div>
-          <div>{{item.time}}</div>
-          <div>时间</div>
+        <div  class="bttit bttit1">
+          <div>百公里人次</div>
+          <div>{{vsonzb.bglrc}}</div>
+          <div>{{vsonzb.bglrc}}</div>
         </div>
       </div>
     </div>
@@ -48,8 +49,10 @@
 </template>
 
 <script>
+import MapMixin from '../networkMap'
 //线路重复系数辅助决策
 export default {
+  mixins: [MapMixin],
    data(){
         return {
           value:'',
@@ -62,37 +65,54 @@ export default {
             }
           ],
           allData: [],
+          datavsion:[],
+          vsonzb:{},
         }
     },
+    mounted(){
+      this.M_initMap('adjustLine')
+
+    },
     created(){
-      this.pointAll()
+      // this.pointAll()
       this.getData()
     },
     methods:{
       getData(){
-          this.$fetchGet("route/lineCoefficient").then(res => {
-            res.result.forEach(iteam=>{
-              iteam.coefficient=Number(iteam.coefficient)
-            })
+          this.$fetchGet("route/routeList").then(res => {
+              setTimeout(()=>{
+                this.$store.commit('SET_LOADING',false)
+              },500)
             this.allData=res.result;
 
           })
       },
+  
       getDetail(){
+        this.nowindex=-1
+        this.datavsion=[]
           this.$fetchGet("route/baseLineDetail",{
             routeName:this.value
           }).then(res => {
-            this.allData.forEach(itam=>{
-              if(itam.routeName==res.result[0].routeName){
-                res.result[0].coefficient=itam.coefficient
-              }
-            })
-              res.result[0].geom=this.setData(res.result[0].geom)
-              this.$emit('changnet',{
-               operLine:res.result[0],
-               typeline:1
+            if(res.result){
+
+              this.allData.forEach(itam=>{
+                if(itam.routeName==res.result[0].routeName){
+                  res.result[0].coefficient=itam.coefficient
+                }
               })
+                res.result[0].geom=this.setData(res.result[0].geom)
+                this.M_drawbusLine(res.result[0])
+            }
+
           })
+
+           this.$fetchGet("net/getLineHistory",{
+             routeName:this.value
+           }).then(res => {
+             if(res.result){this.datavsion=res.result}
+           })
+         
        
 
       },
@@ -102,37 +122,11 @@ export default {
         })
       },
       toDetail(data,index){
-          this.nowindex=index
-          this.$fetchGet("route/baseLineDetail",{
-            routeName:data.routeName
-          }).then(res => {
-            this.allData.forEach(itam=>{
-              if(itam.routeName==res.result[0].routeName){
-                res.result[0].coefficient=itam.coefficient
-              }
-            })
-              res.result[0].geom=this.setData(res.result[0].geom)
-              this.$emit('changeoper',{
-               operLine:res.result[0],
-               typeline:1
-              })
-          })
+        this.nowindex=index
+        this.vsonzb=data
+        this.M_setPath(this.setData(data.geom))
       },
-      getDetail1(){
-        if(this.input==''){
-            this.lineaData=this.allData
-        }else{
-            let arr=[]
-          this.allData.forEach(itam=>{
-              if(itam.coefficient>this.input){
-                arr.push(itam)
-              }
-            })
-            this.lineaData=arr
-         }
-
-
-      },
+    
       setData(data){
         let str=data.split(' ')
         let arr=[]
@@ -145,10 +139,9 @@ export default {
       pointAll(){
         this.$fetchGet("indicator/stationList").then(res => {
           if(res.result&&res.result['站点的详细属性']){
-            this.$store.commit('SET_STATION', res.result['站点的详细属性'])
-            setTimeout(()=>{
-                this.$store.commit('SET_LOADING',false)
-              },500)
+            console.log(this.M_pointAll3)
+            this.M_pointAll3(res.result['站点的详细属性'])
+          
           }
         });  
 
@@ -166,6 +159,10 @@ export default {
 </style>
 <style lang="scss" scoped>
 .repetitionRactor{
+  width:100%;
+  height:100%;
+  position: relative;
+
   .search-box {
     // width:40%;
     background: rgba(12, 38, 104, 0.7);
@@ -177,11 +174,13 @@ export default {
     display: flex;
     align-items: center;
     color: #dae4ff;
+    z-index:2;
   }
   
   
   .rightlinemsg{
     position: absolute;
+     z-index:2;
     top: vh(240);
     right: vw(20);
     width: vw(314);
@@ -261,6 +260,7 @@ export default {
 
   .lkicon{
     position:absolute;
+    z-index:2;
     top:vh(180);
     right:vw(26);
     width: vw(270);

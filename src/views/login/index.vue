@@ -272,7 +272,12 @@ export default {
   .el-form-item__content {
     line-height: vh(44);
   }
+ 
 }
+ .login .login-content .title-form .input-form .el-form-item .el-input[data-v-71866df8]{
+   background: rgba(26, 66, 118, 0.2) !important;
+    border: 1px solid #5D89FF!important;
+ }
 </style>
 
 <style lang="scss" scoped>

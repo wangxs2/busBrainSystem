@@ -1,5 +1,8 @@
 <template>
-  <div class="operServices">
+  <div class="operServices"  v-loading="poloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
     <div class="operMap" id="operMap">
 
     </div>
@@ -7,22 +10,22 @@
       <div class="tit">匹配线路</div>
       <div class="bttit">
         <div>线路名称</div>
-        <div>重复系数</div>
-        <div>百公里人次</div>
-        <div>满载率</div>
-        <div>线路长度</div>
-        <div>非直线系数</div>
-         <div>轨交重复站数</div>
+        <div v-if="tlstation[0].isxz">重复系数</div>
+        <div v-if="tlstation[1].isxz">百公里人次</div>
+        <div v-if="tlstation[2].isxz">满载率</div>
+        <div v-if="tlstation[3].isxz">线路长度(km)</div>
+        <div v-if="tlstation[4].isxz">非直线系数</div>
+        <div v-if="tlstation[5].isxz">轨交重复站数</div>
       </div>
       <div class="tablbox">
         <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
-          <div>{{item.routeName}}</div>
-          <div>0.6</div>
-          <div>0.6</div>
-          <div>50</div>
-          <div>100km</div>
-          <div>1</div>
-          <div>9</div>
+          <div>{{item.lineName}}</div>
+          <div v-if="tlstation[0].isxz">{{item.cfd==null?'':item.cfd.toFixed(2)}}</div>
+          <div v-if="tlstation[1].isxz">{{item.bglrc}}</div>
+          <div v-if="tlstation[2].isxz">{{item.mzl}}</div>
+          <div v-if="tlstation[3].isxz">{{item.cd==null?'':item.cd.toFixed(2)}}</div>
+          <div v-if="tlstation[4].isxz">{{item.fzxxs==null?'':item.fzxxs.toFixed(2)}}</div>
+          <div v-if="tlstation[5].isxz"></div>
         </div>
       </div>
     </div>
@@ -34,7 +37,7 @@
         <img @click="toShow(iteam,n)" v-if="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
         <img @click="toShow(iteam,n)" v-if="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
          <div class="natit">{{iteam.name}}</div>
-         <el-input v-if="n!==6&&n!==7" style="width:40%"   size="mini" v-model="iteam.value"  placeholder="">
+         <el-input v-if="n!==6&&n!==7&&iteam.isxz" style="width:40%" type="number" @change="getData()"  size="mini" v-model="iteam.value"  placeholder="">
            <template slot="prepend"> <i class="iconfont icondayufuhao" ></i></template>
          </el-input>
       </div>
@@ -51,54 +54,56 @@ export default {
     return{
       MyMapper:null,
       polineGroups:new AMap.OverlayGroup(),//线集合
+      M_InfoWindow:null,//信息窗口
+      poloading:true,
       nowindex:-1,
       lineaData: [],
       tlstation:[
           {
             name:'线路重复系数',
-            value:'',
+            value:null,
             isxz:true,
             img:require('@/assets/image/cyan.png')
           },
           {
             name:'百公里人次',
-            value:'',
+            value:null,
             isxz:false,
             img:require('@/assets/image/blue1.png')
           },
           {
             name:'满载率',
-            value:'',
+            value:null,
             isxz:false,
             img:require('@/assets/image/green1.png')
           },
           {
             name:'线路长度',
-            value:'',
+            value:40,
             isxz:true,
             img:require('@/assets/image/yellow1.png')
           },
           {
             name:'非直线系数',
-            value:'1.5',
+            value:null,
             isxz:true,
             img:require('@/assets/image/icon_purple1.png')
           },
           {
             name:'与轨交重复',
-            value:'',
+            value:null,
             isxz:false,
             img:require('@/assets/image/icon_red1.png')
           },
           {
             name:'拥堵情况',
-            value:'',
+            value:null,
             isxz:false,
             img:require('@/assets/image/icon_red1.png')
           },
           {
             name:'换成压力',
-            value:'',
+            value:null,
             isxz:false,
             img:require('@/assets/image/icon_red1.png')
           }
@@ -123,53 +128,75 @@ export default {
         mapStyle: 'amap://styles/d67717253a691e523956e9482ca38f1e',
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
+      this.M_InfoWindow = new AMap.InfoWindow({
+        isCustom: true,
+        autoMove: true,
+        content: '',
+        anchor: 'top-right',
+        offset: new AMap.Pixel(-6, -6)
+      })
       setTimeout(()=>{
         this.$store.commit('SET_LOADING',false)
       },200)
        this.getData()
-
     },
-    getData(){
-        this.$fetchGet("route/lineCoefficient").then(res => {
-          res.result.forEach(iteam=>{
-              this.$fetchGet("route/baseLineDetail",{
-                routeName:iteam.routeName
-              }).then(res => {
-                if(res){
-                  iteam.geom=this.setData(res.result[0].geom)
-                }
-              })
-              this.lineaData.push(iteam)
-              // 
+  
+    getData(){ 
+      this.poloading=true
+      this.lineaData=[]
+      if(this.polineGroups._overlays.length>0){
+        this.polineGroups.clearOverlays()
+      }
+        this.$fetchPost("route/composite",{
+            cfd: this.tlstation[0].value||-1,   // 重复度
+            fzxxs: this.tlstation[4].value||-1,  // 非直线系数
+            cd:this.tlstation[3].value||-1,  // 长度
+            bglrc:this.tlstation[1].value||-1, // 百公里人次
+            mzl:this.tlstation[2].value||-1 // 满载率
+        },'json').then(res => {
+          res.result.forEach(ite=>{
+            ite.geom=this.setData(ite.geom)
           })
-           setTimeout(()=>{
-            this.passCorrline(this.lineaData)
-          },1000)
-          
+           this.lineaData=res.result
+           this.passCorrline(this.lineaData)
         })
     },
     passCorrline(data){
-      console.log(data)
       let lines=[]
       data.forEach(iteam=>{
         let kyLinedata = new AMap.Polyline({
           path: iteam.geom,
           strokeColor: "#35A594",
           strokeOpacity: 1,
-          strokeWeight:2,
-          zIndex:20,
+          strokeWeight:4,
+          zIndex:10,
           cursor:'pointer',
           strokeStyle: "solid",
+          extData :iteam
         })
         
-        // kyLinedata.on('click',(e)=>{
-        // })
+        kyLinedata.on('mouseover',(e)=>{
+          e.target.setOptions({
+             strokeColor: "#A200FF",
+             zIndex :18,
+          })
+          let num=Math.round((e.target.getPath().length)/2)
+          this.setConten(e.target.getPath()[num],e.target.getExtData())
+        })
+        kyLinedata.on('mouseout',(e)=>{
+          e.target.setOptions({
+             strokeColor: "#35A594",
+             zIndex :10,
+          })
+          this.M_InfoWindow.close()
+        })
         lines.push(kyLinedata)
-        console.log(this.MyMapper)
-        this.MyMapper.add(kyLinedata);
-        
+      
       })
-      console.log(lines)
+
+      this.polineGroups.addOverlays(lines)
+      this.MyMapper.add(this.polineGroups);
+      this.poloading=false
       
     },
     setData(data){
@@ -181,9 +208,64 @@ export default {
       return arr
 
     },
+    setConten(position,ExtData){
+      let infoWin = `<div class="info-win">
+              <div class="win-triangle"></div>
+              <div class="info-box">
+                <div class="info-content">
+                  <div class="info">
+                    <div class="info-name">${ExtData.lineName}</div>
+                    <div class="info-item">重复系数：${ExtData.cfd==null?'':ExtData.cfd}</div>
+                    <div class="info-item">百公里人次：${ExtData.bglrc==null?'':ExtData.bglrc}</div>
+                    <div class="info-item">满载率：${ExtData.mzl==null?'':ExtData.mzl}</div> 
+                    <div class="info-item">非直线系数：${ExtData.fzxxs==null?'':ExtData.fzxxs}</div> 
+                    <div class="info-item">线路长度(km)：${ExtData.cd==null?'':ExtData.cd}</div> 
+                  </div>
+                </div>
+              </div>
+            </div>`
+      this.M_openInfoWin(position, infoWin)
+
+    },
+     // 打开信息窗口
+    M_openInfoWin (pos, info) {
+      this.M_InfoWindow.setContent(info)
+      this.M_InfoWindow.open(this.MyMapper, pos)
+    },
+    toDetail(row,index){
+      this.nowindex=index
+      this.polineGroups._overlays.forEach(iteam=>{
+        if(iteam.getExtData().lineName==row.lineName){
+           iteam.setOptions({
+             strokeColor: "#A200FF",
+             zIndex :18,
+          })
+          let num=Math.round((iteam.getPath().length)/2)
+          this.setConten(iteam.getPath()[num],row)
+          this.MyMapper.setFitView(iteam,true,[120,200,60,100])
+        }else{
+          iteam.setOptions({
+             strokeColor: "#35A594",
+             zIndex :10,
+          })
+        }
+      })
+    },
     toShow(row,n){
-      this.tlstation[n].isxz=!this.tlstation[n].isxz
-    }
+      row.isxz=!row.isxz
+      if(row.isxz){
+        this.getData()
+      }
+    },
+    //输入框的数值发生改变的时候
+    getChangeData(row){
+      // if(row.isxz){
+      //   this.getData()
+      // }else{
+      //   return
+      // }
+      
+    },
   }
   
 }
@@ -194,7 +276,65 @@ export default {
   .amap-marker-label{
     background-color:transparent!important;
     border:none!important;
-}
+  } 
+
+
+  .info-win {
+      padding-right: vw(20);
+      // height: vw(110);
+      position: relative;
+      .win-triangle {
+        position: absolute;
+        top: 0;
+        right: vw(16);
+        width: vw(20);
+        height: vw(20);
+        transform: skewX(-45deg);
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+      }
+      .info-box {
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+        border-radius: 4px;
+        .info-content {
+          position: relative;
+          background: rgba(1, 11, 66, 1);
+          border-radius: 4px;
+          padding: vh(12) vw(16) vh(10) vw(10);
+          color: #fff;
+          // display: flex;
+          .icon {
+            width: vw(98);
+            height: vw(88);
+            background: #000;
+            margin-right: vw(10);
+            float: left;
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+          .info {
+            width: vw(180);
+            min-height: vh(108);
+            .info-name {
+              font-size: vw(16);
+              font-weight: bold;
+              margin-bottom: vw(12);
+            }
+            .info-item {
+              font-size: vw(14);
+              line-height: vw(20);
+              margin-top: vw(6);
+              // overflow: hidden;
+              // white-space: nowrap;
+              // text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
 }
 
 

@@ -1,14 +1,11 @@
 <template>
   <div class="networkExcellent">
-      <div v-show="$route.name!=='年度计划'" class="networkMap" id="networkMap">
-      </div>
-    <router-view @changnet="ntsonClick"></router-view>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Map from "./networkMap.js";
-let ntMyMap = null; // 地图实例
+
 export default {
   data(){
     return{
@@ -17,30 +14,10 @@ export default {
 
   },
  watch:{
-  '$store.getters.userStation':{
-      handler(val,oldval){
-       if(val.length>0){
-         ntMyMap.pointAll3(val)
-       }
-      },
-      deep:true,
-      immediate: true
-    },
-
  },
  mounted(){
-    ntMyMap = new Map({ el: "networkMap" });
   },
   methods:{
-    ntsonClick(row){
-      if(row.operLine){
-        ntMyMap.drawbusLine(row.operLine,row.typeline)
-      }
-      if(row.saveLine==1){
-        ntMyMap.closepoly()
-      }
-      
-    },
   }
   
 }
