@@ -411,7 +411,7 @@ const Map = {
               size: [16,16],
               imageSize : [16,16],
              }),
-            offset: new AMap.Pixel(-8, -8),
+            offset: new AMap.Pixel(-8, -16),
             extData:iteam,
             cursor: 'pointer',
           })
@@ -437,6 +437,19 @@ const Map = {
         this.polyEditor.close();
       }
 
+    },
+    M_closepoly(){
+      this.polyEditor.close();
+      return this.busPolyline1.getPath()
+    },
+    M_remove(){
+      if(this.busPolyline){
+        this.M_map.remove([this.busPolyline1,this.busPolyline])
+        this.M_map.remove(this.markers)
+        if(this.polyEditor){
+          this.polyEditor.close();
+        }
+      }
     },
     // 打开信息窗口
     M_openInfoWin (pos, info) {

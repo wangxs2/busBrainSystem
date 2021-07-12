@@ -5,7 +5,7 @@
         <div @click="isFater(item,n)" :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
         <div v-if="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>
       </div>
-      <el-dropdown-menu slot="dropdown" v-if="item.children && item.children.length">
+      <el-dropdown-menu slot="dropdown" v-show="item.children && item.children.length">
         <el-dropdown-item :command="{iteam,n}" v-for="(iteam) in item.children" :key="iteam.id">
           <div class="son-name">{{iteam.name}}</div>
         </el-dropdown-item>
@@ -16,7 +16,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import menuItem from "./menuItem";
+// import menuItem from "./menuItem";
 import {
   getCookie,
   delCookie
@@ -24,7 +24,7 @@ import {
 export default {
   name: "menuNav",
   components: {
-    menuItem
+    // menuItem
   },
   data() {
     return {

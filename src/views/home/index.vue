@@ -1,78 +1,84 @@
 <template>
-  <div class="homePage" id="box">
-    <div class="userName">
-      <img src="@/assets/image/home/lurl.png" alt="" srcset="">
-      <div style="margin-right:2vw" @click="toXinpage()"> 定时任务管理  </div>
-      <img src="@/assets/image/home/settig.png" alt="" srcset="">
-      <div @click="toHome(10,'MAIN')">权限设置</div>
-      <div class="lineName"></div>
-      <img src="@/assets/image/home/icon_yh.png" alt="" srcset="">
-      admin
-      <div class="lineName"></div>
-      <img  src="@/assets/image/home/icon_quit.png" alt="" srcset="">
-      <div @click="loginout">退出</div>
-    </div>
-    <div class="lightLine">
-      <div class="lightson"></div>
-    </div>
-    <div class="lightLine lightLine1"></div>
-    <div class="lightLine lightLine2">
-      <div class="lightson"></div>
-    </div>
-    <div class="lightLine lightLine3">
-      <div class="lightson"></div>
-    </div>
-    <div class="lightLine lightLine4">
-      <div class="lightson"></div>
-    </div>
-    <div class="lightLine lightLine5"></div>
-    <div class="lightLine lightLine6">
-      <div class="lightson"></div>
-    </div>
-    <div class="lightLine lightLine7"></div>
-    <div class="lightLine lightLine8">
-      <div class="lightson"></div>
-    </div>
-    <div class="lightLine lightLine9">
-      <div class="lightson"></div>
-    </div>
-    <div class="lightLine lightLine10"></div>
-    <div class="lightLine lightLine11">
-      <div class="lightson"></div>
-    </div>
-    <div class="left-home">
-      <div class="left-l23 left-l1" @click="toHome(1,'LINE_DECIDE')">
-        公交线网优化决策系统 
-      </div>
-      <div class="left-l23 left-l2" @click="toHome(2,'OBSERVATION')">
-        公交大数据观测系统
-      </div>
-      <div class="left-l23 left-l3" @click="toHome(3,'OBSERVATION')">
-        公交行业数据管理子系统
-      </div>
-    </div>
-    <div class="center-home">
-      <div class="center-box">
-      </div>
-      <div class="center-box1">
-      </div>
-      <div class="guang"></div>
-      <div class="guang1"></div>
-      <div class="guang2"></div>
-      <img class="dipan " src="@/assets/image/home/baseQ.png" alt="" srcset="">
-      <img class="gongjc" src="@/assets/image/home/busQ.png" alt="" srcset="">
-      <img class="sdipan" src="@/assets/image/home/topQ.png" alt="" srcset="">
-      <img class="cloud" src="@/assets/image/home/cloudQ.png" alt="" srcset="">
-      <!-- <img class="wordc" src="@/assets/image/home/word100%.png" alt="" srcset=""> -->
+ <div class="bigHome">
+
+
+    <canvas id="the-canvas" ></canvas>
+    <div class="homePage" id="box">
       
-    </div>
-    <div class="right-home">
-       <div class="left-l23 left-l4">公交测试系统
+      <div class="userName">
+        <img src="@/assets/image/home/lurl.png" alt="" srcset="">
+        <div style="margin-right:2vw" @click="toXinpage()"> 定时任务管理  </div>
+        <img src="@/assets/image/home/settig.png" alt="" srcset="">
+        <div @click="toHome(10,'MAIN')">权限设置</div>
+        <div class="lineName"></div>
+        <img src="@/assets/image/home/icon_yh.png" alt="" srcset="">
+        admin
+        <div class="lineName"></div>
+        <img  src="@/assets/image/home/icon_quit.png" alt="" srcset="">
+        <div @click="loginout">退出</div>
       </div>
-      <div class="left-l23 left-l5">公交测试系统
+      <div class="lightLine">
+        <div class="lightson"></div>
       </div>
+      <div class="lightLine lightLine1"></div>
+      <div class="lightLine lightLine2">
+        <div class="lightson"></div>
+      </div>
+      <div class="lightLine lightLine3">
+        <div class="lightson"></div>
+      </div>
+      <div class="lightLine lightLine4">
+        <div class="lightson"></div>
+      </div>
+      <div class="lightLine lightLine5"></div>
+      <div class="lightLine lightLine6">
+        <div class="lightson"></div>
+      </div>
+      <div class="lightLine lightLine7"></div>
+      <div class="lightLine lightLine8">
+        <div class="lightson"></div>
+      </div>
+      <div class="lightLine lightLine9">
+        <div class="lightson"></div>
+      </div>
+      <div class="lightLine lightLine10"></div>
+      <div class="lightLine lightLine11">
+        <div class="lightson"></div>
+      </div>
+      <div class="left-home">
+        <div class="left-l23 left-l1" @click="toHome(1,'LINE_DECIDE')">
+          公交线网优化决策系统 
+        </div>
+        <div class="left-l23 left-l2" @click="toHome(2,'OBSERVATION')">
+          公交大数据观测系统
+        </div>
+        <div class="left-l23 left-l3" @click="toHome(3,'OBSERVATION')">
+          公交行业数据管理子系统
+        </div>
+      </div>
+      <div class="center-home">
+        <div class="center-box">
+        </div>
+        <div class="center-box1">
+        </div>
+        <div class="guang"></div>
+        <div class="guang1"></div>
+        <div class="guang2"></div>
+        <img class="dipan " src="@/assets/image/home/baseQ.png" alt="" srcset="">
+        <img class="gongjc" src="@/assets/image/home/busQ.png" alt="" srcset="">
+        <img class="sdipan" src="@/assets/image/home/topQ.png" alt="" srcset="">
+        <img class="cloud" src="@/assets/image/home/cloudQ.png" alt="" srcset="">
+        <!-- <img class="wordc" src="@/assets/image/home/word100%.png" alt="" srcset=""> -->
+        
+      </div>
+      <div class="right-home">
+        <div class="left-l23 left-l4">公交测试系统
+        </div>
+        <div class="left-l23 left-l5">公交测试系统
+        </div>
+      </div>
+        
     </div>
-      
   </div>
 </template>
 
@@ -87,7 +93,7 @@ export default {
     //  this.$store.commit("SET_CODEMEAU", '')
     //  document.cookie = "meaucode=" + '';
     //  console.log('在首页',this.$store.getters.codeMeau)
-    // this.initpoint()
+    this.initpoint()
    },
   methods:{
     loginout(){
@@ -100,57 +106,148 @@ export default {
 
     },
     initpoint(){
-        var box=document.getElementById("box");
-        var x;
-        var y;
-        // box.onmousemove=function(e){
-        // 	var e=e||window.event;
-        // 	 x=e.clientX-offset.left(box);
-        // 	 y=e.clientY-offset.top(box)+document.documentElement.scrollTop;
-        // 	if (y>550) {
-        // 		y=550
-        // 	};
-        // 	if (x>1150) {
-        // 		x=1150
-        // 	};
-        // 	if (y<50) {
-        // 		y=50
-        // 	};
-        // 	if (x<50) {
-        // 		x=50
-        // 	};
-        // 	roll.style.left=x-50+"px";
-        // 	roll.style.top=y-50+"px";
-        // };
-        var jiang=[
+         var canvas = document.getElementById('the-canvas'),
+          
+    
+            ctx = canvas.getContext('2d'),
+    
+            w = canvas.width = window.innerWidth,
+    
+            h = canvas.height = window.innerHeight,
+    
+            hue = 217,
+    
+            stars = [],
+    
+            count = 0,
+    
+            maxStars = 1400;
+    
+        // Cache gradient
+        console.log(canvas)
+        var canvas2 = document.createElement('canvas'),
+    
+            ctx2 = canvas2.getContext('2d');
+    
+        canvas2.width = 100;
+    
+        canvas2.height = 100;
+    
+        var half = canvas2.width / 2,
+    
+            gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
+    
+        gradient2.addColorStop(0.025, '#fff');
+    
+        gradient2.addColorStop(0.1, 'hsl(' + hue + ', 61%, 33%)');
+    
+        gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
+    
+        gradient2.addColorStop(1, 'transparent');
+    
+        ctx2.fillStyle = gradient2;
+    
+        ctx2.beginPath();
+    
+        ctx2.arc(half, half, half, 0, Math.PI * 2);
+    
+        ctx2.fill();
+    
+        // End cache
+    
+        function random(min, max) {
+            if (arguments.length < 2) {
+                max = min;
+    
+                min = 0;
+    
+            }
+    
+            if (min > max) {
+                var hold = max;
+    
+                max = min;
+    
+                min = hold;
+    
+            }
+    
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+    
+        }
+    
+        var Star = function () {
+            this.orbitRadius = random(w / 2 - 50);
+    
+            this.radius = random(100, this.orbitRadius) / 10;
+    
+            this.orbitX = w / 2;
+    
+            this.orbitY = h / 2;
+    
+            this.timePassed = random(0, maxStars);
+    
+            this.speed = random(this.orbitRadius) / 100000;
+    
+            this.alpha = random(2, 10) / 10;
+    
+            count++;
+    
+            stars[count] = this;
+    
+        }
+    
+        Star.prototype.draw = function () {
+            var x = Math.sin(this.timePassed + 1) * this.orbitRadius + this.orbitX,
+    
+                y = Math.cos(this.timePassed) * this.orbitRadius / 2 + this.orbitY,
+    
+                twinkle = random(10);
+    
+            if (twinkle === 1 && this.alpha > 0) {
+                this.alpha -= 0.05;
+    
+            } else if (twinkle === 2 && this.alpha < 1) {
+                this.alpha += 0.05;
+    
+            }
+    
+            ctx.globalAlpha = this.alpha;
+    
+            ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
+    
+            this.timePassed += this.speed;
+    
+        }
+    
+        for (var i = 0; i < maxStars; i++) {
+            new Star();
+    
+        }
+    
+        function animation() {
+            ctx.globalCompositeOperation = 'source-over';
+    
+            ctx.globalAlpha = 0.8;
+    
+            ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 1)';
+    
+            ctx.fillRect(0, 0, w, h)
+    
+            ctx.globalCompositeOperation = 'lighter';
+    
+            for (var i = 1, l = stars.length; i < l; i++) {
+                stars[i].draw();
+    
+            };
+    
+            window.requestAnimationFrame(animation);
+    
+        }
+    
+        animation();
+       
 
-          ];
-        var z=0;
-        var wig;
-        var hig;
-        var H;
-      function adds(){
-        z++;
-        if (z>60) {
-          clearInterval(time)
-        };
-        wig=Math.floor(Math.random()*101);
-        hig=Math.floor(Math.random()*1900);
-        H=Math.floor(Math.random()*540);
-        var node=document.createElement("div");
-        node.style.width=wig+"px";
-        node.style.height=wig+"px";
-        if (x==hig+wig) {
-          hig=x+100;
-          H=y+50;
-        };
-        node.style.left=hig+"px";
-        node.style.top=H+"px";
-        node.className="bluepoint";
-        box.appendChild(node);
-
-	};
-	 var time=setInterval(adds,3000);
 
     },
     toHome(name,code){
@@ -197,10 +294,24 @@ export default {
     }
 </style>
 <style scoped lang="scss">
+.bigHome{
+ width: 100%;
+      height: 100%;
+       position: relative;
+}
+#the-canvas{
+  position: absolute;
+      left: vw(0);
+      top: vw(0);
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+}
 .homePage{
     width:100%;
     height:100%;
     background: url("~@/assets/image/home/bj.png");
+    opacity: 0.9;
     background-size: 100% 100%;
     box-sizing:border-box;
     padding:0 vw(60);
@@ -211,7 +322,7 @@ export default {
     color: #DBE7FF;
     font-family: Microsoft YaHei;
     position: relative;
-    
+    z-index: 8;
     .lightLine{
       position: absolute;
       right: vw(100);
