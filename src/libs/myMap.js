@@ -1,4 +1,5 @@
 import * as http from './http'
+let dataLine=require('./data.js')
 export default class Map {
     constructor(data) {
         Object.assign(this, this.data(data))
@@ -9,6 +10,7 @@ export default class Map {
             el: data.el, // 地图容器
             massall:null,//海量点站点
             heatmap:null,//热力图
+            myBusL:[],
             polygonLine:null,//行政区域的范围
             infoWindow:null,//信息窗口
             pathSimplifierIns:null,
@@ -49,6 +51,11 @@ export default class Map {
         // resizeEnable: true, //监控地图容器尺寸变化
         mapStyle:'amap://styles/d67717253a691e523956e9482ca38f1e',
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
+      })
+
+      dataLine.datafg.forEach(iteam=>{
+        iteam.lnglat=this.setData(iteam.lnglat)
+        this.myBusL.push(iteam)
       })
     
       
@@ -168,6 +175,17 @@ export default class Map {
     
     this.pathSimplifierIns.hide()
   }
+  initBusLine(){
+    this.passCorrline1(this.myBusL)
+  }
+  setData(strobj){
+    let str=strobj.split(';')
+    let arr=[]
+    str.forEach(iteam=>{
+      arr.push([Number(iteam.split(',')[0]),Number(iteam.split(',')[1])])
+    })
+    return arr
+  }
   //设置信息窗口的内容
   createInfoWindow(type,name,data){
     let content=''
@@ -197,6 +215,18 @@ export default class Map {
           <div class="itean-lsi">经度:${name.lnglat[0]}</div>
           <div class="">维度:${name.lnglat[1]}</div>
          
+          
+         </div>
+      </div>
+    `
+    }else if(type==3){
+      content=`
+      <div class="myinfobox">
+        <div class="line-lsi1">
+        <div style="margin-bottom:12px" class="itean-lsi">名称:${name.name}</div>
+          <div style="margin-bottom:12px" class="itean-lsi">里程(km):${name.length}</div>
+          <div style="margin-bottom:12px" class="">线路条数:${name.lineNumber}</div>
+          <div class="">备注:${name.remark}</div>
           
          </div>
       </div>
@@ -270,18 +300,37 @@ export default class Map {
   }
 //测试
   passCorrline1(data){
+    let datalin=[]
     data.forEach(iteam=>{
       let kyLinedata = new AMap.Polyline({
-        path: iteam,
-        strokeColor: "#35A594",
+        path: iteam.lnglat,
+        strokeColor: "#BE7322",
         strokeOpacity: 1,
-        strokeWeight: 8,
-     
+        strokeWeight: 4,
+        cursor:'pointer',
         strokeStyle: "solid",
+        zIndex:30,
+        extData :iteam
       })
-      this.map.add(kyLinedata);
 
+      kyLinedata.on('click', (e) => {
+        console.log(e.target.getExtData())
+        let srt=e.target.getExtData()
+        this.infoWindow.setContent(this.createInfoWindow(3,srt))
+        setTimeout(()=>{
+          this.infoWindow.open(this.map,srt.lnglat[0]);
+          
+        },200)
+     });
+     
+      this.map.add(kyLinedata);
+      datalin.push(kyLinedata)
+      // this.busLaneGroups.addOverlay(kyLinedata)
+      
     })
+    this.busLaneGroups.addOverlays(datalin)
+    this.map.setFitView(datalin,true)
+  //  
   
   }
   //客运走廊的公交站点内

@@ -38,6 +38,7 @@ export default {
   watch:{
     '$route':{
       handler:function(val,oldval){
+        console.log('watch')
        this.judgeRouteLine(val)
       },
       deep:true,
@@ -77,8 +78,9 @@ export default {
     
   },
   mounted(){
-     MyMapLine = new Map({ el: "lineCharacteristics" });
+   MyMapLine = new Map({ el: "lineCharacteristics" });
     let nowroute=this.$route
+    console.log('mounted')
     this.judgeRouteLine(nowroute)
   },
   methods:{
@@ -141,6 +143,11 @@ export default {
               if(MyMapLine.infoWindow){
                 MyMapLine.infoWindow.close()
               }
+              if(MyMapLine.busLaneGroups){
+                 MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
+                      MyMapLine.map.remove(iy)
+                    })
+              }
               if(MyMapLine.massall){
                   MyMapLine.massall.hide()
                  
@@ -167,6 +174,11 @@ export default {
              if(MyMapLine){
                 if(MyMapLine.infoWindow){
                     MyMapLine.infoWindow.close()
+                }
+                if(MyMapLine.busLaneGroups){
+                  MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
+                        MyMapLine.map.remove(iy)
+                      })
                 }
                 if(MyMapLine.trafficLayer){
                     MyMapLine.isTraffic(false)
@@ -198,6 +210,11 @@ export default {
               if(MyMapLine.kymassnew){
                  MyMapLine.kymassnew.hide()
                 MyMapLine.kyLineOver.hide()
+              }
+              if(MyMapLine.busLaneGroups){
+                 MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
+                      MyMapLine.map.remove(iy)
+                    })
               }
                if(MyMapLine.trafficLayer){
                   MyMapLine.isTraffic(false)
@@ -252,12 +269,20 @@ export default {
                 }
                 MyMapLine.heatmap.hide()
               }
+              console.log(MyMapLine)
+               MyMapLine.initBusLine()
+              
               break;
           case "客运走廊":
               if(MyMapLine){
                 if(MyMapLine.infoWindow){
                     MyMapLine.infoWindow.close()
                 }
+                if(MyMapLine.busLaneGroups){
+                 MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
+                      MyMapLine.map.remove(iy)
+                    })
+              }
                 if(MyMapLine.trafficLayer){
                     MyMapLine.isTraffic(false)
                 }

@@ -19,8 +19,11 @@ const Map = {
       busPolyline1: null,
       massall: null,
       polyEditor:null,
+      layer:null,
+      geocoder:null,//逆地址解析
       markers:[],
       overlayGroups: new AMap.OverlayGroup(),//调整方案站点集合
+      meroGroups: new AMap.OverlayGroup(),//地铁线路的集合
       nework:{
       }
 
@@ -129,10 +132,22 @@ const Map = {
       this.M_pointGroup = new AMap.OverlayGroup()
       this.M_map.add(this.M_pointGroup)
       this.M_createInfoWin()
-
-      // AMap.event.addListener(this.M_map, 'click', (e) => {
-      //   this.M_closeInfoWin()
-      // })
+      
+      this.M_map.on('click', (e) => {
+        // console.log(e.lnglat.getLng(),e.lnglat.getLat())
+        this.M_regeoCode([e.lnglat.getLng(),e.lnglat.getLat()])
+      });
+      this.geocoder = new AMap.Geocoder({
+          city: "", //城市设为北京，默认：“全国”
+          radius:10, //范围，默认：500
+          extensions:'all'
+      });
+        // 创建 AMap.LabelsLayer 图层
+        this.layer = new AMap.LabelsLayer({
+          zooms: [3, 20],
+          zIndex: 1000,
+          collision: false
+      });
     },
     // 设置重点区域名称标注
     M_setAreasPoint (data) {
@@ -193,6 +208,18 @@ const Map = {
       })
       return Polygon
     },
+    M_regeoCode(lnglat) {
+        
+        this.geocoder.getAddress(lnglat, (status, result)=> {
+            if (status === 'complete'&&result.regeocode) {
+                var address = result.regeocode.formattedAddress;
+                console.log(result)
+                // document.getElementById('address').value = address;
+            }else{
+            }
+        });
+    },
+  
     // 添加点
     M_addPoint (data, icon, name) {
       const marker = new AMap.Marker({
@@ -296,34 +323,81 @@ const Map = {
         offset: new AMap.Pixel(-6, -6)
       })
     },
+  
     //站点集合
     M_pointAll3(datapoint){
       if(this.massall){
         this.massall.clear()
       }
-      let style = [
-        {
-          url: require('../../assets/image/alpoint1.png'),
-          anchor: new AMap.Pixel(6, 6),
-          size: new AMap.Size(11, 11),
-          zIndex: 20,
-        }];
-      console.log(datapoint)
-      this.massall = new AMap.MassMarks(datapoint, {
-          opacity: 0.8,
-          cursor: 'pointer',
-          style: style[0]
+      var markers = [];
+      var icon={
+        type: 'image',
+        image: require('../../assets/image/alpoint1.png'),
+        size: [11, 11],
+        anchor: 'bottom-center',
+      }
+      var normalMarker = new AMap.Marker({
+          anchor: 'bottom-center',
+          offset: [0, -15],
       });
-      this.massall.setMap(this.M_map);
-      let marker = new AMap.Marker({content: ' ', map: this.M_map});
-      this.massall.on('mouseover',  (e)=> {
-          marker.setPosition(e.data.lnglat);
-          marker.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>`})
+      datapoint.forEach(iteam=>{
+
+        var curPosition = iteam.lnglat;
+        var curData = {
+            position: curPosition,
+            extData:iteam.stationName,
+            icon
+        };
+
+        var labelMarker = new AMap.LabelMarker(curData);
+
+        markers.push(labelMarker);
+
+        // 给marker绑定事件
+        labelMarker.on('mouseover', (e)=>{
+          var position = e.target.getExtData();
+          if(position){
+              normalMarker.setContent(
+                  '<div class="amap-info-window">'
+                      + position +
+                      '<div class="amap-info-sharp"></div>' +
+                  '</div>');
+              normalMarker.setPosition(e.target.getPosition());
+              this.M_map.add(normalMarker);
+          }
       });
-      this.massall.on('mouseout',  (e)=> {
-          marker.setPosition(e.data.lnglat);
-          marker.setLabel({content:null})
+
+      labelMarker.on('mouseout', ()=>{
+        this.M_map.remove(normalMarker);
       });
+
+      })
+      this.layer.add(markers);
+      this.M_map.add(this.layer);
+      this.layer.hide()
+      // let style = [
+      //   {
+      //     url: require('../../assets/image/alpoint1.png'),
+      //     anchor: new AMap.Pixel(6, 6),
+      //     size: new AMap.Size(11, 11),
+      //     zIndex: 20,
+      //   }];
+      // console.log(datapoint)
+      // this.massall = new AMap.MassMarks(datapoint, {
+      //     opacity: 0.8,
+      //     cursor: 'pointer',
+      //     style: style[0]
+      // });
+      // this.massall.setMap(this.M_map);
+      // let marker = new AMap.Marker({content: ' ', map: this.M_map});
+      // this.massall.on('mouseover',  (e)=> {
+      //     marker.setPosition(e.data.lnglat);
+      //     marker.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>`})
+      // });
+      // this.massall.on('mouseout',  (e)=> {
+      //     marker.setPosition(e.data.lnglat);
+      //     marker.setLabel({content:null})
+      // });
       
     },
     M_drawbusLine(BusArr, type) {
@@ -340,7 +414,7 @@ const Map = {
         this.polyEditor.close();
       }
       
-      this.lineSearch(BusArr.routeName)
+      // this.lineSearch(BusArr.routeName)
       let num = Math.round((BusArr.geom.length) / 2)
       //线路调整
       this.busPolyline = new AMap.Polyline({
@@ -375,7 +449,7 @@ const Map = {
       this.polyEditor.setTarget(this.busPolyline1);
       this.polyEditor.open();
     },
-    lineSearch(busLineName){
+    lineSearch(busLineName,type,item){
 
       let  linesearch = new AMap.LineSearch({
           pageIndex: 1,
@@ -386,7 +460,13 @@ const Map = {
   
       linesearch.search(busLineName, (status, result)=> {
         if (status === 'complete' && result.info === 'OK') {
-            this.lineSearch_Callback(result);
+            if(type==2){
+              console.log(result)
+              this.M_metroLine(result,item)
+            }else{
+              this.lineSearch_Callback(result);
+            }
+           
         } else {
           
         }
@@ -394,8 +474,7 @@ const Map = {
   
     },
   
-  
-    lineSearch_Callback(data) {
+    lineSearch_Callback(data,type) {
       var lineArr = data.lineInfo;
       var lineNum = data.lineInfo.length;
       if (lineNum == 0) {
@@ -407,7 +486,7 @@ const Map = {
           var marker = new AMap.Marker({
             position: iteam.location,
             icon:new AMap.Icon({
-              image:require('../../assets/image/orange1.png'),
+              image:type==2?require('../../assets/image/icon_dt.png'):require('../../assets/image/orange1.png'),
               size: [16,16],
               imageSize : [16,16],
              }),
@@ -430,6 +509,39 @@ const Map = {
         this.M_map.add(this.overlayGroups);
         
       }
+    },
+    M_metroLine(data,item){
+      var lineArr = data.lineInfo;
+      var lineNum = data.lineInfo.length;
+      if (lineNum == 0) {
+      } else {
+        let busPolyline = new AMap.Polyline({
+            // map: this.M_map,
+            path: lineArr[0].path,
+            strokeColor: item.color,//线颜色
+            strokeOpacity: 0.8,//线透明度
+            isOutline:true,
+            outlineColor:item.color,
+            zIndex:100,
+            strokeWeight: 1//线宽
+        });
+        this.meroGroups.addOverlay(busPolyline)
+        this.M_map.add(this.meroGroups);
+    }
+
+    },
+    M_ishow(flag,type){
+      if(type==2){
+        flag ? this.meroGroups.show() : this.meroGroups.hide()
+      }else{
+        flag ? this.layer.show() : this.layer.hide()
+      }
+      
+
+    },
+    M_ismeclea(){
+      this.meroGroups.clear()
+
     },
     M_setPath(pathArr){
       this.busPolyline1.setPath(pathArr)

@@ -137,15 +137,17 @@ export default {
             direction:this.query.direction,
             lineName:this.query.lineName
         }).then(res => {
+          setTimeout(()=>{
+            this.$store.commit('SET_LOADING',false)
+          },200)
+           this.loading=false
           res.result.list.forEach(iteam=>{
             iteam.isdetail=false
           })
           this.alldata=res.result.list
           // this.total=res.result.total
-          this.loading=false
-          setTimeout(()=>{
-            this.$store.commit('SET_LOADING',false)
-          },200)
+         
+          
 
         })
       }

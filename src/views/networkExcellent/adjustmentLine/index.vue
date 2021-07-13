@@ -5,7 +5,7 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.6)">
      <div class="search-box">
-      <div style="margin-right:0.6vw;width:5vw;">线路名称</div>
+      <div style="margin-right:0.6vw;white-space: nowrap">线路名称</div>
       <el-select style="width:75%" size="small" filterable @change="getDetail" v-model="value" placeholder="请选择">
         <el-option
           v-for="(item,n) in allData"
@@ -15,6 +15,21 @@
         </el-option>
       </el-select>
      <el-button style="width:5vw;margin-left:0.4vw;" @click="saveBtn()" type="primary" size="mini" >保存</el-button>
+     <el-button style="width:5vw;margin-left:0.4vw;" @click="getDetail()" type="primary" size="mini" >刷新</el-button>
+     <div style="margin-left:0.8vw;margin-right:0.4vw;;white-space: nowrap;">地铁</div>
+     <el-switch
+        v-model="mreobr"
+        @change="mreobrclick(2)"
+        active-color="#409EFF"
+        inactive-color="#ff4949">
+      </el-switch>
+      <div style="margin-left:0.8vw;margin-right:0.4vw;;white-space: nowrap;">公交站点</div>
+      <el-switch
+          v-model="mreobr1"
+          @change="mreobrclick(3)"
+          active-color="#409EFF"
+          inactive-color="#ff4949">
+        </el-switch>
     </div>
     <!-- <div class="rightlinemsg">
       <div class="tit">版本记录</div>
@@ -49,7 +64,7 @@
         </div>
       </div>
     </div> -->
-     <div class="rightlinemsg">
+    <div class="rightlinemsg">
       <div class="tit">匹配线路</div>
       <div class="bttit">
         <div>线路名称</div>
@@ -59,7 +74,7 @@
         <div >满载率</div>
         <div>线路长度(km)</div>
         <div>非直线系数</div>
-        <!-- <div>轨交重复站数</div> -->
+       
       </div>
       <div class="tablbox">
         <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
@@ -87,13 +102,21 @@ export default {
    data(){
         return {
           value:'',
-          poloading:true,
+          mreobr:true,
+          mreobr1:false,
+          poloading:false,
           input:'',
           nowindex:-1,
           lineaData: [],
           allData: [],
           datavsion:[],
           vsonzb:{},
+          metrodata:[{name:'1号线',color:'#e3022a'},{name:'2号线',color:'#8dc218'},{name:'3号线',color:'#fdd501'},
+                    {name:'4号线',color:'#411d81'},{name:'5号线',color:'#924a96'},{name:'6号线',color:'#d10368'},
+                    {name:'7号线',color:'#f26b11'},{name:'8号线',color:'#0092d7'},{name:'9号线',color:'#0092d7'},
+                    {name:'10号线',color:'#c3aecb'},{name:'11号线',color:'#841d30'},{name:'12号线',color:'#027a5f'},
+                    {name:'13号线',color:'#e09abe'},{name:'14号线',color:'#655f23'},{name:'15号线',color:'#B9A981'},
+                    {name:'16号线',color:'#98D1C0'},{name:'17号线',color:'#B67770'},{name:'18号线',color:'#D5A461'}],
         }
     },
     mounted(){
@@ -101,22 +124,27 @@ export default {
 
     },
     created(){
-      // this.pointAll()
+      this.pointAll()
+      this.upBtn()
       this.getData()
     },
     methods:{
+      upBtn(){
+        this.metrodata.forEach(iteam=>{
+          this.lineSearch(iteam.name,2,iteam)
+        })
+      },
+      mreobrclick(type){
+        this.M_ishow(type==2?this.mreobr:this.mreobr1,type)
+      },
       getData(){
           this.$fetchGet("route/routeList").then(res => {
-              setTimeout(()=>{
-                this.$store.commit('SET_LOADING',false)
-              },500)
             this.allData=res.result;
-            this.poloading=false
-
+            
           })
       },
       getDetail(){
-         this.poloading=true
+        this.poloading=true
         this.nowindex=-1
         this.datavsion=[]
           this.$fetchGet("route/baseLineDetail",{
@@ -148,6 +176,16 @@ export default {
        
 
       },
+      toQWE(){
+        this.$fetchGet("net/getLineHistory",{
+             routeName:this.value
+           }).then(res => {
+             if(res.result){
+               this.lineaData=res.result
+               }
+           })
+         
+      },
       saveBtn(){
          this.poloading=true
         let allPath=(this.M_closepoly()).join(' ')
@@ -176,9 +214,11 @@ export default {
       pointAll(){
         this.$fetchGet("indicator/stationList").then(res => {
           if(res.result&&res.result['站点的详细属性']){
-            console.log(this.M_pointAll3)
             this.M_pointAll3(res.result['站点的详细属性'])
-          
+            setTimeout(()=>{
+              this.$store.commit('SET_LOADING',false)
+            },1000)
+            
           }
           this.poloading=false
         });  
@@ -193,7 +233,33 @@ export default {
 }
 </script>
 <style lang="scss">
+#adjustLine{
 
+   .amap-info-window{
+            background: #fff;
+            border-radius: 3px;
+            padding: 3px 7px;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            position: relative;
+            color:black;
+            white-space: nowrap
+            
+        }
+        .amap-info-sharp{
+            position: absolute;
+            top: 21px;
+            bottom: 0;
+            left: 50%;
+            margin-left: -12px;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 12px solid #fff;
+        }
+
+
+}
+
+      
 </style>
 <style lang="scss" scoped>
 .repetitionRactor{

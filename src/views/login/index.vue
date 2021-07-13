@@ -244,10 +244,10 @@ export default {
 };
 </script>
 <style lang="scss">
-.login .login-content .title-form .input-form .el-form-item .el-input[data-v-37dfd6fc]{
-   background: rgba(26, 66, 118, 0.2) !important;
-  border: none!important;
-}
+// .login .login-content .title-form .input-form .el-form-item .el-input[data-v-37dfd6fc]{
+//    background: rgba(26, 66, 118, 0.2) !important;
+//   border: none!important;
+// }
 .login {
   .el-input__inner {
    background: rgba(26, 66, 118, 0.2) !important;
