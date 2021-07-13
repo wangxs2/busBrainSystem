@@ -269,7 +269,6 @@ export default {
                 }
                 MyMapLine.heatmap.hide()
               }
-              console.log(MyMapLine)
                MyMapLine.initBusLine()
               
               break;

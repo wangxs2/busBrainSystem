@@ -54,9 +54,11 @@ export default class Map {
       })
 
       dataLine.datafg.forEach(iteam=>{
-        iteam.lnglat=this.setData(iteam.lnglat)
+        // iteam.lnglat=this.setData(iteam.lnglat)
+        iteam.path=this.setData(iteam.path.split(','),2)
         this.myBusL.push(iteam)
       })
+      console.log(this.myBusL)
     
       
        this.map.on("moveend", () => {
@@ -178,13 +180,21 @@ export default class Map {
   initBusLine(){
     this.passCorrline1(this.myBusL)
   }
-  setData(strobj){
-    let str=strobj.split(';')
-    let arr=[]
-    str.forEach(iteam=>{
-      arr.push([Number(iteam.split(',')[0]),Number(iteam.split(',')[1])])
-    })
-    return arr
+  setData(data, n){
+     //获取要切割的数组的长度
+     let arr=[]
+     data.forEach(iteam=>{
+      arr.push(Number(iteam))
+     })
+     let len = data.length;
+     let lineNum = len % n === 0 ? len / n : Math.floor(len / n + 1);
+     let res = [];
+     for (let i = 0; i < lineNum; i++) {
+         // slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。且原始数组不会被修改。
+         let temp = arr.slice(i * n, i * n + n);
+         res.push(temp);
+     }
+     return res;
   }
   //设置信息窗口的内容
   createInfoWindow(type,name,data){
@@ -303,7 +313,7 @@ export default class Map {
     let datalin=[]
     data.forEach(iteam=>{
       let kyLinedata = new AMap.Polyline({
-        path: iteam.lnglat,
+        path: iteam.path,
         strokeColor: "#BE7322",
         strokeOpacity: 1,
         strokeWeight: 4,
@@ -314,11 +324,10 @@ export default class Map {
       })
 
       kyLinedata.on('click', (e) => {
-        console.log(e.target.getExtData())
         let srt=e.target.getExtData()
         this.infoWindow.setContent(this.createInfoWindow(3,srt))
         setTimeout(()=>{
-          this.infoWindow.open(this.map,srt.lnglat[0]);
+          this.infoWindow.open(this.map,srt.path[0]);
           
         },200)
      });
