@@ -152,6 +152,9 @@ export default class Map {
   //区域客流的数据
   getRegionMark(datas) {
     let markers = []
+    if(this.overlayGroups){
+      this.overlayGroups.clearOverlays()
+    }
     datas.forEach(iteam => {
       if(iteam.polygonGeom){
       let iconm = ''

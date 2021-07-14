@@ -79,7 +79,7 @@ export default {
           },
           {
             name:'线路长度',
-            value:40,
+            value:0,
             isxz:true,
             img:require('@/assets/image/yellow1.png')
           },

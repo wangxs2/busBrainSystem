@@ -6,6 +6,7 @@
         v-model="value1"
         size="small"
         type="daterange"
+        @change="getRegionData()"
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期">

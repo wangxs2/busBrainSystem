@@ -30,6 +30,10 @@
           active-color="#409EFF"
           inactive-color="#ff4949">
         </el-switch>
+
+      <el-button style="width:5vw;margin-left:0.4vw;" type="primary" size="mini" >支线公交</el-button>
+      <el-button style="width:5vw;margin-left:0.4vw;"  type="info" size="mini" >定制公交</el-button>
+      <el-button style="width:5vw;margin-left:0.4vw;" type="success" size="mini" >特色公交</el-button>
     </div>
     <!-- <div class="rightlinemsg">
       <div class="tit">版本记录</div>

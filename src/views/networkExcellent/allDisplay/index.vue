@@ -11,6 +11,7 @@
           :value="item.name">
         </el-option>
       </el-select>
+    
       <!-- @blur="getDetail" -->
     </div>
     <div class="rightlinemsg">
@@ -26,11 +27,11 @@
       </div>
       <div class="tablbox">
         <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
-          <div>{{item.lineName}}</div>
-          <div style="white-space:nowrap;">{{item.version}}</div>
-          <div >{{item.cfd==null?'0':item.cfd.toFixed(2)}}</div>
-          <div >{{item.bglrc==null?'0':item.bglrc}}</div>
-          <div >{{item.mzl==null?'0':item.mzl.toFixed(2)}}</div>
+          <div>{{item.lineDirection}}</div>
+          <div style="white-space:nowrap;">{{item.metroName}}</div>
+          <div >{{item.line}}</div>
+          <div >{{item.stationName}}</div>
+          <div >{{item.departureTime}}</div>
         </div>
 
         <div style="text-align:center" v-if="lineaData.length==0">暂无数据~</div>
@@ -47,7 +48,7 @@
        
       </div>
       <div class="tablbox">
-        <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
+        <div  :class="nowindex1==n?'bttit bttit1 bttit2':'bttit bttit1'" v-for="(item,n) in allData" :key="n">
           <div>{{item.lineName}}</div>
           <div style="white-space:nowrap;">{{item.version}}</div>
           <div >{{item.cfd==null?'0':item.cfd.toFixed(2)}}</div>
@@ -66,7 +67,7 @@
        
       </div>
       <div class="tablbox">
-        <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
+        <div  :class="nowindex2==n?'bttit bttit1 bttit2':'bttit bttit1'"  v-for="(item,n) in allData1" :key="n">
           <div>{{item.lineName}}</div>
           <div style="white-space:nowrap;">{{item.version}}</div>
     
@@ -89,6 +90,8 @@ export default {
           value:'',
           input:'',
           nowindex:-1,
+          nowindex1:-1,
+          nowindex2:-1,
           lineaData: [],
           metrodata:[{name:'1号线',color:'#e3022a'},{name:'2号线',color:'#8dc218'},{name:'3号线',color:'#fdd501'},
                   {name:'4号线',color:'#411d81'},{name:'5号线',color:'#924a96'},{name:'6号线',color:'#d10368'},
@@ -97,6 +100,7 @@ export default {
                   {name:'13号线',color:'#e09abe'},{name:'14号线',color:'#655f23'},{name:'15号线',color:'#B9A981'},
                   {name:'16号线',color:'#98D1C0'},{name:'17号线',color:'#B67770'},{name:'18号线',color:'#D5A461'}],
           allData: [],
+          allData1: [],
         }
     },
     mounted(){
@@ -113,44 +117,23 @@ export default {
       getDetail(){
         this.metrodata.forEach(iteam=>{
           if(iteam.name==this.value){
-            this.lineSearch(iteam.name,2,iteam)
+            this.lineSearch(iteam.name,3,iteam)
           }
         })
           this.$fetchGet("net/matchTime",{
-            metroName:this.value
+            line:this.value
           }).then(res => {
-           
+           this.lineaData=res.result
           })
       },
-       toDetail(data,index){
-          this.nowindex=index
-          this.$fetchGet("route/baseLineDetail",{
-            routeName:data.routeName
+      toDetail(data,index){
+        this.nowindex=index
+        this.$fetchGet("net/matchTime",{
+            line:data.line,
+            metroName:data.metroName,
           }).then(res => {
-            this.allData.forEach(itam=>{
-              if(itam.routeName==res.result[0].routeName){
-                res.result[0].coefficient=itam.coefficient
-              }
-            })
-              res.result[0].geom=this.setData(res.result[0].geom)
-              this.$emit('changeoper',{
-               operLine:res.result[0],
-               typeline:1
-              })
           })
-      },
-      getDetail1(){
-        if(this.input==''){
-            this.lineaData=this.allData
-        }else{
-            let arr=[]
-          this.allData.forEach(itam=>{
-              if(itam.coefficient>this.input){
-                arr.push(itam)
-              }
-            })
-            this.lineaData=arr
-         }
+        
       },
       setData(data){
         let str=data.split(' ')
@@ -165,6 +148,52 @@ export default {
 }
 </script>
 <style lang="scss">
+
+.myinfobox{
+    width: vw(342);
+    height:100%;
+    background: url("~@/assets/image/tk_bj.png");
+    background-size: 100% 100%;
+    border:1px solid rgba(0, 255, 255, 0.65);
+    box-sizing: border-box;
+    padding: vh(10) vw(26);
+    font-size: vw(16);
+    padding-bottom: vh(34);
+    display: flex;
+    flex-direction: column;
+    .infoimg{
+      width: vw(48);
+      height: vw(48);
+      background: url("~@/assets/image/gf_icon.png");
+      background-size: 100% 100%;
+    }
+    .line-lsi{
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      flex: 1;
+      .tithear{
+        width: vw(42);
+        height:vh(20);
+        display: inline-block;
+      }
+    }
+    .itean-lsi{
+      margin-bottom:0.2vh;
+    }
+    .titfont{
+      display: flex;
+      align-items: center;
+      font-size: vw(20);
+      color: #00FFFF;
+      font-weight: bold;
+      width: 100%;
+      height: vh(30);
+      margin: vh(16) vw(0);
+      margin-left: vw(-12);
+      margin-top: vh(4);
+    }
+  }
 
 </style>
 <style lang="scss" scoped>
@@ -244,7 +273,7 @@ export default {
     .bttit1 {
       // padding:0;
       width: 100%;
-      height: vh(42);
+      // height: vh(42);
       // margin-bottom:vh(20);
       color:#ffffff;
       margin-top: vh(0);
