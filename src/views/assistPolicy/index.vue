@@ -14,7 +14,8 @@ export default {
 </style>
 <style lang="scss" scoped>
 .assistPolicy{
- 
+width:100%;
+  height:100%;
  
 }
 </style>

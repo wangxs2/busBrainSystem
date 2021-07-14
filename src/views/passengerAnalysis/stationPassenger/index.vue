@@ -207,6 +207,7 @@ export default {
               data: data
           },
           yAxis: {
+           
               type: 'value',
               axisLabel:{
                 color:"#D9EFFF",

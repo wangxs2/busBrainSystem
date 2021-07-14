@@ -5,11 +5,13 @@
       <div style="margin-right:0.6vw;width:3vw;">时间</div>
       <el-date-picker
         v-model="query.date"
+        :clearable="false"
         type="date"
+        @change="getData"
         placeholder="选择日期">
       </el-date-picker>
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.6vw;">线路名称</div>
-      <el-select size="small" filterable v-model="query.lineName" placeholder="请选择">
+      <el-select size="small" @change="getData" filterable v-model="query.lineName" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.routeId"
@@ -21,42 +23,11 @@
         <div :class="query.direction==iteam.id?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
       </div>
     </div>
-    <div class="table-data"  v-loading="loading"
-    element-loading-text="拼命加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(12, 38, 104, 0.2)">
-      <div class="table-header">
-       
-        <div style="width:15%">上车站点</div>
-        <div style="width:20%">下车站点</div>
-        <div style="width:20%">线路数量(条)</div>
-        <div style="width:15%">客流(人)</div>
-        <div style="width:20%">平均乘车距离(km)</div>
-        <div style="width:10%">明细</div>
-      </div>
-      <div class="table-contain">
-        <div class="tableTr"   v-for="(item,index) in alldata" :key="index">
-         
-          <div style="width:15%">{{item.routeName}}</div>
-          <div style="width:20%">{{item.company}}</div>
-          <div style="width:20%">{{item.mainContent}} </div>
-          <div style="width:15%">{{item.finishTime==null?'':item.finishTime.slice(0,4)}}</div>
-          <div style="width:20%">{{item.classify}}</div>
-          <div style="width:10%;color:#00FFFF">查看明细</div>
-        </div>
-        <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
-      </div>
+
+    <div class="sectionEc" id="sectionEc">
+
     </div>
-    <div class="tabbottom" v-if="alldata.length!==0">
-      <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="query.pageNo"
-          :page-size="query.pageSize"
-          layout="total, prev, pager, next"
-          :total="total"
-        ></el-pagination>
-    </div>
+   
   </div>
 </template>
 
@@ -85,26 +56,28 @@ export default {
             ],
           loading:true,
           query:{
-            date:new Date(),
+            date:'2021-06-29',
             direction:0,
-            lineName:'961路'
+            lineName:'610路'
           },
           alldata:[],
           options:[],
           fileList:[],
           total:null,
+          myChart:null,
           allids:''
         }
    },
    watch:{
    },
     created(){
-      
       this.getData()
       this.getAllline()
     },
     mounted(){
-
+       window.onresize = ()=> {
+        this.myChart.resize()
+      }
     },
     methods:{
       getAllline(){ 
@@ -112,16 +85,7 @@ export default {
           this.options=res.result
         })
       },
-      handleSizeChange (val) {
-        //分页 选择每页条数
-        this.query.pageSize = val;
-        this.getData();
-      },
-      handleCurrentChange (val) {
-        //分页 选择当前是多少页
-        this.query.pageNo = val;
-        this.getData();
-      },
+   
       handleChange(file, fileList) {
         this.loading=true
         // this.fileList = fileList.slice(-3);
@@ -132,6 +96,7 @@ export default {
       },
       getData(){
         this.loading=true
+        let arr=[],arr1=[],arr2=[]
         this.$fetchGet("passenger/section",{
             date:this.$moment(this.query.date).format("YYYY-MM-DD"),
             direction:this.query.direction,
@@ -140,49 +105,154 @@ export default {
           setTimeout(()=>{
             this.$store.commit('SET_LOADING',false)
           },200)
-           this.loading=false
-          res.result.list.forEach(iteam=>{
-            iteam.isdetail=false
+          res.result.forEach(iteam=>{
+            arr.push(iteam.stationName)
+            arr1.push(iteam.onboard)
+            // arr2.push(iteam.sp)
           })
-          this.alldata=res.result.list
-          // this.total=res.result.total
-         
-          
+           this.loading=false
+           this.initechart(arr,arr1)
+        })
+      },
+      initechart(arr,arr1){
+        this.myChart = this.$echarts.init(document.getElementById('sectionEc'));
+        this.myChart.setOption({
+            tooltip: {
+               backgroundColor:'#144A8C',
+              borderWidth:0,
+              textStyle:{
+                color:'#D9EFFF',
+              }
+            },
+            title:{
+              text:"客流量/人次",
+              textStyle:{
+                color:'#DAE4FF',
+                fontWeight:'normal',
+                fontSize:16,
+                
+              },
+              top:26,
+              left:10,
+            },
+            color:['#5470c6', '#fac858'],
+            grid: {
+                left: '3%',
+                right: '3%',
+                bottom: '16%',
+                containLabel: true
+            },
+            xAxis: {
+                data:arr,
+                name: '',
+                nameTextStyle:{
+                  color:'#DAE4FF'
+                },
+                splitLine:{
+                  show:true,
+                  lineStyle:{
+                      color:'#194F95',
+                      type:'dashed'
+                    }
+                },
+                 axisLabel : {
+                   interval:0,
+                rotate:25 ,
+                  formatter: '{value}',
+                  textStyle: {
+                      color: '#DAE4FF',
+                      fontSize:16
+                  }
+                },
+                axisLine:{
+                  onZero: true,
+                  lineStyle:{
+                    color:'#194F95',
+                    type:'dashed'
+                  }
+                },
+            },
+            yAxis: {
+              splitLine:{
+                  show:true,
+                  lineStyle:{
+                      color:'#194F95',
+                      type:'dashed'
+                    }
+                },
+                axisLabel : {
+                  formatter: '{value}',
+                  textStyle: {
+                      color: '#fff',
+                      fontSize:16
+                  }
+                },
+                axisLine:{
+                  onZero: true,
+                  lineStyle:{
+                    color:'#194F95',
+                    type:'dashed'
+                  }
+                },
+            },
+            series: [
+                {
+                  name: '当前车上人数',
+                  type: 'bar',
+                  barWidth:12,
+                  stack: 'one',
+                  data:  arr1
+              },
+              // {
+              //     name: '下行',
+              //     type: 'bar',
+                  
+              //     itemStyle:{
+              //       borderWidth:4,
+              //     },
+              //     stack: 'one',
+              //     data: [-10,-52, -200, -334, -390, -330, -220]
+              // },
+            ]
 
         })
-      }
-    }
+
+      },
+  }
   
 }
 </script>
 <style lang="scss">
 .sectionPassenger{
-.el-pagination .btn-next, .el-pagination .btn-prev{
-  background: transparent !important;
-  color: #ffffff !important;
-}
-.el-pagination{
-  color: #ffffff !important;
-}
+  .el-pagination .btn-next, .el-pagination .btn-prev{
+    background: transparent !important;
+    color: #ffffff !important;
+  }
+  .el-pagination{
+    color: #ffffff !important;
+  }
 }
 
 
 </style>
 <style lang="scss" scoped>
 .sectionPassenger{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction: column;
+  padding-top:vh(140);
+  // margin-bottom:vh(80);
   .search-box {
-    background: rgba(12, 38, 104, 0.7);
+    // background: rgba(12, 38, 104, 0.7);
+    border-bottom:1px solid rgba(12, 38, 104, 0.7);
     box-sizing: border-box;
     padding: vh(10) vw(16);
-    position: absolute;
-    width:98%;
-    top: vh(140);
-    left: vw(20);
     display: flex;
     align-items: center;
     color: #dae4ff;
-  }
-  .qhbtn{
+    height:60px;
+     .qhbtn{
       width: vw(120);
       height: vh(36);
       background: rgba(26, 66, 118, 0.2);
@@ -211,72 +281,14 @@ export default {
         background: #4578FF;
       }
     }
-  .table-data{
-    position: absolute;
-    width:98%;
-    height:vh(800);
-    top: vh(210);
-    left: vw(20);
-    box-sizing: border-box;
-    overflow:hidden;
-    display:flex;
-    flex-direction: column;
-    .table-header{
-      width:100%;
-      height:vh(44);
-      background: rgba(12, 38, 104, 0.2);
-      color: #4578FF;
-      font-size:vw(16);
-      box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 1) inset;
-      display:flex;
-      justify-content: space-between;
-      align-items: center;
-      box-sizing: border-box;
-      padding: 0 vw(20);
-      div{
-        // flex:1;
-        text-align:left;
-      }
-    }
-    .table-contain{
-      flex:1;
-      overflow:hidden;
-      overflow-y:scroll;
-      .tableTr{
-        width:100%;
-        height:vh(44);
-        color: #ffffff;
-        font-size:vw(16);
-        display:flex;
-        justify-content: space-between;
-        align-items: center;
-        box-sizing: border-box;
-        padding: 0 vw(20);
-        cursor:pointer;
-        div{
-          // flex:1;
-           text-align:left;
-        }
-
-      }
-      .tableTr:hover {
-        background:rgba(12, 38, 104, 0.5);
-        color: #4578FF;
-        font-weight:bold;
-      } 
-      .tableTr:nth-child(even){
-        background:rgba(12, 38, 104, 0.2)
-
-      }
-    }
   }
-  .tabbottom{
-      position: absolute;
-      width:98%;
-      bottom: vh(20);
-      left: vw(20);
 
+  .sectionEc{
+    flex:1;
   }
+
+   
+ 
  
 }
 </style>

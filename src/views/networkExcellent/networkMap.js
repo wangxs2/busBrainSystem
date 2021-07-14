@@ -544,6 +544,24 @@ const Map = {
       }
 
     },
+    //辅助决策绘制的线路
+    M_BUSLINE(data,type){
+      this.M_map.clearMap()
+      let lineArr=[]
+      
+      data.forEach(iteam=>{
+        let busPolyline = new AMap.Polyline({
+          map: this.M_map,
+          path: type==2?iteam:iteam.geom,
+          strokeColor: '#00FFFF',//线颜色
+          strokeOpacity: 0.8,//线透明度
+          zIndex: 100,
+          strokeWeight:4//线宽
+        });
+        lineArr.push(busPolyline)
+      })
+      this.M_map.setFitView(lineArr,true)
+    },
     M_ishow(flag, type) {
       if (type == 2) {
         flag ? this.meroGroups.show() : this.meroGroups.hide()

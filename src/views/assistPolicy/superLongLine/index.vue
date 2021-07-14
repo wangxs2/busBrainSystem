@@ -1,8 +1,8 @@
 <template>
-  <div class="bentratio" id="bentratio">
+  <div class="superLongLine" id="superLongLine">
         <div class="search-box">
 
-      <div style="margin-right:0.6vw;margin-left:0.1vw;white-space: nowrap">线路名称</div>
+      <div style="margin-right:0.6vw;margin-left:0.1vw;width:3.5vw;">线路名称</div>
       <el-select style="width:40%" size="small" clearable @clear="getDetail1" filterable @change="getDetail" v-model="value" placeholder="请选择">
         <el-option
           v-for="(item,n) in lineaData"
@@ -11,11 +11,9 @@
           :value="item.routeName">
         </el-option>
       </el-select>
-      <div style="white-space: nowrap;margin-right:0.6vw;margin-left:1vw;">阈值设置</div>
+      <div style="margin-right:0.6vw;margin-left:1vw;width:3.5vw;">阈值设置</div>
       <!-- @blur="getDetail" -->
-      <el-input style="width:30%" type="number" @change="getDetail1"  size="mini" v-model="input"  placeholder="">
-        <template slot="prepend"> 非直线系数<i class="iconfont icondayufuhao" ></i></template>
-      </el-input>
+      <el-input style="width:40%"   size="small" type="number" :min="0" max="70" v-model="input" @change="getDetail1" placeholder="请输入线路长度(>12km)"></el-input>
     </div>
     <div class="rightlinemsg">
       <div class="tit">线路长度</div>
@@ -37,6 +35,7 @@
 <script>
 //超长线路
 import MapMixin from '../../networkExcellent/networkMap'
+// let dataLine=require('./dataq.js')
 export default {
   mixins: [MapMixin],
      data(){
@@ -50,14 +49,26 @@ export default {
     },
     created(){
       this.getData()
+      
+      
+      
     },
    mounted(){
-     this.M_initMap('bentratio')
-        setTimeout(()=>{
-            this.$store.commit('SET_LOADING',false)
-        },200)
+     this.M_initMap('superLongLine')
+    //  let arr=dataLine.reult.data.location
+    //  console.log(dataLine.reult)
+    //   let testdata=[]
+    //   arr.forEach(iteam=>{
+    //     iteam=this.TestsetData(iteam,2)
+    //     testdata.push(iteam)
+    //     // console.log(iteam)
+    //   })
+    //   console.log(testdata)
+    //   this.M_BUSLINE(testdata,2)
   },
   methods:{
+      testga(str){
+      },
        getData(){
           this.$fetchGet("route/overLength").then(res => {
             res.result.forEach(iteam=>{
@@ -65,11 +76,10 @@ export default {
             })
             this.allData=res.result
             this.lineaData=res.result;
-
             this.M_BUSLINE(this.allData)
             setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)
-            },200)
+            },500)
           })
       },
      getDetail(){
@@ -120,27 +130,9 @@ export default {
 }
 </script>
 <style lang="scss">
-.bentratio{
- .el-input__inner {
-      background: rgba(26, 66, 118, 0.2) !important;
-      color: #dae4ff !important;
-      border: 1px solid #27B6FF !important; 
-      // box-shadow: 0px 0px vh(6) rgba(39, 182, 255, 0.8) inset !important;
-       border-left: none !important;
-      //  padding-left:0!important;
-    }
-    .el-input-group__append, .el-input-group__prepend{
-      border: 1px solid #27B6FF !important;
-       background: rgba(26, 66, 118, 0.2) !important;
-       color: #dae4ff !important;
-       padding:0 vw(6) !important;
-       border-right: none !important;
-      
-    }
-}
 </style>
 <style lang="scss" scoped>
-.bentratio{
+.superLongLine{
    width:100%;
   height:100%;
   position: relative;

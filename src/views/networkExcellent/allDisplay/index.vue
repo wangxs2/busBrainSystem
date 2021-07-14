@@ -70,7 +70,6 @@
         <div  :class="nowindex2==n?'bttit bttit1 bttit2':'bttit bttit1'"  v-for="(item,n) in allData1" :key="n">
           <div>{{item.lineName}}</div>
           <div style="white-space:nowrap;">{{item.version}}</div>
-    
         </div>
 
         <div style="text-align:center" v-if="lineaData.length==0">暂无数据~</div>

@@ -119,6 +119,38 @@ export default {
     };
 
 
+    // /*全局处理geom的数据格式
+    Vue.prototype.Q_setData= function (data){
+      let str=data.split(' ')
+      let arr=[]
+      str.forEach(iteam=>{
+        arr.push([Number(iteam.split(',')[0]),Number(iteam.split(',')[1])])
+      })
+      return arr
+
+    },
+
+    // 全局处理测试数据
+    Vue.prototype.TestsetData=function(data, n){
+      //获取要切割的数组的长度
+      let arr=[]
+      // console
+      let data1=data.split(',')
+      data1.forEach(iteam=>{
+       arr.push(Number(iteam))
+      })
+      let len = data1.length;
+      let lineNum = len % n === 0 ? len / n : Math.floor(len / n + 1);
+      let res = [];
+      for (let i = 0; i < lineNum; i++) {
+          // slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。且原始数组不会被修改。
+          let temp = arr.slice(i * n, i * n + n);
+          res.push(temp);
+      }
+      return res;
+   }
+
+
     /* *
      *全局过滤 时间
      */
