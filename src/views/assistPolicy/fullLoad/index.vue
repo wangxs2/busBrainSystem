@@ -6,13 +6,15 @@
       <el-date-picker
         v-model="value1"
         size="small"
+        @change="getData"
+        :clearable="false"
         type="daterange"
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期">
       </el-date-picker>
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.6vw;">线路名称</div>
-      <el-select size="small" filterable v-model="value" placeholder="请选择">
+      <el-select size="small" @change="getData" clearable filterable v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.routeId"
@@ -20,6 +22,11 @@
           :value="item.routeId">
         </el-option>
       </el-select>
+      <div style="margin-right:0.6vw;margin-left:1vw;width:3.5vw;">阈值设置</div>
+      <!-- @change="getDetail1" -->
+      <el-input style="width:10%" type="number" @change="getData"  size="mini" v-model="input"  placeholder="">
+        <template slot="prepend"> 满载率<i class="iconfont icondayufuhao" ></i></template>
+      </el-input>
     </div>
     <div class="table-data"  v-loading="loading"
     element-loading-text="拼命加载中"
@@ -27,35 +34,23 @@
     element-loading-background="rgba(12, 38, 104, 0.2)">
       <div class="table-header">
        
-        <div style="width:15%">上车站点</div>
-        <div style="width:20%">下车站点</div>
-        <div style="width:20%">线路数量(条)</div>
-        <div style="width:15%">客流(人)</div>
-        <div style="width:20%">平均乘车距离(km)</div>
-        <div style="width:10%">明细</div>
+        <div >线路名称</div>
+        <div>所属公司</div>
+        <div >线路级别</div>
+        <div >满载率</div>
+        <div>明细</div>
       </div>
       <div class="table-contain">
         <div class="tableTr"   v-for="(item,index) in alldata" :key="index">
          
-          <div style="width:15%">{{item.routeName}}</div>
-          <div style="width:20%">{{item.company}}</div>
-          <div style="width:20%">{{item.mainContent}} </div>
-          <div style="width:15%">{{item.finishTime==null?'':item.finishTime.slice(0,4)}}</div>
-          <div style="width:20%">{{item.classify}}</div>
-          <div style="width:10%;color:#00FFFF">查看明细</div>
+          <div >{{item.xlmc}}</div>
+          <div ></div>
+          <div ></div>
+          <div >{{item.mzl}}</div>
+          <div style="color:#00FFFF">查看明细</div>
         </div>
         <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
       </div>
-    </div>
-    <div class="tabbottom" v-if="alldata.length!==0">
-      <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="query.pageNo"
-          :page-size="query.pageSize"
-          layout="total, prev, pager, next"
-          :total="total"
-        ></el-pagination>
     </div>
   </div>
 </template>
@@ -73,9 +68,9 @@ export default {
               value:'2020',
             }
           ],
-          value:'',
-          value1:'',
-          loading:true,
+          value:'610路',
+          value1:[new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
+          loading:false,
           query:{
             pageNo:1,
             pageSize:20, 
@@ -83,6 +78,7 @@ export default {
           alldata:[],
           options:[],
           fileList:[],
+          input:'',
           total:null,
           allids:''
         }
@@ -103,29 +99,19 @@ export default {
           this.options=res.result
         })
       },
-      handleSizeChange (val) {
-        //分页 选择每页条数
-        this.query.pageSize = val;
-        this.getData();
-      },
-      handleCurrentChange (val) {
-        //分页 选择当前是多少页
-        this.query.pageNo = val;
-        this.getData();
-      },
-      handleChange(file, fileList) {
-        this.loading=true
-        // this.fileList = fileList.slice(-3);
-      },
       getData(){
         this.loading=true
-        this.$fetchGet("adjust-plan/list",this.query).then(res => {
-          res.result.list.forEach(iteam=>{
-            iteam.isdetail=false
-          })
-          this.alldata=res.result.list
-          this.total=res.result.total
+        this.$fetchGet("route/mzl",{
+          st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
+          et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
+          lineName:this.value,
+          nums:this.input,
+        }).then(res => {
           this.loading=false
+          if(res.code==200){
+             this.alldata=res.result
+          }
+         
           setTimeout(()=>{
             this.$store.commit('SET_LOADING',false)
           },200)
@@ -186,7 +172,7 @@ export default {
       box-sizing: border-box;
       padding: 0 vw(20);
       div{
-        // flex:1;
+        flex:1;
         text-align:left;
       }
     }
@@ -206,7 +192,7 @@ export default {
         padding: 0 vw(20);
         cursor:pointer;
         div{
-          // flex:1;
+          flex:1;
            text-align:left;
         }
 
@@ -221,13 +207,6 @@ export default {
 
       }
     }
-  }
-  .tabbottom{
-      position: absolute;
-      width:98%;
-      bottom: vh(20);
-      left: vw(20);
-
   }
  
 }

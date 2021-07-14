@@ -12,8 +12,9 @@
         </el-option>
       </el-select>
       <div style="margin-right:0.6vw;margin-left:1vw;width:3.5vw;">阈值设置</div>
-      <!-- @blur="getDetail" -->
-      <el-input style="width:40%"   size="small" v-model="input" @change="getDetail1" placeholder="请输入0-1阈值"></el-input>
+      <el-input style="width:30%" type="number" @change="getDetail1"  size="mini" v-model="input"  placeholder="">
+        <template slot="prepend"> 重复系数<i class="iconfont icondayufuhao" ></i></template>
+      </el-input>
     </div>
     <div class="rightlinemsg">
       <div class="tit">线路重复系数</div>
@@ -57,49 +58,29 @@ export default {
           this.$fetchGet("route/lineCoefficient").then(res => {
             res.result.forEach(iteam=>{
               iteam.coefficient=Number(iteam.coefficient)
+              iteam.geom=this.Q_setData(iteam.geom)
             })
             this.allData=res.result;
             this.lineaData=res.result;
+            this.M_BUSLINE(this.allData)
             setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)
-            },200)
+            },500)
 
           })
       },
       getDetail(){
-          this.$fetchGet("route/baseLineDetail",{
-            routeName:this.value
-          }).then(res => {
-            this.allData.forEach(itam=>{
-              if(itam.routeName==res.result[0].routeName){
-                res.result[0].coefficient=itam.coefficient
-              }
-            })
-              res.result[0].geom=this.setData(res.result[0].geom)
-              this.$emit('changeoper',{
-               operLine:res.result[0],
-               typeline:1
-              })
-          })
+         this.allData.forEach(itam=>{
+          if(itam.routeName==this.value){
+            this.M_BUSLINE([itam])
+          }
+        })
        
 
       },
        toDetail(data,index){
           this.nowindex=index
-          this.$fetchGet("route/baseLineDetail",{
-            routeName:data.routeName
-          }).then(res => {
-            this.allData.forEach(itam=>{
-              if(itam.routeName==res.result[0].routeName){
-                res.result[0].coefficient=itam.coefficient
-              }
-            })
-              res.result[0].geom=this.setData(res.result[0].geom)
-              this.$emit('changeoper',{
-               operLine:res.result[0],
-               typeline:1
-              })
-          })
+          this.M_BUSLINE([data])
       },
       getDetail1(){
         if(this.input==''){
@@ -112,6 +93,7 @@ export default {
               }
             })
             this.lineaData=arr
+             this.M_BUSLINE(this.lineaData)
          }
 
 

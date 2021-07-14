@@ -18,15 +18,15 @@
       </el-input>
     </div>
     <div class="rightlinemsg">
-      <div class="tit">线路长度</div>
+      <div class="tit">非直线系数</div>
       <div class="bttit">
         <div>线路名称</div>
-        <div>线路长度(km)</div>
+        <div>非直线系数</div>
       </div>
       <div class="tablbox">
         <div :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData"  :key="n">
           <div>{{item.routeName}}</div>
-          <div>{{item.lineLength}}</div>
+          <div>{{item.coefficient.toFixed(2)}}</div>
         </div>
       </div>
     </div>
@@ -59,24 +59,22 @@ export default {
   },
   methods:{
        getData(){
-          this.$fetchGet("route/overLength").then(res => {
+          this.$fetchGet("route/straightCoefficient").then(res => {
             res.result.forEach(iteam=>{
-              iteam.geom=this.Q_setData(iteam.geom)
+              // iteam.geom=this.Q_setData(iteam.geom)
             })
             this.allData=res.result
             this.lineaData=res.result;
-
-            this.M_BUSLINE(this.allData)
+            // this.M_BUSLINE(this.allData)
             setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)
             },200)
           })
       },
      getDetail(){
-      
       this.allData.forEach(itam=>{
           if(itam.routeName==this.value){
-            this.M_BUSLINE([itam])
+            this.M_BUSLINE([itam],3)
           }
         })
               
@@ -89,24 +87,19 @@ export default {
       },
       toDetail(data,index){
           this.nowindex=index
-          data.geom=this.setData(data.geom)
-          this.$emit('changeoper',{
-            operLine:data,
-            typeline:2
-        })
+          this.M_BUSLINE([data],3)
       },
       getDetail1(){
-        console.log(789)
         if(this.input==''){
             this.lineaData=this.allData
             this.M_BUSLINE(this.lineaData)
         }else{
             let arr=[]
-          this.allData.forEach(itam=>{
-              if(itam.lineLength>this.input){
-                arr.push(itam)
-              }
-            })
+            this.allData.forEach(itam=>{
+                if(itam.coefficient>this.input){
+                  arr.push(itam)
+                }
+              })
             this.lineaData=arr
             this.M_BUSLINE(this.lineaData)
          }

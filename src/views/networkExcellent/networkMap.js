@@ -548,7 +548,6 @@ const Map = {
     M_BUSLINE(data,type){
       this.M_map.clearMap()
       let lineArr=[]
-      
       data.forEach(iteam=>{
         let busPolyline = new AMap.Polyline({
           map: this.M_map,
@@ -560,6 +559,57 @@ const Map = {
         });
         lineArr.push(busPolyline)
       })
+      if(type==3){
+        let busPolyline2 = new AMap.Polyline({
+          map: this.M_map,
+          path: [iteam.geom[0],iteam.geom[iteam.geom.length-1]],
+          strokeColor: '#A200FF',//线颜色
+          strokeOpacity: 0.8,//线透明度
+          zIndex: 100,
+          extData:iteam,
+          strokeWeight:4//线宽
+        });
+
+        
+        let marker = new AMap.Marker({content: ' ', map: this.M_map});
+        busPolyline.on('mouseover',  (e)=> {
+          let str=e.target.getExtData()
+          let num=Math.round(e.target.getPath()/2)
+          let position=e.target.getPath()[num]
+            marker.setPosition(position);
+            marker.setLabel({content: `
+            <div style='color:rgba(26, 66, 118, 1)'>
+             <div>线路长度：${str.realDistance.toFixed(2)}</div>
+             <div>非直线系数：${str.coefficient.toFixed(2)}</div>
+            </div>`
+          })
+        });
+        busPolyline.on('mouseout',  (e)=> {
+          let num=Math.round(e.target.getPath()/2)
+          let position=e.target.getPath()[num]
+            marker.setPosition(position);
+            marker.setLabel({content:null})
+        });
+        busPolyline2.on('mouseover',  (e)=> {
+          let str=e.target.getLength()
+          let num=Math.round(e.target.getPath()/2)
+          let position=e.target.getPath()[num]
+            marker.setPosition(position);
+            marker.setLabel({content: `
+            <div style='color:rgba(26, 66, 118, 1)'>
+             <div>线段长度：${str}</div>
+            </div>`
+          })
+          busPolyline2.on('mouseout',  (e)=> {
+            let num=Math.round(e.target.getPath()/2)
+            let position=e.target.getPath()[num]
+              marker.setPosition(position);
+              marker.setLabel({content:null})
+          });
+        });
+
+
+      }
       this.M_map.setFitView(lineArr,true)
     },
     M_ishow(flag, type) {
@@ -571,7 +621,6 @@ const Map = {
     },
     M_ismeclea() {
       this.meroGroups.clear()
-
     },
     M_setPath(pathArr) {
       this.busPolyline1.setPath(pathArr)

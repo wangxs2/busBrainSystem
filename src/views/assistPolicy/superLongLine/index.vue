@@ -13,7 +13,9 @@
       </el-select>
       <div style="margin-right:0.6vw;margin-left:1vw;width:3.5vw;">阈值设置</div>
       <!-- @blur="getDetail" -->
-      <el-input style="width:40%"   size="small" type="number" :min="0" max="70" v-model="input" @change="getDetail1" placeholder="请输入线路长度(>12km)"></el-input>
+      <el-input style="width:30%" type="number" @change="getDetail1"  size="mini" v-model="input"  placeholder="">
+        <template slot="prepend"> 线路长度<i class="iconfont icondayufuhao" ></i></template>
+      </el-input>
     </div>
     <div class="rightlinemsg">
       <div class="tit">线路长度</div>
@@ -99,11 +101,8 @@ export default {
       },
       toDetail(data,index){
           this.nowindex=index
-          data.geom=this.setData(data.geom)
-          this.$emit('changeoper',{
-            operLine:data,
-            typeline:2
-        })
+          this.M_BUSLINE([data])
+        
       },
       getDetail1(){
         console.log(789)

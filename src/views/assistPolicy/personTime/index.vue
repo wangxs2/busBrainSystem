@@ -22,7 +22,10 @@
         </el-option>
       </el-select>
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.5vw;">阈值设置</div>
-      <el-input style="width:10%"  size="small" v-model="query.nums" @input="getData" placeholder="请输入阈值"></el-input>
+      <!-- <el-input style="width:10%"  size="small" v-model="query.nums" @input="getData" placeholder="请输入阈值"></el-input> -->
+      <el-input style="width:10%" type="number" @change="getData"  size="mini" v-model="query.nums"  placeholder="">
+        <template slot="prepend"> 百公里人次<i class="iconfont icondayufuhao" ></i></template>
+      </el-input>
     </div>
     <div class="table-data"  v-loading="loading"
       element-loading-text="拼命加载中"
@@ -163,7 +166,7 @@ export default {
   height:100%;
   position: relative;
   .search-box {
-    background: rgba(12, 38, 104, 0.7);
+    background: rgba(12, 38, 104, 0.4);
     box-sizing: border-box;
     padding: vh(10) vw(16);
     position: absolute;
