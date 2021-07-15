@@ -24,6 +24,8 @@ const Map = {
       geocoder: null,//逆地址解析
       markers: [],
       overlayGroups: new AMap.OverlayGroup(),//调整方案站点集合
+      overlayGroups1: new AMap.OverlayGroup(),//车辆可视化公交车集合
+      overlayGroups2: new AMap.OverlayGroup(),//车辆可视化街镇集合
       meroGroups: new AMap.OverlayGroup(),//地铁线路的集合
       nework: {
       }
@@ -77,7 +79,6 @@ const Map = {
           'coastline-stroke': '#6B9FE7',
           'province-stroke': [107, 156, 224, 1],
           'fill': (props) => { // 中国特有字段
-            // console.log(props)
             return this.M_disColor(props.adcode_pro)
           }
         }
@@ -117,6 +118,8 @@ const Map = {
         resizeEnable: true, // 监控地图容器尺寸变化
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
+      // this.M_addGroupEvent()
+
       this.M_pointGroup = new AMap.OverlayGroup()
       this.M_map.add(this.M_pointGroup)
       this.M_createInfoWin()
@@ -127,10 +130,10 @@ const Map = {
         city: ''   //确定搜索城市
       });
 
-      this.M_map.on('click', (e) => {
-        // console.log(e.lnglat.getLng(),e.lnglat.getLat())
-        this.M_regeoCode([e.lnglat.getLng(), e.lnglat.getLat()])
-      });
+      
+      // this.M_map.on('click', (e) => {
+      //   this.M_regeoCode([e.lnglat.getLng(), e.lnglat.getLat()])
+      // });
       this.geocoder = new AMap.Geocoder({
         city: "", //城市设为北京，默认：“全国”
         radius: 10, //范围，默认：500
@@ -143,38 +146,82 @@ const Map = {
         collision: false
       });
     },
-    // 设置重点区域名称标注
+    // 设置车辆可视化
     M_setAreasPoint(data) {
-      const marker = new AMap.Marker({
-        position: data.centre,
-        offset: new AMap.Pixel(-13, -17),
-        topWhenClick: true,
-        icon: new AMap.Icon({
-          size: new AMap.Size(26, 34),
-          // image: areasIcon,
-          imageSize: new AMap.Size(26, 34)
-        }), // 添加 Icon 图标 URL
-        label: {
-          content: `<div class="label-style">${data.name}</div>`,
-          direction: 'right' // 设置文本标注方位
-        },
-        map: this.M_map
-      })
+      if(this.M_pointGroup){
+        this.M_pointGroup.clearOverlays()
+      }
+      if(this.overlayGroups1){
+        this.overlayGroups1.clearOverlays()
+      }
 
-      return marker
+      const iconm = require('../../assets/image/blue.png')
+
+      let marks=[]
+      data.forEach(iteam=>{
+        const marker = new AMap.Marker({
+          position: iteam.centre,
+          // 将 html 传给 content background: url(icon) url(${iconm})
+          content: `<div class="regionMark" style="background:url(${iconm})">
+            <div> ${iteam.name}</div>
+             <div>  ${iteam.num}</div>
+             <div> ${iteam.percent}</div>
+            </div>`,
+          // 以 icon 的 [center bottom] 为原点
+          offset: new AMap.Pixel(-13, -30),
+          zIndex: 10,
+          cursor: 'pointer',
+          extData: iteam,
+          map: this.M_map
+        })
+        // marker.on('click',e=>{
+        //   this.M_map.setZoom(16)
+        // })
+        marks.push(marker)
+      })
+      this.M_addGroup(marks)
     },
     // 设置重点区
     M_setAreas(data) {
-      const Polygon = new AMap.Polygon({
-        path: data.path, // 点集合
-        fillColor: 'red', // 多边形填充颜色
-        fillOpacity: 0.2, // 填充颜色
-        strokeColor: 'red', // 线条颜色
-        strokeWeight: 2, // 线条宽度，默认为 1
-        map: this.M_map
+      let polyarr=[]
+      data.forEach(iteam=>{
+        let str =iteam.polygonGeom.replace("POLYGON((", "");
+        let str1 = str.replace("))", "");
+        let arr = str1.split(",");
+        let path=[]
+        arr.forEach(iteam => {
+          path.push(
+            new AMap.LngLat(iteam.split(" ")[0], iteam.split(" ")[1])
+          );
+        });
+        const Polygon = new AMap.Polygon({
+          path: path, // 合
+          fillColor: '#35A594', // 多边形填充颜色
+          fillOpacity: 0.2, // 填充颜色
+          strokeColor: '#35A594', // 线条颜色
+          strokeWeight: 1, // 线条宽度，默认为 1
+          cursor:'pointer'
+        })
+        Polygon.on('mouseover', (e) => {
+         
+          e.target.setOptions({
+            strokeColor: "#FF00FF",
+            fillColor : "#FF00FF",
+          })
+        })
+        Polygon.on('mouseout', (e) => {
+          e.target.setOptions({
+            strokeColor: "#35A594",
+            fillColor : "#35A594",
+          })
+
+        })
+        polyarr.push(Polygon)
       })
-      this.M_setAreasPoint(data)
-      return Polygon
+      this.overlayGroups2.addOverlays(polyarr)
+      this.M_map.add(this.overlayGroups2)
+      this.overlayGroups2.hide()
+     
     },
     // 设置边界
     M_setTownPath(path) {
@@ -207,29 +254,40 @@ const Map = {
       this.geocoder.getAddress(lnglat, (status, result) => {
         if (status === 'complete' && result.regeocode) {
           var address = result.regeocode.formattedAddress;
-          console.log(result)
           // document.getElementById('address').value = address;
         } else {
         }
       });
     },
 
-    // 添加点
+    // 车辆可视化的公交车添加点
     M_addPoint(data, icon, name) {
-      const marker = new AMap.Marker({
-        position: data.position,
-        offset: new AMap.Pixel(-12, -12),
-        topWhenClick: true,
-        icon: new AMap.Icon({
-          size: new AMap.Size(24, 24),
-          image: icon,
-          imageSize: new AMap.Size(24, 24)
-        }), // 添加 Icon 图标 URL
-        extData: data
-      })
-      marker.TypeName = name
+      if(this.M_pointGroup){
+        this.M_pointGroup.clearOverlays()
+      }
+      if(this.overlayGroups1){
+        this.overlayGroups1.clearOverlays()
+      }
+      let markers=[]
+      data.forEach(iteam=>{
+        const marker = new AMap.Marker({
+          position: [iteam.lng,iteam.lat],
+          offset: new AMap.Pixel(-16, -16),
+          topWhenClick: true,
+          icon: new AMap.Icon({
+            size: new AMap.Size(32, 32),
+            image: require('../../assets/image/orange1.png'),
+            imageSize: new AMap.Size(32, 32)
+          }), // 添加 Icon 图标 URL
+          extData: iteam
+        })
+        markers.push(marker)
 
-      return marker
+        this.overlayGroups1.addOverlays(markers)
+        this.M_map.add(this.overlayGroups1)
+
+      })
+      
     },
     // 修改组
     M_upDateGroup(index, points) {
@@ -242,53 +300,40 @@ const Map = {
         group.hide()
       }
     },
-    // 分组添加到组
-    M_addGroup(points) {
-      const group = new AMap.OverlayGroup()
-      // group.type = type
-      group.addOverlays(points)
-      this.M_pointGroup.addOverlay(group)
-    },
+  
     // 添加点事件
     M_addGroupEvent(callback) {
-      this.M_pointEvent.forEach((item) => {
-        AMap.event.removeListener(item)
-      })
-
+      // if(this.M_pointEvent.length>0){
+      //   AMap.Event.clearListeners(this.M_pointEvent)
+      // }
       this.M_pointEvent = []
-
       let flag = ''
+      // this.M_pointEvent.push(
+      //   AMap.event.addListener(this.M_pointGroup, 'mousemove', (e) => {
+      //     const ExtData = e.target.getExtData()
+      //     const name = ExtData.name
+      //     const TypeName = e.target.TypeName
+
+      //     if (TypeName === '视频监控') return
+
+      //     if (flag !== name) {
+      //       callback && callback(TypeName, ExtData)
+      //       flag = name
+      //     }
+      //   })
+      // )
+      // this.M_pointEvent.push(
+      //   AMap.event.addListener(this.M_pointGroup, 'mouseout', (e) => {
+      //     this.M_closeInfoWin()
+      //     flag = ''
+      //   })
+      // )
+
 
       this.M_pointEvent.push(
-        AMap.event.addListener(this.M_pointGroup, 'mousemove', (e) => {
+        AMap.Event.addListener(this.M_pointGroup, 'click', (e) => {
           const ExtData = e.target.getExtData()
-          const name = ExtData.name
-          const TypeName = e.target.TypeName
-
-          if (TypeName === '视频监控') return
-
-          if (flag !== name) {
-            callback && callback(TypeName, ExtData)
-            flag = name
-          }
-        })
-      )
-      this.M_pointEvent.push(
-        AMap.event.addListener(this.M_pointGroup, 'mouseout', (e) => {
-          this.M_closeInfoWin()
-          flag = ''
-        })
-      )
-
-      this.M_pointEvent.push(
-        AMap.event.addListener(this.M_pointGroup, 'click', (e) => {
-          const ExtData = e.target.getExtData()
-          const TypeName = e.target.TypeName
-
-          if (TypeName !== '视频监控') return
-
-          callback && callback(TypeName, ExtData)
-          this.M_closeInfoWin()
+          callback && callback(ExtData)
           flag = ''
         })
       )
@@ -306,6 +351,13 @@ const Map = {
         const group = this.M_pointGroup.getOverlays()[index]
         group && group.show()
       }
+    },
+    // 分组添加到组
+    M_addGroup(points) {
+      const group = new AMap.OverlayGroup()
+      // group.type = type
+      group.addOverlays(points)
+      this.M_pointGroup.addOverlay(group)
     },
     // 创建窗口
     M_createInfoWin() {
@@ -431,7 +483,6 @@ const Map = {
       linesearch.search(busLineName, (status, result) => {
         if (status === 'complete' && result.info === 'OK') {
           if (type == 2) {
-            console.log(result)
             this.M_metroLine(result, item, type)
           } else if (type == 3) {
             this.M_metroLine(result, item, type)
@@ -516,7 +567,6 @@ const Map = {
       var stationArr = searchResult.stationInfo;
       var searchNum = stationArr.length;
       if (searchNum > 0) {
-        console.log(stationArr[0])
         }
     },
 
@@ -525,7 +575,6 @@ const Map = {
       var lineNum = data.lineInfo.length;
       if (lineNum == 0) {
       } else {
-        console.log(lineArr)
         let busPolyline = new AMap.Polyline({
           // map: this.M_map,
           path: lineArr[0].path,

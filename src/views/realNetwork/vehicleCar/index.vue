@@ -1,5 +1,5 @@
 <template>
-  <div class="vehicleCarbox">
+  <div class="vehicleCarbox" id="vehicle">
     <div class="search-box">
       <div style="margin-right:0.8vw">行政区域</div>
       <el-select style="margin-right:1.5vw" clearable  filterable size="small" v-model="value" placeholder="请选择">
@@ -110,19 +110,47 @@
 </template>
 
 <script>
+import MapMixin from '../../networkExcellent/networkMap'
 export default {
+  mixins: [MapMixin],
   data() {
   return {
     options: [],
     value:"",
     point:1,
     isheat:1,
+    carSearch:{
+      leftlon:null,
+      rightlon:null,
+      leftlat:null,
+      rightlat:null,
+      zoom:0,
+    },
   }
   },
   created(){
       this.getAreaLine()
-      // this.getData()
   },
+   mounted(){
+     this.M_initMap('vehicle')
+     this.M_map.setZoom([12,20])
+     this.M_setZoomAndCenter([121.473658,31.230378],12)
+     this.M_map.on('moveend',(e)=>{
+      this.carSearch.leftlon=e.target.getBounds().southWest.lng
+      this.carSearch.rightlon=e.target.getBounds().northEast.lng
+      this.carSearch.leftlat=e.target.getBounds().northEast.lat
+      this.carSearch.rightlat=e.target.getBounds().southWest.lat
+      this.carSearch.zoom=Math.round(e.target.getZoom())
+      if(this.carSearch.zoom>13){
+        this.overlayGroups2.show()
+      }else{
+        this.overlayGroups2.hide()
+      }
+      this.getData()
+      
+    })
+  
+   },
   methods:{
       allpoint(){
       if(this.point==1){
@@ -138,7 +166,6 @@ export default {
       }else{
         this.isheat=1
       }
-    
     },
     getAreaLine(){
       this.$fetchGet("passenger/region").then(res => {
@@ -146,32 +173,67 @@ export default {
         setTimeout(()=>{
         this.$store.commit('SET_LOADING',false)
         },200)
+        this.M_setAreas(this.options)
       })
     },
     getData(){
-      this.$fetchGet("gps/list",{
-          leftlon:120.626846,
-          rightlon:122.348953,
-          leftlat:31.529928,
-          rightlat:30.967558,
-          zoom:16
+      this.$fetchGet("gps/list",this.carSearch).then(res => {
+        if(res.result&&res.result.length>0){
+           if(this.carSearch.zoom>11&&this.carSearch.zoom<16){
+              this.M_setAreasPoint(res.result)
+              this.pointEvent()
+            }
+            if(this.carSearch.zoom>15){
+              this.M_addPoint(res.result)
+            }
+
         }
-      ).then(res => {
+
+       
+
+
+
       
       })
 
     },
+
+    pointEvent(){
+
+      this.M_addGroupEvent((str)=>{
+          this.M_setZoomAndCenter(str.centre,16)
+          this.getData()
+      })
+
+    }
   }
 
   
 }
 </script>
 <style lang="scss">
+.vehicleCarbox{
+  .regionMark{
+    width: vw(178);
+    height: vw(178);
+    border-radius:50%;
+    background-size: contain;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+}
+
+
 
 </style>
 <style lang="scss" scoped>
 .vehicleCarbox{
-  
+   width:100%;
+  height:100%;
+  position: relative;
  .search-box {
     background: rgba(12, 38, 104, 0.7);
     box-sizing: border-box;
@@ -182,6 +244,7 @@ export default {
     display: flex;
     align-items: center;
     color: #dae4ff;
+    z-index: 10;
     .clearbtn{
       width: vw(60);
       height: vh(32);
@@ -257,6 +320,7 @@ export default {
     background-size: 100% 100%;
     box-sizing: border-box;
     padding:0 vw(24);
+     z-index: 10;
     .tit {
       width: 100%;
       height: vw(60);

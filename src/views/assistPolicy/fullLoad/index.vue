@@ -35,19 +35,19 @@
       <div class="table-header">
        
         <div >线路名称</div>
-        <div>所属公司</div>
-        <div >线路级别</div>
-        <div >满载率</div>
-        <div>明细</div>
+        <div>车牌号</div>
+        <div >日期</div>
+        <div >上下行</div>
+        <!-- <div>明细</div> -->
       </div>
       <div class="table-contain">
         <div class="tableTr"   v-for="(item,index) in alldata" :key="index">
          
           <div >{{item.xlmc}}</div>
-          <div ></div>
-          <div ></div>
-          <div >{{item.mzl}}</div>
-          <div style="color:#00FFFF">查看明细</div>
+          <div >{{item.cph}}</div>
+          <div >{{item.workdate}}</div>
+          <div >{{item.xsfx}}</div>
+          <!-- <div style="color:#00FFFF">查看明细</div> -->
         </div>
         <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
       </div>

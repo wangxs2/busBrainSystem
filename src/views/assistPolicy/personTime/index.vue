@@ -34,18 +34,18 @@
       <div class="table-header">
        
         <div>线路名称</div>
-        <div>所属公司</div>
-        <div>线路等级</div>
         <div>百公里人次</div>
+        <div>日期 </div>
+        <div>线路编号</div>
         
       </div>
       <div class="table-contain">
         <div class="tableTr"   v-for="(item,index) in alldata" :key="index">
          
           <div >{{item.xlmc}}</div>
-          <div >{{item.company}}</div>
-          <div >{{item.company}}</div>
-          <div>{{item.baipass}}</div>
+          <div >{{item.baipass}}</div>
+          <div >{{item.workdate}}</div>
+          <div>{{item.xlid}}</div>
           <!-- <div style="width:10%;color:#00FFFF">查看明细</div> -->
         </div>
         <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>

@@ -45,12 +45,12 @@ export default class Map {
     });
     
     this.map.on('moveend',(e)=>{
-      // this.carSearch.leftlon=e.target.getBounds().southWest.lng
-      // this.carSearch.rightlon=e.target.getBounds().northEast.lng
-      // this.carSearch.leftlat=e.target.getBounds().northEast.lat
-      // this.carSearch.rightlat=e.target.getBounds().southWest.lat
-      // this.carSearch.zoom=Math.round(e.target.getZoom())
-      // this.setCarData1()
+      this.carSearch.leftlon=e.target.getBounds().southWest.lng
+      this.carSearch.rightlon=e.target.getBounds().northEast.lng
+      this.carSearch.leftlat=e.target.getBounds().northEast.lat
+      this.carSearch.rightlat=e.target.getBounds().southWest.lat
+      this.carSearch.zoom=Math.round(e.target.getZoom())
+      this.setCarData1()
       
     })
 
@@ -59,12 +59,8 @@ export default class Map {
 
   setCarData(){
     this.setCarData1()
-
-    
     // http.fetchGet('gps/list',this.carSearch).then(res=>{
-      
     // })
-
   }
   setCarData1(){
     http.fetchGet('gps/list',this.carSearch).then(res=>{

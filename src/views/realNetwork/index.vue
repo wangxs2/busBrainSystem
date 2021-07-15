@@ -1,38 +1,22 @@
 <template>
   <div class="realNetworkbox">
-    <div class="netrelMap" id="netrelMap">
-    </div>
+    <!-- <div class="netrelMap" id="netrelMap">
+    </div> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Map from "./reanetMap.js";
-let ntMyMap = null; // 地图实例
+
 export default {
   watch:{
-    '$route':{
-      handler:function(val,oldval){
-      //  this.judgeRouteLine(val)
-      },
-      deep:true,
-      immediate: true
-    },
+   
   },
    mounted(){
-    ntMyMap = new Map({ el: "netrelMap" });
-    let nowroute=this.$route
-    this.judgeRouteLine(nowroute)
+
   },
   methods:{
-    judgeRouteLine(val){
-      switch(val.name) {
-        case "车辆运行可视化":
-         ntMyMap.setCarData()
-         break;
-        default: 
-      }
-    }
+  
   }
   
 }

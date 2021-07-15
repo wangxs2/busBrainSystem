@@ -160,29 +160,28 @@ export default class Map {
       let iconm = ''
       
       if ((iteam.sd + iteam.sp) < 1001) {
-        // iconm = require('../../assets/image/blue.png')
-        iconm = '#00D8FF'
+        iconm = require('../../assets/image/blue.png')
+        // iconm = '#00D8FF'
       } else if ((iteam.sd + iteam.sp) > 1000 && (iteam.sd + iteam.sp) < 10001) {
-        // iconm = require('../../assets/image/violet.png')
-        iconm = '#9000FF'
+        iconm = require('../../assets/image/violet.png')
+        // iconm = '#9000FF'
       } else if ((iteam.sd + iteam.sp) > 10000 && (iteam.sd + iteam.sp) < 20001) {
-        // iconm = require('../../assets/image/orange.png')
-        iconm = '#FF9100'
+        iconm = require('../../assets/image/orange.png')
+        // iconm = '#FF9100'
       } else if ((iteam.sd + iteam.sp) > 20000 && (iteam.sd + iteam.sp) < 30001) {
-        // iconm = require('../../assets/image/reginmark.png')
-        iconm = '#FF00FF'
+        iconm = require('../../assets/image/reginmark.png')
+        // iconm = '#FF00FF'
       } else if ((iteam.sd + iteam.sp) > 30000) {
-        // iconm = require('../../assets/image/red.png')
-        iconm = '#FF4200'
+        iconm = require('../../assets/image/red.png')
+        // iconm = '#FF4200'
       }
       var marker = new AMap.Marker({
         position: [iteam.centerLongitude, parseFloat(iteam.centerLatitude)],
         // 将 html 传给 content background: url(icon) url(${iconm})
-        content: `<div class="regionMark" style="background:${iconm}">
+        content: `<div class="regionMark" style="background:url(${iconm})">
           <div> ${iteam.regionName}</div>
            <div> 上车 ${iteam.sd}</div>
            <div> 下车 ${iteam.sp}</div>
-         
           </div>`,
           
         // 以 icon 的 [center bottom] 为原点
@@ -225,7 +224,6 @@ export default class Map {
               new AMap.LngLat(iteam.split(" ")[0], iteam.split(" ")[1])
             );
           });
-
         let polygonLine = new AMap.Polygon({
           path: path,
           cursor: "pointer",
@@ -243,9 +241,6 @@ export default class Map {
             strokeColor: "#FF00FF",
             fillColor : "#FF00FF",
           })
-
-          // this.map.setFitView(polygonLine,false)
-
         })
         polygonLine.on('mouseout', (e) => {
          

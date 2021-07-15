@@ -312,12 +312,13 @@ export default {
   }
 }
 .regionMark{
-  width: vw(100);
-  height: vw(100);
+  width: vw(178);
+  height: vw(178);
   // background-image: radial-gradient(circle, rgb(49, 144, 228) 0%, rgb(41, 122, 204) 30%, rgb(29, 84, 166) 70%);
   border-radius:50%;
   // background: url("~@/assets/image/reginmark.png");
-    background-size: 100% 100%;
+  // background-size: 100% 100%;
+  background-size: contain;
   display:flex;
   flex-direction: column;
   justify-content: center;

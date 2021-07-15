@@ -42,7 +42,7 @@ export default {
      data(){
         return {
           value:'',
-          input:'',
+          input:0.5,
           nowindex:-1,
           lineaData: [],
           allData:[],

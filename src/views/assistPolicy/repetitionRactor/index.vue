@@ -40,7 +40,7 @@ export default {
    data(){
         return {
           value:'',
-          input:'',
+          input:0.5,
           nowindex:-1,
           lineaData: [],
           allData: [],
@@ -62,6 +62,7 @@ export default {
             })
             this.allData=res.result;
             this.lineaData=res.result;
+            this.getDetail1()
             this.M_BUSLINE(this.allData)
             setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)

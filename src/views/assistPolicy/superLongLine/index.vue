@@ -3,7 +3,7 @@
         <div class="search-box">
 
       <div style="margin-right:0.6vw;margin-left:0.1vw;width:3.5vw;">线路名称</div>
-      <el-select style="width:40%" size="small" clearable @clear="getDetail1" filterable @change="getDetail" v-model="value" placeholder="请选择">
+      <el-select style="width:40%" size="small" clearable @clear="getData" filterable @change="getDetail" v-model="value" placeholder="请选择">
         <el-option
           v-for="(item,n) in lineaData"
           :key="n"
@@ -13,7 +13,7 @@
       </el-select>
       <div style="margin-right:0.6vw;margin-left:1vw;width:3.5vw;">阈值设置</div>
       <!-- @blur="getDetail" -->
-      <el-input style="width:30%" type="number" @change="getDetail1"  size="mini" v-model="input"  placeholder="">
+      <el-input style="width:30%" type="number" @change="getData"  size="mini" v-model="input"  placeholder="">
         <template slot="prepend"> 线路长度<i class="iconfont icondayufuhao" ></i></template>
       </el-input>
     </div>
@@ -43,7 +43,7 @@ export default {
      data(){
         return {
           value:'',
-          input:'',
+          input:25,
           nowindex:-1,
           lineaData: [],
           allData:[],
@@ -72,7 +72,9 @@ export default {
       testga(str){
       },
        getData(){
-          this.$fetchGet("route/overLength").then(res => {
+          this.$fetchGet("route/overLength",{
+            length:this.input,
+          }).then(res => {
             res.result.forEach(iteam=>{
               iteam.geom=this.Q_setData(iteam.geom)
             })
