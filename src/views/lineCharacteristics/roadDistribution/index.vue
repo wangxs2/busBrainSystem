@@ -56,6 +56,7 @@ export default {
   },
   mounted() {
     this.M_initMap('roaddistr')
+    this.trafficLayer.setMap(this.M_map);
   },
 
   methods: {

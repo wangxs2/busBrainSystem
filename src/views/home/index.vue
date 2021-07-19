@@ -296,8 +296,8 @@ export default {
 <style scoped lang="scss">
 .bigHome{
  width: 100%;
-      height: 100%;
-       position: relative;
+height: 100%;
+  position: relative;
 }
 #the-canvas{
   position: absolute;

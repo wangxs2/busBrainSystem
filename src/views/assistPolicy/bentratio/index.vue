@@ -61,10 +61,11 @@ export default {
        getData(){
           this.$fetchGet("route/straightCoefficient").then(res => {
             res.result.forEach(iteam=>{
-              // iteam.geom=this.Q_setData(iteam.geom)
+              iteam.geom=this.Q_setData(iteam.geom)
             })
             this.allData=res.result
             this.lineaData=res.result;
+            this.getDetail1()
             // this.M_BUSLINE(this.allData)
             setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)

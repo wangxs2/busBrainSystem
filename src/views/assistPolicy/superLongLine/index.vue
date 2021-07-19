@@ -107,7 +107,7 @@ export default {
         
       },
       getDetail1(){
-        console.log(789)
+        
         if(this.input==''){
             this.lineaData=this.allData
             this.M_BUSLINE(this.lineaData)
