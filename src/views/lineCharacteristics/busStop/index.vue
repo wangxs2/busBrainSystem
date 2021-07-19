@@ -269,7 +269,6 @@ export default {
 .busStop-box {
   box-sizing: border-box;
   margin-top: vw(70);
-  position: relative;
   z-index: 10;
   .search-box {
     background: rgba(12, 38, 104, 0.7);
@@ -281,6 +280,7 @@ export default {
     display: flex;
     align-items: center;
     color: #dae4ff;
+      z-index: 12;
     .clearbtn{
       width: vw(60);
       height: vh(32);

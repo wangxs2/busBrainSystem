@@ -229,7 +229,6 @@ export default {
 .publicTransport-box {
   box-sizing: border-box;
   margin-top: vw(70);
-  position: relative;
   z-index: 10;
   .leftlinemsg {
     position: absolute;

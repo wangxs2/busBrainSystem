@@ -1,10 +1,9 @@
 <template>
-  <div class="lineCharacteristicsc" id="lineCharacteristics">
-    <!-- <div style="margin-top:100px;position:fixed;z-index:100">
-        <el-button @click="judgeradius" type="primary">主要按钮</el-button>
-    </div> -->
-    <router-view @changefun="sonClick"></router-view>
+<div style="width:100%;height:100%">
+  <div v-show="$route.name!=='道路网'" class="lineCharacteristicsc" id="lineCharacteristics">
   </div>
+   <router-view @changefun="sonClick"></router-view>
+   </div>
 </template>
 
 <script>
@@ -180,9 +179,6 @@ export default {
                         MyMapLine.map.remove(iy)
                       })
                 }
-                if(MyMapLine.trafficLayer){
-                    MyMapLine.isTraffic(false)
-                }
                 // if(MyMapLine.massall){
                 //   MyMapLine.massall.show()
                 //   if(MyMapLine.polygonLine){
@@ -216,9 +212,7 @@ export default {
                       MyMapLine.map.remove(iy)
                     })
               }
-               if(MyMapLine.trafficLayer){
-                  MyMapLine.isTraffic(false)
-              }
+            
               if(MyMapLine.infoWindow){
                   MyMapLine.infoWindow.close()
                 }
@@ -243,9 +237,6 @@ export default {
               if(MyMapLine){
                 if(MyMapLine.infoWindow){
                   MyMapLine.infoWindow.close()
-                }
-                if(MyMapLine.trafficLayer){
-                    MyMapLine.isTraffic(false)
                 }
                 //隐藏公交站点里面的数据
                 if(MyMapLine.massall){
@@ -282,9 +273,7 @@ export default {
                       MyMapLine.map.remove(iy)
                     })
               }
-                if(MyMapLine.trafficLayer){
-                    MyMapLine.isTraffic(false)
-                }
+               
                 if(MyMapLine.massall){
                   MyMapLine.massall.hide()
                   if(MyMapLine.polygonLine){
@@ -435,7 +424,6 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-
 .lineCharacteristicsc{
   width: 100%;
   height: 100%;

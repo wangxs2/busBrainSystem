@@ -190,27 +190,6 @@ export default class Map {
         cursor: 'pointer',
         extData: { iteam }
       });
-
-      // marker.on('click', (e) => {
-        
-      //   if (e.target.getExtData()) {
-      //     let str = e.target.getExtData().iteam.polygonGeom.replace("POLYGON((", "");
-      //     let str1 = str.replace("))", "");
-      //     let arr = str1.split(",");
-      //     let path=[]
-      //     arr.forEach(iteam => {
-      //       path.push(
-      //         new AMap.LngLat(iteam.split(" ")[0], iteam.split(" ")[1])
-      //       );
-      //     });
-
-      //     this.createPolygon(path)
-      //   }
-      // });
-      // marker.on('mouseout', (e) => {
-      //   this.map.remove(this.polygonLine);
-        
-      // });
       marker.on('click', (e) => {
         this.map.setFitView(marker,false)
       })

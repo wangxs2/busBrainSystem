@@ -10,9 +10,7 @@
           :value="item.regionName"
         ></el-option>
       </el-select>
-
-      
-      <div @click="allheat" :class="isheat==2?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">热力图</div>  
+      <!-- <div @click="allheat" :class="isheat==2?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">热力图</div>   -->
       <div @click="allpoint" :class="point==1?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">数据统计</div>
     </div>
     <div v-if="point==1" class="leftlinemsg">
@@ -185,24 +183,54 @@ export default {
             }
             if(this.carSearch.zoom>15){
               this.M_addPoint(res.result)
+              this.pointEvent()
             }
 
         }
-
-       
-
-
-
-      
       })
-
     },
-
     pointEvent(){
+      this.M_addGroupEvent((str,type)=>{
+          if(type==2){
+            console.log(7889)
+            let content=`
+            <div class="myinfobox1">
+       
+              <div class="line-lsi">
+                <div class="tithear">车辆编号:</div>
+                <div style="flex:1;text-align:right">${str.routeName}</div>
+              </div>
+              <div class="line-lsi">
+                <div class="tithear">车牌号码:</div>
+                <div style="flex:1;text-align:right">${str.plateNum}</div>
+              </div>
+              <div class="line-lsi">
+                <div class="tithear">站点名称:</div>
+                <div style="flex:1;text-align:right">${str.stationName}</div>
+              </div>
+              <div class="line-lsi">
+                <div class="tithear">线路名称:</div>
+                <div style="flex:1;text-align:right">${str.routeName}</div>
+              </div>
+              <div class="line-lsi">
+                <div class="tithear">开往方向:</div>
+                <div style="flex:1;text-align:right">${str.routeDirection}</div>
+              </div>
+              <div class="line-lsi">
+                <div class="tithear">更新时间:</div>
+                <div style="flex:1;text-align:right">${this.$moment(str.updateTime).format("YYYY-MM-DD hh:mm:ss")}</div>
+              </div>
+            </div>
+              
+            `
+            this.M_InfoWindow.setAnchor('bottom-center')
+            this.M_openInfoWin([str.lng,str.lat],content)
 
-      this.M_addGroupEvent((str)=>{
-          this.M_setZoomAndCenter(str.centre,16)
-          this.getData()
+          }else{
+            this.M_setZoomAndCenter(str.centre,16)
+            this.getData()
+          }
+        
       })
 
     }
@@ -224,6 +252,31 @@ export default {
     align-items: center;
   }
 
+  .myinfobox1{
+    width: vw(346);
+    height:vw(308);
+    background: url("~@/assets/image/tk_bj.png");
+    background-size: 100% 100%;
+    box-sizing: border-box;
+    padding: vh(34) vw(26);
+    font-size: vw(16);
+    padding-top: vh(50);
+    display: flex;
+    flex-direction: column;
+    .line-lsi{
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      flex: 1;
+      .tithear{
+        width: vw(80);
+        height:vh(20);
+        display: inline-block;
+      }
+    }
+   
+  }
+
 }
 
 
@@ -234,7 +287,7 @@ export default {
    width:100%;
   height:100%;
   position: relative;
- .search-box {
+  .search-box {
     background: rgba(12, 38, 104, 0.7);
     box-sizing: border-box;
     padding: vh(10) vw(16);
@@ -375,7 +428,7 @@ export default {
         }
       }
       
-    }
- }
+  }
+}
 
 </style>

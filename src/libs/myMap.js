@@ -68,10 +68,9 @@ export default class Map {
       //    map:this.map
       //  })
      
-      this.trafficLayer = new AMap.TileLayer.Traffic({
-            zIndex: 10,
-            // autoRefresh:true,
-        });
+      // this.trafficLayer = new AMap.TileLayer.Traffic({
+      //       zIndex: 10,
+      //   });
       this.map.plugin(["AMap.HeatMap"],  ()=> {      //加载热力图插件
         this.heatmap = new AMap.HeatMap(this.map, {
             opacity: [0, 0.8], 
@@ -168,7 +167,7 @@ export default class Map {
           content: this.createInfoWindow(),
           offset: new AMap.Pixel(0, -35)
       });
-      this.trafficLayer.setMap(this.map);
+      // this.trafficLayer.setMap(this.map);
       // this.isTraffic(true)
 
   }

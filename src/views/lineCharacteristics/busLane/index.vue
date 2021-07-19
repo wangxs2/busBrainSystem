@@ -56,12 +56,10 @@ export default {
 <style lang="scss" scoped>
 .busLane-box {
   box-sizing: border-box;
-  margin-top: vw(70);
-  position: relative;
   z-index: 10;
   .leftlinemsg1 {
     position: absolute;
-    top: vh(120);
+    top: vh(150);
     left: vw(20);
     width: vw(370);
     height: vh(588);

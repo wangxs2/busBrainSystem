@@ -18,7 +18,7 @@ const localList = `
 ,/errorPage,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/passengerCorridor,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
 /passengerAnalysis,/passengerAnalysis/linePassenger,/passengerAnalysis/sectionPassenger,/passengerAnalysis/stationPassenger,/passengerAnalysis/regionPassenger,
 /networkExcellent,/networkExcellent/annualPlan,/networkExcellent/allDisplay,/networkExcellent/adjustmentLine,/operServices,
-/realNetwork,/realNetwork/vehicleCar,/realNetwork/siteStatus,/realNetwork/flowtionSite,/realNetwork/flowtionNet,
+/realNetwork,/realNetwork/vehicleCar, /realNetwork/publicTrans,/realNetwork/siteStatus,/realNetwork/flowtionSite,/realNetwork/flowtionNet,
 /tradeManage,/tradeManage/staffMove,/tradeManage/lifeCycleCar,/tradeManage/smartBuild,/tradeManage/linenetVehicle,/tradeManage/lineRailTransit,/tradeManage/lineaspect,/tradeManage/valuationService,
 /assistPolicy,/assistPolicy/bentratio,/assistPolicy/repetitionRactor,/assistPolicy/superLongLine,
 /assistPolicy/congestionLine,/assistPolicy/personTime,/assistPolicy/fullLoad,/assistPolicy/transferPressure,

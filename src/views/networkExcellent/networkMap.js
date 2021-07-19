@@ -1,5 +1,8 @@
 // const areasIcon = require('@img/map/icon_0_1@3x.png')
-
+// import * as http from '@/libs/http'
+// import store from './stores'
+import Anmation from "@/libs/anmation.js";
+let Myanmation = null; // 地图实例
 const Map = {
   data() {
     return {
@@ -13,6 +16,7 @@ const Map = {
       // 覆盖物点组
       M_pointGroup: null,
       M_pointEvent: [],
+      markerarr: [],
       // 信息窗口
       M_InfoWindow: null,
       busPolyline: null,
@@ -26,6 +30,7 @@ const Map = {
       overlayGroups: new AMap.OverlayGroup(),//调整方案站点集合
       overlayGroups1: new AMap.OverlayGroup(),//车辆可视化公交车集合
       overlayGroups2: new AMap.OverlayGroup(),//车辆可视化街镇集合
+      overlayGroups3: new AMap.OverlayGroup(),//车辆可视化街镇集合
       meroGroups: new AMap.OverlayGroup(),//地铁线路的集合
       nework: {
       }
@@ -118,7 +123,7 @@ const Map = {
         resizeEnable: true, // 监控地图容器尺寸变化
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
-      // this.M_addGroupEvent()
+      
 
       this.M_pointGroup = new AMap.OverlayGroup()
       this.M_map.add(this.M_pointGroup)
@@ -131,9 +136,9 @@ const Map = {
       });
 
       
-      // this.M_map.on('click', (e) => {
-      //   this.M_regeoCode([e.lnglat.getLng(), e.lnglat.getLat()])
-      // });
+      this.M_map.on('click', (e) => {
+        this.M_closeInfoWin()
+      });
       this.geocoder = new AMap.Geocoder({
         city: "", //城市设为北京，默认：“全国”
         radius: 10, //范围，默认：500
@@ -151,12 +156,11 @@ const Map = {
       if(this.M_pointGroup){
         this.M_pointGroup.clearOverlays()
       }
+       this.M_closeInfoWin()
       if(this.overlayGroups1){
         this.overlayGroups1.clearOverlays()
       }
-
       const iconm = require('../../assets/image/blue.png')
-
       let marks=[]
       data.forEach(iteam=>{
         const marker = new AMap.Marker({
@@ -330,6 +334,18 @@ const Map = {
       // )
 
 
+      
+
+      this.M_pointEvent.push(
+        AMap.Event.addListener(this.overlayGroups1, 'click', (e) => {
+          const ExtData = e.target.getExtData()
+          const position = e.target.getPosition()
+          callback && callback(ExtData,2,position)
+          flag = ''
+        })
+      )
+
+
       this.M_pointEvent.push(
         AMap.Event.addListener(this.M_pointGroup, 'click', (e) => {
           const ExtData = e.target.getExtData()
@@ -337,6 +353,17 @@ const Map = {
           flag = ''
         })
       )
+
+
+      this.M_pointEvent.push(
+        AMap.Event.addListener(this.overlayGroups3, 'click', (e) => {
+          const ExtData = e.target.getExtData()
+          const position = e.target.getPosition()
+          callback && callback(ExtData,position)
+          flag = ''
+        })
+      )
+      
     },
     // 设置地图中心点和缩放级别 coord 数组
     M_setZoomAndCenter(coord, zoom = 15) {
@@ -472,14 +499,12 @@ const Map = {
       this.polyEditor.open();
     },
     lineSearch(busLineName, type, item) {
-
       let linesearch = new AMap.LineSearch({
         pageIndex: 1,
         city: '上海',
         pageSize: 1,
         extensions: 'all'
       });
-
       linesearch.search(busLineName, (status, result) => {
         if (status === 'complete' && result.info === 'OK') {
           if (type == 2) {
@@ -529,20 +554,6 @@ const Map = {
           });
           if (type == 3) {
             marker.on('click', (e) => {
-            //   let str = `
-            //   <div class="myinfobox">
-            //     <div class="titfont">
-            //       <div class="infoimg"></div>
-            //       ${name}
-            //     </div>
-            //     <div class="line-lsi">
-            //       <div class="tithear">线路:</div>
-            //       <div style="flex:1">${data}</div>
-                  
-            //      </div>
-            //   </div>
-            // `
-            //   this.M_openInfoWin(e.target.getPosition())
              this.M_station(e.target.getExtData().name)
             })
           }
@@ -591,7 +602,6 @@ const Map = {
         this.meroGroups.addOverlay(busPolyline)
         this.M_map.add(this.meroGroups);
       }
-
     },
     //辅助决策绘制的线路
     M_BUSLINE(data,type){
@@ -691,6 +701,93 @@ const Map = {
         }
       }
     },
+       // 获取搜索信息
+    M_autoInput(data){
+      let markerarr=[]
+      data.forEach(iteam=>{
+
+        // AMap.plugin('AMap.PlaceSearch', ()=>{
+        //   var autoOptions = {
+        //     city: '全国'
+        //   }
+        
+        // })
+        var placeSearch = new AMap.PlaceSearch({
+          city: '全国'
+        });
+        placeSearch.search('上海市'+iteam.roadsegid, (status, result)=> {
+          // 搜索成功时，result即是对应的匹配数据
+          if(result.poiList.pois[0]){
+            this.pointSearch(result.poiList.pois[0],iteam)
+          }
+          
+        })
+
+        
+       
+      })
+      // 
+      
+   
+  },
+
+  pointSearch(row,data){
+    Myanmation = new Anmation({
+      center: [row.location.lng,row.location.lat],
+        color: {
+          fillColor:"#b40100",
+          fillOpacity: 0.7
+        }
+      });
+    let marker1 = new AMap.Marker({ 
+      content: `<div style='width:12px;height:12px;border-radius:50%;background:#b40100'></div> `, 
+      offset: new AMap.Pixel(-6, -6),
+      extData:data,
+      zIndex:100,
+      position: [row.location.lng,row.location.lat],
+    });
+    marker1.on('click',e=>{
+      this.$store.commit('SET_LOADING',true)
+      this.$fetchGet("curve/detail",{
+        roadName:data.roadsegid
+      }).then(res => {
+        this.M_openRoad(row.location,res)
+      })
+    
+    })
+    this.M_map.add(Myanmation.circleGroup)
+    this.markerarr.push(marker1)
+
+    this.overlayGroups3.addOverlays(this.markerarr)
+    this.M_map.add(this.overlayGroups3);
+
+  },
+  M_searroad(name,res){
+    let arr=this.overlayGroups3.getOverlays()
+    arr.forEach(iteam=>{
+      if(iteam.getExtData().roadsegid==name){
+        this.M_openRoad(iteam.getPosition(),res)
+      }
+    })
+  },
+  M_openRoad(position,res){
+    let infoWin = `<div class="info-win">
+      <div class="win-triangle"></div>
+      <div class="info-box">
+        <div class="info-content">
+          <div class="info">
+            <div class="info-name">${res.result.description}</div>
+          </div>
+        </div>
+      </div>
+    </div>`
+   this.M_openInfoWin([position.lng,position.lat], infoWin)
+   this.M_map.setZoomAndCenter(16,[position.lng,position.lat],true)
+   this.$store.commit('SET_LOADING',false)
+
+  },
+  
+  
     // 打开信息窗口
     M_openInfoWin(pos, info) {
       this.M_InfoWindow.setContent(info)
@@ -698,6 +795,7 @@ const Map = {
     },
     // 关闭信息窗
     M_closeInfoWin() {
+
       this.M_InfoWindow.close()
     }
   }

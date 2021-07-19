@@ -203,16 +203,6 @@ export default {
                   stack: 'one',
                   data:  arr1
               },
-              // {
-              //     name: '下行',
-              //     type: 'bar',
-                  
-              //     itemStyle:{
-              //       borderWidth:4,
-              //     },
-              //     stack: 'one',
-              //     data: [-10,-52, -200, -334, -390, -330, -220]
-              // },
             ]
 
         })
