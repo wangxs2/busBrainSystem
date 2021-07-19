@@ -13,7 +13,7 @@
       <!-- <div @click="allheat" :class="isheat==2?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">热力图</div>   -->
       <div @click="allpoint" :class="point==1?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">数据统计</div>
     </div>
-    <div v-if="point==1" class="leftlinemsg">
+    <div v-show="point==1" class="leftlinemsg">
       <div class="tit">
         <div class="titw">浦东公交车辆库总数</div>
         <div>4326辆</div>
@@ -51,10 +51,10 @@
     
       </div>
     </div>
-    <div v-if="point==1" class="leftlinemsg leftlinemsg1">
+    <div v-if="point==1&&rightObj.count!==undefined" class="leftlinemsg leftlinemsg1">
       <div class="tit">
         <div class="titw">存在历史定位车辆总数</div>
-        <div>4326辆</div>
+        <div>{{rightObj.count.num||0}}辆</div>
       </div>
       <div class="boeline"></div>
       <div class="itmsg-box">
@@ -63,28 +63,28 @@
             <i slot="prefix" class="iconfont iconzhankaizhedie" ></i>
             车辆活跃数
           </div>
-          <div>0</div>
+          <div>{{rightObj.count.active}}</div>
         </div>
         <div class="itmsg" style="margin-bottom:2.8vh">
           <div class="itmsgs">
           <i slot="prefix" class="iconfont iconpiechart" ></i>
            车辆活跃率
           </div>
-          <div>0</div>
+          <div>{{rightObj.count.percent}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <i slot="prefix" class="iconfont iconlocationdingwei" ></i>
             车辆数定位数
           </div>
-          <div>0</div>
+          <div>{{rightObj.gpsValue.num||0}}</div>
         </div>
         <div class="itmsg" style="margin-bottom:2.8vh">
           <div class="itmsgs">
             <i slot="prefix" class="iconfont iconpiechart" ></i>
             车辆定位率
           </div>
-          <div>0</div>
+          <div>{{rightObj.gpsValue.percent}}</div>
         </div>
 
         <div class="itmsg">
@@ -92,14 +92,14 @@
            <i slot="prefix" class="iconfont iconyunyingzhongxin" ></i>
             车辆运营数
           </div>
-          <div>0</div>
+          <div>{{rightObj.runningValue.num||0}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <i slot="prefix" class="iconfont iconpiechart" ></i>
             车辆运营率
           </div>
-          <div>0</div>
+          <div>{{rightObj.runningValue.percent}}</div>
         </div>
     
       </div>
@@ -117,6 +117,7 @@ export default {
     value:"",
     point:1,
     isheat:1,
+    rightObj:{},
     carSearch:{
       leftlon:null,
       rightlon:null,
@@ -128,10 +129,10 @@ export default {
   },
   created(){
       this.getAreaLine()
+      this.getcentre()
   },
    mounted(){
      this.M_initMap('vehicle')
-     this.M_map.setZoom([12,20])
      this.M_setZoomAndCenter([121.473658,31.230378],12)
      this.M_map.on('moveend',(e)=>{
       this.carSearch.leftlon=e.target.getBounds().southWest.lng
@@ -174,6 +175,11 @@ export default {
         this.M_setAreas(this.options)
       })
     },
+    getcentre(){
+      this.$fetchGet("gps/centre").then(res => {
+        this.rightObj=res.result
+      })
+    },
     getData(){
       this.$fetchGet("gps/list",this.carSearch).then(res => {
         if(res.result&&res.result.length>0){
@@ -192,25 +198,24 @@ export default {
     pointEvent(){
       this.M_addGroupEvent((str,type)=>{
           if(type==2){
-            console.log(7889)
             let content=`
             <div class="myinfobox1">
        
               <div class="line-lsi">
                 <div class="tithear">车辆编号:</div>
-                <div style="flex:1;text-align:right">${str.routeName}</div>
+                <div style="flex:1;text-align:right">${str.routeName==null?'':str.routeName}</div>
               </div>
               <div class="line-lsi">
                 <div class="tithear">车牌号码:</div>
-                <div style="flex:1;text-align:right">${str.plateNum}</div>
+                <div style="flex:1;text-align:right">${str.plateNum==null?'':str.plateNum}</div>
               </div>
               <div class="line-lsi">
                 <div class="tithear">站点名称:</div>
-                <div style="flex:1;text-align:right">${str.stationName}</div>
+                <div style="flex:1;text-align:right">${str.stationName==null?'':str.stationName}</div>
               </div>
               <div class="line-lsi">
                 <div class="tithear">线路名称:</div>
-                <div style="flex:1;text-align:right">${str.routeName}</div>
+                <div style="flex:1;text-align:right">${str.routeName==null?'':str.routeName}</div>
               </div>
               <div class="line-lsi">
                 <div class="tithear">开往方向:</div>
@@ -255,7 +260,7 @@ export default {
   .myinfobox1{
     width: vw(346);
     height:vw(308);
-    background: url("~@/assets/image/tk_bj.png");
+    background: url("~@/assets/image/tk_bj1.png");
     background-size: 100% 100%;
     box-sizing: border-box;
     padding: vh(34) vw(26);

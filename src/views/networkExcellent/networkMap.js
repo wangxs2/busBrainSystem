@@ -169,7 +169,7 @@ const Map = {
           content: `<div class="regionMark" style="background:url(${iconm})">
             <div> ${iteam.name}</div>
              <div>  ${iteam.num}</div>
-             <div> ${iteam.percent}</div>
+             <div> ${iteam.percent||0}</div>
             </div>`,
           // 以 icon 的 [center bottom] 为原点
           offset: new AMap.Pixel(-13, -30),

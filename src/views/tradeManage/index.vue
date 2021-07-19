@@ -14,7 +14,11 @@ export default {
 </style>
 <style lang="scss" scoped>
 .tradeManage{
- 
+ width:100%;
+ height:100%;
+ padding-top:vw(120);
+ padding-right:vw(18);
+ box-sizing:border-box;
  
 }
 </style>

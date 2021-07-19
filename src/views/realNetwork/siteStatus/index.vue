@@ -22,10 +22,10 @@
       <!-- <div @click="allheat" :class="isheat==2?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">热力图</div>   -->
       <div @click="allpoint" :class="point==1?'rltbtn rltbtn1':'rltbtn'" style="margin-left:1.8vw">数据统计</div>
     </div>
-    <div v-if="point==1" class="leftlinemsg">
+    <div v-if="point==1&&rightObj.stationsInRun!==undefined" class="leftlinemsg">
       <div class="tit">
         <div class="titw">站点总数</div>
-        <div>4326辆</div>
+        <div>{{rightObj.stationsInRun}}辆</div>
       </div>
       <div class="boeline"></div>
       <div class="itmsg-box">
@@ -34,14 +34,14 @@
             <i slot="prefix" class="iconfont iconIOTtubiao_huabanfuben" ></i>
             有线路经过
           </div>
-          <div>0</div>
+          <div>{{rightObj.stations}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
            <i slot="prefix" class="iconfont iconhuaban-" ></i>
            无线路经过
           </div>
-          <div>0</div>
+          <div>{{rightObj.stationsInRun-rightObj.stations}}</div>
         </div>
     
       </div>
@@ -74,13 +74,37 @@ export default {
     value1:"",
     point:1,
     isheat:1,
+    rightObj:{},
+    carSearch:{
+      leftlon:null,
+      rightlon:null,
+      leftlat:null,
+      rightlat:null,
+      zoom:0,
+    },
   }
   },
   created(){
     this.getAreaLine()
+    this.getcentre()
   },
   mounted(){
     this.M_initMap('siteStatus')
+     this.M_setZoomAndCenter([121.473658,31.230378],12)
+     this.M_map.on('moveend',(e)=>{
+      this.carSearch.leftlon=e.target.getBounds().southWest.lng
+      this.carSearch.rightlon=e.target.getBounds().northEast.lng
+      this.carSearch.leftlat=e.target.getBounds().northEast.lat
+      this.carSearch.rightlat=e.target.getBounds().southWest.lat
+      this.carSearch.zoom=Math.round(e.target.getZoom())
+      if(this.carSearch.zoom>13){
+        this.overlayGroups2.show()
+      }else{
+        this.overlayGroups2.hide()
+      }
+      this.getData()
+      
+    })
   },
   methods:{
     allpoint(){
@@ -89,6 +113,13 @@ export default {
       }else{
         this.point=1
       }
+    },
+
+    getcentre(){
+      this.$fetchGet("gps/stationMessage").then(res => {
+        this.rightObj=res.result
+    
+      })
     },
     
     getAreaLine(){
@@ -99,10 +130,94 @@ export default {
         },200)
       })
     },
+    getData(){
+      this.$fetchGet("gps/station",this.carSearch).then(res => {
+        if(res.result&&res.result.length>0){
+          
+          if(this.carSearch.zoom>11&&this.carSearch.zoom<17){
+            res.result.forEach(iteam=>{
+              iteam.centre=iteam.centre.split(',')
+            })
+            this.M_setAreasPoint(res.result)
+            this.pointEvent()
+          }
+          if(this.carSearch.zoom>16){
+            this.M_addPoint(res.result)
+            this.pointEvent()
+          }
+
+        }
+      })
+    },
+    pointEvent(){
+      this.M_addGroupEvent((str,type)=>{
+          if(type==2){
+            let content=`
+            <div class="myinfobox1">
+              <div class="line-lsi">
+                <div class="tithear">车辆编号:</div>
+                <div style="flex:1;text-align:right">${str.code}</div>
+              </div>
+              <div class="line-lsi">
+                <div class="tithear">站点名称:</div>
+                <div style="flex:1;text-align:right">${str.name}</div>
+              </div>
+              <div class="line-lsi">
+                <div class="tithear">线路名称:</div>
+                <div style="flex:1;text-align:right">${str.route_name}</div>
+              </div>
+              <div class="line-lsi">
+                <div class="tithear">开往方向:</div>
+                <div style="flex:1;text-align:right">${str.direction}</div>
+              </div>
+              
+            </div>
+              
+            `
+            this.M_InfoWindow.setAnchor('bottom-center')
+            this.M_openInfoWin([str.lng,str.lat],content)
+
+          }else{
+            this.M_setZoomAndCenter(str.centre,17)
+            this.getData()
+          }
+        
+      })
+
+    },
   }
 }
 </script>
 <style lang="scss">
+.siteStatus{
+
+  .myinfobox1{
+    width: vw(316);
+    height:vw(308);
+    background: url("~@/assets/image/tk_bj1.png");
+    background-size: 100% 100%;
+    box-sizing: border-box;
+    padding: vh(34) vw(26);
+    font-size: vw(16);
+    padding-top: vh(50);
+    display: flex;
+    flex-direction: column;
+    .line-lsi{
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      flex: 1;
+      .tithear{
+        width: vw(80);
+        height:vh(20);
+        display: inline-block;
+      }
+    }
+    
+  }
+
+}
+
 
 </style>
 <style lang="scss" scoped>
