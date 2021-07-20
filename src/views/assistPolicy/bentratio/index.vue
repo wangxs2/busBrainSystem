@@ -78,10 +78,6 @@ export default {
             this.M_BUSLINE([itam],3)
           }
         })
-              
-              
-         
-
       },
       clearpoit(){
 

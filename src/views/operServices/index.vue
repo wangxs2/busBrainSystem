@@ -102,7 +102,7 @@ export default {
             img:require('@/assets/image/icon_red1.png')
           },
           {
-            name:'换成压力',
+            name:'换乘压力',
             value:null,
             isxz:false,
             img:require('@/assets/image/icon_red1.png')

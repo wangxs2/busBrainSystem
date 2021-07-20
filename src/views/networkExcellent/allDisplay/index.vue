@@ -62,9 +62,6 @@
       <div class="bttit">
         <div>线路名称</div>
         <div style="white-space:nowrap;">重复站数(站)</div>
-        
-       
-       
       </div>
       <div class="tablbox">
         <div  :class="nowindex2==n?'bttit bttit1 bttit2':'bttit bttit1'"  v-for="(item,n) in allData1" :key="n">
@@ -114,6 +111,13 @@ export default {
          
       },
       getDetail(){
+        let arr=this.M_map.getAllOverlays()
+        if(arr.length>0){
+        //  this.M_map.clearMap()
+         this.meroGroups.removeOverlays(arr)
+         this.overlayGroups.removeOverlays(arr)
+        }
+        console.log(arr)
         this.metrodata.forEach(iteam=>{
           if(iteam.name==this.value){
             this.lineSearch(iteam.name,3,iteam)

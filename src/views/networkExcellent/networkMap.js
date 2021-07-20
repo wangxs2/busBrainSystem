@@ -500,6 +500,7 @@ const Map = {
       this.polyEditor.open();
     },
     lineSearch(busLineName, type, item) {
+      
       let linesearch = new AMap.LineSearch({
         pageIndex: 1,
         city: '上海',
@@ -511,6 +512,7 @@ const Map = {
           if (type == 2) {
             this.M_metroLine(result, item, type)
           } else if (type == 3) {
+           
             this.M_metroLine(result, item, type)
             this.lineSearch_Callback(result, type);
           } else {

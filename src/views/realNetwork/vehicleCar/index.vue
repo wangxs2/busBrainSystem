@@ -223,7 +223,7 @@ export default {
               </div>
               <div class="line-lsi">
                 <div class="tithear">更新时间:</div>
-                <div style="flex:1;text-align:right">${this.$moment(str.updateTime).format("YYYY-MM-DD hh:mm:ss")}</div>
+                <div style="flex:1;text-align:right">${this.$moment(str.updateTime).format("YYYY-MM-DD HH:mm:ss")}</div>
               </div>
             </div>
               
