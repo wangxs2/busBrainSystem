@@ -232,7 +232,7 @@ export default {
   z-index: 10;
   .leftlinemsg {
     position: absolute;
-    top: vh(65);
+    top: vh(140);
     left: vw(20);
     width: vw(370);
     height: vh(330);
@@ -267,7 +267,7 @@ export default {
   }
   .leftlinemsg1 {
     position: absolute;
-    top: vh(408);
+    top: vh(480);
     left: vw(20);
     width: vw(370);
     height: vh(588);
@@ -350,7 +350,7 @@ export default {
 
   .lkicon {
     position: absolute;
-    top: vh(65);
+    top: vh(140);
     right: vw(12);
     width: vw(300);
     height: vh(86);

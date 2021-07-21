@@ -1,5 +1,5 @@
 <template>
-  <div class="busLane-box">
+  <div class="busLane-box" id="busLane">
      <div class="leftlinemsg1">
       <div class="titbox">
         <div class="titboxname">
@@ -26,8 +26,10 @@
 </template>
 
 <script>
+import MapMixin from '../../networkExcellent/networkMap'
 let dataLine=require('@/libs/data.js')
 export default {
+  mixins: [MapMixin],
   components: {
   },
   data() {
@@ -37,13 +39,22 @@ export default {
   },
   beforeCreate() {},
   created() {
-    this.lineData=dataLine.datafg
-    setTimeout(()=>{
-      this.$store.commit('SET_LOADING',false)
-    },1000)
+    let arr=this.cloneObj(dataLine.datafg)
+    console.log(arr)
+    // console.log(arr)
+    arr.forEach(iteam=>{
+      iteam.path=this.TestsetData(iteam.path,2)
+      this.lineData.push(iteam)
+    })
+    console.log(this.lineData)
+    
+     this.$store.commit('SET_LOADING',false)
+    
   
   },
   mounted() {
+    this.M_initMap('busLane')
+    this.M_passCorrline(this.lineData)
   },
   methods: {
 
@@ -51,12 +62,73 @@ export default {
 };
 </script>
 <style lang="scss">
+.busLane-box{
+ .info-win {
+      padding-right: vw(20);
+      // height: vw(110);
+      position: relative;
+      .win-triangle {
+        position: absolute;
+        top: 0;
+        right: vw(16);
+        width: vw(20);
+        height: vw(20);
+        transform: skewX(-45deg);
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+      }
+      .info-box {
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+        border-radius: 4px;
+        .info-content {
+          position: relative;
+          background: rgba(1, 11, 66, 1);
+          border-radius: 4px;
+          padding: vh(12) vw(16) vh(10) vw(10);
+          color: #fff;
+          // display: flex;
+          .icon {
+            width: vw(98);
+            height: vw(88);
+            background: #000;
+            margin-right: vw(10);
+            float: left;
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+          .info {
+            width: vw(180);
+            min-height: vh(20);
+            .info-name {
+              font-size: vw(16);
+              font-weight: bold;
+              margin-bottom: vw(9);
+            }
+            .info-item {
+              font-size: vw(14);
+              line-height: vw(20);
+              margin-top: vw(6);
+              // overflow: hidden;
+              // white-space: nowrap;
+              // text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
+}
 </style>
 
 <style lang="scss" scoped>
 .busLane-box {
+ 
+   width:100%;
+  height:100%;
   box-sizing: border-box;
-  z-index: 10;
+ position:relative;
   .leftlinemsg1 {
     position: absolute;
     top: vh(150);
@@ -68,6 +140,7 @@ export default {
     flex-direction: column;
     display: flex;
     font-size: vw(17);
+     z-index: 10;
     .titbox {
       width: 100%;
       height: vh(58);

@@ -47,7 +47,7 @@
       </div>
       <div class="left-home">
         <div class="left-l23 left-l1" @click="toHome(1,'LINE_DECIDE')">
-          公交线网优化决策系统 
+          公交线网辅助决策系统 
         </div>
         <div class="left-l23 left-l2" @click="toHome(2,'OBSERVATION')">
           公交大数据观测系统
@@ -72,7 +72,7 @@
         
       </div>
       <div class="right-home">
-        <div class="left-l23 left-l4">公交测试系统
+        <div class="left-l23 left-l4">线网优化模型
         </div>
         <div class="left-l23 left-l5">公交测试系统
         </div>

@@ -226,7 +226,6 @@ const Map = {
       this.overlayGroups2.addOverlays(polyarr)
       this.M_map.add(this.overlayGroups2)
       this.overlayGroups2.hide()
-     
     },
     // 设置边界
     M_setTownPath(path) {
@@ -238,7 +237,6 @@ const Map = {
           new AMap.LngLat(360, 90, true)
         ]
       ]
-
       // eslint-disable-next-line no-useless-call
       pathArray.push.apply(pathArray, [path])
 
@@ -804,7 +802,57 @@ const Map = {
     M_closeInfoWin() {
 
       this.M_InfoWindow.close()
-    }
+    },
+    //公交专用道
+    M_passCorrline(data){
+      let datalin=[]
+      data.forEach(iteam=>{
+        let kyLinedata = new AMap.Polyline({
+          path: iteam.path,
+          strokeColor: "#BE7322",
+          strokeOpacity: 1,
+          strokeWeight: 4,
+          cursor:'pointer',
+          strokeStyle: "solid",
+          zIndex:30,
+          map:this.M_map,
+          extData :iteam
+        })
+  
+        kyLinedata.on('click', (e) => {
+          let srt=e.target.getExtData()
+          let num=Math.floor((srt.path.length)/2)
+
+            console.log(num)
+          let infoWin = `<div class="info-win">
+            <div class="win-triangle"></div>
+            <div class="info-box">
+              <div class="info-content">
+                <div class="info">
+                  <div class="info-name">名称：${srt.name}</div>
+                </div>
+                <div class="info">
+                  <div class="info-name">里程：${srt.length}km</div>
+                </div>
+                <div class="info">
+                  <div class="info-name">备注：${srt.remark==undefined?'无':''}</div>
+                </div>
+                <div class="info">
+                  <div class="info-name">线路条数：${srt.lineNumber}</div>
+                </div>
+              </div>
+            </div>
+          </div>`
+        this.M_openInfoWin(srt.path[num], infoWin)
+        console.log(this.M_InfoWindow)
+       });
+        datalin.push(kyLinedata)
+      })
+      
+      this.M_map.setFitView(this.datalin, true, [60, 200, 60, 60]);
+    //  
+    
+    },
   }
 }
 

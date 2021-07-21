@@ -101,6 +101,19 @@ export default {
     },
     mounted(){
       this.M_initMap('alldisplay')
+
+
+      // var map = new Indoor.Map('alldisplay',{
+      //     key:'37e2d7a58a3f8897326b9b0250254eef',
+      //     buildingId:'B00156YKHU'
+      // });
+      
+      // //由于地图数据使用了异步加载，为避免出错请把所有的逻辑放在mapready事件内
+      // map.once('mapready',function(){
+      //     console.log(map.getFloor());
+      // })
+
+
     },
     created(){
       this.getData()
@@ -113,11 +126,9 @@ export default {
       getDetail(){
         let arr=this.M_map.getAllOverlays()
         if(arr.length>0){
-        //  this.M_map.clearMap()
          this.meroGroups.removeOverlays(arr)
          this.overlayGroups.removeOverlays(arr)
         }
-        console.log(arr)
         this.metrodata.forEach(iteam=>{
           if(iteam.name==this.value){
             this.lineSearch(iteam.name,3,iteam)

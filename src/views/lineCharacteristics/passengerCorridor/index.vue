@@ -180,7 +180,7 @@ export default {
   z-index: 10;
   .lkicon {
     position: absolute;
-    top: vh(65);
+    top: vh(140);
     right: vw(12);
     width: vw(260);
     height: vh(55);
@@ -204,7 +204,7 @@ export default {
   }
   .leftlinemsg {
     position: absolute;
-    top: vh(74);
+    top: vh(150);
     left: vw(20);
     width: vw(370);
     height: vh(292);
@@ -274,7 +274,7 @@ export default {
   }
   .leftlinemsg1 {
     position: absolute;
-    top: vh(390);
+    top: vh(480);
     left: vw(20);
     width: vw(370);
     height: vh(219);

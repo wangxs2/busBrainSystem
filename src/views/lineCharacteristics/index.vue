@@ -1,6 +1,6 @@
 <template>
 <div style="width:100%;height:100%">
-  <div v-show="$route.name!=='道路网'" class="lineCharacteristicsc" id="lineCharacteristics">
+  <div v-show="$route.name!=='道路网'&&$route.name!=='公交专用道'" class="lineCharacteristicsc" id="lineCharacteristics">
   </div>
    <router-view @changefun="sonClick"></router-view>
    </div>
@@ -137,37 +137,6 @@ export default {
     judgeRouteLine(val){
       switch(val.name) {
           case "道路网":
-            if(MyMapLine){
-              MyMapLine.isTraffic(true)
-              if(MyMapLine.infoWindow){
-                MyMapLine.infoWindow.close()
-              }
-              if(MyMapLine.busLaneGroups){
-                 MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
-                      MyMapLine.map.remove(iy)
-                    })
-              }
-              if(MyMapLine.massall){
-                  MyMapLine.massall.hide()
-                 
-                  if(MyMapLine.polygonLine){
-                    MyMapLine.polygonLine.hide()
-                   
-                    MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
-                      MyMapLine.map.remove(iy)
-                    })
-                  }
-              }
-              if(MyMapLine.kymassnew){
-                  MyMapLine.kymassnew.hide()
-                  MyMapLine.kyLineOver.hide()
-              }
-
-              if(MyMapLine.pathSimplifierIns){
-                  MyMapLine.pathSimplifierIns.setData(null)
-              }
-            }
-              
               break;
           case "公交站点":
              if(MyMapLine){
@@ -226,41 +195,9 @@ export default {
                 }
               }
            }
-          
-              //  setTimeout(()=>{
-              //     MyMapLine.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
-              //   },1000)
-              
               
               break;
           case "公交专用道":
-              if(MyMapLine){
-                if(MyMapLine.infoWindow){
-                  MyMapLine.infoWindow.close()
-                }
-                //隐藏公交站点里面的数据
-                if(MyMapLine.massall){
-                  MyMapLine.massall.hide()
-                  
-                  if(MyMapLine.polygonLine){
-                    MyMapLine.polygonLine.hide()
-                    MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
-                      MyMapLine.map.remove(iy)
-                    })
-                  }
-                }
-                //隐藏客运走廊里面的数据
-                if(MyMapLine.kymassnew){
-                  MyMapLine.kymassnew.hide()
-                  MyMapLine.kyLineOver.hide()
-                }
-                //隐藏公交线网里面的数据
-                if(MyMapLine.pathSimplifierIns){
-                  MyMapLine.pathSimplifierIns.setData(null)
-                }
-                MyMapLine.heatmap.hide()
-              }
-               MyMapLine.initBusLine()
               
               break;
           case "客运走廊":

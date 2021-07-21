@@ -1,5 +1,5 @@
 import * as http from './http'
-let dataLine=require('./data.js')
+
 export default class Map {
     constructor(data) {
         Object.assign(this, this.data(data))
@@ -52,22 +52,11 @@ export default class Map {
         mapStyle:'amap://styles/d67717253a691e523956e9482ca38f1e',
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
-
-      dataLine.datafg.forEach(iteam=>{
-        // iteam.lnglat=this.setData(iteam.lnglat)
-        iteam.path=this.setData(iteam.path.split(','),2)
-        this.myBusL.push(iteam)
-      })
-      console.log(this.myBusL)
     
-      
-       this.map.on("moveend", () => {
-        
-       })
+    
       // let RoadNet= new AMap.TileLayer.RoadNet({
       //    map:this.map
       //  })
-     
       // this.trafficLayer = new AMap.TileLayer.Traffic({
       //       zIndex: 10,
       //   });
@@ -179,22 +168,7 @@ export default class Map {
   initBusLine(){
     this.passCorrline1(this.myBusL)
   }
-  setData(data, n){
-     //获取要切割的数组的长度
-     let arr=[]
-     data.forEach(iteam=>{
-      arr.push(Number(iteam))
-     })
-     let len = data.length;
-     let lineNum = len % n === 0 ? len / n : Math.floor(len / n + 1);
-     let res = [];
-     for (let i = 0; i < lineNum; i++) {
-         // slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。且原始数组不会被修改。
-         let temp = arr.slice(i * n, i * n + n);
-         res.push(temp);
-     }
-     return res;
-  }
+  
   //设置信息窗口的内容
   createInfoWindow(type,name,data){
     let content=''
@@ -233,10 +207,10 @@ export default class Map {
       <div class="myinfobox">
         <div class="line-lsi1">
         <div style="margin-bottom:12px" class="itean-lsi">名称:${name.name}</div>
-          <div style="margin-bottom:12px" class="itean-lsi">里程(km):${name.length}</div>
-          <div style="margin-bottom:12px" class="">线路条数:${name.lineNumber}</div>
-          <div class="">备注:${name.remark}</div>
-          
+        <div style="margin-bottom:12px" class="itean-lsi">里程(km):${name.length}</div>
+        <div style="margin-bottom:12px" class="">线路条数:${name.lineNumber}</div>
+        <div class="">备注:${name.remark}</div>
+        
          </div>
       </div>
     `
@@ -346,12 +320,12 @@ export default class Map {
 
     let style = [{
         url: require('../assets/image/icon_dt1.png'),
-        anchor: new AMap.Pixel(16, 16),
+        anchor: new AMap.Pixel(32, 32),
         size: new AMap.Size(32,32),
         zIndex: 3,
       }, {
         url: require('../assets/image/icon_gj1.png'),
-        anchor: new AMap.Pixel(16,16),
+        anchor: new AMap.Pixel(32,32),
         size: new AMap.Size(32,32),
         zIndex: 2,
       }];

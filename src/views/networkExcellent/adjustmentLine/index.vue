@@ -238,7 +238,6 @@ export default {
 </script>
 <style lang="scss">
 #adjustLine{
-
    .amap-info-window{
             background: #fff;
             border-radius: 3px;
@@ -247,7 +246,6 @@ export default {
             position: relative;
             color:black;
             white-space: nowrap
-            
         }
         .amap-info-sharp{
             position: absolute;
