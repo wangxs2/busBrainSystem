@@ -72,7 +72,7 @@
         
       </div>
       <div class="right-home">
-        <div class="left-l23 left-l4">线网优化模型
+        <div class="left-l23 left-l4" @click="toHome(4,'MODEL')">线网优化模型
         </div>
         <div class="left-l23 left-l5">公交测试系统
         </div>
@@ -107,20 +107,12 @@ export default {
     },
     initpoint(){
          var canvas = document.getElementById('the-canvas'),
-          
-    
             ctx = canvas.getContext('2d'),
-    
             w = canvas.width = window.innerWidth,
-    
             h = canvas.height = window.innerHeight,
-    
             hue = 217,
-    
             stars = [],
-    
             count = 0,
-    
             maxStars = 1400;
     
         // Cache gradient
@@ -242,12 +234,8 @@ export default {
             };
     
             window.requestAnimationFrame(animation);
-    
         }
-    
         animation();
-       
-
 
     },
     toHome(name,code){
@@ -268,9 +256,10 @@ export default {
               window.open(`http://10.1.30.204:50010/metabase.html?key${getCookie('metabase.SESSION')}`)
             }else{
               window.open(`http://101.231.47.117:50009/metabase.html?key${getCookie('metabase.SESSION')}`)
-
               
             }
+        }else if(name==4){
+          this.$router.push("/busModel");
         }
       },500)
       

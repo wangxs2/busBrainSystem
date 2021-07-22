@@ -164,6 +164,9 @@ export default {
                       fontSize:16
                   }
                 },
+                axisTick:{
+                    show:false
+                },
                 axisLine:{
                   onZero: true,
                   lineStyle:{
@@ -179,6 +182,9 @@ export default {
                       color:'#194F95',
                       type:'dashed'
                     }
+                },
+                axisTick:{
+                    show:false
                 },
                 axisLabel : {
                   formatter: '{value}',

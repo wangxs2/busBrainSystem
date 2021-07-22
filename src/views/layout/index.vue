@@ -95,6 +95,8 @@ export default {
         return 'header-box header-box1'
       }else if(getCookie('meaucode')=='MAIN'){
         return 'header-box header-box2'
+      }else if(getCookie('meaucode')=='MODEL'){
+        return 'header-box header-box3'
       }
 
     },
@@ -201,6 +203,9 @@ export default {
   }
   .header-box2{
     background:url('~@/assets/image/xtgl_top_bj.png');
+  }
+  .header-box3{
+    background:url('~@/assets/image/top_bj3.png');
   }
   .routelist{
     position:absolute;

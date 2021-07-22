@@ -22,6 +22,7 @@ const localList = `
 /tradeManage,/tradeManage/staffMove,/tradeManage/lifeCycleCar,/tradeManage/smartBuild,/tradeManage/linenetVehicle,/tradeManage/lineRailTransit,/tradeManage/lineaspect,/tradeManage/valuationService,
 /assistPolicy,/assistPolicy/bentratio,/assistPolicy/repetitionRactor,/assistPolicy/superLongLine,
 /assistPolicy/congestionLine,/assistPolicy/personTime,/assistPolicy/fullLoad,/assistPolicy/transferPressure,
+/lineModel,/busModel,/roadModel,/controlModel,
 ` //本地列表 注意最后加逗号
 /**
  * 递归菜单
