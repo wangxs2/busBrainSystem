@@ -10,6 +10,10 @@
           :value="item.regionName"
         ></el-option>
       </el-select>
+
+
+
+      <div style="margin-left:0.8vw" @click="M_drawPolygon()">开始绘制</div>
       
     </div>
     
@@ -18,6 +22,7 @@
 
 <script>
 import MapMixin from '../../networkExcellent/networkMap'
+let dataLine=require('./round.js')
 export default {
   mixins: [MapMixin],
   data() {
@@ -57,10 +62,16 @@ export default {
   },
   created(){
     this.getAreaLine()
+    
+   
   },
   mounted(){
     this.M_initMap('flowtionSite')
-
+    // let path1=this.TestsetData(dataLine.datafg,2)//中环
+    // let path2=this.TestsetData(dataLine.datafg1,2)//内
+    // let path3=this.TestsetData(dataLine.datafg2,2)//外
+    // this.M_addPolygon(path1,path2)
+    // this.M_zzploy()
     this.M_addPoint(this.sitionflow)
      this.pointEvent()
   },
@@ -73,10 +84,8 @@ export default {
       }
     },
     getData(){
-
     },
     pointEvent(){
-
       this.M_addGroupEvent((str,type)=>{
           if(type==2){
             let content=`

@@ -144,11 +144,11 @@ export default {
       })
       cb(results);
     },
-     createFilter(queryString) {
+    createFilter(queryString) {
         return (restaurant) => {
           return (restaurant.stationName.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
         };
-      },
+    },
     handleSelect(iteam) {
       this.$fetchGet("/indicator/stationDetail",{
         code:iteam.stationName,

@@ -3,21 +3,23 @@
     <div class="search-box">
         <div style="display:flex; align-items: center;">
             <div style="margin-right:0.6vw;white-space: nowrap">公交站点</div>
-            <el-select style="width:75%" size="small" filterable v-model="value" placeholder="请选择">
-                <el-option
-                v-for="(item,n) in allData"
-                :key="n"
-                :label="item.routeName"
-                :value="item.routeName">
-                </el-option>
-            </el-select>
+            <el-autocomplete
+                style="width:75%"
+                class="inline-input"
+                size="small"
+                v-model="stationName"
+                :fetch-suggestions="querySearch"
+                placeholder="请输入站点"
+                :trigger-on-focus="false"
+                @select="handleSelect"
+            ></el-autocomplete>
             <div style="margin-right:0.6vw;margin-left:1.6vw;white-space: nowrap">行驶方向</div>
-            <el-select style="width:75%" size="small" filterable  v-model="value" placeholder="请选择">
+            <el-select style="width:75%" size="small" filterable @change="get_30_day()"  v-model="direction" placeholder="请选择">
                 <el-option
-                v-for="(item,n) in allData"
+                v-for="(item,n) in directionlist"
                 :key="n"
-                :label="item.routeName"
-                :value="item.routeName">
+                :label="item.name"
+                :value="item.direction">
                 </el-option>
             </el-select>
         </div>
@@ -32,21 +34,28 @@
             </div>
         </div>
     </div>
-    <div class="cancelbox" v-show="noeindex==1">
+    <div class="cancelbox" v-show="stcecar.length!==0&&noeindex==1">
         <div class="cancelhead">
             <div v-for="(item,index) in weekdate" :key="index">{{item}}</div>
 
         </div>
         <div class="cancelbody">
-            <div v-for="(iteam,i) in stcecar" :class="i==30?'canite canite1':i>30?'canite canite2':((i>6&&i<14)||(i>20&&i<28))?'canite canite3':'canite'">
+            <div v-for="(iteam,i) in stcecar"  :class="i==30?'canite canite1':i>30?'canite canite2':((i>6&&i<14)||(i>20&&i<28))?'canite canite3':'canite'">
                 <div>{{iteam.date}}</div>
                 <div class="noe">{{iteam.countPassenger}}</div>
                 <div>客流人数</div>
             </div>
+            <!-- <div style="width:100%;margin-top:10vh;text-align:center" v-if="stcecar.length==0">暂无数据~</div> -->
         </div>
 
     </div>
-    <div class="echartsox" id="echartsox" v-show="noeindex==2">
+    <div class="lenglist" v-show="stcecar.length!==0&&noeindex==2">
+        <div class="lengbox"></div> <div>历史客流数据</div>
+        <div class="lengbox lengbox1"></div> <div>实时客流数据</div>
+        <div class="lengbox lengbox2"></div> <div>未来七天客流预测</div>
+    </div>
+    <div style="width:100%;margin-top:10vh;text-align:center" v-if="stcecar.length==0">暂无数据~</div>
+    <div class="echartsox" id="echartsox" v-show="stcecar.length!==0&&noeindex==2">
     </div>
   </div>
 </template>
@@ -64,14 +73,28 @@ export default {
         allData:[],
         value1:[new Date().getTime() - 3600 * 1000 * 24 * 30,new Date()],
         stcecar:[],
-        latcace:[]
+        directionlist:[
+            {
+                direction:0,
+                name:'上行'
+            },
+            {
+                direction:1,
+                name:'下行'
+            }
+        ],
+        direction:0,
+        stationName:'东方路蓝村路',
+        latcace:[],
+        restaurants:[]
 
     }
 
   },
   created() {
+    
+    this.pointAll()
     this.get_30_day()
-    this.$store.commit('SET_LOADING',false)
     this.initweek()
   },
   mounted(){
@@ -84,33 +107,80 @@ export default {
         this.noeindex=type
     },
     initweek(){
-        let newd=this.$moment(new Date()).format("YYYY-MM-DD")
+        let newd=this.$moment(new Date().getTime() - 3600 * 1000 * 24 * 30).format("YYYY-MM-DD")
         let newd1=this.getWeek(newd)
         var index = this.weekNames.findIndex(item=> item===newd1);
         this.weekdate=this.reSort(this.weekNames,index)
     },
+    pointAll(){
+        this.$fetchGet("indicator/stationList").then(res => {
+            if(res.result&&res.result['站点的详细属性']){
+                this.restaurants =this.cloneObj(res.result['站点的详细属性'])
+                this.$store.commit('SET_LOADING',false)
+            }
+        })
+    },
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createFilter(queryString))
+        : restaurants;
+      // 调用 callback 返回建议列表的数据
+      results.forEach(iteam=>{
+        iteam.value=iteam.stationName
+      })
+      cb(results);
+    },
+    createFilter(queryString) {
+        return (restaurant) => {
+          return (restaurant.stationName.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        };
+    },
+    handleSelect(iteam) {
+    //   this.$fetchGet("/indicator/stationDetail",{
+    //     code:iteam.stationName,
+    //     direction:iteam.routeDirection
+    //   }).then(res => {
+    //     this.$emit('changefun',{
+    //       stattiondetail:res.result
+    //   })
+    //   })
+    this.stationName=iteam.stationName
+    this.get_30_day()
+    },
     getData(){
+        // this.stcecar=[]
         this.$fetchGet("passenger/sklearn",{
             st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
             et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
-            stationName:"东方路蓝村路",
-            direction:0
+            stationName:this.stationName,
+            direction:this.direction
         }).then(res => {
-            let arr=[],arr1=[]
-            this.stcecar.forEach(iteam=>{
-                res.result.forEach(item=>{
-                    if(iteam.date==item.passengerDate){
-                        iteam.countPassenger=item.countPassenger
-                      
-                    }
-                })
-                iteam.date=iteam.date.split('-')[1]+'月'+iteam.date.split('-')[2]+'日'
-                arr.push(iteam.date)
-                arr1.push(iteam.countPassenger)
+            if(res.result.length==0){
+                console.log(456)
+                this.stcecar=[]
+                this.$echarts.init(document.getElementById('echartsox'));
 
-               
-            })
-            this.initechart(arr,arr1)
+            }else{
+                console.log(555)
+                let arr=[],arr1=[]
+                this.stcecar.forEach(iteam=>{
+                    res.result.forEach(item=>{
+                        if(iteam.date==item.passengerDate){
+                            iteam.countPassenger=item.countPassenger
+                        }
+                    })
+                    iteam.date=iteam.date.split('-')[1]+'月'+iteam.date.split('-')[2]+'日'
+                    arr.push(iteam.date)
+                    arr1.push(iteam.countPassenger)
+
+                
+                })
+                console.log(this.stcecar)
+                this.initechart(arr,arr1)
+
+            }
+           
         })
 
     },
@@ -133,6 +203,7 @@ export default {
 
     },
     get_30_day (){
+        this.stcecar=[]
         var thrityMonth = [];
         var thrityMonth1 = [];
         for (var i = 0; i < 31; i++) {
@@ -147,7 +218,7 @@ export default {
         arr.forEach(iteam=>{
              let obj={
                 date:iteam,
-                countPassenger:0
+                countPassenger:1000
             }
             this.stcecar.push(obj)
         })
@@ -235,7 +306,7 @@ export default {
                     show:false,
                     interval:30,
                     areaStyle:{
-                        // color:'rgba(12, 38, 104,0.8)'
+                        color:['rgba(12, 38, 104,0)','rgba(12, 38, 104,0.8)']
                     }
                 },
             },
@@ -287,7 +358,7 @@ export default {
               },
             ]
 
-        })
+        },true)
 
       },
 
@@ -329,6 +400,29 @@ export default {
              color:#4578FF
         }
     }
+    .lenglist{
+        width:100%;
+        // height:vh(50);
+        justify-content:flex-end;
+        display:flex;
+        align-items: center;
+        box-sizing:border-box;
+        padding:vh(12) 0;
+        .lengbox{
+            width:vw(28);
+            height:vh(18);
+            background:rgba(218, 228, 255, 0.8);
+            border-radius:vw(3);
+            margin-right:vw(2);
+            margin-left:vw(16);
+        }
+        .lengbox1{
+            background:#0077F0;
+        }
+        .lengbox2{
+            background:#00FFFF;
+        }
+    }
     .cancelbox{
         width: vw(1884);
         height: vh(835);
@@ -339,7 +433,6 @@ export default {
         border-bottom:none;
         display:flex;
         flex-direction: column;
-        
         .cancelhead{
             width:100%;
             display:flex;
@@ -393,7 +486,7 @@ export default {
       flex:1;
       box-shadow: 0px 0px vh(10) rgba(25, 79, 149, 1) inset;
       box-sizing:border-box;
-      margin-top:vh(12);
+    //   margin-top:vh(12);
       background:rgba(12, 38, 104, 0.2);
       margin-bottom:vh(12);
       position:relative;
