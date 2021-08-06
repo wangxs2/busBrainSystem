@@ -84,17 +84,17 @@
           <div class="tulibox">
             <div style="display:flex;align-items: center">
               <div class="linetu"></div>
-              <div class="fonttu">{{nowName}}≤1.6</div>
+              <div class="fonttu">{{nowName}} ≤ {{nownum}}</div>
             </div>
              <div style="display:flex;align-items: center;margin-top:1vh">
               <div class="linetu linetu1"></div>
-              <div class="fonttu">{{nowName}}＞1.6</div>
+              <div class="fonttu">{{nowName}}＞{{nownum}}</div>
             </div>
           </div>
       </div>
       <div class="cen-bottom">
         <div class="cen-bottom-left">
-          <div class="titbox" style="margin-top:18px;margin-bottom:8px">百公里人数</div>
+          <div class="titbox" style="margin-top:18px;margin-bottom:8px">百公里人次</div>
           <div class="big-tab swiper-container" id="swiper2" >
             <div class="swiper-wrapper">
               <div class="swiper-slide"  v-for="(iteam,index) in personData" :key="index">
@@ -114,12 +114,15 @@
            <div class="titbox" style="margin-top:18px;margin-bottom:8px">换乘压力</div>
           <div class="big-tab swiper-container" id="swiper7" >
             <div class="swiper-wrapper">
-              <div class="swiper-slide"  v-for="(iteam,index) in personData" :key="index">
-                <div class="big-tab2"  v-for="(item,index) in iteam" :key="item.index">
+              <div class="swiper-slide"  > 
+                <!-- v-for="(iteam,index) in personData" :key="index" -->
+                <!-- <div class="big-tab2"  v-for="(item,index) in iteam" :key="item.index">
                   <div :class="item.index==1?'itea-per itea-per3':item.index==2?'itea-per itea-per4':item.index==3?'itea-per itea-per5':'itea-per'">{{item.index}}</div>
                   <div :class="item.index==1?'itea-per1 itea-per7':item.index==2?'itea-per1 itea-per8':item.index==3?'itea-per1 itea-per9':'itea-per1'">{{item.xlmc}}</div>
                   <div class="itea-per2">{{item.baipass}}人</div>
-                </div>
+                </div> -->
+
+                <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;">暂无数据~</div>
 
               </div>
             </div>
@@ -133,25 +136,25 @@
       <div class="titbox" style="margin-bottom:8px">满载率</div>
       <div class="right-svg">
         <div class="node-one">
-            <el-progress type="circle" color="#E1453E" :width="120" stroke-linecap="butt" :stroke-width="16" :percentage="90"></el-progress>
+            <el-progress type="circle" color="#E1453E" :width="120" stroke-linecap="butt" :stroke-width="16" :percentage="mlldata[0].mzl"></el-progress>
             <div class="btfon btfon6">
               <div  class="btfon1 btfon3">1</div>
-             <div style="flex:1;text-align:center"> {{alldata[0].routeName}}</div>
+             <div style="flex:1;text-align:center"> {{mlldata[0].xlmc}}</div>
             </div>
         </div>
         <div class="two-one">
            <div>
-              <el-progress type="circle" color="#E19E3E" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="90"></el-progress>
+              <el-progress type="circle" color="#E19E3E" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="mlldata[1].mzl"></el-progress>
               <div class="btfon btfon7">
                 <div  class="btfon1 btfon4">2</div>
-                <div style="flex:1;text-align:center"> {{alldata[1].routeName}}</div>
+                <div style="flex:1;text-align:center"> {{mlldata[1].xlmc}}</div>
               </div>
            </div>
            <div>
-               <el-progress type="circle" color="#38CE97" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="90"></el-progress>
+               <el-progress type="circle" color="#38CE97" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="mlldata[2].mzl"></el-progress>
               <div class="btfon btfon8">
                 <div  class="btfon1 btfon5">3</div>
-                <div style="flex:1;text-align:center"> {{alldata[2].routeName}}</div>
+                <div style="flex:1;text-align:center"> {{mlldata[2].xlmc}}</div>
               </div>
            </div>
            
@@ -161,12 +164,12 @@
 
           <div class="three-box swiper-container" id="swiper6" >
             <div class="swiper-wrapper">
-              <div class="swiper-slide"  v-for="(iteam,index) in threedata" :key="index">
+              <div class="swiper-slide"  v-for="(iteam,index) in mlgdata" :key="index">
                 <div v-for="(item,i) in iteam" :key="item.index" v-show="index>0">
-                  <el-progress type="circle" color="#4578FF" :width="80" stroke-linecap="butt" :stroke-width="16" :percentage="90"></el-progress>
+                  <el-progress type="circle" color="#4578FF" :width="80" stroke-linecap="butt" :stroke-width="16" :percentage="item.mzl"></el-progress>
                   <div class="btfon">
                     <div  class="btfon1">{{item.index}}</div>
-                    <div style="flex:1;text-align:center">{{item.routeName}}</div>
+                    <div style="flex:1;text-align:center">{{item.xlmc}}</div>
                   </div>
                 </div>
 
@@ -187,13 +190,13 @@
         </div>
         <div class="table-contain swiper-container" id="swiper5">
           <div class="swiper-wrapper">
-            <div class="swiper-slide"   v-for="(iteam,index) in qdData" :key="index">
+            <div class="swiper-slide"   v-for="(iteam,index) in lineaData" :key="index">
               <div class="tableTr" v-for="(item,o) in iteam" :key="item.index">
                 <div  style="width:10%">
                   <div :class="item.index==1?'roud roud1':item.index==2?'roud roud2':item.index==3?'roud roud3':'roud'">{{item.index}}</div>
                 </div>
-                <div style="width:45%">{{item.routeName}}</div>
-                <div style="width:45%">{{item.coefficient.toFixed(2)}}</div>
+                <div style="width:45%">{{item.roadsegid}}</div>
+                <div style="width:45%">{{item.congestIndex}}</div>
               </div>
             </div>
           </div>
@@ -217,20 +220,12 @@ export default {
   },
   data(){
     return{
-      alldata:[
-        {
-          routeName:""
-        },
-        {
-          routeName:""
-        },
-        {
-          routeName:""
-        },
-      ],
+      alldata:[],
       alldata1:[],//线路重复系数
       alldata2:[],//百公里人次
       OverlengData:[],
+      lineaData:[],//长期拥堵乱
+      lineaData1:[],//长期拥堵乱
       personData:[],
       value:'',
       swipertable:null,
@@ -242,10 +237,29 @@ export default {
       swipertable7:null,
       qdData:[],
       qdData1:[],//线路重复系数
+      mlldata:[
+        
+        {
+          xlmc:"",
+          mzl:0,
+        },
+        {
+          xlmc:"",
+          mzl:0,
+        },
+        {
+          xlmc:"",
+          mzl:0,
+        },
+      
+      ],//manzailv
+      mlgdata:[],
       options:[],
       personData1:[],
+      value1:[new Date().getTime() - 3600 * 1000 * 24 * 3,new Date()],
       threedata:[],
       nowName:"非直线系数",
+      nownum:0.6,
       tlstation:[
         {
             name:'非直线系数',
@@ -260,18 +274,22 @@ export default {
           {
             name:'长期拥堵路段',
             isxz:false,
+             num:30,
           },
           {
             name:'百公里人次',
             isxz:false,
+             num:30,
           },
           {
             name:'满载率',
             isxz:false,
+             num:30,
           },
           {
             name:'超长线路',
             isxz:false,
+            num:'30km',
           }
       ]
     }
@@ -279,16 +297,12 @@ export default {
   },
   mounted() {
     this.M_initMap('compreMapks')
-    this.initSwipertable()
+    // this.initSwipertable()
     // this.trafficLayer.setMap(this.M_map);
   },
   created(){
-      
       this.getNoLi()
-      // this.getOverleng()
       this.getAreaLine()
-      // this.getPerion()
-      
   },
   methods:{
     getNoLi(){
@@ -323,11 +337,16 @@ export default {
       //百公里人次
       this.$fetchGet("route/hundreds",{
       }).then(res => {
-        res.result.forEach((iteam,index)=>{
-          iteam.index = index + 1;
+
+        // res.result.forEach((item,index)=>{
+        //     item.geom=this.Q_setData(item.geom)
+        // })
+        this.alldata3=res.result;
+        let arr=this.alldata3.sort(this.compare('baipass',false))
+        arr.forEach((iteam,index)=>{
+            iteam.index = index + 1;
         })
-        this.alldata2=res.result;
-        this.personData = arrGroup(res.result,8);
+        this.personData = arrGroup(arr,8);
       })
 
 
@@ -343,15 +362,61 @@ export default {
               iteam.index = index + 1;
           })
           this.OverlengData=arr;
+
+
+          setTimeout(()=>{
+          this.$store.commit('SET_LOADING',false)
+          },2000)
+      })
+
+
+    // 满载率
+      this.$fetchGet("route/mzl",{
+        st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
+          et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
+      }).then(res => {
+        
+          // res.result.forEach((item,index)=>{
+          //    if(item.mzl==null){
+          //       item.mzl=0
+          //     }
+          // })
+          
+          // let arr=res.result.sort(this.compare('mzl',false))
+          // arr.forEach((iteam,index)=>{
+          //     iteam.index = index + 1;
+              
+          // })
+          // this.mlldata=arr;
+          // this.mlgdata=arrGroup(arr,3);
+          // console.log(this.mlgdata)
+      })
+
+
+    //  长期拥堵的路段
+      this.$fetchGet("curve/list").then(res => {
+        res.result.forEach((iteam,index)=>{
+              iteam.index = index + 1;
+              
+          })
+          this.lineaData1=res.result
+        this.lineaData=arrGroup(res.result,5);
+
+        // this.M_autoInput(this.lineaData)
+        // setTimeout(()=>{
+        // this.$store.commit('SET_LOADING',false)
+        // },200)
+        
       })
 
 
 
 
 
-      setTimeout(()=>{
-      this.$store.commit('SET_LOADING',false)
-      },1500)
+
+
+
+      
 
 
     },
@@ -379,6 +444,7 @@ export default {
     
     toShow(row,n){
       this.nowName=row.name
+      this.nownum=row.num
       if(row.isxz){
         return 
       }else{
@@ -403,15 +469,16 @@ export default {
                  this.M_BUSLINE(this.alldata1,11)
                 break;
             case '百公里人次' :
-
                  this.M_BUSLINE(this.alldata2,11)
-                
                 break;
             case '长期拥堵路段' :
+              this.M_autoInput(this.lineaData1)
                 break;
             case '满载率' :
                 break;
             case '超长线路' :
+
+             this.M_BUSLINE(this.OverlengData,16)  
                 
                 break;
             default :
@@ -443,18 +510,7 @@ export default {
       }
       screenfull.toggle(this.$refs.compreMapks)
     },
-    getPerion(){
-      this.$fetchGet("route/hundreds",{
-      }).then(res => {
-        // personData=this.
-        res.result.forEach((iteam,index)=>{
-          iteam.index = index + 1;
-        })
-        this.personData = arrGroup(res.result,8);
-         this.personData1 = arrGroup(res.result,6);
-      })
-
-    },
+   
     initSwipertable() {
       this.swipertable = new Swiper("#swiper1", {
         loop: true, // 循环模式选项
@@ -535,6 +591,65 @@ export default {
 }
 .el-progress-circle__track{
   stroke:#00ffff26
+}
+
+.valuationService{
+ .info-win {
+      padding-right: vw(20);
+      // height: vw(110);
+      position: relative;
+      .win-triangle {
+        position: absolute;
+        top: 0;
+        right: vw(16);
+        width: vw(20);
+        height: vw(20);
+        transform: skewX(-45deg);
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+      }
+      .info-box {
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+        border-radius: 4px;
+        .info-content {
+          position: relative;
+          background: rgba(1, 11, 66, 1);
+          border-radius: 4px;
+          padding: vh(12) vw(16) vh(10) vw(10);
+          color: #fff;
+          // display: flex;
+          .icon {
+            width: vw(98);
+            height: vw(88);
+            background: #000;
+            margin-right: vw(10);
+            float: left;
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+          .info {
+            width: vw(180);
+            min-height: vh(60);
+            .info-name {
+              font-size: vw(16);
+              font-weight: bold;
+              margin-bottom: vw(12);
+            }
+            .info-item {
+              font-size: vw(14);
+              line-height: vw(20);
+              margin-top: vw(6);
+              // overflow: hidden;
+              // white-space: nowrap;
+              // text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
 }
 
 </style>

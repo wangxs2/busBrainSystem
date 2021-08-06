@@ -626,6 +626,13 @@ const Map = {
             color='#D53838'
           }
         }
+        if(type==16){ 
+          if(Number(iteam.lineLength)>30){
+            color='#3EAABA'
+          }else{
+            color='#D53838'
+          }
+        }
         let busPolyline = new AMap.Polyline({
           map: this.M_map,
           path: type == 2 ? iteam : iteam.geom,
@@ -728,6 +735,7 @@ const Map = {
     },
     // 获取搜索信息
     M_autoInput(data) {
+      this.M_map.clearMap()
       let markerarr = []
       data.forEach(iteam => {
 
@@ -740,8 +748,10 @@ const Map = {
         var placeSearch = new AMap.PlaceSearch({
           city: '全国'
         });
+        console.log(iteam)
         placeSearch.search('上海市' + iteam.roadsegid, (status, result) => {
           // 搜索成功时，result即是对应的匹配数据
+          console.log(result)
           if (result.poiList.pois[0]) {
             this.pointSearch(result.poiList.pois[0], iteam)
           }

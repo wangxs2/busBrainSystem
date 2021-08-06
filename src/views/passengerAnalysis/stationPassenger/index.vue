@@ -147,112 +147,112 @@ export default {
       })
     },
     methods: {
-        initechart(data,data1){
-        this.myChart = this.$echarts.init(document.getElementById('echstation'));
-        this.myChart.setOption({
-          grid:{
-            top:60,
-            left:80,
-            right:40,
-            bottom:60,
-          },
-          tooltip:{
-            trigger: 'axis',
-            formatter:'客流量：{c}人次',
-            backgroundColor:'#144A8C',
-            borderWidth:0,
-            textStyle:{
-              color:'#D9EFFF',
-            }
-          },
-          title:{
-            text:"客流量/人次",
-            textStyle:{
-              color:'#DAE4FF',
-              fontWeight:'normal',
-              fontSize:16,
-              
+      initechart(data,data1){
+          this.myChart = this.$echarts.init(document.getElementById('echstation'));
+          this.myChart.setOption({
+            grid:{
+              top:60,
+              left:80,
+              right:40,
+              bottom:60,
             },
-            top:26,
-            left:10,
-          },
-          color:['#836DF0'],
-          xAxis: {
-              type: 'category',
-              boundaryGap:false,
-              axisLabel:{
-                interval:0,
-                rotate:25 ,
-                color:"#D9EFFF",
-                borderType:"dashed",
-                borderColor:"#194F95",
-               
-              },
-              axisTick: {
-                show:false
-              },
-              splitLine:{
-                show:true,
-                lineStyle:{
-                  color:'#194F95',
-                  type:'dashed'
-                }
-              },
-              axisLine:{
-                lineStyle:{
-                  color:'#194F95',
-                  type:'dashed'
-                }
-              },
-              data: data
-          },
-          yAxis: {
-           
-              type: 'value',
-              axisLabel:{
-                color:"#D9EFFF",
-                 borderType:"dashed",
-                borderColor:"#194F95",
-              },
-              splitLine:{
-                show:true,
-                lineStyle:{
-                  color:'#194F95',
-                  type:'dashed'
-                }
-              },
-              
-          },
-          series: [{
-              data:data1,
-              type: 'line',
-              smooth: true ,
-              legendHoverLink: true ,
-              showSymbol:false,
-              symbolSize: 10,
-              areaStyle: {
-                color: {
-                      type: 'linear',
-                      x: 0,
-                      y: 0,
-                      x2: 0,
-                      y2: 1,
-                      colorStops: [{
-                          offset: 0, color: 'rgba(131, 109, 240, 0.7)' // 0% 处的颜色
-                      },
-                      {
-                          offset: 0.08, color: 'rgba(131, 109, 240, 0.7)' // 100% 处的颜色
-                      },
-                      {
-                          offset: 1, color: 'rgba(131, 109, 240, 0)' // 100% 处的颜色
-                      }
-                      ],
-                      global: false // 缺省为 false
-                }
+            tooltip:{
+              trigger: 'axis',
+              formatter:'客流量：{c}人次',
+              backgroundColor:'#144A8C',
+              borderWidth:0,
+              textStyle:{
+                color:'#D9EFFF',
               }
-          }]
-        });
-        this.echload=false
+            },
+            title:{
+              text:"客流量/人次",
+              textStyle:{
+                color:'#DAE4FF',
+                fontWeight:'normal',
+                fontSize:16,
+                
+              },
+              top:26,
+              left:10,
+            },
+            color:['#836DF0'],
+            xAxis: {
+                type: 'category',
+                boundaryGap:false,
+                axisLabel:{
+                  interval:0,
+                  rotate:25 ,
+                  color:"#D9EFFF",
+                  borderType:"dashed",
+                  borderColor:"#194F95",
+                
+                },
+                axisTick: {
+                  show:false
+                },
+                splitLine:{
+                  show:true,
+                  lineStyle:{
+                    color:'#194F95',
+                    type:'dashed'
+                  }
+                },
+                axisLine:{
+                  lineStyle:{
+                    color:'#194F95',
+                    type:'dashed'
+                  }
+                },
+                data: data
+            },
+            yAxis: {
+            
+                type: 'value',
+                axisLabel:{
+                  color:"#D9EFFF",
+                  borderType:"dashed",
+                  borderColor:"#194F95",
+                },
+                splitLine:{
+                  show:true,
+                  lineStyle:{
+                    color:'#194F95',
+                    type:'dashed'
+                  }
+                },
+                
+            },
+            series: [{
+                data:data1,
+                type: 'line',
+                smooth: true ,
+                legendHoverLink: true ,
+                showSymbol:false,
+                symbolSize: 10,
+                areaStyle: {
+                  color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [{
+                            offset: 0, color: 'rgba(131, 109, 240, 0.7)' // 0% 处的颜色
+                        },
+                        {
+                            offset: 0.08, color: 'rgba(131, 109, 240, 0.7)' // 100% 处的颜色
+                        },
+                        {
+                            offset: 1, color: 'rgba(131, 109, 240, 0)' // 100% 处的颜色
+                        }
+                        ],
+                        global: false // 缺省为 false
+                  }
+                }
+            }]
+          });
+          this.echload=false
       },
       getechdata(){
         let arr=[],arr1=[]
