@@ -253,11 +253,11 @@ export default {
         }else if(name==3){
           // window.open(`http://10.1.30.204:50009/metabase.html?key${getCookie('metabase.SESSION')}`)
             if(test.indexOf("10.1.30.204") != -1){
-              window.open(`http://10.1.30.204:50010/metabase.html?key${getCookie('metabase.SESSION')}`)
+              window.open(`http://10.1.30.204:5009/metabase.html?key${getCookie('metabase.SESSION')}`)
             }else{
-              window.open(`http://101.231.47.117:50009/metabase.html?key${getCookie('metabase.SESSION')}`)
-              
+              window.open(`http://180.167.126.126:3002/metabase.html?key${getCookie('metabase.SESSION')}`)
             }
+            // 180.167.126.126：3006
         }else if(name==4){
           this.$router.push("/busModel");
         }

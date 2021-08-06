@@ -67,11 +67,12 @@ export default {
   },
   mounted(){
     this.M_initMap('flowtionSite')
-    // let path1=this.TestsetData(dataLine.datafg,2)//中环
+    let path1=this.TestsetData(dataLine.datafg,2)//中环
     // let path2=this.TestsetData(dataLine.datafg1,2)//内
-    // let path3=this.TestsetData(dataLine.datafg2,2)//外
-    // this.M_addPolygon(path1,path2)
-    // this.M_zzploy()
+    let path3=this.TestsetData(dataLine.datafg2,2)//外
+    this.M_addPolygon(path1)
+    this.M_addPolygon(path3)
+    this.M_zzploy()
     this.M_addPoint(this.sitionflow)
      this.pointEvent()
   },

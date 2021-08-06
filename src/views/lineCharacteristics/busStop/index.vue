@@ -107,7 +107,7 @@ export default {
         }
       ],
       listMsg:{},
-      isbtn:300,
+      isbtn:-1,
       point:1,
       isheat:1,
       adminArea:[],

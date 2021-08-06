@@ -443,6 +443,7 @@ export default class Map {
       fillOpacity:0.1,
       zIndex: 10,
     });
+    console.log(this.polygonLine.getArea())
     this.map.add(this.polygonLine);
     this.map.setFitView(this.polygonLine,true)
   }

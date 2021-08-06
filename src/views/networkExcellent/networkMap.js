@@ -609,16 +609,32 @@ const Map = {
     M_BUSLINE(data, type) {
       this.M_map.clearMap()
       let lineArr = []
+
       data.forEach(iteam => {
+        let color=""
+        if(type==10){ 
+          if((iteam.coefficient)>0.5){
+            color='#3EAABA'
+          }else{
+            color='#D53838'
+          }
+        }
+        if(type==11){ 
+          if(Number(iteam.coefficient)>0.5){
+            color='#3EAABA'
+          }else{
+            color='#D53838'
+          }
+        }
         let busPolyline = new AMap.Polyline({
           map: this.M_map,
           path: type == 2 ? iteam : iteam.geom,
-          strokeColor: '#00FFFF',//线颜色
+          strokeColor: color,//线颜色
           strokeOpacity: 0.8,//线透明度
           zIndex: 100,
           cursor: 'pointer',
           extData: iteam,
-          strokeWeight: 4//线宽
+          strokeWeight: 2//线宽
         });
         lineArr.push(busPolyline)
         if (type == 3) {
@@ -677,7 +693,8 @@ const Map = {
         }
       })
 
-      this.M_map.setFitView(lineArr, true)
+      this.M_map.setFitView(lineArr, true,[0,0,0,0])
+      // this.M_map.setZoom(11)
     },
     M_ishow(flag, type) {
       if (type == 2) {
@@ -857,31 +874,31 @@ const Map = {
 
     },
     M_addPolygon(data,data1) {
-      // console.log(data)
-      // let polygon = new AMap.Polygon({
-      //   path: data,
-      //   fillColor: '#ccebc5',
-      //   strokeOpacity: 1,
-      //   fillOpacity: 0.5,
-      //   strokeColor: '#A200FF',
-      //   strokeWeight: 4,
-      //   strokeDasharray: [5, 5],
-      //   map:this.M_map,
-      //   zIndex:100
-      // });
-      // console.log(polygon)
+      console.log(data)
+      let polygon = new AMap.Polygon({
+        path: data,
+        fillColor: '#ccebc5',
+        strokeOpacity: 1,
+        fillOpacity: 0.5,
+        strokeColor: '#A200FF',
+        strokeWeight: 4,
+        strokeDasharray: [5, 5],
+        map:this.M_map,
+        zIndex:100
+      });
+      console.log(polygon)
 
      
-      var polygon = new AMap.Polygon({
-        pathL:[data,data1],
-        strokeColor: '#00eeff',
-        strokeWeight: 1,
-        fillColor: '#71B3ff',
-        fillOpacity: 0.5
-      });
-      polygon.setPath([data,data1]);
-      this.M_map.add(polygon)
-      console.log(polygon.getPath())
+      // var polygon = new AMap.Polygon({
+      //   pathL:[data,data1],
+      //   strokeColor: '#00eeff',
+      //   strokeWeight: 1,
+      //   fillColor: '#71B3ff',
+      //   fillOpacity: 0.5
+      // });
+      // polygon.setPath([data,data1]);
+      // this.M_map.add(polygon)
+      // console.log(polygon.getPath())
     },
     M_drawPolygon () {
       this.mouseTool.polygon({
@@ -900,7 +917,9 @@ const Map = {
 
       this.mouseTool.on('draw', (event)=> {
         // event.obj 为绘制出来的覆盖物对象
-        console.log( this.M_formattingCharacters(event.obj.getPath()))
+        console.log(this.M_formattingCharacters(event.obj.getPath()))
+        console.log(event.obj.getArea())
+        
       })
     },
     M_formattingCharacters (val) {

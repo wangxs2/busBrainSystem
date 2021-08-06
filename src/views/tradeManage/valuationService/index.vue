@@ -1,23 +1,917 @@
 <template>
+<!-- 辅助决策的可视化 -->
   <div class="valuationService">
+    <div class="left-box">
+      <div class="titbox" style="margin-bottom:8px">非直线系数</div>
+       <div class="con-box table-data" >
+        <div class="table-header">
+        
+          <div style="width:10%"></div>
+          <div style="width:45%">线路名称</div>
+          <div style="width:45%">非直线系数</div>
+          
+        </div>
+        <div class="table-contain swiper-container" id="swiper3">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"   v-for="(iteam,index) in qdData" :key="index">
+              <div class="tableTr" v-for="(item,o) in iteam" :key="item.index">
+          
+                <div  style="width:10%">
+                  <div :class="item.index==1?'roud roud1':item.index==2?'roud roud2':item.index==3?'roud roud3':'roud'">{{item.index}}</div>
+                </div>
+                <div style="width:45%">{{item.routeName}}</div>
+                <div style="width:45%">{{item.coefficient.toFixed(2)}}</div>
+              </div>
+            </div>
+          </div>
+          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
+        </div>
+
+
+
+      </div>
+      <div class="titbox" style="margin-bottom:8px;margin-top:14px">线路重复系数</div>
+      <div class="con-box table-data" >
+        <div class="table-header">
+        
+          <div style="width:10%"></div>
+          <div style="width:45%">线路名称</div>
+          <div style="width:45%">线路重复系数</div>
+          
+        </div>
+        <div class="table-contain swiper-container" id="swiper4">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"   v-for="(iteam,index) in qdData1" :key="index">
+              <div class="tableTr" v-for="(item,o) in iteam" :key="item.index">
+          
+                <div  style="width:10%">
+                  <div :class="item.index==1?'roud roud1':item.index==2?'roud roud2':item.index==3?'roud roud3':'roud'">{{item.index}}</div>
+                </div>
+                <div style="width:45%">{{item.routeName}}</div>
+                <div style="width:45%">{{Number(item.coefficient).toFixed(2)}}</div>
+              </div>
+            </div>
+          </div>
+          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
+        </div>
+      </div>
+      <div class="titbox" style="margin-top:14px">线路长度</div>
+      <div class="big-tab big-tab4">
+        <rank-block
+          :rank-data="OverlengData"
+          :gradient-ramp="['#E9795B', '#FF9A85']"
+          block-tit
+          font-color="#FF9A85"
+        ></rank-block>
+        
+      </div>
+    </div>
+    <div class="center-box">
+      <div class="map-box1" ref="compreMapks"  id="compreMapks">
+          <img @click="mapFullEvent()" class="qpbtn" width="24" height="24" src="@/assets/image/home/qp.png" alt="" srcset="">
+          <div class="seting-box" >
+            <div class="settit">显示设置</div>
+            <div class="table-box">
+              <div  class="table-iteanm" v-for="(iteam,n) in tlstation" :key="n" >
+                <img @click="toShow(iteam,n)" v-if="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
+                <img @click="toShow(iteam,n)" v-if="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
+                <div class="natit">{{iteam.name}}</div>
+                
+              </div>
+            </div>
+
+          </div>
+          <div class="tulibox">
+            <div style="display:flex;align-items: center">
+              <div class="linetu"></div>
+              <div class="fonttu">{{nowName}}≤1.6</div>
+            </div>
+             <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class="linetu linetu1"></div>
+              <div class="fonttu">{{nowName}}＞1.6</div>
+            </div>
+          </div>
+      </div>
+      <div class="cen-bottom">
+        <div class="cen-bottom-left">
+          <div class="titbox" style="margin-top:18px;margin-bottom:8px">百公里人数</div>
+          <div class="big-tab swiper-container" id="swiper2" >
+            <div class="swiper-wrapper">
+              <div class="swiper-slide"  v-for="(iteam,index) in personData" :key="index">
+                <div class="big-tab2"  v-for="(item,index) in iteam" :key="item.index">
+                  <div :class="item.index==1?'itea-per itea-per3':item.index==2?'itea-per itea-per4':item.index==3?'itea-per itea-per5':'itea-per'">{{item.index}}</div>
+                  <div :class="item.index==1?'itea-per1 itea-per7':item.index==2?'itea-per1 itea-per8':item.index==3?'itea-per1 itea-per9':'itea-per1'">{{item.xlmc}}</div>
+                  <div class="itea-per2">{{item.baipass}}人</div>
+                </div>
+
+              </div>
+            </div>
+          
+            
+          </div>
+        </div>
+        <div class="cen-bottom-right">
+           <div class="titbox" style="margin-top:18px;margin-bottom:8px">换乘压力</div>
+          <div class="big-tab swiper-container" id="swiper7" >
+            <div class="swiper-wrapper">
+              <div class="swiper-slide"  v-for="(iteam,index) in personData" :key="index">
+                <div class="big-tab2"  v-for="(item,index) in iteam" :key="item.index">
+                  <div :class="item.index==1?'itea-per itea-per3':item.index==2?'itea-per itea-per4':item.index==3?'itea-per itea-per5':'itea-per'">{{item.index}}</div>
+                  <div :class="item.index==1?'itea-per1 itea-per7':item.index==2?'itea-per1 itea-per8':item.index==3?'itea-per1 itea-per9':'itea-per1'">{{item.xlmc}}</div>
+                  <div class="itea-per2">{{item.baipass}}人</div>
+                </div>
+
+              </div>
+            </div>
+          
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right-box">
+      <div class="titbox" style="margin-bottom:8px">满载率</div>
+      <div class="right-svg">
+        <div class="node-one">
+            <el-progress type="circle" color="#E1453E" :width="120" stroke-linecap="butt" :stroke-width="16" :percentage="90"></el-progress>
+            <div class="btfon btfon6">
+              <div  class="btfon1 btfon3">1</div>
+             <div style="flex:1;text-align:center"> {{alldata[0].routeName}}</div>
+            </div>
+        </div>
+        <div class="two-one">
+           <div>
+              <el-progress type="circle" color="#E19E3E" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="90"></el-progress>
+              <div class="btfon btfon7">
+                <div  class="btfon1 btfon4">2</div>
+                <div style="flex:1;text-align:center"> {{alldata[1].routeName}}</div>
+              </div>
+           </div>
+           <div>
+               <el-progress type="circle" color="#38CE97" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="90"></el-progress>
+              <div class="btfon btfon8">
+                <div  class="btfon1 btfon5">3</div>
+                <div style="flex:1;text-align:center"> {{alldata[2].routeName}}</div>
+              </div>
+           </div>
+           
+        </div>
+        <!-- <div class="three-box"> -->
+
+
+          <div class="three-box swiper-container" id="swiper6" >
+            <div class="swiper-wrapper">
+              <div class="swiper-slide"  v-for="(iteam,index) in threedata" :key="index">
+                <div v-for="(item,i) in iteam" :key="item.index" v-show="index>0">
+                  <el-progress type="circle" color="#4578FF" :width="80" stroke-linecap="butt" :stroke-width="16" :percentage="90"></el-progress>
+                  <div class="btfon">
+                    <div  class="btfon1">{{item.index}}</div>
+                    <div style="flex:1;text-align:center">{{item.routeName}}</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+            
+
+        <!-- </div> -->
+      </div>
+      <div class="titbox" style="margin-bottom:8px;margin-top:18px">长期拥堵路段</div>
+      <div class="con-box con-box1 table-data" >
+        <div class="table-header">
+          <div style="width:10%"></div>
+          <div style="width:45%">道路名称</div>
+          <div style="width:45%">拥堵系数</div>
+        </div>
+        <div class="table-contain swiper-container" id="swiper5">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"   v-for="(iteam,index) in qdData" :key="index">
+              <div class="tableTr" v-for="(item,o) in iteam" :key="item.index">
+                <div  style="width:10%">
+                  <div :class="item.index==1?'roud roud1':item.index==2?'roud roud2':item.index==3?'roud roud3':'roud'">{{item.index}}</div>
+                </div>
+                <div style="width:45%">{{item.routeName}}</div>
+                <div style="width:45%">{{item.coefficient.toFixed(2)}}</div>
+              </div>
+            </div>
+          </div>
+          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import MapMixin from '../../networkExcellent/networkMap';
+import Swiper from "swiper";
+import rankBlock from "@/components/rankBlock/index.vue";
+import { arrGroup } from '@/libs/util.js';
+ import screenfull from "screenfull";
 export default {
-    created(){
-        setTimeout(()=>{
-        this.$store.commit('SET_LOADING',false)
-        },200)
+  mixins: [MapMixin],
+  components: {
+    rankBlock
+  },
+  data(){
+    return{
+      alldata:[
+        {
+          routeName:""
+        },
+        {
+          routeName:""
+        },
+        {
+          routeName:""
+        },
+      ],
+      alldata1:[],//线路重复系数
+      alldata2:[],//百公里人次
+      OverlengData:[],
+      personData:[],
+      value:'',
+      swipertable:null,
+      swipertable2:null,
+      swipertable3:null,
+      swipertable4:null,
+      swipertable5:null,
+      swipertable6:null,
+      swipertable7:null,
+      qdData:[],
+      qdData1:[],//线路重复系数
+      options:[],
+      personData1:[],
+      threedata:[],
+      nowName:"非直线系数",
+      tlstation:[
+        {
+            name:'非直线系数',
+            isxz:true,
+            num:0.6,
+          },
+          {
+            name:'线路重复系数',
+            isxz:false,
+            num:0.5,
+          },
+          {
+            name:'长期拥堵路段',
+            isxz:false,
+          },
+          {
+            name:'百公里人次',
+            isxz:false,
+          },
+          {
+            name:'满载率',
+            isxz:false,
+          },
+          {
+            name:'超长线路',
+            isxz:false,
+          }
+      ]
     }
+
+  },
+  mounted() {
+    this.M_initMap('compreMapks')
+    this.initSwipertable()
+    // this.trafficLayer.setMap(this.M_map);
+  },
+  created(){
+      
+      this.getNoLi()
+      // this.getOverleng()
+      this.getAreaLine()
+      // this.getPerion()
+      
+  },
+  methods:{
+    getNoLi(){
+      //非直线系数的数据
+      this.$fetchGet("route/straightCoefficient").then(res => {
+        res.result.forEach((item,index)=>{
+            item.geom=this.Q_setData(item.geom)
+        })
+        this.alldata=res.result;
+        let arr=this.alldata.sort(this.compare('coefficient',false))
+        arr.forEach((iteam,index)=>{
+            iteam.index = index + 1;
+        })
+        
+        this.M_BUSLINE(this.alldata,10)
+        this.qdData=arrGroup(arr,5)
+        this.threedata=arrGroup(res.result,3)
+      })
+
+       //线路重复系数的的数据
+      this.$fetchGet("route/lineCoefficient").then(res => {
+        res.result.forEach((item,index)=>{
+            item.geom=this.Q_setData(item.geom)
+            item.index = index + 1;
+        })
+        this.alldata1=res.result;
+        this.qdData1=arrGroup(res.result,5)
+       
+      })
+
+
+      //百公里人次
+      this.$fetchGet("route/hundreds",{
+      }).then(res => {
+        res.result.forEach((iteam,index)=>{
+          iteam.index = index + 1;
+        })
+        this.alldata2=res.result;
+        this.personData = arrGroup(res.result,8);
+      })
+
+
+    // 线路长度
+      this.$fetchGet("route/overLength").then(res => {
+        
+          res.result.forEach((item,index)=>{
+              item.geom=this.Q_setData(item.geom)
+          })
+          // this.alldata=res.result;
+          let arr=res.result.sort(this.compare('lineLength',false))
+          arr.forEach((iteam,index)=>{
+              iteam.index = index + 1;
+          })
+          this.OverlengData=arr;
+      })
+
+
+
+
+
+      setTimeout(()=>{
+      this.$store.commit('SET_LOADING',false)
+      },1500)
+
+
+    },
+    //  排序
+    compare(attr,rev){
+      //第二个参数没有传递 默认升序排列
+      if(rev == undefined){
+        rev = 1;
+      }else{
+        rev = (rev) ? 1 : -1;
+      }
+      
+      return function(a,b){
+        a = a[attr];
+        b = b[attr];
+        if(a < b){
+          return rev * -1;
+        }
+        if(a > b){
+          return rev * 1;
+        }
+        return 0;
+      }
+    },
+    
+    toShow(row,n){
+      this.nowName=row.name
+      if(row.isxz){
+        return 
+      }else{
+        //  row.isxz=!row.isxz
+        console.log(this.nowName)
+         this.tlstation.forEach(iteam=>{
+           if(iteam.name==this.nowName){
+             iteam.isxz=true
+           }
+           if(iteam.name!==this.nowName){
+             console.log(777)
+              iteam.isxz=false
+           }
+         })
+
+
+        switch (this.nowName) {
+            case '非直线系数' :
+                this.M_BUSLINE(this.alldata,10)
+                break;
+            case '线路重复系数' :
+                 this.M_BUSLINE(this.alldata1,11)
+                break;
+            case '百公里人次' :
+
+                 this.M_BUSLINE(this.alldata2,11)
+                
+                break;
+            case '长期拥堵路段' :
+                break;
+            case '满载率' :
+                break;
+            case '超长线路' :
+                
+                break;
+            default :
+                 
+        }
+      } 
+     
+    },
+    getAreaLine(){
+      this.$fetchGet("passenger/region").then(res => {
+        this.options=res.result
+      })
+     
+    },
+    //线路长度
+    getOverleng(){
+      this.$fetchGet("route/overLength").then(res => {
+        res.result.forEach((item,index)=>{
+          item.index = index + 1;
+        })
+        this.OverlengData=res.result;
+      })
+    },
+     // 设置地图全屏显示
+    mapFullEvent () {
+      console.log(screenfull)
+      if (!screenfull.isEnabled) {
+        return false
+      }
+      screenfull.toggle(this.$refs.compreMapks)
+    },
+    getPerion(){
+      this.$fetchGet("route/hundreds",{
+      }).then(res => {
+        // personData=this.
+        res.result.forEach((iteam,index)=>{
+          iteam.index = index + 1;
+        })
+        this.personData = arrGroup(res.result,8);
+         this.personData1 = arrGroup(res.result,6);
+      })
+
+    },
+    initSwipertable() {
+      this.swipertable = new Swiper("#swiper1", {
+        loop: true, // 循环模式选项
+        direction: "vertical",
+        mousewheel: true,
+        autoplay: {
+          delay: 5000 // 切换时间
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true //修改swiper的父元素时，自动初始化swiper
+      });
+      this.swipertable2 = new Swiper("#swiper2", {
+        loop: true, // 循环模式选项
+        mousewheel: true,
+        autoplay: {
+          delay: 8000 // 切换时间
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true //修改swiper的父元素时，自动初始化swiper
+      });
+      this.swipertable3 = new Swiper("#swiper3", {
+        loop: true, // 循环模式选项
+        direction: "vertical",
+        mousewheel: true,
+        autoplay: {
+          delay: 6000 // 切换时间
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true //修改swiper的父元素时，自动初始化swiper
+      });
+      this.swipertable4 = new Swiper("#swiper4", {
+        loop: true, // 循环模式选项
+        direction: "vertical",
+        mousewheel: true,
+        autoplay: {
+          delay: 7500 // 切换时间
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true //修改swiper的父元素时，自动初始化swiper
+      });
+      this.swipertable5 = new Swiper("#swiper5", {
+        loop: true, // 循环模式选项
+        direction: "vertical",
+        mousewheel: true,
+        autoplay: {
+          delay: 7500 // 切换时间
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true //修改swiper的父元素时，自动初始化swiper
+      });
+      this.swipertable6 = new Swiper("#swiper6", {
+        loop: true, // 循环模式选项
+        mousewheel: true,
+        autoplay: {
+          delay: 5000 // 切换时间
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true //修改swiper的父元素时，自动初始化swiper
+      });
+      this.swipertable7 = new Swiper("#swiper7", {
+        loop: true, // 循环模式选项
+        mousewheel: true,
+        autoplay: {
+          delay: 5000 // 切换时间
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true //修改swiper的父元素时，自动初始化swiper
+      });
+
+    },
+  }
   
 }
 </script>
 <style lang="scss">
+.el-progress__text{
+  color:#ffffff;
+}
+.el-progress-circle__track{
+  stroke:#00ffff26
+}
 
 </style>
 <style lang="scss" scoped>
 .valuationService{
+  width:100%;
+  height: 100%;
+  background: url("~@/assets/image/zhbj.png");
+  background-size: 100% 100%;
+  display: flex;
+  box-sizing: border-box;
+  padding:vh(12) vw(16);
+  .titbox{
+    width:100%;
+    height:vh(56);
+    background: #0C2668;
+    font-size: vw(20);
+    font-weight: bold;
+    line-height: vh(56);
+    box-sizing: border-box;
+    padding-left: vw(22);
+    display:flex;
+    flex-direction: column;
+  }
+  .con-box{
+      width: vw(380);
+      height: vh(262);
+      box-shadow: 0px 0px vh(8) rgba(69, 120, 255, 1) inset;
+      
+    }
+  .con-box1{
+    height: vh(265);
+  }
+  .table-data{
+    box-sizing: border-box;
+    overflow:hidden;
+    display:flex;
+    flex-direction: column;
+    .table-header{
+      width:100%;
+      height:vh(50);
+      line-height:vh(50);
+      color: #00FFFF;
+      font-size:vw(16);
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 0 vw(20);
+      padding-top:vh(8);
+      div{
+        // flex:1;
+        text-align:center;
+        font-weight: bold;
+      }
+    }
+    .table-contain{
+      // flex:1;
+      overflow:hidden;
+      // overflow-y:scroll;
+      .tableTr{
+        width:100%;
+        height:vh(40);
+        color: #ffffff;
+        font-size:vw(16);
+        display:flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        padding: 0 vw(20);
+        cursor:pointer;
+        div{
+          // flex:1;
+          display:flex;
+
+          justify-content:center;
+        }
+        .roud{
+          width: vw(18);
+          height:vw(18);
+          background: #4578FF;
+          border-radius: 50%;
+          font-size:vw(12);
+          line-height:vw(18);
+          text-align:center;
+        }
+        .roud1{
+          background: #E1453E;
+        }
+        .roud2{
+          background: #E19E3E;
+        }
+        .roud3{
+          background: #38CE97;
+        }
+
+      }
+      .tableTr:hover {
+        background:rgba(12, 38, 104, 0.5);
+        // color: #4578FF;
+        // font-weight:bold;
+      } 
+      .tableTr:nth-child(even){
+        // background:rgba(12, 38, 104, 0.2)
+
+      }
+    }
+  }
+  .big-tab{
+    width:vw(506);
+    height:vh(240);
+    background: rgba(12, 38, 104, 0.2);
+    box-shadow: 0px 0px vh(8) rgba(69, 120, 255, 1) inset;
+    box-sizing:border-box;
+    // padding-top:vh(12);
+    padding-left:vw(30);
+    overflow:hidden;
+    display:flex;
+    flex-wrap:wrap ;
+    .big-tab2{
+      margin-right:vw(24);
+      margin-top:vh(30);
+    }
+    .itea-per{
+      width:vw(90);
+      height:vh(16);
+      line-height:vh(17);
+      background: #4578FF;
+      font-size:vw(12);
+      border-radius: 2px 2px 0px 0px;
+      text-align:center;
+    }
+    .itea-per3{
+      background: #E1453E;
+    }
+    .itea-per4{
+      background: #E19E3E;
+    }
+    .itea-per5{
+      background:  #38CE97;
+    }
+   
+    .itea-per1{
+      width:vw(90);
+      height:vh(32);
+      line-height:vh(34);
+       font-size:vw(14);
+       text-align:center;
+      box-shadow: 0px 0px vh(4) rgba(69, 120, 255, 1) inset;
+      background: rgba(69, 120, 255, 0.1);
+    }
+    .itea-per7{
+      box-shadow: 0px 0px vh(4) rgba(225, 69, 62, 1) inset;
+    }
+    .itea-per8{
+      box-shadow: 0px 0px vh(4) #E19E3E inset;
+    }
+    .itea-per9{
+      box-shadow: 0px 0px vh(4) #38CE97 inset;
+    }
+    .itea-per2{
+      width:vw(80);
+      font-size:vw(22);
+      text-align:center;
+      margin-top:vh(4);
+    }
+  }
+  .big-tab4{
+    width:100%;
+    height:vh(198);
+    padding-left:0;
+    box-shadow: none;
+    
+  }
+  #swiper1,#swiper3,#swiper4,#swiper5{
+      width:100%;
+      height:vh(200);
+      .swiper-wrapper{
+        width:100%;
+        height:100%;
+      }
+  }
+
+   #swiper2,#swiper7{
+    .swiper-slide{
+      width:100%;
+      height:100%;
+        display:flex;
+      flex-wrap:wrap ;
+    }
+  }
+   #swiper6{
+    .swiper-slide{
+      width:100%;
+      height:100%;
+      display:flex;
+      justify-content:space-between;
+    }
+  }
+ 
+  .left-box{
+    width:vw(396);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .center-box{
+    width:vw(1060);
+    height: 100%;
+    margin: 0 vw(14);
+     box-sizing:border-box;
+    padding:vh(6) vw(6);
+    display: flex;
+    flex-direction: column;
+    .map-box1{
+      width:100%;
+      height:vh(610);
+      box-sizing:border-box;
+      padding:vh(6) vw(6);
+      box-shadow: 0px 0px vh(6) rgba(12, 38, 104, 1) inset;
+      position:relative;
+      .qpbtn{
+        position: absolute;
+        right: vw(28);
+        bottom: vw(104);
+        z-index:10;
+        cursor:pointer;
+      }
+      .seting-box{
+        position: absolute;
+        left: vw(12);
+        bottom: vw(14);
+        z-index:10;
+        background: rgba(12, 38, 104, 0.6);
+        box-shadow: 0px 0px vh(6) #27B6FF inset;
+        box-sizing:border-box;
+        padding:vh(12) vw(17);
+        .settit{
+            text-shadow: 0 0 1.2em rgba(255, 255, 255, 0.8),
+            -0 -0 1.4em rgba(255, 255, 255, 0.7);
+          font-weight: bold;
+        }
+        .table-box{
+          flex-direction: column;
+          display: flex;
+          box-sizing:border-box;
+          // padding-left:vw(20);
+          .table-iteanm{
+            box-sizing:border-box;
+            display: flex;
+            align-items: center;
+            padding-top:vh(20);
+            img{
+              margin-right:vw(6);
+            }
+            .natit{
+              display:inline-block;
+              width:6.6vw;
+            }
+          }
+        }
+      }
+      .tulibox{
+        position: absolute;
+        right: vw(12);
+        bottom: vw(14);
+        // width:vw(200);
+        height:vh(90);
+        z-index:10;
+        box-shadow: 0px 0px vh(6)  #4578FF inset;
+         background: rgba(12, 38, 104,1);
+        box-sizing:border-box;
+        padding:vh(18) vw(10);
+        .linetu{
+          width:vw(50);
+          height:vh(5);
+          background: #3EAABA;
+          margin-right:vw(8);
+        }
+        .linetu1{
+          background:#D53838
+        }
+      }
+    }
+
+    .cen-bottom{
+      width:100%;
+      flex:1;
+      display:flex;
+      .cen-bottom-left{
+        width:vw(522);
+        height:100%;
+        flex-direction: column;
+          display: flex;
+          box-sizing:border-box;
+      }
+      .cen-bottom-right{
+        width:vw(522);
+        height:100%;
+        margin-left:vw(12);
+      }
+    }
+  }
+  .right-box{
+    width:vw(396);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .right-svg{
+      width:vw(380);
+      height:vh(494);
+      box-shadow: 0px 0px vh(6) #27B6FF inset;
+      box-sizing:border-box;
+      padding:vh(18) vw(24);
+      .node-one{
+        width:100%;
+        height:vh(150);
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .two-one{
+        margin-top:vh(24);
+         display:flex;
+         justify-content:space-between;
+         box-sizing:border-box;
+         padding:vh(0) vw(30);
+      }
+      .three-box{
+        width:100%;
+        margin-top:vh(24);
+        // display:flex;
+        //  justify-content:space-between;
+
+
+      }
+       .btfon{
+        width:vw(94);
+        height:vh(18);
+        display:flex;
+        margin-top:vh(6);
+        border: 1px solid #4578FF;
+        align-items: center;
+        font-size:vw(14);
+        white-space:nowrap;
+      .btfon1{
+          height:100%;
+          box-sizing:border-box;
+          padding:vh(0) vw(2);
+          margin-right:vw(2);
+          font-size:vw(12);
+          line-height:vh(22);
+          background:rgba(69, 120, 255, 1);
+        }
+        .btfon3{
+          background: #E1453E;
+        }
+        .btfon4{
+          background: #E19E3E;
+        }
+        .btfon5{
+          background:  #38CE97;
+        }
+      }
+      .btfon6{
+        border: 1px solid #E1453E;
+      }
+      .btfon7{
+        border: 1px solid #E19E3E;
+      }
+      .btfon8{
+        border: 1px solid #38CE97;
+      }
+    }
+  }
  
 }
 </style>

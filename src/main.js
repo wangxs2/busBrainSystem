@@ -7,8 +7,10 @@ import './assets/css/mainstyle.scss'
 import store from './stores'
 import './permission' //路由判断
 import common from './libs/common.js' //自定义包
-
+import 'swiper/css/swiper.css'
 import moment from 'moment'//导入文件
+
+import './assets/iconfont/font.css'
 Vue.prototype.$moment = moment;//赋值使用
 import animated from 'animate.css'
 

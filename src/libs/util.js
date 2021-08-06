@@ -134,6 +134,25 @@ function getMax (arr = [], key = null, stamp = false) {
   return Math.max(..._t);
 }
 
+
+
+
+
+/**
+ * @method 数组等分
+ * @param {Array} 原数组
+ * @param {Number} 每份个数
+ * @return {Array}
+ */
+function arrGroup (array, subGroupLength) {
+  let index = 0;
+  const newArray= [];
+  while (index < array.length) {
+    newArray.push(array.slice(index, (index += subGroupLength)));
+  }
+  return newArray;
+};
+
 /**
  * 筛选出数组中最小值
  * @param {*} arr 数据
@@ -231,5 +250,6 @@ export {
   delCookie,
   isYestday, // 判断时间是否是昨天
   isYear, // 判断是否是今年
-  timeChange // 时间差值判断
+  timeChange ,// 时间差值判断
+  arrGroup
 }

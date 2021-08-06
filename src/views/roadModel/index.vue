@@ -1,8 +1,17 @@
 <template>
   <div class="roadModel">
-    <div class="titbox">
+    <div class="search-box titbox">
       <div class="titf">道路拥堵系数预测</div>
-      <div>
+      <div style="display:flex;align-items: center">
+         <div style="margin-right:0.6vw;margin-left:1.6vw;white-space: nowrap">主干道</div>
+            <el-select style="width:75%" size="small" filterable @change="getData()"  v-model="roadName" placeholder="请选择">
+                <el-option
+                v-for="(item,n) in roadNameData"
+                :key="n"
+                :label="item.roadName"
+                :value="item.roadName">
+                </el-option>
+            </el-select>
 
       </div>
     </div>
@@ -28,11 +37,14 @@ export default {
   data(){
     return{
       myChart:null,
-      myChart1:null
+      myChart1:null,
+      roadName:"",
+      roadNameData:[]
     }
   },
    created() {
-      this.$store.commit('SET_LOADING',false)
+      
+      this.getList()
       
   },
   mounted(){
@@ -40,15 +52,50 @@ export default {
         this.myChart.resize()
         this.myChart1.resize()
       }
-      this.initechart()
-      this.initechart1()
+     
   },
   methods:{
-    initechart(){
+    getList(){
+      this.$fetchGet("main-road/list").then(res => {
+        this.roadNameData=res.result
+        this.roadName=res.result[0].roadName
+        this.getData()
+      })
+
+    },
+    getData(){
+      this.$store.commit('SET_LOADING',true)
+      this.$fetchGet("curve/sklearn",{
+        roadName:this.roadName
+      }).then(res => {
+        let arr=[],arr1=[],arr2=[]
+        res.result.forEach(iteam=>{
+          arr.push(iteam.datatime)
+          arr1.push(iteam.congestIndex)
+          arr2.push(iteam.speed)
+        })
+        this.initechart(arr,arr1)
+        this.initechart1(arr,arr2)
+      })
+
+
+    },
+    getDataw(){ 
+     this.$fetchGet("main-road/list").then(res => {
+
+     })
+
+    },
+    initechart(data,data1){
         this.myChart = this.$echarts.init(document.getElementById('echartroad1'));
         this.myChart.setOption({
             tooltip: {
-              show:false,
+              show:true,
+              backgroundColor:'#144A8C',
+              borderWidth:0,
+              textStyle:{
+                color:'#D9EFFF',
+              }
            
             },
             title:{
@@ -64,14 +111,14 @@ export default {
             },
             color:['#4578FF'],
             grid: {
-                left: '2.5%',
+                left: '1%',
                 right: '1%',
                 bottom: '3%',
                 top:'10%',
                 containLabel: true
             },
             xAxis: {
-                data:['09:05','09:10','09:15','09:20','09:20','09:20','09:20','09:20','09:20'],
+                data:data,
                 name: '',
                 nameTextStyle:{
                   color:'#DAE4FF'
@@ -84,7 +131,7 @@ export default {
                     }
                 },
                  axisLabel : {
-                   interval:0,
+                   interval:15,
                   formatter: '{value}',
                   textStyle: {
                       color: '#DAE4FF',
@@ -136,58 +183,71 @@ export default {
             },
             series: [
                 {
-                  name: '当前车上人数',
+                  name: '道路拥堵系数',
                   type: 'bar',
-                  barWidth:28,
+                  barWidth:4,
                   stack: 'one',
-                  itemStyle:{
-                        normal: {
-                            label: {
-                                show: true,		//开启显示
-                                position: 'top',	//在上方显示
-                                textStyle: {	    //数值样式
-                                    color: '#DAE4FF',
-                                    fontSize: 14
-                                }
-                            }
-                        }
-                    },
-                  data: [5,6,7,5,5,5,12,1,6]
+                  data: data1,
+                
               },
+               {
+                  name: '',
+                  type: 'line',
+                  data: data1,
+                  markPoint: {
+                    itemStyle: {
+                      color: '#FECB00',
+                    },
+                    label: {
+                      color: '#000',
+                    },
+                    symbolSize: 40,
+                    data: [
+                      { type: 'max', name: '最大值' },
+                      { type: 'min', name: '最小值' },
+                    ],
+                  },
+              }
             ]
 
         },true)
+        this.$store.commit('SET_LOADING',false)
 
     },
-    initechart1(){
+    initechart1(data,data1){
         this.myChart1 = this.$echarts.init(document.getElementById('echartroad2'));
         this.myChart1.setOption({
             tooltip: {
-              show:false,
+               show:true,
+              backgroundColor:'#144A8C',
+              borderWidth:0,
+              textStyle:{
+                color:'#D9EFFF',
+              }
            
             },
             title:{
-              text:"",
+              text:"车速(km/h)",
               textStyle:{
                 color:'#DAE4FF',
                 fontWeight:'normal',
                 fontSize:16,
                 
               },
-              top:26,
+              top:6,
               left:10,
             },
            
             grid: {
-                left: '2.5%',
+                left: '1%',
                 right: '1%',
                 bottom: '3%',
-                top:'10%',
+                top:'13%',
                 containLabel: true
             },
             color:['#4578FF'],
             xAxis: {
-                data:['09:05','09:10','09:15','09:20','09:20','09:20','09:20','09:20','09:20'],
+                data:data,
                 name: '',
                 nameTextStyle:{
                   color:'#DAE4FF'
@@ -199,7 +259,7 @@ export default {
                     }
                 },
                  axisLabel : {
-                   interval:0,
+                   interval:15,
                   formatter: '{value}',
                   textStyle: {
                       color: '#DAE4FF',
@@ -251,24 +311,31 @@ export default {
             },
             series: [
                 {
-                  name: '当前车上人数',
+                  name: '道路车速',
                   type: 'bar',
-                  barWidth:28,
+                  barWidth:4,
                   stack: 'one',
-                  itemStyle:{
-                        normal: {
-                            label: {
-                                show: true,		//开启显示
-                                position: 'top',	//在上方显示
-                                textStyle: {	    //数值样式
-                                    color: '#DAE4FF',
-                                    fontSize: 14
-                                }
-                            }
-                        }
-                    },
-                  data: [5,6,7,5,5,5,12,1,6]
+                
+                  data: data1
               },
+               {
+                  name: '',
+                  type: 'line',
+                  data: data1,
+                  markPoint: {
+                    itemStyle: {
+                      color: '#FECB00',
+                    },
+                    label: {
+                      color: '#000',
+                    },
+                    symbolSize: 40,
+                    data: [
+                      { type: 'max', name: '最大值' },
+                      { type: 'min', name: '最小值' },
+                    ],
+                  },
+              }
             ]
 
         },true)
