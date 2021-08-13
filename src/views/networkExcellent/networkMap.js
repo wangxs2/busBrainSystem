@@ -1,5 +1,5 @@
 // const areasIcon = require('@img/map/icon_0_1@3x.png')
-// import * as http from '@/libs/http'
+import * as http from '@/libs/http'
 // import store from './stores'
 import Anmation from "@/libs/anmation.js";
 let Myanmation = null; // 地图实例
@@ -17,11 +17,13 @@ const Map = {
       M_pointGroup: null,
       M_pointEvent: [],
       markerarr: [],
+      testLIneda:[],
       // 信息窗口
       M_InfoWindow: null,
       busPolyline: null,
       busPolyline1: null,
       massall: null,
+      massall1: null,
       polyEditor: null,
       mouseTool: null,
       station: null,
@@ -34,6 +36,9 @@ const Map = {
       overlayGroups2: new AMap.OverlayGroup(),//车辆可视化街镇集合
       overlayGroups3: new AMap.OverlayGroup(),//车辆可视化街镇集合
       meroGroups: new AMap.OverlayGroup(),//地铁线路的集合
+      realTownGroups: new AMap.OverlayGroup(),//实时运营街镇的集合
+      realbusGroups: new AMap.OverlayGroup(),//实时运营公交的集合
+      overlayGroupsgl: new AMap.OverlayGroup(),//实时运营分布UI率
       nework: {
       }
 
@@ -125,6 +130,13 @@ const Map = {
         resizeEnable: true, // 监控地图容器尺寸变化
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
+
+
+      // setTimeout(()=>{
+      //   http.fetchPost('route/approve',this.testLIneda,'json').then(res=>{
+
+      //   })
+      // },50000)
       this.trafficLayer = new AMap.TileLayer.Traffic();
       this.mouseTool = new AMap.MouseTool(this.M_map)
       this.M_pointGroup = new AMap.OverlayGroup()
@@ -168,7 +180,7 @@ const Map = {
         const marker = new AMap.Marker({
           position: iteam.centre,
           // 将 html 传给 content background: url(icon) url(${iconm})
-          content: `<div class="regionMark" style="background:url(${iconm})">
+          content: `<div class="regionMark" style="width:178px;height:178px;background:url(${iconm})">
             <div> ${iteam.name}</div>
              <div>  ${iteam.num}</div>
              <div> ${iteam.percent || 0}</div>
@@ -185,6 +197,7 @@ const Map = {
         // })
         marks.push(marker)
       })
+      console.log(marks)
       this.M_addGroup(marks)
     },
     // 设置重点区
@@ -265,7 +278,7 @@ const Map = {
     },
 
     // 车辆可视化的公交车添加点
-    M_addPoint(data, icon, name) {
+    M_addPoint(data,type) {
       if (this.M_pointGroup) {
         this.M_pointGroup.clearOverlays()
       }
@@ -275,12 +288,12 @@ const Map = {
       let markers = []
       data.forEach(iteam => {
         const marker = new AMap.Marker({
-          position: [iteam.lng, iteam.lat],
+          position: type==2?iteam.lnglat:[iteam.lng, iteam.lat],
           offset: new AMap.Pixel(-16, -16),
           topWhenClick: true,
           icon: new AMap.Icon({
             size: new AMap.Size(32, 32),
-            image: require('../../assets/image/orange1.png'),
+            image: type==2?require('../../assets/image/alpoint1.png'):require('../../assets/image/orange1.png'),
             imageSize: new AMap.Size(32, 32)
           }), // 添加 Icon 图标 URL
           extData: iteam
@@ -346,6 +359,9 @@ const Map = {
       )
 
 
+
+
+
       this.M_pointEvent.push(
         AMap.Event.addListener(this.M_pointGroup, 'click', (e) => {
           const ExtData = e.target.getExtData()
@@ -353,6 +369,18 @@ const Map = {
           flag = ''
         })
       )
+
+
+
+      this.M_pointEvent.push(
+        AMap.Event.addListener(this.overlayGroupsgl, 'click', (e) => {
+          const ExtData = e.target.getExtData()
+          callback && callback(ExtData)
+          flag = ''
+        })
+      )
+
+
 
 
       this.M_pointEvent.push(
@@ -396,9 +424,124 @@ const Map = {
         offset: new AMap.Pixel(-6, -6)
       })
     },
+    M_pointAll4(datapoint){
 
+      console.log(datapoint)
+      
+      let style = [
+        {
+          url: require('../../assets/image/alpoint1.png'),
+          anchor: new AMap.Pixel(28, 16),
+          size: new AMap.Size(16, 16),
+          zIndex: 20,
+        }];
+      this.massall1 = new AMap.MassMarks(datapoint, {
+          opacity: 0.8,
+          cursor: 'pointer',
+          style: style[0]
+      });
+
+      console.log(this.massall1)
+
+      this.massall1.on('click',  (e)=> {
+
+        http.fetchGet('gps/ebusManage',{
+          pdbCode:e.data.messagerecord,  
+        }).then(res=>{
+
+          let str=''
+          let sf=''
+          if(res.result.routeInfor.length>0){
+            str =this.getStationLisLinesDomStr(res.result.routeInfor)
+          }
+          if(res.result.terminalSta.length>0){
+            sf =this.getStationLisLinesDomStr1(res.result.terminalSta)
+          }
+          let infoWin = 
+          `<div class="marhznbox">
+
+            <div class="titit">
+              <div class="omgtit"></div>
+              <div style="margin:0 4px">${e.data.messagerecord}</div>
+              <div>${e.data.stationName}</div>    
+            </div>
+
+            <div style="font-size:18px" class="linlist">
+              经过线路：${str}
+            </div>
+
+            <div class="tablebox">
+              <div class="tablehead">
+                <div style="width:20%">设备编号</div>
+                <div style="width:20%">设备类型</div>
+                <div style="width:20%">在线状态</div>
+                <div style="width:40%">绑定线路</div>
+              </div>
+
+              <div class="tablebody">
+                ${sf}
+              </div>
+            </div>
+          
+        
+          </div>`
+          this.M_openInfoWin1(e.data.lnglat, infoWin)
+
+
+        
+        })
+
+      });
+      
+      this.massall1.setMap(this.M_map);
+      
+    },
+    getStationLisLinesDomStr(data){
+
+      var domStr = '';
+      for (var i = 0; i < data.length; i++) {
+          var lineDom = `<span style="color:#FFFFFF;font-size:18px">${data[i].routeName}、</span>`
+          domStr += lineDom
+      }
+      // domStr = domStr.substring(0, domStr.length - 1);
+      return domStr;
+
+    },
+    getStationLisLinesDomStr1(data){
+
+      var domStr = '';
+      for (var i = 0; i < data.length; i++) {
+        let dhjli=''
+          if(data[i].routelist.length>0){
+            dhjli=this.getStationLisLinesDomStr3(data[i].routelist)
+          }
+          var lineDom = `
+            <div style="width:100%;height:46px;display:flex;align-items: center;border-top: 1px dashed #00FFFF;">
+              <div style="width:20%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${data[i].terminalId}</div>
+              <div style="width:20%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${data[i].terminalTypeName}</div>
+              <div style="width:20%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${data[i].terminalStatus}</div>
+              <div style="width:40%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${dhjli}</div>
+            </div>
+          `
+          domStr += lineDom
+      }
+      // domStr = domStr.substring(0, domStr.length - 1);
+      return domStr;
+
+    },
+    getStationLisLinesDomStr3(data){
+
+      var domStr = '';
+      for (var i = 0; i < data.length; i++) {
+          var lineDom = `<span style="color:#FFFFFF;font-size:16px">${data[i].routeName}、</span>`
+          domStr += lineDom
+      }
+      // domStr = domStr.substring(0, domStr.length - 1);
+      return domStr;
+
+    },
     //站点集合
-    M_pointAll3(datapoint) {
+    M_pointAll3(datapoint,type) {
       if (this.massall) {
         this.massall.clear()
       }
@@ -406,12 +549,12 @@ const Map = {
       var icon = {
         type: 'image',
         image: require('../../assets/image/alpoint1.png'),
-        size: [11, 11],
+        size: type==2?[18,18]:[11, 11],
         anchor: 'bottom-center',
       }
       var normalMarker = new AMap.Marker({
         anchor: 'bottom-center',
-        offset: [0, -15],
+        offset: [0, -21],
       });
       datapoint.forEach(iteam => {
 
@@ -447,7 +590,7 @@ const Map = {
       })
       this.layer.add(markers);
       this.M_map.add(this.layer);
-      this.layer.hide()
+      type==2?'':this.layer.hide()
     },
     M_drawbusLine(BusArr, type) {
       if (this.busPolyline) {
@@ -497,6 +640,36 @@ const Map = {
       });
       this.polyEditor.setTarget(this.busPolyline1);
       this.polyEditor.open();
+    },
+    testLinesearch(busLineName){
+      let linesearch = new AMap.LineSearch({
+        pageIndex: 1,
+        city: '上海',
+        pageSize: 10,
+        extensions: 'all'
+      });
+      linesearch.search(busLineName, (status, result) => {
+        if (status === 'complete' && result.info === 'OK') {
+          // console.log(result.lineInfo[1].path.join(' '))
+          
+
+            this.testLIneda.push({
+              routeName:busLineName,
+              version:busLineName+"+1",
+              geom:result.lineInfo[1].path.join(' '),
+              directionDesc:result.lineInfo[1].name,
+              direction:1})
+
+              // console.log(this.testLIneda)
+
+
+              // return  result.lineInfo[1].name
+         
+         
+        } 
+        
+      });
+
     },
     lineSearch(busLineName, type, item) {
 
@@ -828,6 +1001,11 @@ const Map = {
       this.M_InfoWindow.setContent(info)
       this.M_InfoWindow.open(this.M_map, pos)
     },
+    M_openInfoWin1(pos, info) {
+      this.M_InfoWindow.setContent(info)
+      this.M_InfoWindow.setAnchor('bottom-center')
+      this.M_InfoWindow.open(this.M_map, pos)
+    },
     // 关闭信息窗
     M_closeInfoWin() {
 
@@ -876,6 +1054,7 @@ const Map = {
           this.M_openInfoWin(srt.path[num], infoWin)
           console.log(this.M_InfoWindow)
         });
+
         datalin.push(kyLinedata)
       })
 
@@ -945,6 +1124,153 @@ const Map = {
       return arr3
 
     },
+    M_setTypedata(row){
+      let str = row.replace("POLYGON((", "");
+      let str1 = str.replace("))", "");
+      let arr = str1.split(",");
+      let path=[]
+      arr.forEach(iteam => {
+        path.push(
+          new AMap.LngLat(iteam.split(" ")[0], iteam.split(" ")[1])
+        );
+      });
+      return path
+    },
+    //实时运营车辆里面街镇的数据
+    M_createPolygon(data){
+
+      data.forEach(iteam=>{
+        let polygonLine = new AMap.Polygon({
+          path: this.M_setTypedata(iteam.polygonGeom),
+          cursor: "pointer",
+          strokeColor: "#00B2CA",
+          strokeWeight: 2,
+          bubble :true,
+          strokeOpacity: 1,
+          fillOpacity:0.2,
+          zIndex: 10,
+        })
+        let markarea = new AMap.Marker({
+          position: [iteam.centerLongitude,iteam.centerLatitude],
+          // 将 html 传给 content background: url(icon) url(${iconm})
+          content: `<div class="regionMark" style="background:#00B2CA">
+            <div style="font-weight: bold;margin-bottom:12px"> ${iteam.regionName}</div>
+             <div>公交畅行指数</div>
+             <div> ${iteam.avgSpeed}km/h</div>
+            </div>`,
+          // 以 icon 的 [center bottom] 为原点
+          offset: new AMap.Pixel(-13, -30),
+          zIndex: 10,
+          cursor: 'pointer',
+          extData: iteam,
+        })
+
+        this.realTownGroups.addOverlay(polygonLine)
+        this.realTownGroups.addOverlay(markarea)
+        this.M_map.add(this.realTownGroups)
+        // this.realTownGroups.hide()
+        
+      })
+      this.M_map.setZoomAndCenter(15,[121.515414,31.2331])
+
+
+
+    },
+    M_crealinebus(iteam){
+      // console.log(data)
+      // data.forEach(iteam => {
+       
+       
+      // })
+
+      let kyLinedata = new AMap.Polyline({
+        path: iteam.geom,
+        strokeColor: "#00FFFF",
+        strokeOpacity: 1,
+        strokeWeight: 4,
+        cursor: 'pointer',
+        strokeStyle: "solid",
+        extData: iteam
+      })
+     
+      kyLinedata.on('click', (e) => {
+        console.log(88)
+        let srt = e.target.getExtData()
+        console.log(srt)
+        let num = Math.floor((srt.geom.length) / 2)
+        let infoWin = `<div class="info-win">
+          <div class="win-triangle"></div>
+          <div class="info-box">
+            <div class="info-content">
+              <div class="info">
+                <div class="info-name">线路名称名称：${srt.routeName}</div>
+              </div>
+              <div class="info">
+                <div class="info-name">平均车速：${srt.avgSpeed}km/h</div>
+              </div>
+              <div class="info">
+                <div class="info-name">平均畅行指数：${srt.avgIndex}min/km</div>
+              </div>
+              <div class="info">
+                <div class="info-name">平均车速稳定性：${srt.exchange}</div>
+              </div>
+              <div class="info">
+                <div class="info-name">平均运行准点率：${srt.rightOnTime}%</div>
+              </div>
+            </div>
+          </div>
+        </div>`
+        this.M_openInfoWin(srt.geom[num], infoWin)
+        
+      });
+
+
+      kyLinedata.on('mouseover', (e) => {
+
+        e.target.setOptions({
+          strokeColor: "#A200FF",
+          zIndex: 40,
+        })
+      })
+      kyLinedata.on('mouseout', (e) => {
+        e.target.setOptions({
+          strokeColor: "#00FFFF",
+        })
+
+      })
+
+
+      this.realbusGroups.addOverlay(kyLinedata)
+      this.M_map.add(this.realbusGroups)
+      // this.realbusGroups.hide()
+      
+    },
+
+      // 实施运营的分布规律
+      M_addPoint1(data,type) {
+      
+        let markers = []
+        data.forEach(iteam => {
+          const marker = new AMap.Marker({
+            position: type==2?iteam.lnglat:[iteam.lng, iteam.lat],
+            offset: new AMap.Pixel(-9, -9),
+            topWhenClick: true,
+            icon: new AMap.Icon({
+              size: new AMap.Size(18, 18),
+              image: require('../../assets/image/alpoint1.png'),
+              imageSize: new AMap.Size(18, 18)
+            }), // 添加 Icon 图标 URL
+            extData: iteam
+          })
+          markers.push(marker)
+  
+          this.overlayGroupsgl.addOverlays(markers)
+          this.M_map.add(this.overlayGroupsgl)
+          this.M_map.setFitView(this.markers, true, [60, 200, 60, 60]);
+  
+        })
+  
+      },
     M_zzploy(){
       new AMap.DistrictSearch({
         extensions:'all',

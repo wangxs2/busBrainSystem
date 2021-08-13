@@ -2,7 +2,7 @@
   <div class="busStop-box">
     <div class="search-box">
       <div style="margin-right:0.8vw">行政区域</div>
-      <el-select style="margin-right:1.5vw" clearable  filterable @change="getpatharea" size="small" v-model="value" placeholder="请选择">
+      <el-select style="margin-right:1.5vw" clearable  @clear="claearstop()" filterable @change="getpatharea" size="small" v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.regionName"
@@ -30,55 +30,14 @@
     <div class="leftlinemsg">
       <div class="tit">基本指标</div>
       <div class="itmsg-box">
-        <div class="itmsg">
+        <div class="itmsg" v-for="(iteam,n) in listMsg" :key="n">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_1.png" />
-            站点总数
+            {{iteam.name}}
           </div>
-          <div>{{listMsg['站点总数']}}个</div>
+          <div>{{iteam.value}}</div>
         </div>
-        <div class="itmsg">
-          <div class="itmsgs">
-            <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
-            全区300米覆盖面积
-          </div>
-          <div>{{Number(listMsg['全区300米覆盖面积']).toFixed(2)}}平方公里</div>
-        </div>
-        <div class="itmsg">
-          <div class="itmsgs">
-            <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
-            建成区300米覆盖率
-          </div>
-          <div>{{Number(listMsg['建成区300米覆盖率'])}}</div>
-        </div>
-        <div class="itmsg">
-          <div class="itmsgs">
-            <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
-            总面积300米覆盖率
-          </div>
-          <div>{{Number(listMsg['总面积300米覆盖率'])}}</div>
-        </div>
-        <div class="itmsg">
-          <div class="itmsgs">
-            <img style="margin-right:0.4vw" src="@/assets/image/licon_2.png" />
-            全区500米覆盖面积
-          </div>
-          <div>{{Number(listMsg['全区500米覆盖面积']).toFixed(2)}}平方公里</div>
-        </div>
-         <div class="itmsg">
-          <div class="itmsgs">
-            <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
-            建成区500米覆盖率
-          </div>
-          <div>{{Number(listMsg['建成区500米覆盖率'])}}</div>
-        </div>
-        <div class="itmsg">
-          <div class="itmsgs">
-            <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
-            总面积500米覆盖率
-          </div>
-          <div>{{Number(listMsg['总面积500米覆盖率'])}}</div>
-        </div>
+    
       </div>
     </div>
   </div>
@@ -106,7 +65,7 @@ export default {
           id:2
         }
       ],
-      listMsg:{},
+      listMsg:[],
       isbtn:-1,
       point:1,
       isheat:1,
@@ -167,6 +126,9 @@ export default {
     },
     getpatharea(){
       let arr=[]
+       this.$emit('changefun',{
+            isclaear:2
+        })
       if(this.value==''){
       
          this.$emit('changefun',{
@@ -198,6 +160,16 @@ export default {
       
      
     },
+
+    claearstop(){
+        this.$emit('changefun',{
+            isclaear:1
+        })
+
+
+
+
+    },
     allpoint(){
       if(this.point==1){
         this.point=2
@@ -227,11 +199,20 @@ export default {
 
     // },
     getAreaLine(){
-      this.$fetchGet("passenger/region").then(res => {
+      this.$fetchGet("passenger/region",{
+        pid:1002
+      }).then(res => {
         this.options=res.result
       })
       this.$fetchGet("indicator/stationBasicMessage").then(res => {
-        this.listMsg=res.result
+
+        for(let key  in res.result){
+          let obj={}
+          obj.name=key
+          obj.value=res.result[key]
+          this.listMsg.push(obj)
+        }
+        console.log(this.listMsg)
       })
     },
     pointAll(){
@@ -275,7 +256,7 @@ export default {
     box-sizing: border-box;
     padding: vh(10) vw(16);
     position: absolute;
-    top: vh(76);
+    top: vh(140);
     left: vw(20);
     display: flex;
     align-items: center;
@@ -348,10 +329,10 @@ export default {
   }
    .leftlinemsg {
     position: absolute;
-    top: vh(145);
+    top: vh(210);
     left: vw(20);
     width: vw(370);
-    height: vh(420);
+    // height: vh(420);
     background: url("~@/assets/image/bigline.png");
     background-size: 100% 100%;
     .tit {

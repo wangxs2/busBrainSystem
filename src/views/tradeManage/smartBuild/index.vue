@@ -41,6 +41,27 @@
             </div>
       </div>
       <div class="titbox" style="margin-top:16px;margin-bottom:8px">设备信息</div>
+      <div class="right-ech right-ech1" >
+          <div id="echbox2"></div>
+            <div class="echleng">
+              <div class="echleng1">
+                <div style="display:flex;align-items: center;">
+                  <div class="rounbox"></div>
+                    已改造站点数：
+
+                </div>
+                <div style="color:#4578FF">205个</div>
+              </div>
+              <div class="echleng1">
+                <div style="display:flex;align-items: center;">
+                   <div class="rounbox rounbox1"></div>
+                    已改造站点数：
+
+                </div>
+                <div style="color:#F5256A">32个</div>
+              </div>
+            </div>
+      </div>
     </div>
     <div class="center-box"></div>
     <div class="right-box"></div>
@@ -52,6 +73,7 @@ export default {
   data(){
     return{
       myChart1:null,
+      myChart2:null
     }
 
   },
@@ -59,6 +81,7 @@ export default {
         setTimeout(()=>{
         this.$store.commit('SET_LOADING',false)
         this.initechart1()
+        this.initechart2()
         },200)
         
     },
@@ -149,6 +172,48 @@ export default {
               ]
           });
       },
+      initechart2(){
+          this.myChart2 = this.$echarts.init(document.getElementById('echbox2'));
+          this.myChart2.setOption({
+              tooltip: {
+                  trigger: 'item'
+              },
+              legend: {
+                show:false,
+                  // top: '5%',
+                  // left: 'center'
+              },
+               title: [
+                  {
+                    text: 2356,
+                    itemGap: 5,
+                    left: 'center',
+                    top: '36%',
+                    textStyle: {
+                      fontWeight: 'bold',
+                      fontSize: 32,
+                      textAlign: 'center',
+                      color: '#00FFFF'
+                    }
+                  },
+                {
+                  text: '站点总数',
+                  left: 'center',
+                  top: '55%',
+                  textStyle: {
+                    fontSize: 14,
+                    color: '#fff',
+                    textAlign: 'center'
+                    // align:'left'
+                  }
+                }
+              ],
+              series: [
+                  {value: 1048, name: '搜索引擎'},
+                  {value: 735, name: '直接访问'},
+              ]
+          });
+      },
     }
 
   
@@ -228,6 +293,13 @@ export default {
           padding-top:vh(18);
           
         }
+         #echbox2{
+          width:100%;
+          height:vh(235);
+          box-sizing:border-box;
+          padding-top:vh(18);
+          
+        }
         .echleng{
           display:flex;
           flex-direction: column;
@@ -252,6 +324,12 @@ export default {
             }
           }
         }
+    }
+    .right-ech1{
+        width:vw(380);
+        height:vh(337);
+        box-shadow: 0px 0px vh(8) rgba(69, 120, 255, 1) inset;
+
     }
   }
   .center-box{

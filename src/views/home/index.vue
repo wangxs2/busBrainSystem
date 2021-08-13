@@ -247,7 +247,7 @@ export default {
         if(name==1){
         this.$router.push("/lineCharacteristics/roadDistribution");
         }else if(name==2){
-          this.$router.push("/realNetwork/vehicleCar");
+          this.$router.push("/realNetwork");
         }else if(name==10){
           this.$router.push("/system/users");
         }else if(name==3){

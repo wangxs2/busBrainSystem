@@ -238,25 +238,25 @@ export default {
 </script>
 <style lang="scss">
 #adjustLine{
-   .amap-info-window{
-            background: #fff;
-            border-radius: 3px;
-            padding: 3px 7px;
-            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
-            position: relative;
-            color:black;
-            white-space: nowrap
-        }
-        .amap-info-sharp{
-            position: absolute;
-            top: 21px;
-            bottom: 0;
-            left: 50%;
-            margin-left: -12px;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-top: 12px solid #fff;
-        }
+  .amap-info-window{
+      background: #fff;
+      border-radius: 3px;
+      padding: 3px 7px;
+      box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+      position: relative;
+      color:black;
+      white-space: nowrap
+  }
+  .amap-info-sharp{
+      position: absolute;
+      top: 21px;
+      bottom: 0;
+      left: 50%;
+      margin-left: -12px;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 12px solid #fff;
+  }
 
 
 }

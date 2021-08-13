@@ -278,6 +278,15 @@ export default {
 
       }
 
+      if(row.isclaear==1){
+        MyMapLine.map.remove(MyMapLine.polygonLine);
+        if(MyMapLine.overlayGroups){
+          MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+            MyMapLine.map.remove(iy)
+          })
+        }
+      }
+
        if(row.isbtn){
           MyMapLine.setRadius(row.isbtn)
         }

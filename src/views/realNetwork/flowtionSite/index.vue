@@ -227,7 +227,7 @@ export default {
 
         })
 
-      },
+    },
     getAreaLine(){
       this.$fetchGet("passenger/region").then(res => {
         this.options=res.result

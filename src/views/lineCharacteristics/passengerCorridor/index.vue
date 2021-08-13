@@ -1,5 +1,5 @@
 <template>
-  <div class="passengerCorridor-box">
+<div class="passengerCorridor-box">
 
     <div class="leftlinemsg">
         <div class="tit-line">
@@ -36,17 +36,26 @@
     <div class="lkicon">
         <div class="lkicon-box">
             <div class="lkicon-itam">
-            <img style="margin-right:0.4vw" src="@/assets/image/icon_gj.png" />
-            公交站点
+                <img style="margin-right:0.4vw" src="@/assets/image/icon_gj.png" />
+                公交站点
             </div>
             <div class="lkicon-itam">
-            <img style="margin-right:0.4vw" src="@/assets/image/icon_dt.png" />
-            轨交站点
+                <img style="margin-right:0.4vw" src="@/assets/image/icon_dt.png" />
+                轨交站点
             </div>
         </div>
-        </div>
-    
     </div>
+
+
+    <div class="erach-box" id="echstation"  
+      v-loading="echloadsd"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.6)"></div>
+    
+</div>
+
+
 </template>
 
 <script>
@@ -57,6 +66,7 @@ export default {
   data() {
     return {
       lineData:[],
+      echloadsd:false,
       mlinedata:{},
       slinedata:{},
     };
@@ -74,12 +84,99 @@ export default {
       
   },
   methods: {
-      //站点显示信息窗口
-     datastation(rows){
-         this.$emit('changefun',{
-          isinfobtn:rows
-      })
-     },
+    //站点显示信息窗口
+    datastation(rows){
+        this.$emit('changefun',{
+        isinfobtn:rows
+    })
+    },
+    initechart(data){
+        this.myChart = this.$echarts.init(document.getElementById('echstation'));
+        this.myChart.setOption({
+        grid:{
+            top:60,
+            left:80,
+            right:40,
+            bottom:60,
+        },
+        tooltip:{
+            trigger: 'axis',
+            // formatter:'客流量：{c}人次',
+            backgroundColor:'#144A8C',
+            // borderWidth:0,
+            // textStyle:{
+            // color:'#D9EFFF',
+            // }
+        },
+        legend:{
+            top:'8%',
+            left:"center",
+            textStyle:{
+                color:'#ffffff'
+            }
+        },
+        title:{
+            text:"客流量/人次",
+            textStyle:{
+            color:'#DAE4FF',
+            fontWeight:'normal',
+            fontSize:16,
+            
+            },
+            top:26,
+            left:10,
+        },
+        color:['#ffca40','#00a08a','#e20048','#447bd4','#2e16b1','#5ab91b','#d35f1a','#8c2eca'],
+        xAxis: {
+            type: 'category',
+            boundaryGap:false,
+            axisLabel:{
+                interval:0,
+                rotate:25 ,
+                color:"#D9EFFF",
+                borderType:"dashed",
+                borderColor:"#194F95",
+            
+            },
+            axisTick: {
+                show:false
+            },
+            splitLine:{
+                show:true,
+                lineStyle:{
+                color:'#194F95',
+                type:'dashed'
+                }
+            },
+            axisLine:{
+                lineStyle:{
+                color:'#194F95',
+                type:'dashed'
+                }
+            },
+            data: data[0].dataX
+        },
+        yAxis: {
+        
+            type: 'value',
+            axisLabel:{
+                color:"#D9EFFF",
+                borderType:"dashed",
+                borderColor:"#194F95",
+            },
+            splitLine:{
+                show:true,
+                lineStyle:{
+                color:'#194F95',
+                type:'dashed'
+                }
+            },
+            
+        },
+        series: data
+        });
+        this.echloadsd=false
+    },
     separateArr(data, n) {
         //获取要切割的数组的长度
         let len = data.length;
@@ -94,7 +191,7 @@ export default {
     },
     getkyzlData(){
         this.$fetchGet("indicator/corridor").then(res => {
-            let mdata=[],sdata=[],allStation=[],allStation1=[]
+            let mdata=[],sdata=[],allStation=[],allStation1=[],zxtdata=[]
             for(let key  in res.result.mmap){
                 let obj={} 
                 obj.name=key
@@ -124,6 +221,25 @@ export default {
             this.mlinedata=mdata
             this.slinedata=sdata
             this.$store.commit('SET_LOADING',false)
+
+            for(let key  in res.result.corridorPassenger){
+                let obj={} 
+                obj.name=key
+                obj.data=[]
+                obj.dataX=[]
+                 obj.type='line'
+                obj.stack='总量'
+                obj.smooth= true
+                res.result.corridorPassenger[key].forEach(iteam=>{
+                    obj.data.push(Number(iteam.passengerNum))
+                    obj.dataX.push(iteam.passengerDate)
+                })
+                zxtdata.push(obj)
+            }
+            console.log(zxtdata)
+            this.initechart(zxtdata)
+
+
         });
     },
     setTwo(data){
@@ -279,6 +395,16 @@ export default {
     width: vw(370);
     height: vh(219);
     
+  }
+.erach-box{
+    position: absolute;
+    bottom: vh(10);
+    left: vw(20);
+    width:vw(1880);
+    height:vh(312);
+    background: url("~@/assets/image/zdbj.png");
+    background-size: 100% 100%;
+    margin-top:vh(8);
   }
 }
 </style>
