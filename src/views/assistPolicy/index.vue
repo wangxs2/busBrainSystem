@@ -256,7 +256,7 @@ export default {
       mlgdata:[],
       options:[],
       personData1:[],
-      value1:[new Date().getTime() - 3600 * 1000 * 24 * 3,new Date()],
+      value1:[new Date().getTime() - 3600 * 1000 * 24 * 30,new Date()],
       threedata:[],
       nowName:"非直线系数",
       nownum:0.6,
@@ -297,7 +297,7 @@ export default {
   },
   mounted() {
     this.M_initMap('compreMapks')
-    // this.initSwipertable()
+    this.initSwipertable()
     // this.trafficLayer.setMap(this.M_map);
   },
   created(){
@@ -376,20 +376,20 @@ export default {
           et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
       }).then(res => {
         
-          // res.result.forEach((item,index)=>{
-          //    if(item.mzl==null){
-          //       item.mzl=0
-          //     }
-          // })
+          res.result.forEach((item,index)=>{
+             if(item.mzl==null){
+                item.mzl=0
+              }
+          })
           
-          // let arr=res.result.sort(this.compare('mzl',false))
-          // arr.forEach((iteam,index)=>{
-          //     iteam.index = index + 1;
+          let arr=res.result.sort(this.compare('mzl',false))
+          arr.forEach((iteam,index)=>{
+              iteam.index = index + 1;
               
-          // })
-          // this.mlldata=arr;
-          // this.mlgdata=arrGroup(arr,3);
-          // console.log(this.mlgdata)
+          })
+          this.mlldata=arr;
+          this.mlgdata=arrGroup(arr,3);
+          console.log(this.mlgdata)
       })
 
 

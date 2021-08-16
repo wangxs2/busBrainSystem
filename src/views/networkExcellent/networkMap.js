@@ -39,6 +39,10 @@ const Map = {
       realTownGroups: new AMap.OverlayGroup(),//实时运营街镇的集合
       realbusGroups: new AMap.OverlayGroup(),//实时运营公交的集合
       overlayGroupsgl: new AMap.OverlayGroup(),//实时运营分布UI率
+      zgdGroups: new AMap.OverlayGroup(),//实时运营主干道
+      xwrhGroups: new AMap.OverlayGroup(),//线网融合
+      xwrhGroups1: new AMap.OverlayGroup(),//线网融合
+      xwrhGroups2: new AMap.OverlayGroup(),//线网融合
       nework: {
       }
 
@@ -118,6 +122,8 @@ const Map = {
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
 
       })
+
+      
     },
     // 初始化小镇地图
     M_initMap(el) {
@@ -179,11 +185,11 @@ const Map = {
       data.forEach(iteam => {
         const marker = new AMap.Marker({
           position: iteam.centre,
-          // 将 html 传给 content background: url(icon) url(${iconm})
+          // 将 html 传给 content background: url(icon) url(${iconm}) <div> ${iteam.percent || 0}</div>
           content: `<div class="regionMark" style="width:178px;height:178px;background:url(${iconm})">
             <div> ${iteam.name}</div>
              <div>  ${iteam.num}</div>
-             <div> ${iteam.percent || 0}</div>
+             
             </div>`,
           // 以 icon 的 [center bottom] 为原点
           offset: new AMap.Pixel(-13, -30),
@@ -359,6 +365,19 @@ const Map = {
       )
 
 
+      this.M_pointEvent.push(
+        AMap.Event.addListener(this.xwrhGroups2, 'click', (e) => {
+          // const ExtData = e.target.getExtData()
+          const position = e.target.getPosition()
+          callback && callback()
+          flag = ''
+        })
+      )
+
+
+      
+
+
 
 
 
@@ -446,7 +465,7 @@ const Map = {
       this.massall1.on('click',  (e)=> {
 
         http.fetchGet('gps/ebusManage',{
-          pdbCode:e.data.messagerecord,  
+          pdbCode:e.data.code,  
         }).then(res=>{
 
           let str=''
@@ -462,8 +481,8 @@ const Map = {
 
             <div class="titit">
               <div class="omgtit"></div>
-              <div style="margin:0 4px">${e.data.messagerecord}</div>
-              <div>${e.data.stationName}</div>    
+              <div style="margin:0 4px">${e.data.code}</div>
+              <div>${e.data.address}</div>    
             </div>
 
             <div style="font-size:18px" class="linlist">
@@ -500,7 +519,7 @@ const Map = {
 
       var domStr = '';
       for (var i = 0; i < data.length; i++) {
-          var lineDom = `<span style="color:#FFFFFF;font-size:18px">${data[i].routeName}、</span>`
+          var lineDom = `<span style="color:#FFFFFF;font-size:18px">${data[i].routeName||''}、</span>`
           domStr += lineDom
       }
       // domStr = domStr.substring(0, domStr.length - 1);
@@ -668,6 +687,203 @@ const Map = {
          
         } 
         
+      });
+
+    },
+
+    M_autoInputzgt(data) {
+      
+      data.forEach(iteam => {
+        var placeSearch = new AMap.PlaceSearch({
+          city: '全国'
+        });
+        placeSearch.search('上海市' + iteam.regionName, (status, result) => {
+          // 搜索成功时，result即是对应的匹配数据
+          console.log(result)
+          if (result.poiList.pois[0]) {
+            let row=result.poiList.pois[0]
+            let marker1 = new AMap.Marker({
+              content: `<div style='width:12px;height:12px;border-radius:50%;background:#b40100'></div> `,
+              offset: new AMap.Pixel(-6, -6),
+              zIndex: 100,
+              position: [row.location.lng, row.location.lat],
+            });
+
+            marker1.on('click',e=>{
+
+              let infoWin = `<div class="info-win">
+              <div class="win-triangle"></div>
+              <div class="info-box">
+                <div class="info-content">
+                  <div class="info">
+                    <div class="info-name">名称：${iteam.regionName}</div>
+                  </div>
+                  <div class="info">
+                    <div class="info-name">平均车速：${iteam.avgSpeed}</div>
+                  </div>
+                  <div class="info">
+                    <div class="info-name">畅行指数：${iteam.avgIndex}</div>
+                  </div>
+                  <div class="info">
+                  <div class="info-name">运行稳定性：${iteam.exchange}</div>
+                </div>
+                </div>
+              </div>
+            </div>`
+              this.M_openInfoWin([row.location.lng, row.location.lat], infoWin)
+
+            })
+           
+
+            this.zgdGroups.addOverlay(marker1)
+            this.M_map.add(this.zgdGroups)
+          }
+
+        })
+
+
+
+      })
+      // 
+
+
+    },
+
+    //行业管理线网现状规划管理
+
+    setxwxzgh(data){
+      if(this.xwrhGroups2){
+        this.xwrhGroups2.clearOverlays()
+      }
+      if(this.realbusGroups.getOverlays().length>0){
+          this.realbusGroups.hide()
+      }
+      const iconm = require('../../assets/image/blue.png')
+      data.forEach(iteam => {
+        const marker = new AMap.Marker({
+          position: iteam.centre,
+          // 将 html 传给 content background: url(icon) url(${iconm})
+          content: `<div class="regionMark" style="width:178px;height:178px;background:url(${iconm})">
+            <div> ${iteam.name}</div>
+             <div>  ${iteam.num}</div>
+             <div> </div>
+            </div>`,
+          // 以 icon 的 [center bottom] 为原点
+          offset: new AMap.Pixel(-13, -30),
+          zIndex: 10,
+          cursor: 'pointer',
+          extData: iteam,
+          
+        })
+
+        this.xwrhGroups2.addOverlay(marker)
+        this.M_map.add(this.xwrhGroups2)
+      })
+
+    },
+
+    //行业管理里面的线网融合
+    lineSearchtes(busLineName,item){
+      if(this.xwrhGroups){
+        this.xwrhGroups.clearOverlays()
+      }
+      if(this.xwrhGroups1){
+        this.xwrhGroups1.clearOverlays()
+      }
+      let linesearch = new AMap.LineSearch({
+        pageIndex: 1,
+        city: '上海',
+        pageSize: 1,
+        extensions: 'all'
+      });
+
+      linesearch.search(busLineName, (status, result) => {
+        if (status === 'complete' && result.info === 'OK') {
+
+          console.log(result)
+
+          let busPolyline = new AMap.Polyline({
+            // map: this.M_map,
+            path: result.lineInfo[0].path,
+            strokeColor: item.color,//线颜色
+            strokeOpacity: 0.8,//线透明度
+            isOutline: true,
+            outlineColor: item.color,
+            zIndex: 100,
+            strokeWeight: 1//线宽
+          });
+
+
+        let datas = result.lineInfo[0].via_stops
+        let markers = []
+        datas.forEach(iteam => {
+          var marker = new AMap.Marker({
+            position: iteam.location,
+            icon: new AMap.Icon({
+              image: require('../../assets/image/icon_dt.png'),
+              size: [16, 16],
+              imageSize: [16, 16],
+            }),
+            offset: new AMap.Pixel(-8, -16),
+            extData: iteam,
+            cursor: 'pointer',
+          })
+          marker.on('click', (e) => {
+            if(this.xwrhGroups1){
+              this.xwrhGroups1.clearOverlays()
+            }
+            this.M_map.setFitView(marker, true, [150, 240, 60, 60]);
+            let stationKeyWord=e.target.getExtData().name+'(地铁站)'
+            this.station.search(stationKeyWord, (status, resd) => {
+              if (status === 'complete' && resd.info === 'OK') {
+                console.log(resd.stationInfo)
+                resd.stationInfo[1].buslines.forEach(itm=>{
+
+                  linesearch.search(itm.name, (status, lida) => {
+
+                    if (status === 'complete' && lida.info === 'OK') {
+
+                                    
+                        let busPolyline1 = new AMap.Polyline({
+                          // map: this.M_map,
+                          path: lida.lineInfo[0].path,
+                          strokeColor:"#00FFFF",//线颜色
+                          strokeOpacity: 0.8,//线透明度
+                          isOutline: true,
+                          outlineColor: "#00FFFF",
+                          zIndex: 100,
+                          strokeWeight: 1//线宽
+                        });
+
+                        this.xwrhGroups1.addOverlay(busPolyline1)
+                        this.M_map.add(this.xwrhGroups1)
+
+                    }
+
+                  })
+
+
+
+                })
+               
+              }
+            });
+          })
+          markers.push(marker)
+        })
+        this.xwrhGroups.addOverlay(busPolyline)
+        this.xwrhGroups.addOverlays(markers)
+
+        this.M_map.add(this.xwrhGroups)
+
+
+
+
+
+
+         
+
+        } 
       });
 
     },
@@ -911,13 +1127,6 @@ const Map = {
       this.M_map.clearMap()
       let markerarr = []
       data.forEach(iteam => {
-
-        // AMap.plugin('AMap.PlaceSearch', ()=>{
-        //   var autoOptions = {
-        //     city: '全国'
-        //   }
-
-        // })
         var placeSearch = new AMap.PlaceSearch({
           city: '全国'
         });

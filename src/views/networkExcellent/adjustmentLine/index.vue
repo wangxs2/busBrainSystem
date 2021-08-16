@@ -152,7 +152,8 @@ export default {
         this.nowindex=-1
         this.datavsion=[]
           this.$fetchGet("route/baseLineDetail",{
-            routeName:this.value
+            routeName:this.value,
+            direction:1
           }).then(res => {
             if(res.result.length>0){
               this.allData.forEach(itam=>{

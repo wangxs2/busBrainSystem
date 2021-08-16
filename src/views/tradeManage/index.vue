@@ -28,15 +28,15 @@
                     已改造站点数：
 
                 </div>
-                <div style="color:#4578FF">205个</div>
+                <div style="color:#4578FF">2963个</div>
               </div>
               <div class="echleng1">
                 <div style="display:flex;align-items: center;">
                    <div class="rounbox rounbox1"></div>
-                    已改造站点数：
+                    未改造站点数：
 
                 </div>
-                <div style="color:#F5256A">32个</div>
+                <div style="color:#F5256A">3734个</div>
               </div>
             </div>
       </div>
@@ -47,10 +47,11 @@
               <div class="echleng1">
                 <div style="display:flex;align-items: center;">
                   <div class="rounbox" style="background:#4578FF"></div>
-                   电子站牌：
+                  三角站杆：
 
                 </div>
-                <div style="color:#4578FF">{{stadata['三角杆']}}个</div>
+                <!-- {{stadata['三角杆']}} -->
+                <div style="color:#4578FF">2536个</div>
               </div>
               <div class="echleng1" style="margin-top:1.5vh">
                 <div style="display:flex;align-items: center;">
@@ -58,7 +59,7 @@
                     亭牌合一：
 
                 </div>
-                <div style="color:#00FFFF">{{stadata['亭牌合一']}}个</div>
+                <div style="color:#00FFFF">820个</div>
               </div>
             </div>
       </div>
@@ -78,8 +79,16 @@
             </div>
 
           </div>
-          <div class="tulibox">
-           
+          <div class="search-box" v-show="tlstation[2].isxz">
+            <div style="margin-right:0.6vw;white-space: nowrap">地铁线路名称</div>
+              <el-select style="width:75%" size="small" filterable @change="getDetail" v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="(item,n) in metrodata"
+                  :key="n"
+                  :label="item.name"
+                  :value="item.name">
+                </el-option>
+              </el-select>
           </div>
       </div>
       <div class="cen-bottom">
@@ -98,18 +107,18 @@
         </div>
         <div class="table-contain swiper-container" id="swiperhy">
           <div class="swiper-wrapper">
-            <div class="swiper-slide"   v-for="(iteam,index) in qdData" :key="index">
+            <div class="swiper-slide"   v-for="(iteam,index) in awdata" :key="index">
               <div class="tableTr" v-for="(item,i) in iteam" :key="i+2">
-                <div>{{item.index}}</div>
-                <div >{{item.routeName}}</div>
-                <div >{{item.coefficient.toFixed(2)}}</div>
-                <div >{{item.routeName}}</div>
-                <div>{{item.coefficient.toFixed(2)}}</div>
+                <div>{{item.BXSJ}}</div>
+                <div >{{item.SGDH}}</div>
+                <div >{{item.CPH}}</div>
+                <div >{{item.XM}}</div>
+                <div>{{item.BXY}}</div>
                 
               </div>
             </div>
           </div>
-          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="qdData.length==0">无数据</div>
+          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="awdata.length==0">无数据</div>
         </div>
       </div>
         
@@ -158,38 +167,66 @@
 
       </div>
 
-       <div class="titbox" style="margin-top:16px;margin-bottom:8px">线网服务质量</div>
-       <div class="rightpj-box">
-        <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
-           <div>线路名称：</div>
-           <div>1101路</div>
+        <div class="titbox" style="margin-top:24px;margin-bottom:0px">线网服务质量</div>
+
+
+        <div class="table-contain swiper-container" id="swiperhy1">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"   v-for="(iteam,index) in fwpldata" :key="index">
+              <div class="rightpj-box" v-for="(item,i) in iteam" :key="i+2">
+                  <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
+                    <div>线路名称：</div>
+                    <div>{{item.routeName}}</div>
+                  </div>
+                  <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
+                    <div>反映时间：</div>
+                    <div>{{item.receiveTime}}</div>
+                  </div>
+                  <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.5vh">
+                    <div>反映内容：</div>
+                    <div style="width:60%;height:24px;overflow:hidden">
+                      
+                       <el-tooltip class="item" effect="dark" placement="top-start">
+                         <div style="width:300px;font-size:16px" slot="content">{{item.content}}</div>
+                          <div>{{item.content}}</div>
+                        </el-tooltip>
+                    </div>
+                  </div>
+                  <img  :src="item.hdlStatus=='处理中'?require('@/assets/image/4.6_2.png'):require('@/assets/image/4.6_3.png')" alt="" srcset="">
+              </div>
+            </div>
+          </div>
         </div>
-        <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
-           <div>反映时间：</div>
-           <div>1101路</div>
-         </div>
-         <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.5vh">
-           <div>反映内容：</div>
-           <div>1101路</div>
-         </div>
-        <img  src="@/assets/image/4.6_1.png" alt="" srcset="">
-         
-       </div>
-        <div style="margin-top:3vh" class="rightpj-box">
+        <!-- <div class="rightpj-box">
+            <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
+              <div>线路名称：</div>
+              <div>1101路</div>
+            </div>
+            <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
+              <div>反映时间：</div>
+              <div>1101路</div>
+            </div>
+            <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.5vh">
+              <div>反映内容：</div>
+              <div>1101路</div>
+            </div>
+            <img  src="@/assets/image/4.6_1.png" alt="" srcset="">
+        </div> -->
+        <!-- <div class="rightpj-box">
           <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
-           <div>线路名称：</div>
-           <div>1101路</div>
-        </div>
-        <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
-           <div>反映时间：</div>
-           <div>1101路</div>
-         </div>
-         <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.5vh">
-           <div>反映内容：</div>
-           <div>1101路</div>
-         </div>
-        <img  src="@/assets/image/4.6_2.png" alt="" srcset="">
-        </div>
+            <div>线路名称：</div>
+            <div>1101路</div>
+          </div>
+          <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
+            <div>反映时间：</div>
+            <div>1101路</div>
+          </div>
+          <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.5vh">
+            <div>反映内容：</div>
+            <div>1101路</div>
+          </div>
+          <img  src="@/assets/image/4.6_2.png" alt="" srcset="">
+        </div> -->
     </div>
   </div>
 </template>
@@ -199,6 +236,7 @@ import MapMixin from '../networkExcellent/networkMap';
  import screenfull from "screenfull";
  import Swiper from "swiper";
  import { arrGroup } from '@/libs/util.js';
+ let wxjl=require('./datawxjl.js')
 export default {
   mixins: [MapMixin],
   data(){
@@ -210,8 +248,18 @@ export default {
       stadata:{},
       myChart2:null,
        swipertable:null,
+       value:"9号线",
        nowName:"站点智能化建设",
        qdData:[],
+       awdata:[],
+       fwpldata:[],
+       toxidata:[ {num: 297, name: "浦东新区", centre: [121.550734,31.227827]}],
+      metrodata:[{name:'1号线',color:'#e3022a'},{name:'2号线',color:'#8dc218'},{name:'3号线',color:'#fdd501'},
+                    {name:'4号线',color:'#411d81'},{name:'5号线',color:'#924a96'},{name:'6号线',color:'#d10368'},
+                    {name:'7号线',color:'#f26b11'},{name:'8号线',color:'#0092d7'},{name:'9号线',color:'#0092d7'},
+                    {name:'10号线',color:'#c3aecb'},{name:'11号线',color:'#841d30'},{name:'12号线',color:'#027a5f'},
+                    {name:'13号线',color:'#e09abe'},{name:'14号线',color:'#655f23'},{name:'15号线',color:'#B9A981'},
+                    {name:'16号线',color:'#98D1C0'},{name:'17号线',color:'#B67770'},{name:'18号线',color:'#D5A461'}],
       tlstation:[
         {
             name:'站点智能化建设',
@@ -236,24 +284,25 @@ export default {
         setTimeout(()=>{
         this.$store.commit('SET_LOADING',false)
         this.initechart1()
-        // this.initechart2()
         this.initSwipertable()
         },200)
         this.getNoLi()
         this.getAllLine()
         this.getda()
-        // this.pointAll2()
-        // this.gettesr()
+
+
+         this.awdata=arrGroup(wxjl.datawx,5)
+         this.fwpldata=arrGroup(wxjl.fwpj,2)
+         console.log()
+         
+     
         
     },
     mounted(){
       this.M_initMap('compreMapks5')
-      //  this.M_pointAll4(this.restaurants)
        this.pointAll2()
 
-      //  console.log(this.testLinesearch('790路'))s
-      // this.testLinesearch('790路')
-
+       
     },
     methods:{
          // 设置地图全屏显示
@@ -263,6 +312,42 @@ export default {
         return false
       }
       screenfull.toggle(this.$refs.compreMapks5)
+    },
+
+     getBusLine(){
+         this.$fetchGet("gps/realBusRoute").then(res => {
+           res.result.forEach(iteam=>{
+            this.$fetchGet("route/baseLineDetail",{
+              routeName:iteam.routeName
+            }).then(resall => {
+              if(resall.result.length>0){
+                  iteam.geom=this.Q_setData(resall.result[0].geom)
+                  this.M_crealinebus(iteam)
+              }
+            })
+           })
+              // setTimeout(()=>{
+              // this.echloadsd1=false
+              // },3000)
+          
+
+           
+          
+         
+        })
+
+
+
+      
+
+
+      },
+    getDetail(){
+      this.metrodata.forEach(iteam=>{
+        if(this.value==iteam.name){
+          this.lineSearchtes(iteam.name,iteam)
+        }
+      })
     },
     gettesr(){
      
@@ -312,16 +397,59 @@ export default {
         })
         switch (row.name) {
             case '站点智能化建设' :
-              this.M_setZoomAndCenter([121.473658,31.230378],13)
-                this.realTownGroups.hide()
-              this.realbusGroups.hide()
+              this.massall1.show()
+
+               if(this.xwrhGroups){
+                  this.xwrhGroups.hide()
+                }
+                if(this.xwrhGroups1){
+                  this.xwrhGroups1.hide()
+                }
+
+                  if(this.xwrhGroups2){
+                  this.xwrhGroups2.hide()
+                }
+
+              if(this.realbusGroups.getOverlays().length>0){
+                    this.realbusGroups.hide()
+                }
+
+
                 break;
             case '线网现状规划' :
-              this.M_setZoomAndCenter([121.510737,31.230525],12)
-              this.realTownGroups.hide()
-              this.realbusGroups.hide()
+
+              //  if(this.realbusGroups.getOverlays().length>0){
+              //       this.realbusGroups.show()
+              //   }else{
+              //     this.getBusLine()
+              //   }
+
+              this.massall1.hide()
+
+               if(this.xwrhGroups){
+                  this.xwrhGroups.hide()
+                }
+                if(this.xwrhGroups1){
+                  this.xwrhGroups1.hide()
+                }
+                this.setxwxzgh(this.toxidata)
+                this.pointEvent()
+              
+            
                 break;
             case '线网融合' :
+
+              this.massall1.hide()
+
+               if(this.xwrhGroups2){
+                  this.xwrhGroups2.hide()
+                }
+
+              if(this.realbusGroups.getOverlays().length>0){
+                    this.realbusGroups.hide()
+                }
+
+              this.lineSearchtes('9号线',this.metrodata[8])
 
 
                 break;
@@ -331,6 +459,21 @@ export default {
         }
       }
 
+    },
+
+    pointEvent(){
+      this.M_addGroupEvent(()=>{
+        // this.getBusLine()
+
+        this.xwrhGroups2.clearOverlays()
+
+        if(this.realbusGroups.getOverlays().length>0){
+            this.realbusGroups.show()
+        }else{
+          this.getBusLine()
+        }
+
+      })
     },
 
     getNoLi(){
@@ -351,22 +494,37 @@ export default {
 
     },
     pointAll2(){
-     
-        this.$fetchGet("indicator/stationList").then(res => {
-          if(res.result&&res.result['站点的详细属性']){
-              this.restaurants =this.cloneObj(res.result['站点的详细属性']).slice(1,100)
-              this.M_pointAll4(this.restaurants)
+        this.$fetchGet("gps/ebusList").then(res => {
+          // if(res.result&&res.result['站点的详细属性']){
+          //     this.restaurants =this.cloneObj(res.result['站点的详细属性'])
+          //     this.M_pointAll4(this.restaurants)
              
               
-          }
+          // }
+          res.result.data.forEach(iteam=>{
+            iteam.lnglat=[iteam.lon,iteam.lat]
+            this.restaurants.push(iteam)
+
+          })
+          this.M_pointAll4(this.restaurants)
         })
     },
     initSwipertable() {
      
-      this.swipertable = new Swiper("#swiperks", {
+      this.swipertable = new Swiper("#swiperhy", {
         loop: true, // 循环模式选项
         mousewheel: true,
         direction: "vertical",
+        autoplay: {
+          delay: 8000 // 切换时间
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true //修改swiper的父元素时，自动初始化swiper
+      });
+
+      this.swipertable = new Swiper("#swiperhy1", {
+        loop: true, // 循环模式选项
+        mousewheel: true,
         autoplay: {
           delay: 8000 // 切换时间
         },
@@ -379,6 +537,7 @@ export default {
           this.myChart1 = this.$echarts.init(document.getElementById('echbox1'));
           this.myChart1.setOption({
               tooltip: {
+                show:false,
                   trigger: 'item'
               },
               legend: {
@@ -388,7 +547,7 @@ export default {
               },
                title: [
                   {
-                    text: 2356,
+                    text: 6670,
                     itemGap: 5,
                     left: 'center',
                     top: '36%',
@@ -442,12 +601,12 @@ export default {
                     },
                     data: [
                       {
-                        value: 60,
-                        name: '1'
+                        value: 2963/6670*75,
+                        name: '已改造站点'
                       },
                       {
-                        value: 15,
-                        name: '2'
+                        value: 3734/6670*75,
+                        name: '未改造站点'
                       },
                       {
                         value: 25,
@@ -462,6 +621,7 @@ export default {
           this.myChart2 = this.$echarts.init(document.getElementById('echbox2'));
           this.myChart2.setOption({
               tooltip: {
+                show:false,
                   trigger: 'item'
               },
               legend: {
@@ -469,7 +629,7 @@ export default {
               },
               title: [
                   {
-                    text: to,
+                    text: 3356,
                     itemGap: 5,
                     left: 'center',
                     top: '36%',
@@ -516,8 +676,8 @@ export default {
                           show: false
                       },
                       data: [
-                          {value: sa, name: '电子站牌'},
-                          {value: hy, name: '亭牌合一'},
+                          {value: 2256/3356*75, name: '三角站杆'},
+                          {value: 820/3356*75, name: '亭牌合一'},
                          
                       ]
                   }
@@ -582,6 +742,63 @@ export default {
     }
 
   }
+
+  .info-win {
+      padding-right: vw(20);
+      // height: vw(110);
+      position: relative;
+      .win-triangle {
+        position: absolute;
+        top: 0;
+        right: vw(16);
+        width: vw(20);
+        height: vw(20);
+        transform: skewX(-45deg);
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+      }
+      .info-box {
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+        border-radius: 4px;
+        .info-content {
+          position: relative;
+          background: rgba(1, 11, 66, 1);
+          border-radius: 4px;
+          padding: vh(12) vw(16) vh(10) vw(10);
+          color: #fff;
+          // display: flex;
+          .icon {
+            width: vw(98);
+            height: vw(88);
+            background: #000;
+            margin-right: vw(10);
+            float: left;
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+          .info {
+            // width: vw(180);
+            min-height: vh(20);
+            .info-name {
+              font-size: vw(16);
+              font-weight: bold;
+              margin-bottom: vw(12);
+            }
+            .info-item {
+              font-size: vw(14);
+              line-height: vw(20);
+              margin-top: vw(6);
+              // overflow: hidden;
+              // white-space: nowrap;
+              // text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+}
 
 }
 
@@ -720,6 +937,14 @@ export default {
         z-index:10;
         cursor:pointer;
       }
+      .search-box{
+        position: absolute;
+        left: vw(12);
+        top: vw(14);
+        z-index:10;
+        display:flex;
+        align-items: center;
+      }
       .seting-box{
         position: absolute;
         left: vw(12);
@@ -836,6 +1061,21 @@ export default {
       // }
 
   }
+  #swiperhy1{
+
+     width:100%;
+      height:vh(480);
+      // margin-top:vh(2);
+      .swiper-wrapper{
+        width:100%;
+        height:100%;
+      }
+      // .swiper-slide{
+      //   width:100%;
+      //   height:vh(40) ;
+      // }
+
+  }
   .right-box{
     .team-rij{
       width:vw(380);
@@ -854,6 +1094,7 @@ export default {
        box-shadow: 0px 0px vh(8) rgba(69, 120, 255, 1) inset;
        box-sizing:border-box;
        padding:vh(22) vw(22);
+       margin-top:vh(16);
 
     }
   }

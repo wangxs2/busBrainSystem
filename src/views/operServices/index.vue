@@ -61,7 +61,7 @@ export default {
       tlstation:[
           {
             name:'线路重复系数',
-            value:0.5,
+            value:0.2,
             isxz:true,
             img:require('@/assets/image/cyan.png')
           },
@@ -85,7 +85,7 @@ export default {
           },
           {
             name:'非直线系数',
-            value:0.5,
+            value:0.2,
             isxz:true,
             img:require('@/assets/image/icon_purple1.png')
           },

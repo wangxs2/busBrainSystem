@@ -5,19 +5,20 @@
         <div class="tl-box1">
           <div class="itlist">
             <div class="fonq1">今日平均计划配置数</div>
-            <div class="fonq2">{{rightObj.onLineValue.active||0}}</div>
+            <div class="fonq2">{{letopObj['今日平均计划配车数']||0}}</div>
           </div>
           <div class="itlist">
             <div class="fonq1">今日运营车辆总数</div>
-            <div class="fonq2">{{rightObj.runningValue.active||0}}</div>
+            <div class="fonq2">{{letopObj['今日运营总数']||0}}</div>
           </div>
           <div class="itlist">
             <div class="fonq1">当前运营车辆数</div>
-            <div class="fonq2">{{rightObj.runningValue.num||0}}</div>
+            <div class="fonq2">{{letopObj['当前运营总数']||0}}</div>
           </div>
           <div class="itlist">
             <div class="fonq1">运营率</div>
-            <div class="fonq2">{{rightObj.runningValue.percent}}</div>
+            <!-- {{letopObj['运营率'].toFixed(2)*100}}% -->
+            <div class="fonq2">{{letopObj['运营率']*100}}%</div>
           </div>
         </div>
         <div class="tl-box2">
@@ -75,7 +76,7 @@
 
           </div>
 <!-- v-show="tlstation[3].isxz" -->
-          <div class="seting-box seting-box1" >
+          <div class="seting-box seting-box1" v-show="tlstation[3].isxz">
              <div class="table-box">
               <div  class="table-iteanm" v-for="(iteam,n) in tlstation1" :key="n" >
                 <img @click="toShow1(iteam,n)" v-if="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
@@ -149,6 +150,9 @@ export default {
       return {
         echloadsd:true,
         righavg:{},
+        letopObj:{
+          '运营率':null
+        },
         echloadsd1:false,
         myChart3:null,
         stadata:{},
@@ -171,7 +175,9 @@ export default {
         },
 
         nowName:"车辆实时运行",
+        nowName1:"区域",
         listMsg:[],//客流分布规律的接口
+        listMsg1:[],//客流分布规律的接口
         
         jzeaData:[],//车辆运行街镇的的车辆实时运行
         buslineData:[],
@@ -217,6 +223,7 @@ export default {
         this.getechdata()
         this.getroad()
         this.getcentre()
+        // this.getSSyx()
     },
     mounted() {
       this.M_initMap('compreMapks1')
@@ -256,12 +263,11 @@ export default {
        
         //主干道
         this.$fetchGet("gps/realBusRoad").then(res => {
+
+          this.M_autoInputzgt(res.result)
          
         })
-        //线路车况
-        this.$fetchGet("gps/realBusRoute").then(res => {
-         
-        })
+       
       },
       //客流分布规律
       getstion(){
@@ -301,17 +307,15 @@ export default {
               this.M_InfoWindow.setAnchor('bottom-center')
               this.M_openInfoWin(str.lnglat,content)
                this.$fetchGet("passenger/stationDetail",{
-                  stationName:'浦东南路上南路',
-                  direction:0,
+                  stationName:str.stationName,
+                  direction:str.routeDirection,
                   st:this.$moment(this.value1[0]).format("YYYY-MM"),
                   et:this.$moment(this.value1[1]).format("YYYY-MM"),
                 }).then(res => {
 
-                  // for(let key  in res.result){
-                  //   this.listMsg=this.listMsg.concat(res.result[key])
-                  // }
-
+                
                   this.initechart3(res.result)
+                 
 
 
                   
@@ -323,12 +327,28 @@ export default {
 
       },
       initechart3(data){
-        for(let key  in res.result){
-          this.listMsg=this.listMsg.concat(res.result[key])
+        let arr4=[],arrX=[]
+        for(let key  in data){
+          
+          let obj={
+            name:'',
+            data:[],
+            type: 'line',
+            stack: '总量',
+            symbolSize:6,
+          }
+          obj.name=key
+          data[key].forEach(iteam=>{
+            obj.data.push(iteam.sp)
+            arrX.push(iteam.passengerDate)
+          })
+          arr4.push(obj)
         }
+        console.log(arr4)
         this.myChart3 = this.$echarts.init(document.getElementById('echarebox'));
         this.myChart3.setOption({
             tooltip: {
+              // show:false,
                backgroundColor:'#144A8C',
               borderWidth:0,
               textStyle:{
@@ -348,7 +368,7 @@ export default {
             },
             legend:{
               show:true,
-              bottom:10,
+              bottom:2,
               textStyle:{
                 color:'#DAE4FF'
               },
@@ -360,12 +380,12 @@ export default {
             grid: {
                 left: '1%',
                 right: '2%',
-                bottom: '16%',
+                bottom: '10%',
                 top:50,
                 containLabel: true
             },
             xAxis: {
-                data:[1,1,1,1,1,1,1],
+                data:arrX,
                 name: '',
                 nameTextStyle:{
                   color:'#DAE4FF'
@@ -378,8 +398,8 @@ export default {
                     }
                 },
                  axisLabel : {
-                   interval:0,
-                   rotate:0 ,
+                   interval:3,
+                   rotate:0,
                   formatter: '{value}',
                   textStyle: {
                       color: '#ffffff',
@@ -417,61 +437,76 @@ export default {
                   }
                 },
             },
-            series: [
-                {
-                    name: '线路一',
-                    type: 'line',
-                    stack: '总量',
-                    symbolSize:6,
-                    data: [120, 132, 101, 134, 90, 230, 210]
-                },
-                {
-                    name: '线路二',
-                    type: 'line',
-                    stack: '总量',
-                    symbolSize:6,
-                    data: [220, 182, 191, 234, 290, 330, 310]
-                },
-                {
-                    name: '线路三',
-                    type: 'line',
-                    stack: '总量',
-                    symbolSize:6,
-                    data: [150, 232, 201, 154, 190, 330, 410]
-                },
-            ]
-
+            series:arr4
         })
 
     },
     toShow1(row,n){
-      this.tlstation1[n].isxz=!this.tlstation1[n].isxz
+      this.nowName1=row.name
+      if(row.isxz){
+        return
+      }else{
+
+      this.tlstation1.forEach(iteam=>{
+          if(iteam.name==this.nowName1){
+            iteam.isxz=true
+          }
+          if(iteam.name!==this.nowName1){
+          
+              iteam.isxz=false
+          }
+        })
 
       switch (row.name) {
             case '区域' :
               if(row.isxz){
                 this.realTownGroups.show()
+                // this.realbusGroups.hide()
               }else{
                 this.realTownGroups.hide()
               }
+              this.zgdGroups.hide()
+              this.realbusGroups.hide()
+              break;
             
             case '主干道' :
+
+              if(this.zgdGroups.getOverlays().length>0){
+                    this.zgdGroups.show()
+                }else{
+                  this.getSSyx()
+                }
+
+
+                this.realbusGroups.hide()
+                this.realTownGroups.hide()
+
+              
+              break;
            
             case '公交线路' :
 
               if(row.isxz){
-                this.realbusGroups.show()
+                if(this.realbusGroups.getOverlays().length>0){
+                    this.realbusGroups.show()
+                }else{
+                  this.getBusLine()
+                }
               }else{
                 this.realbusGroups.hide()
               }
-
-
+               this.zgdGroups.hide()
+               this.realTownGroups.hide()
             break;
             
 
             default :
                 
         }
+
+
+        }
+    
 
      
 
@@ -497,11 +532,13 @@ export default {
               this.M_setZoomAndCenter([121.473658,31.230378],13)
                 this.realTownGroups.hide()
                 this.realbusGroups.hide()
+                  this.overlayGroupsgl.hide()
                 break;
             case '站点现状' :
               this.M_setZoomAndCenter([121.510737,31.230525],12)
               this.realTownGroups.hide()
               this.realbusGroups.hide()
+              this.overlayGroupsgl.hide()
                 break;
             case '站点客流分布规律' :
 
@@ -542,6 +579,7 @@ export default {
                     //公交线路
                     // this.getBusLine()
                   }
+                   this.overlayGroupsgl.hide()
                 break;
             default :
                 
@@ -552,6 +590,13 @@ export default {
       getcentre(){
         this.$fetchGet("gps/centre").then(res => {
           this.rightObj=res.result
+        })
+
+
+        this.$fetchGet("gps/busYunYing",{
+          date:this.$moment(new Date()).format("YYYY-MM-DD")
+        }).then(res => {
+          this.letopObj=res.result
         })
 
         this.$fetchGet("gps/stationMessage").then(res => {
@@ -678,9 +723,9 @@ export default {
               }
             })
            })
-          setTimeout(()=>{
-          this.echloadsd1=false
-          },3000)
+              setTimeout(()=>{
+              this.echloadsd1=false
+              },3000)
           
 
            
@@ -696,6 +741,7 @@ export default {
       },
       //街镇信息
       getJzmag(){
+        this.echloadsd1=true
         this.$fetchGet("gps/realBusRegion").then(res => {
           this.$fetchGet("passenger/region").then(resall => {
              res.result.forEach(iteam=>{
@@ -709,7 +755,9 @@ export default {
             })
 
             this.jzeaData=res.result
-            console.log(this.jzeaData)
+            setTimeout(()=>{
+              this.echloadsd1=false
+              },2000)
             this.M_createPolygon(this.jzeaData)
          
           })
@@ -726,7 +774,7 @@ export default {
       }
       screenfull.toggle(this.$refs.compreMapks)
     },
-      initechart(data,data1){
+      initechart(data){
           this.myChart = this.$echarts.init(document.getElementById('echstation'));
           this.myChart.setOption({
             grid:{
@@ -761,7 +809,7 @@ export default {
                 boundaryGap:false,
                 axisLabel:{
                   interval:0,
-                  rotate:25 ,
+                  rotate:0 ,
                   color:"#D9EFFF",
                   borderType:"dashed",
                   borderColor:"#194F95",
@@ -783,7 +831,7 @@ export default {
                     type:'dashed'
                   }
                 },
-                data: data
+                data: ["1:00","2:00","3:00","4:00","5:00","6:00","7:00","8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00","24:00"]
             },
             yAxis: {
             
@@ -803,7 +851,7 @@ export default {
                 
             },
             series: [{
-                data:data1,
+                data:data,
                 type: 'line',
                 smooth: true ,
                 legendHoverLink: true ,
@@ -837,6 +885,7 @@ export default {
           this.myChart1 = this.$echarts.init(document.getElementById('echbox'));
           this.myChart1.setOption({
               tooltip: {
+                  show:false,
                   trigger: 'item'
               },
               legend: {
@@ -918,12 +967,17 @@ export default {
       },
       getechdata(){
         let arr=[],arr1=[]
-        this.$fetchGet("passenger/dailyPassenger").then(res=>{
-          res.result.forEach(iteam=>{
-            arr.push(iteam.date)
-            arr1.push(iteam.sum)
-          })
-          this.initechart(arr,arr1)
+        this.$fetchGet("iccard/passenger").then(res=>{
+          // res.result.forEach(iteam=>{
+          //   arr.push(iteam.date)
+          //   arr1.push(iteam.sum)
+          // })
+          // this.initechart(arr,arr1)
+          for(let key  in res.result){
+            arr.push(res.result[key])
+          }
+          // console.log(arr.slice(2,arr.length))
+          this.initechart(arr.slice(2,arr.length))
           setTimeout(()=>{
           this.$store.commit('SET_LOADING',false)
           },200)
