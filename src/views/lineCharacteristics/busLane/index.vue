@@ -11,16 +11,23 @@
       <div class="bttit">
         <div>名称</div>
         <div>里程(km)</div>
-        <div>线路条数</div>
+        <!-- <div>线路条数</div> -->
       </div>
       <div class="tablbox">
         <div class="bttit bttit1" v-for="(item,n) in lineData" :key="n">
           <div style="text-align:left;padding-left:1vw">{{item.name}}</div>
           <div>{{item.length}}</div>
-          <div>{{item.lineNumber}}</div>
+          <!-- <div>{{item.lineNumber}}</div> -->
         </div>
       </div>
     </div>
+
+
+    <div class="erach-box" id="echstation"  
+      v-loading="echloadsd"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.6)"></div>
   
   </div>
 </template>
@@ -34,7 +41,8 @@ export default {
   },
   data() {
     return {
-      lineData:[]
+      lineData:[],
+      myChart:null
     };
   },
   beforeCreate() {},
@@ -49,14 +57,140 @@ export default {
     console.log(this.lineData)
     
      this.$store.commit('SET_LOADING',false)
+     this.getData()
     
   
   },
   mounted() {
     this.M_initMap('busLane')
     this.M_passCorrline(this.lineData)
+     window.onresize = ()=> {
+        this.myChart.resize()
+      }
   },
   methods: {
+
+    getData(){
+      this.echloadsd=true
+
+       this.$fetchGet("base-bus-exclusive-road/msg").then(res => {
+         console.log()
+         let zxtdata=[],arr=[]
+         for(let key  in res.result){
+          //  let obj1={}
+           if(res.result.[key].list!==null){
+
+             let obj={} 
+                obj.name=key
+                obj.data=[]
+                obj.dataX=[]
+                 obj.type='line'
+                obj.stack='总量'
+                obj.smooth= true
+                res.result[key].list.forEach(iteam=>{
+                    obj.data.push(Number(iteam.passengerNum))
+                    obj.dataX.push(iteam.passengerDate)
+                })
+                zxtdata.push(obj)
+
+           }
+                
+          }
+            console.log(zxtdata)
+            this.initechart(zxtdata)
+
+
+
+       })
+
+    },
+    initechart(data){
+        this.myChart = this.$echarts.init(document.getElementById('echstation'));
+        this.myChart.setOption({
+        grid:{
+            top:60,
+            left:80,
+            right:40,
+            bottom:60,
+        },
+        tooltip:{
+            trigger: 'axis',
+            // formatter:'客流量：{c}人次',
+            backgroundColor:'#144A8C',
+            // borderWidth:0,
+            // textStyle:{
+            // color:'#D9EFFF',
+            // }
+        },
+        legend:{
+            top:'8%',
+            left:"center",
+            textStyle:{
+                color:'#ffffff'
+            }
+        },
+        title:{
+            text:"客流量/人次",
+            textStyle:{
+            color:'#DAE4FF',
+            fontWeight:'normal',
+            fontSize:16,
+            
+            },
+            top:26,
+            left:10,
+        },
+        color:['#ffca40','#00a08a','#e20048','#447bd4','#2e16b1','#5ab91b','#d35f1a','#8c2eca'],
+        xAxis: {
+            type: 'category',
+            boundaryGap:false,
+            axisLabel:{
+                interval:0,
+                rotate:25 ,
+                color:"#D9EFFF",
+                borderType:"dashed",
+                borderColor:"#194F95",
+            
+            },
+            axisTick: {
+                show:false
+            },
+            splitLine:{
+                show:true,
+                lineStyle:{
+                color:'#194F95',
+                type:'dashed'
+                }
+            },
+            axisLine:{
+                lineStyle:{
+                color:'#194F95',
+                type:'dashed'
+                }
+            },
+            data: data[0].dataX
+        },
+        yAxis: {
+        
+            type: 'value',
+            axisLabel:{
+                color:"#D9EFFF",
+                borderType:"dashed",
+                borderColor:"#194F95",
+            },
+            splitLine:{
+                show:true,
+                lineStyle:{
+                color:'#194F95',
+                type:'dashed'
+                }
+            },
+            
+        },
+        series: data
+        });
+        this.echloadsd=false
+    },
 
   }
 };
@@ -196,6 +330,18 @@ export default {
       margin-top: vh(12);
       margin-bottom: vh(30);
     }
+  }
+
+  .erach-box{
+    position: absolute;
+    bottom: vh(10);
+    left: vw(20);
+    width:vw(1880);
+    height:vh(312);
+    z-index:10;
+    background: url("~@/assets/image/zdbj.png");
+    background-size: 100% 100%;
+    margin-top:vh(8);
   }
 }
 </style>

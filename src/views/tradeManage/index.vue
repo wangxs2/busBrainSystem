@@ -36,7 +36,7 @@
                     未改造站点数：
 
                 </div>
-                <div style="color:#F5256A">3734个</div>
+                <div style="color:#F5256A">{{zonum-2963}}个</div>
               </div>
             </div>
       </div>
@@ -71,8 +71,8 @@
             <div class="settit">显示设置</div>
             <div class="table-box">
               <div  class="table-iteanm" v-for="(iteam,n) in tlstation" :key="n" >
-                <img @click="toShow(iteam,n)" v-if="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
-                <img @click="toShow(iteam,n)" v-if="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
+                <img @click="toShow(iteam,n)" v-show="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
+                <img @click="toShow(iteam,n)" v-show="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
                 <div class="natit">{{iteam.name}}</div>
                 
               </div>
@@ -97,28 +97,25 @@
          <div class="table-data">
         <div class="table-header">
         
-          <div >日期</div>
+          <div >报修时间</div>
           <div>车辆自编号</div>
           <div >车牌号</div>
           <div>维修内容</div>
           <div >维修人员</div>
-       
-          
         </div>
         <div class="table-contain swiper-container" id="swiperhy">
           <div class="swiper-wrapper">
             <div class="swiper-slide"   v-for="(iteam,index) in awdata" :key="index">
               <div class="tableTr" v-for="(item,i) in iteam" :key="i+2">
                 <div>{{item.BXSJ}}</div>
-                <div >{{item.SGDH}}</div>
+                <div >{{item.ZBH}}</div>
                 <div >{{item.CPH}}</div>
-                <div >{{item.XM}}</div>
+                <div >{{item.WXXZ}}</div>
                 <div>{{item.BXY}}</div>
-                
               </div>
             </div>
           </div>
-          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="awdata.length==0">无数据</div>
+          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-show="awdata.length==0">无数据</div>
         </div>
       </div>
         
@@ -184,11 +181,11 @@
                   </div>
                   <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.5vh">
                     <div>反映内容：</div>
-                    <div style="width:60%;height:24px;overflow:hidden">
+                    <div style="width:60%;height:24px;overflow:hidden;text-overflow:ellipsis;white-space: nowrap;">
                       
                        <el-tooltip class="item" effect="dark" placement="top-start">
-                         <div style="width:300px;font-size:16px" slot="content">{{item.content}}</div>
-                          <div>{{item.content}}</div>
+                         <div style="width:300px;font-size:16px;" slot="content">{{item.content}}</div>
+                          <div style="overflow:hidden;text-overflow:ellipsis;white-space: nowrap;">{{item.content}}</div>
                         </el-tooltip>
                     </div>
                   </div>
@@ -246,6 +243,7 @@ export default {
       restaurants:[],
       lefttda:{},
       stadata:{},
+      zonum:0,
       myChart2:null,
        swipertable:null,
        value:"9号线",
@@ -253,6 +251,13 @@ export default {
        qdData:[],
        awdata:[],
        fwpldata:[],
+      carSearch:{
+        // leftlon:null,
+        // rightlon:null,
+        // leftlat:null,
+        // rightlat:null,
+        zoom:0,
+      },
        toxidata:[ {num: 297, name: "浦东新区", centre: [121.550734,31.227827]}],
       metrodata:[{name:'1号线',color:'#e3022a'},{name:'2号线',color:'#8dc218'},{name:'3号线',color:'#fdd501'},
                     {name:'4号线',color:'#411d81'},{name:'5号线',color:'#924a96'},{name:'6号线',color:'#d10368'},
@@ -283,7 +288,6 @@ export default {
     created(){
         setTimeout(()=>{
         this.$store.commit('SET_LOADING',false)
-        this.initechart1()
         this.initSwipertable()
         },200)
         this.getNoLi()
@@ -293,21 +297,34 @@ export default {
 
          this.awdata=arrGroup(wxjl.datawx,5)
          this.fwpldata=arrGroup(wxjl.fwpj,2)
-         console.log()
          
      
         
     },
     mounted(){
       this.M_initMap('compreMapks5')
-       this.pointAll2()
-
        
+       this.M_map.on('moveend',(e)=>{
+         this.carSearch.zoom=Math.round(e.target.getZoom())
+
+         
+
+          if(this.tlstation[1].isxz==true){
+            // if(this.carSearch.zoom>15){
+            //   this.xwrhGroups2.hide()
+            // }
+            // if(this.carSearch.zoom<13){
+            //   this.realbusGroups.hide()
+            // }
+            this.getgpsLine()
+          }
+        
+       })
+       this.pointAll2()
     },
     methods:{
          // 设置地图全屏显示
     mapFullEvent () {
-      console.log(screenfull)
       if (!screenfull.isEnabled) {
         return false
       }
@@ -367,8 +384,33 @@ export default {
         this.stadata=res.result.brackets
         this.initechart2(this.stadata.total,this.stadata['三角杆'],this.stadata['亭牌合一'])
         // let noli=this.stadata.stationsInRun-this.stadata.stations
-        // this.initechart1(this.stadata.stationsInRun,this.stadata.stations,noli)
+        this.zonum=res.result.stations
+        this.initechart1(res.result.stations)
+
+        console.log("站点总数")
       })
+    },
+    getgpsLine(){
+       this.$fetchGet("gps/route",this.carSearch).then(res => {
+        if(res.result&&res.result.length>0){
+           if(this.carSearch.zoom>11&&this.carSearch.zoom<16){
+              this.setxwxzgh(res.result)
+              this.pointEvent()
+            }
+            if(this.carSearch.zoom>15){
+              // this.M_addPoint(res.result)
+              
+              res.result.forEach(iteam=>{
+                iteam.geom=this.Q_setData(iteam.geom)
+                this.M_crealinebus(iteam,2)
+              })
+              
+              // this.pointEvent()
+            }
+
+        }
+      })
+
     },
     getAllLine(){
       
@@ -406,25 +448,33 @@ export default {
                   this.xwrhGroups1.hide()
                 }
 
-                  if(this.xwrhGroups2){
-                  this.xwrhGroups2.hide()
-                }
-
-              if(this.realbusGroups.getOverlays().length>0){
+                if(this.realbusGroups){
+                
                     this.realbusGroups.hide()
                 }
 
 
+                  if(this.xwrhGroups2){
+                  this.xwrhGroups2.hide()
+                }
+               
+
+              
+
                 break;
             case '线网现状规划' :
+
+              this.M_setZoomAndCenter([121.473658,31.230378],12)
 
               //  if(this.realbusGroups.getOverlays().length>0){
               //       this.realbusGroups.show()
               //   }else{
               //     this.getBusLine()
               //   }
-
-              this.massall1.hide()
+              if(this.massall1){
+                this.massall1.hide()
+              }
+              
 
                if(this.xwrhGroups){
                   this.xwrhGroups.hide()
@@ -432,8 +482,8 @@ export default {
                 if(this.xwrhGroups1){
                   this.xwrhGroups1.hide()
                 }
-                this.setxwxzgh(this.toxidata)
-                this.pointEvent()
+                // this.setxwxzgh(this.toxidata)
+                // this.pointEvent()
               
             
                 break;
@@ -446,6 +496,8 @@ export default {
                 }
 
               if(this.realbusGroups.getOverlays().length>0){
+                    console.log(4555)
+                    console.log(this.realbusGroups)
                     this.realbusGroups.hide()
                 }
 
@@ -462,16 +514,23 @@ export default {
     },
 
     pointEvent(){
-      this.M_addGroupEvent(()=>{
+      this.M_addGroupEvent((str)=>{
         // this.getBusLine()
 
-        this.xwrhGroups2.clearOverlays()
-
+        this.M_setZoomAndCenter([str.centerLongitude,str.centerLatitude],17)
         if(this.realbusGroups.getOverlays().length>0){
             this.realbusGroups.show()
         }else{
-          this.getBusLine()
+          this.getgpsLine()
         }
+
+        // if(this.realbusGroups){
+        //   this.realbusGroups.clearOverlays()
+        // }
+
+        this.M_setZoomAndCenter([str.centerLongitude,str.centerLatitude],17)
+        // this.xwrhGroups2.clearOverlays()
+        // this.getgpsLine()
 
       })
     },
@@ -498,19 +557,15 @@ export default {
           // if(res.result&&res.result['站点的详细属性']){
           //     this.restaurants =this.cloneObj(res.result['站点的详细属性'])
           //     this.M_pointAll4(this.restaurants)
-             
-              
           // }
           res.result.data.forEach(iteam=>{
             iteam.lnglat=[iteam.lon,iteam.lat]
             this.restaurants.push(iteam)
-
           })
           this.M_pointAll4(this.restaurants)
         })
     },
     initSwipertable() {
-     
       this.swipertable = new Swiper("#swiperhy", {
         loop: true, // 循环模式选项
         mousewheel: true,
@@ -533,7 +588,7 @@ export default {
       });
   
     },
-      initechart1(){
+      initechart1(dase){
           this.myChart1 = this.$echarts.init(document.getElementById('echbox1'));
           this.myChart1.setOption({
               tooltip: {
@@ -547,7 +602,7 @@ export default {
               },
                title: [
                   {
-                    text: 6670,
+                    text: dase,
                     itemGap: 5,
                     left: 'center',
                     top: '36%',
@@ -601,11 +656,11 @@ export default {
                     },
                     data: [
                       {
-                        value: 2963/6670*75,
+                        value: 2963/dase*75,
                         name: '已改造站点'
                       },
                       {
-                        value: 3734/6670*75,
+                        value: (dase-2963)/dase*75,
                         name: '未改造站点'
                       },
                       {

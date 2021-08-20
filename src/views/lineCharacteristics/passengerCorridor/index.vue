@@ -81,6 +81,10 @@ export default {
 
   },
   mounted() {
+
+      window.onresize = ()=> {
+        this.myChart.resize()
+      }
       
   },
   methods: {

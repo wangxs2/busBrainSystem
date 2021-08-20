@@ -55,7 +55,13 @@ export default {
      
 
     },
-    mounted() {},
+    mounted() {
+      window.onresize = ()=> {
+        // this.myChart.resize()
+        // this.myChart1.resize()
+        // this.myChart3.resize()
+      }
+    },
     methods: {
       tomeay(row) {
       this.islist = row.id;

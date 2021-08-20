@@ -128,6 +128,14 @@ export default {
 
     },
     created(){
+
+       const routerParams = this.$route.query.mallCode
+        // 将数据放在当前组件的数据内
+        this.value = routerParams;
+        if(this.value){
+          this.getDetail()
+        }
+        
       this.pointAll()
       this.upBtn()
       this.getData()

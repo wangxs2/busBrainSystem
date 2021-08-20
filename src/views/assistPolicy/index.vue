@@ -24,15 +24,12 @@
               </div>
             </div>
           </div>
-          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
+          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-show="alldata.length==0">无数据</div>
         </div>
-
-
-
       </div>
       <div class="titbox" style="margin-bottom:8px;margin-top:14px">线路重复系数</div>
       <div class="con-box table-data" >
-        <div class="table-header">
+        <!-- <div class="table-header">
         
           <div style="width:10%"></div>
           <div style="width:45%">线路名称</div>
@@ -52,17 +49,21 @@
               </div>
             </div>
           </div>
-          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
-        </div>
+          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-show="alldata.length==0">无数据</div>
+        </div> -->
+
+        <div id="assech2"></div>
       </div>
       <div class="titbox" style="margin-top:14px">线路长度</div>
       <div class="big-tab big-tab4">
-        <rank-block
+        <!-- <rank-block
           :rank-data="OverlengData"
           :gradient-ramp="['#E9795B', '#FF9A85']"
           block-tit
           font-color="#FF9A85"
-        ></rank-block>
+        ></rank-block> -->
+
+        <div id="assech1"></div>
         
       </div>
     </div>
@@ -73,15 +74,15 @@
             <div class="settit">显示设置</div>
             <div class="table-box">
               <div  class="table-iteanm" v-for="(iteam,n) in tlstation" :key="n" >
-                <img @click="toShow(iteam,n)" v-if="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
-                <img @click="toShow(iteam,n)" v-if="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
+                <img @click="toShow(iteam,n)" v-show="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
+                <img @click="toShow(iteam,n)" v-show="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
                 <div class="natit">{{iteam.name}}</div>
                 
               </div>
             </div>
 
           </div>
-          <div class="tulibox">
+          <div class="tulibox" v-show="nowName!=='长期拥堵路段'&&nowName!=='百公里人次'">
             <div style="display:flex;align-items: center">
               <div class="linetu"></div>
               <div class="fonttu">{{nowName}} ≤ {{nownum}}</div>
@@ -89,6 +90,24 @@
              <div style="display:flex;align-items: center;margin-top:1vh">
               <div class="linetu linetu1"></div>
               <div class="fonttu">{{nowName}}＞{{nownum}}</div>
+            </div>
+          </div>
+          <div class="tulibox tulibox1" v-show="nowName=='百公里人次'">
+            <div style="display:flex;align-items: center">
+              <div class="linetu"></div>
+              <div class="fonttu">0-30</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class="linetu" style="background:#e5d887"></div>
+              <div class="fonttu">30-60</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class="linetu" style="background:#f06f59"></div>
+              <div class="fonttu">60-100</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class="linetu linetu1"></div>
+              <div class="fonttu">100以上</div>
             </div>
           </div>
       </div>
@@ -200,7 +219,7 @@
               </div>
             </div>
           </div>
-          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
+          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-show="alldata.length==0">无数据</div>
         </div>
       </div>
     </div>
@@ -259,12 +278,12 @@ export default {
       value1:[new Date().getTime() - 3600 * 1000 * 24 * 30,new Date()],
       threedata:[],
       nowName:"非直线系数",
-      nownum:0.6,
+      nownum:1.6,
       tlstation:[
         {
             name:'非直线系数',
             isxz:true,
-            num:0.6,
+            num:1.6,
           },
           {
             name:'线路重复系数',
@@ -284,14 +303,17 @@ export default {
           {
             name:'满载率',
             isxz:false,
-             num:30,
+             num:0.7,
           },
           {
             name:'超长线路',
             isxz:false,
             num:'30km',
           }
-      ]
+      ],
+      myChart1:null,
+      myChart2:null
+
     }
 
   },
@@ -299,12 +321,100 @@ export default {
     this.M_initMap('compreMapks')
     this.initSwipertable()
     // this.trafficLayer.setMap(this.M_map);
+    // this.initechart1()
   },
   created(){
       this.getNoLi()
       this.getAreaLine()
   },
   methods:{
+    initechart1(data1,data2){
+      this.myChart1 = this.$echarts.init(document.getElementById('assech1'));
+      this.myChart1.setOption({
+
+           tooltip: {
+                show:false,
+                  trigger: 'item'
+              },
+              legend: {
+                  show:false
+              },
+              title: [
+              ],
+              series: [
+                  {
+                      name: '',
+                      type: 'pie',
+                      radius: ['55%', '75%'],
+                      color: ['#D53838','#3EAABA'],
+                   
+                      emphasis: {
+                          itemStyle: {
+                          shadowBlur: 10,
+                          shadowOffsetX: 0,
+                          shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                      },
+                      labelLine:{
+                        length:2
+                      },
+                      data: [
+                          {value: data1, name: '线路长度≥30km('+Math.round((data1/(data1+data2))*100)+'%)'},
+                          {value: data2, name: '线路长度＜30km('+Math.round((data2/(data1+data2))*100)+'%)'},
+                         
+                      ]
+                  }
+              ]
+         
+      });
+
+    },
+    initechart2(data1,data2){
+      this.myChart2 = this.$echarts.init(document.getElementById('assech2'));
+      this.myChart2.setOption({
+          title: {
+              // text: '',
+              // subtext: '',
+              // left: 'center'
+          },
+          tooltip: {
+            show:false,
+              trigger: 'item'
+          },
+          color:['#5470c6','#73c0de'],
+          legend: {
+            show:false,
+              orient: 'vertical',
+              left: 'left',
+          },
+          series: [
+              {
+                  name: '',
+                  type: 'pie',
+                  radius: '60%',
+                  data: [
+                      {value: data1, name: '重复系数≥0.5('+Math.round((data1/(data1+data2))*100)+'%)'},
+                      {value: data2, name: '重复系数＜0.5('+Math.round((data2/(data1+data2))*100)+'%)'},
+                     
+                  ],
+                      hoverAnimation: false,
+                    legendHoverLink: false,
+                  labelLine:{
+                    length:0.5,
+                  },
+                  emphasis: {
+                      itemStyle: {
+                          shadowBlur: 10,
+                          shadowOffsetX: 0,
+                          shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  }
+              }
+          ]
+         
+      });
+
+    },
     getNoLi(){
       //非直线系数的数据
       this.$fetchGet("route/straightCoefficient").then(res => {
@@ -324,10 +434,19 @@ export default {
 
        //线路重复系数的的数据
       this.$fetchGet("route/lineCoefficient").then(res => {
+        let arr8=[],arr9=[]
         res.result.forEach((item,index)=>{
             item.geom=this.Q_setData(item.geom)
             item.index = index + 1;
+            if(Number(item.coefficient)>0.5){
+              console.log(item)
+              arr8.push(item)
+            }else{
+              arr9.push(item)
+            }
         })
+        console.log(arr8.length,arr9.length)
+        this.initechart2(arr8.length,arr9.length)
         this.alldata1=res.result;
         this.qdData1=arrGroup(res.result,5)
        
@@ -338,9 +457,9 @@ export default {
       this.$fetchGet("route/hundreds",{
       }).then(res => {
 
-        // res.result.forEach((item,index)=>{
-        //     item.geom=this.Q_setData(item.geom)
-        // })
+        res.result.forEach((item,index)=>{
+            item.geom=this.Q_setData(item.geom)
+        })
         this.alldata3=res.result;
         let arr=this.alldata3.sort(this.compare('baipass',false))
         arr.forEach((iteam,index)=>{
@@ -352,10 +471,18 @@ export default {
 
     // 线路长度
       this.$fetchGet("route/overLength").then(res => {
+        let arr8=[],arr9=[];
         
           res.result.forEach((item,index)=>{
               item.geom=this.Q_setData(item.geom)
+              if(Number(item.lineLength)>30){
+                arr8.push(item)
+              }else{
+                arr9.push(item)
+              }
           })
+          this.initechart1(arr8.length,arr9.length)
+          // 
           // this.alldata=res.result;
           let arr=res.result.sort(this.compare('lineLength',false))
           arr.forEach((iteam,index)=>{
@@ -377,6 +504,7 @@ export default {
       }).then(res => {
         
           res.result.forEach((item,index)=>{
+            item.geom=this.Q_setData(item.geom)
              if(item.mzl==null){
                 item.mzl=0
               }
@@ -469,12 +597,13 @@ export default {
                  this.M_BUSLINE(this.alldata1,11)
                 break;
             case '百公里人次' :
-                 this.M_BUSLINE(this.alldata2,11)
+                 this.M_BUSLINE(this.alldata3,19)
                 break;
             case '长期拥堵路段' :
               this.M_autoInput(this.lineaData1)
                 break;
             case '满载率' :
+                this.M_BUSLINE(this.mlldata,17)
                 break;
             case '超长线路' :
 
@@ -689,6 +818,10 @@ export default {
     overflow:hidden;
     display:flex;
     flex-direction: column;
+    #assech2{
+      width:100%;
+      height:100%;
+    }
     .table-header{
       width:100%;
       height:vh(50);
@@ -770,6 +903,12 @@ export default {
     overflow:hidden;
     display:flex;
     flex-wrap:wrap ;
+    #assech1{
+      width:100%;
+      height:100%;
+      box-sizing:border-box;
+      // padding:vh(10);
+    }
     .big-tab2{
       margin-right:vw(24);
       margin-top:vh(30);
@@ -919,7 +1058,7 @@ export default {
         right: vw(12);
         bottom: vw(14);
         // width:vw(200);
-        height:vh(90);
+        // height:vh(90);
         z-index:10;
         box-shadow: 0px 0px vh(6)  #4578FF inset;
          background: rgba(12, 38, 104,1);

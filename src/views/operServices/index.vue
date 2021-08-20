@@ -38,7 +38,7 @@
         <img @click="toShow(iteam,n)" v-if="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
          <div class="natit">{{iteam.name}}</div>
          <el-input v-if="n!==6&&n!==7&&iteam.isxz" style="width:40%" type="number" @change="getData()"  size="mini" v-model="iteam.value"  placeholder="">
-           <template slot="prepend"> <i class="iconfont icondayufuhao" ></i></template>
+           <template slot="prepend"> <span style="font-size:20px" v-show="iteam.name=='百公里人次'">＜</span><i v-show="iteam.name!=='百公里人次'" class="iconfont icondayufuhao" ></i></template>
          </el-input>
       </div>
       </div>
@@ -61,37 +61,37 @@ export default {
       tlstation:[
           {
             name:'线路重复系数',
-            value:0.2,
+            value:0.5,
             isxz:true,
             img:require('@/assets/image/cyan.png')
           },
           {
             name:'百公里人次',
-            value:null,
+            value:100,
             isxz:false,
             img:require('@/assets/image/blue1.png')
           },
           {
             name:'满载率',
-            value:null,
+            value:0.7,
             isxz:false,
             img:require('@/assets/image/green1.png')
           },
           {
             name:'线路长度',
-            value:25,
-            isxz:true,
+            value:30,
+            isxz:false,
             img:require('@/assets/image/yellow1.png')
           },
           {
             name:'非直线系数',
             value:0.2,
-            isxz:true,
+            isxz:false,
             img:require('@/assets/image/icon_purple1.png')
           },
           {
             name:'与轨交重复',
-            value:null,
+            value:3,
             isxz:false,
             img:require('@/assets/image/icon_red1.png')
           },
@@ -149,10 +149,10 @@ export default {
       }
         this.$fetchPost("route/composite",{
             cfd: this.tlstation[0].value||-1,   // 重复度
-            fzxxs: this.tlstation[4].value||-1,  // 非直线系数
-            cd:this.tlstation[3].value||-1,  // 长度
-            bglrc:this.tlstation[1].value||-1, // 百公里人次
-            mzl:this.tlstation[2].value||-1 // 满载率
+            fzxxs: this.tlstation[4].isxz==false?-1:this.tlstation[4].value,  // 非直线系数
+            cd:this.tlstation[3].isxz==false?-1:this.tlstation[3].value,  // 长度
+            bglrc:this.tlstation[1].isxz==false?-1:this.tlstation[1].value, // 百公里人次
+            mzl:this.tlstation[2].isxz==false?-1:this.tlstation[2].value // 满载率
         },'json').then(res => {
           res.result.forEach(ite=>{
             ite.geom=this.setData(ite.geom)

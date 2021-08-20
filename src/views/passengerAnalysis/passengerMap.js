@@ -185,7 +185,7 @@ export default class Map {
           </div>`,
           
         // 以 icon 的 [center bottom] 为原点
-        offset: new AMap.Pixel(-13, -30),
+        offset: new AMap.Pixel(-89, -89),
         zIndex: 10,
         cursor: 'pointer',
         extData: { iteam }
@@ -334,7 +334,7 @@ export default class Map {
           size: [24,24],
           imageSize : [24,24],
          }),
-        offset: new AMap.Pixel(-36, -24),
+        offset: new AMap.Pixel(-12, -12),
         cursor: 'pointer',
         extData: { iteam }
       })
@@ -343,7 +343,7 @@ export default class Map {
 
       var marker1 = new AMap.Marker({
         content: ' ', 
-        offset :new AMap.Pixel(-12, -12),
+        offset :new AMap.Pixel(-0, -100),
       zIndex: 50, map: this.map});
       marker.on('mouseover',  (e)=> {
         marker1.setPosition([iteam.longitude,iteam.latitude]);

@@ -3,7 +3,7 @@
     <el-dropdown placement="bottom-start" @command="changemenu" v-for="(item,n) in menuData" :key="item.id">
       <div class="one-meanu">
         <div @click="isFater(item,n)" :class="meauindex==n?'fram-active':'framf'">{{item.name}}</div>
-        <div v-if="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>
+        <div v-show="meauindex==n" class="animate__animated animate__fadeInUp line-bor"></div>
       </div>
       <el-dropdown-menu slot="dropdown" v-show="item.children && item.children.length">
         <el-dropdown-item :command="{iteam,n}" v-for="(iteam) in item.children" :key="iteam.id">

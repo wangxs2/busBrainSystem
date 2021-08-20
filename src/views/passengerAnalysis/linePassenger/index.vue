@@ -35,7 +35,7 @@ export default {
     data(){
         return {
             options:[],
-            value1:[new Date(),new Date()],
+            value1:[new Date() - 3600 * 1000 * 24 * 1,new Date()- 3600 * 1000 * 24 * 1],
             value:"",
             isbtn:0,
             typelst:[

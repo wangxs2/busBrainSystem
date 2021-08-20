@@ -21,7 +21,8 @@ module.exports = {
       '/busbrain/*': {
         // target: 'http://10.1.4.175:8001/traffic-investment',
         // target: 'http://10.1.30.204:50020/busbrain',
-        target: 'http://101.231.47.117:50020/busbrain', // 测试
+        // target: 'http://101.231.47.117:50020/busbrain', // 测试
+        target: 'http://180.167.126.126:3001/busbrain', // 测试
         changeOrigin: true,
         pathRewrite: {
           '/busbrain': '/'

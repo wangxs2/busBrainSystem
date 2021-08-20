@@ -49,7 +49,10 @@
           <div style="width:20%">{{item.mainContent}} </div>
           <div style="width:10%">{{item.finishTime==null?'':item.finishTime.slice(0,4)}}</div>
           <div style="width:20%">{{item.classify}}</div>
-          <div style="width:10%"> <el-button size="mini" type="warning">修改</el-button></div>
+          <div style="width:10%"> 
+            <el-button size="mini" type="warning">修改</el-button>
+            <el-button @click="toMallInfo(item.routeName)" size="mini" type="primary">绘制</el-button>
+          </div>
         </div>
         <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-if="alldata.length==0">无数据</div>
       </div>
@@ -129,6 +132,18 @@ export default {
           });
           this.getData();
         }
+      },
+
+      //跳转到线路调整的页面
+      toMallInfo(val){
+        
+          this.$router.push({
+          path: '/networkExcellent/adjustmentLine',
+            query: {
+              mallCode: val
+          }
+        })
+
       },
       detilAll(){
           this.loading=true

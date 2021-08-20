@@ -37,7 +37,7 @@
         <div style="text-align:center" v-if="lineaData.length==0">暂无数据~</div>
       </div>
     </div>
-    <div class="rightlinemsg rightlinemsg1">
+    <!-- <div class="rightlinemsg rightlinemsg1">
       <div class="tit">轨交接驳站点</div>
       <div class="bttit">
         <div style="white-space:nowrap;">地铁站名称</div>
@@ -56,8 +56,8 @@
         </div>
         <div style="text-align:center" v-if="lineaData.length==0">暂无数据~</div>
       </div>
-    </div>
-    <div class="rightlinemsg leftlinemsg">
+    </div> -->
+    <!-- <div class="rightlinemsg leftlinemsg">
       <div class="tit">途径线路</div>
       <div class="bttit">
         <div>线路名称</div>
@@ -71,7 +71,7 @@
 
         <div style="text-align:center" v-if="lineaData.length==0">暂无数据~</div>
       </div>
-    </div>
+    </div> -->
     
   </div>
 </template>

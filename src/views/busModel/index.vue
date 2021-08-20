@@ -218,7 +218,7 @@ export default {
         arr.forEach(iteam=>{
              let obj={
                 date:iteam,
-                countPassenger:1000
+                countPassenger:0
             }
             this.stcecar.push(obj)
         })

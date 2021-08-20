@@ -38,12 +38,12 @@
         <div class="fonq">站点客流信息</div>
         <div>2021-04-10</div>
       </div>
-      <div class="stationnum">
+      <!-- <div class="stationnum">
         <div style="display:flex;align-items: center;">
           <img style="margin-right:0.4vw" src="@/assets/image/licon_1.png" /> 站点总数
         </div>
         <div>4124个</div>
-      </div>
+      </div> -->
       <div class="tlList" v-for="(iteam,n) in tlstation" :key="n">
         <div style="display:flex;align-items: center;">
             <img @click="toShow(iteam,n)" v-if="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
@@ -51,7 +51,8 @@
             <img width="20" height="20" style="margin:0 0.2vw" :src="iteam.img" />
             乘车{{iteam.name}}
         </div>
-        <div><span style="color:#00FFFF">{{stationroll[iteam.value]==undefined?0:stationroll[iteam.value].length}}</span>个</div>
+        <div><span style="color:#00FFFF">{{iteam.zsnum}}</span>个</div>
+        <!-- <div><span style="color:#00FFFF">{{stationroll[iteam.value]==undefined?0:stationroll[iteam.value].length}}</span>个</div> -->
       </div>
       <div style="margin-top:1.4vh;display:flex;align-items: center;color:#00FFFF;font-weight: bold;">
         <img @click="toheat()" v-if='isheat' style="margin-right:0.4vw" width="18" height="18" src="@/assets/image/fxktrue.png" />
@@ -94,37 +95,43 @@ export default {
               name:'0-500',
               value:'0-500',
               isxz:true,
-              img:require('@/assets/image/cyan.png')
+              img:require('@/assets/image/cyan.png'),
+              zsnum:6754,
             },
             {
               name:'501-1000',
               value:'500-1000',
               isxz:true,
-              img:require('@/assets/image/blue1.png')
+              img:require('@/assets/image/blue1.png'),
+              zsnum:38,
             },
             {
               name:'1001-2000',
               value:'1000-2000',
               isxz:true,
-              img:require('@/assets/image/green1.png')
+              img:require('@/assets/image/green1.png'),
+              zsnum:4,
             },
             {
               name:'2001-3000',
               value:'2000-3000',
               isxz:true,
-              img:require('@/assets/image/yellow1.png')
+              img:require('@/assets/image/yellow1.png'),
+              zsnum:0,
             },
             {
               name:'3001-4000',
               value:'3000-4000',
               isxz:true,
-              img:require('@/assets/image/icon_purple1.png')
+              img:require('@/assets/image/icon_purple1.png'),
+              zsnum:0,
             },
             {
               name:'4000+',
               value:'4000+',
               isxz:true,
-              img:require('@/assets/image/icon_red1.png')
+              img:require('@/assets/image/icon_red1.png'),
+              zsnum:0,
             }
           ],
           stationroll:{},
@@ -364,14 +371,14 @@ export default {
     top: vh(170);
     right: vw(20);
     width: vw(300);
-    height: vh(424);
+    // height: vh(424);
     background: rgba(26, 66, 118, 1);
     border: 1px solid rgba(39, 182, 255, 0.5);
     border-radius: 2px;
     display:flex;
     flex-direction: column;
     box-sizing:border-box;
-    padding:0 vw(17);
+    padding:vh(16) vw(17);
     box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 0.6) inset;
     .tit{
       display:flex;

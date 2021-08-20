@@ -2,7 +2,7 @@
  <div class="bigHome">
 
 
-    <canvas id="the-canvas" ></canvas>
+    <!-- <canvas id="the-canvas" ></canvas> -->
     <div class="homePage" id="box">
       
       <div class="userName">
@@ -17,7 +17,7 @@
         <img  src="@/assets/image/home/icon_quit.png" alt="" srcset="">
         <div @click="loginout">退出</div>
       </div>
-      <div class="lightLine">
+      <!-- <div class="lightLine">
         <div class="lightson"></div>
       </div>
       <div class="lightLine lightLine1"></div>
@@ -44,7 +44,7 @@
       <div class="lightLine lightLine10"></div>
       <div class="lightLine lightLine11">
         <div class="lightson"></div>
-      </div>
+      </div> -->
       <div class="left-home">
         <div class="left-l23 left-l1" @click="toHome(1,'LINE_DECIDE')">
           公交线网辅助决策系统 
@@ -72,9 +72,10 @@
         
       </div>
       <div class="right-home">
-        <div class="left-l23 left-l4" @click="toHome(4,'MODEL')">线网优化模型
+        <div class="left-l23 left-l4" @click="toHome(4,'MODEL')">运力计算模型
         </div>
-        <div class="left-l23 left-l5">公交测试系统
+        <div class="left-l23 left-l5">
+          <!-- 公交测试系统 -->
         </div>
       </div>
         
@@ -93,7 +94,7 @@ export default {
     //  this.$store.commit("SET_CODEMEAU", '')
     //  document.cookie = "meaucode=" + '';
     //  console.log('在首页',this.$store.getters.codeMeau)
-    this.initpoint()
+    // this.initpoint()
    },
   methods:{
     loginout(){
@@ -300,7 +301,7 @@ height: 100%;
     width:100%;
     height:100%;
     background: url("~@/assets/image/home/bj.png");
-    opacity: 0.9;
+    opacity:1;
     background-size: 100% 100%;
     box-sizing:border-box;
     padding:0 vw(60);

@@ -184,15 +184,15 @@ const Map = {
       let marks = []
       data.forEach(iteam => {
         const marker = new AMap.Marker({
-          position: iteam.centre,
+          position: iteam.centre||[iteam.centerLongitude,iteam.centerLatitude],
           // 将 html 传给 content background: url(icon) url(${iconm}) <div> ${iteam.percent || 0}</div>
           content: `<div class="regionMark" style="width:178px;height:178px;background:url(${iconm})">
-            <div> ${iteam.name}</div>
-             <div>  ${iteam.num}</div>
+            <div> ${iteam.name||iteam.regionName}</div>
+             <div>  ${iteam.num||iteam.routeNum||0}</div>
              
             </div>`,
           // 以 icon 的 [center bottom] 为原点
-          offset: new AMap.Pixel(-13, -30),
+          offset: new AMap.Pixel(-89, -89),
           zIndex: 10,
           cursor: 'pointer',
           extData: iteam,
@@ -203,7 +203,6 @@ const Map = {
         // })
         marks.push(marker)
       })
-      console.log(marks)
       this.M_addGroup(marks)
     },
     // 设置重点区
@@ -367,9 +366,9 @@ const Map = {
 
       this.M_pointEvent.push(
         AMap.Event.addListener(this.xwrhGroups2, 'click', (e) => {
-          // const ExtData = e.target.getExtData()
+          const ExtData = e.target.getExtData()
           const position = e.target.getPosition()
-          callback && callback()
+          callback && callback(ExtData)
           flag = ''
         })
       )
@@ -444,9 +443,6 @@ const Map = {
       })
     },
     M_pointAll4(datapoint){
-
-      console.log(datapoint)
-      
       let style = [
         {
           url: require('../../assets/image/alpoint1.png'),
@@ -460,7 +456,6 @@ const Map = {
           style: style[0]
       });
 
-      console.log(this.massall1)
 
       this.massall1.on('click',  (e)=> {
 
@@ -538,7 +533,7 @@ const Map = {
             <div style="width:100%;height:46px;display:flex;align-items: center;border-top: 1px dashed #00FFFF;">
               <div style="width:20%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${data[i].terminalId}</div>
               <div style="width:20%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${data[i].terminalTypeName}</div>
-              <div style="width:20%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${data[i].terminalStatus}</div>
+              <div style="width:20%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${data[i].terminalStatus==0?'在线':'离线'}</div>
               <div style="width:40%;height: 100%;display:flex;align-items: center;justify-content: center; border-right: 1px dashed #00FFFF;">${dhjli}</div>
             </div>
           `
@@ -669,7 +664,6 @@ const Map = {
       });
       linesearch.search(busLineName, (status, result) => {
         if (status === 'complete' && result.info === 'OK') {
-          // console.log(result.lineInfo[1].path.join(' '))
           
 
             this.testLIneda.push({
@@ -679,7 +673,6 @@ const Map = {
               directionDesc:result.lineInfo[1].name,
               direction:1})
 
-              // console.log(this.testLIneda)
 
 
               // return  result.lineInfo[1].name
@@ -693,58 +686,110 @@ const Map = {
 
     M_autoInputzgt(data) {
       
-      data.forEach(iteam => {
-        var placeSearch = new AMap.PlaceSearch({
-          city: '全国'
-        });
-        placeSearch.search('上海市' + iteam.regionName, (status, result) => {
-          // 搜索成功时，result即是对应的匹配数据
-          console.log(result)
-          if (result.poiList.pois[0]) {
-            let row=result.poiList.pois[0]
-            let marker1 = new AMap.Marker({
-              content: `<div style='width:12px;height:12px;border-radius:50%;background:#b40100'></div> `,
-              offset: new AMap.Pixel(-6, -6),
-              zIndex: 100,
-              position: [row.location.lng, row.location.lat],
-            });
+      // data.forEach(iteam => {
+      //   var placeSearch = new AMap.PlaceSearch({
+      //     city: '全国'
+      //   });
+      //   placeSearch.search('上海市' + iteam.regionName, (status, result) => {
+      //     // 搜索成功时，result即是对应的匹配数据
+      //     if (result.poiList.pois[0]) {
+      //       let row=result.poiList.pois[0]
+      //       let marker1 = new AMap.Marker({
+      //         content: `<div style='width:12px;height:12px;border-radius:50%;background:#b40100'></div> `,
+      //         offset: new AMap.Pixel(-6, -6),
+      //         zIndex: 100,
+      //         position: [row.location.lng, row.location.lat],
+      //       });
 
-            marker1.on('click',e=>{
+      //       marker1.on('click',e=>{
 
-              let infoWin = `<div class="info-win">
-              <div class="win-triangle"></div>
-              <div class="info-box">
-                <div class="info-content">
-                  <div class="info">
-                    <div class="info-name">名称：${iteam.regionName}</div>
-                  </div>
-                  <div class="info">
-                    <div class="info-name">平均车速：${iteam.avgSpeed}</div>
-                  </div>
-                  <div class="info">
-                    <div class="info-name">畅行指数：${iteam.avgIndex}</div>
-                  </div>
-                  <div class="info">
-                  <div class="info-name">运行稳定性：${iteam.exchange}</div>
-                </div>
-                </div>
-              </div>
-            </div>`
-              this.M_openInfoWin([row.location.lng, row.location.lat], infoWin)
+      //         let infoWin = `<div class="info-win">
+      //         <div class="win-triangle"></div>
+      //         <div class="info-box">
+      //           <div class="info-content">
+      //             <div class="info">
+      //               <div class="info-name">名称：${iteam.regionName}</div>
+      //             </div>
+      //             <div class="info">
+      //               <div class="info-name">平均车速：${iteam.avgSpeed}km/h</div>
+      //             </div>
+      //             <div class="info">
+      //               <div class="info-name">畅行指数：${iteam.avgIndex}min/km</div>
+      //             </div>
+      //             <div class="info">
+      //             <div class="info-name">运行稳定性：${iteam.exchange}</div>
+      //           </div>
+      //           </div>
+      //         </div>
+      //       </div>`
+      //         this.M_InfoWindow.setAnchor('top-right')
+      //         this.M_openInfoWin([row.location.lng, row.location.lat], infoWin)
 
-            })
+
+      //       })
            
 
-            this.zgdGroups.addOverlay(marker1)
-            this.M_map.add(this.zgdGroups)
-          }
+      //       this.zgdGroups.addOverlay(marker1)
+      //       this.M_map.add(this.zgdGroups)
+      //     }
 
+      //   })
+
+
+
+      // })
+      // 
+
+
+      data.forEach(iteam=>{
+
+        
+
+        let busPolyline = new AMap.Polyline({
+          // map: this.M_map,
+          path: this.TestsetData(iteam.geom,2),
+          strokeColor: "#A200FF",//线颜色
+          strokeOpacity: 0.8,//线透明度
+          isOutline: true,
+          outlineColor: "#A200FF",
+          zIndex: 100,
+          cursor:'pointer',
+          strokeWeight: 1//线宽
+        });
+
+
+        busPolyline.on('click',e=>{
+
+                  let infoWin = `<div class="info-win">
+                  <div class="win-triangle"></div>
+                  <div class="info-box">
+                    <div class="info-content">
+                      <div class="info">
+                        <div class="info-name">名称：${iteam.regionName}</div>
+                      </div>
+                      <div class="info">
+                        <div class="info-name">平均车速：${iteam.avgSpeed}km/h</div>
+                      </div>
+                      <div class="info">
+                        <div class="info-name">畅行指数：${iteam.avgIndex}min/km</div>
+                      </div>
+                      <div class="info">
+                      <div class="info-name">运行稳定性：${iteam.exchange}</div>
+                    </div>
+                    </div>
+                  </div>
+                </div>`
+
+                let num = Math.round(e.target.getPath().length / 2)
+                  this.M_InfoWindow.setAnchor('top-right')
+                  this.M_openInfoWin(e.target.getPath()[num], infoWin)
         })
 
-
+        this.zgdGroups.addOverlay(busPolyline)
+              this.M_map.add(this.zgdGroups)
 
       })
-      // 
+      // this.M_map.add(this.zgdGroups)
 
 
     },
@@ -755,21 +800,22 @@ const Map = {
       if(this.xwrhGroups2){
         this.xwrhGroups2.clearOverlays()
       }
-      if(this.realbusGroups.getOverlays().length>0){
-          this.realbusGroups.hide()
-      }
+      // if(this.realbusGroups.getOverlays().length>0){
+      //     this.realbusGroups.hide()
+      // }
+      this.M_closeInfoWin()
       const iconm = require('../../assets/image/blue.png')
       data.forEach(iteam => {
         const marker = new AMap.Marker({
-          position: iteam.centre,
+          position:[iteam.centerLongitude,iteam.centerLatitude],
           // 将 html 传给 content background: url(icon) url(${iconm})
           content: `<div class="regionMark" style="width:178px;height:178px;background:url(${iconm})">
-            <div> ${iteam.name}</div>
-             <div>  ${iteam.num}</div>
+            <div> ${iteam.regionName}</div>
+             <div>  ${iteam.routeNum}</div>
              <div> </div>
             </div>`,
           // 以 icon 的 [center bottom] 为原点
-          offset: new AMap.Pixel(-13, -30),
+          offset: new AMap.Pixel(-89, -89),
           zIndex: 10,
           cursor: 'pointer',
           extData: iteam,
@@ -800,7 +846,6 @@ const Map = {
       linesearch.search(busLineName, (status, result) => {
         if (status === 'complete' && result.info === 'OK') {
 
-          console.log(result)
 
           let busPolyline = new AMap.Polyline({
             // map: this.M_map,
@@ -836,7 +881,6 @@ const Map = {
             let stationKeyWord=e.target.getExtData().name+'(地铁站)'
             this.station.search(stationKeyWord, (status, resd) => {
               if (status === 'complete' && resd.info === 'OK') {
-                console.log(resd.stationInfo)
                 resd.stationInfo[1].buslines.forEach(itm=>{
 
                   linesearch.search(itm.name, (status, lida) => {
@@ -1002,24 +1046,42 @@ const Map = {
       data.forEach(iteam => {
         let color=""
         if(type==10){ 
-          if((iteam.coefficient)>0.5){
-            color='#3EAABA'
-          }else{
+          if((iteam.coefficient)>1.5){
             color='#D53838'
+          }else{
+            color='#3EAABA'
           }
         }
         if(type==11){ 
           if(Number(iteam.coefficient)>0.5){
-            color='#3EAABA'
-          }else{
             color='#D53838'
+          }else{
+            color='#3EAABA'
           }
         }
         if(type==16){ 
           if(Number(iteam.lineLength)>30){
-            color='#3EAABA'
-          }else{
             color='#D53838'
+          }else{
+            color='#3EAABA'
+          }
+        }
+        if(type==17){ 
+          if(Number(iteam.mzl)>69){
+            color='#D53838'
+          }else{
+            color='#3EAABA'
+          }
+        }
+        if(type==19){ 
+          if((iteam.baipass)<31){
+            color='#D53838'
+          }else if((iteam.baipass)<61&&(iteam.baipass)>30){
+            color='#e5d887'
+          }else if((iteam.baipass)<101&&(iteam.baipass)>60){
+            color='#f06f59'
+          }else{
+            color='#3EAABA'
           }
         }
         let busPolyline = new AMap.Polyline({
@@ -1034,7 +1096,6 @@ const Map = {
         });
         lineArr.push(busPolyline)
         if (type == 3) {
-          console.log(iteam)
           let busPolyline2 = new AMap.Polyline({
             map: this.M_map,
             path: [iteam.geom[0], iteam.geom[iteam.geom.length - 1]],
@@ -1050,7 +1111,6 @@ const Map = {
           let marker = new AMap.Marker({ content: ' ', map: this.M_map });
           busPolyline.on('mouseover', (e) => {
             let str = e.target.getExtData()
-            console.log(str)
             let num = Math.round(e.target.getPath().length / 2)
             let position = e.target.getPath()[num]
             marker.setPosition(position);
@@ -1122,6 +1182,22 @@ const Map = {
         }
       }
     },
+    //线网现状规划
+    M_linxz(){
+
+      let busPolyline2 = new AMap.Polyline({
+        map: this.M_map,
+        path: geom,
+        strokeColor: '#A200FF',//线颜色
+        strokeOpacity: 0.8,//线透明度
+        zIndex: 100,
+        cursor: 'pointer',
+        extData: iteam,
+        strokeWeight: 4//线宽
+      });
+
+
+    },
     // 获取搜索信息
     M_autoInput(data) {
       this.M_map.clearMap()
@@ -1130,10 +1206,8 @@ const Map = {
         var placeSearch = new AMap.PlaceSearch({
           city: '全国'
         });
-        console.log(iteam)
         placeSearch.search('上海市' + iteam.roadsegid, (status, result) => {
           // 搜索成功时，result即是对应的匹配数据
-          console.log(result)
           if (result.poiList.pois[0]) {
             this.pointSearch(result.poiList.pois[0], iteam)
           }
@@ -1199,7 +1273,7 @@ const Map = {
       </div>
     </div>`
       this.M_openInfoWin([position.lng, position.lat], infoWin)
-      this.M_map.setZoomAndCenter(16, [position.lng, position.lat], true)
+      this.M_map.setZoomAndCenter(16, [position.lng, position.lat])
       this.$store.commit('SET_LOADING', false)
 
     },
@@ -1240,7 +1314,6 @@ const Map = {
           let srt = e.target.getExtData()
           let num = Math.floor((srt.path.length) / 2)
 
-          console.log(num)
           let infoWin = `<div class="info-win">
             <div class="win-triangle"></div>
             <div class="info-box">
@@ -1261,7 +1334,6 @@ const Map = {
             </div>
           </div>`
           this.M_openInfoWin(srt.path[num], infoWin)
-          console.log(this.M_InfoWindow)
         });
 
         datalin.push(kyLinedata)
@@ -1272,7 +1344,6 @@ const Map = {
 
     },
     M_addPolygon(data,data1) {
-      console.log(data)
       let polygon = new AMap.Polygon({
         path: data,
         fillColor: '#ccebc5',
@@ -1284,7 +1355,6 @@ const Map = {
         map:this.M_map,
         zIndex:100
       });
-      console.log(polygon)
 
      
       // var polygon = new AMap.Polygon({
@@ -1296,7 +1366,6 @@ const Map = {
       // });
       // polygon.setPath([data,data1]);
       // this.M_map.add(polygon)
-      // console.log(polygon.getPath())
     },
     M_drawPolygon () {
       this.mouseTool.polygon({
@@ -1315,8 +1384,7 @@ const Map = {
 
       this.mouseTool.on('draw', (event)=> {
         // event.obj 为绘制出来的覆盖物对象
-        console.log(this.M_formattingCharacters(event.obj.getPath()))
-        console.log(event.obj.getArea())
+        
         
       })
     },
@@ -1364,7 +1432,7 @@ const Map = {
           // 将 html 传给 content background: url(icon) url(${iconm})
           content: `<div class="regionMark" style="background:#00B2CA">
             <div style="font-weight: bold;margin-bottom:12px"> ${iteam.regionName}</div>
-             <div>公交畅行指数</div>
+             <div>${iteam.avgIndex}min/km</div>
              <div> ${iteam.avgSpeed}km/h</div>
             </div>`,
           // 以 icon 的 [center bottom] 为原点
@@ -1385,12 +1453,16 @@ const Map = {
 
 
     },
-    M_crealinebus(iteam){
-      // console.log(data)
+    M_crealinebus(iteam,type){
       // data.forEach(iteam => {
        
        
       // })
+
+      if(this.xwrhGroups2){
+        this.xwrhGroups2.clearOverlays()
+      }
+      
 
       let kyLinedata = new AMap.Polyline({
         path: iteam.geom,
@@ -1403,11 +1475,24 @@ const Map = {
       })
      
       kyLinedata.on('click', (e) => {
-        console.log(88)
         let srt = e.target.getExtData()
-        console.log(srt)
         let num = Math.floor((srt.geom.length) / 2)
-        let infoWin = `<div class="info-win">
+        let infoWin=''
+        if(type==2){
+
+          infoWin = `<div class="info-win">
+          <div class="win-triangle"></div>
+          <div class="info-box">
+            <div class="info-content">
+              <div class="info">
+                <div class="info-name">线路名称名称：${srt.routeName}</div>
+              </div>
+            </div>
+          </div>
+        </div>`
+
+        }else{
+          infoWin = `<div class="info-win">
           <div class="win-triangle"></div>
           <div class="info-box">
             <div class="info-content">
@@ -1429,6 +1514,7 @@ const Map = {
             </div>
           </div>
         </div>`
+        }
         this.M_openInfoWin(srt.geom[num], infoWin)
         
       });
@@ -1438,7 +1524,7 @@ const Map = {
 
         e.target.setOptions({
           strokeColor: "#A200FF",
-          zIndex: 40,
+          zIndex: 100,
         })
       })
       kyLinedata.on('mouseout', (e) => {
@@ -1492,7 +1578,6 @@ const Map = {
               new AMap.LngLat(360,-90,true),
               new AMap.LngLat(360,90,true),
           ];
-          console.log(result)
           var holes = result.districtList[0].boundaries
 
           var pathArray = [
