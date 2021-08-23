@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import MapMixin from '../../networkExcellent/networkMap'
+import MapMixin from '@/libs/myMap.js'
 import {
   getCookie,
   delCookie
@@ -239,7 +239,7 @@ export default {
           let arr=this.cloneObj(res.result['站点的详细属性']),heatOption = [];
           this.restaurants =this.cloneObj(res.result['站点的详细属性'])
           // this.$store.commit('SET_STATION', res.result['站点的详细属性'])
-          // this.pointAll3(res.result['站点的详细属性'])
+          this.pointAll3(res.result['站点的详细属性'])
 
           arr.forEach(iteam=>{
             var heatOptionObj = {};
@@ -416,6 +416,7 @@ export default {
     top: vh(210);
     left: vw(20);
     width: vw(370);
+    min-height:vh(200);
     z-index: 10;
 
     // height: vh(420);

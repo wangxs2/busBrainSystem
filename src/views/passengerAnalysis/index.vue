@@ -1,81 +1,51 @@
 <template>
   <div class="passengerAnalysis">
-    <div v-show="$route.name!=='断面客流'" class="passengerMap" id="passengerMap">
-    </div>
-    <router-view @changeKl="klsonClick"></router-view>
+    <!-- <div v-show="$route.name!=='断面客流'" class="passengerMap" id="passengerMap">
+    </div> -->
+    <keep-alive>
+         <router-view @changeKl="klsonClick"></router-view>
+    </keep-alive>
   </div>
 </template>
 <script>
-import Map from "./passengerMap.js";
-let MyMap = null; // 地图实例
+// import Map from "./passengerMap.js";
+// let MyMap = null; // 地图实例
 export default {
   data(){
     return{
       options:[],
       value:"",
        testdata:"POLYGON((121.822 31.0072,121.822 31.0093,121.818 31.0094,121.819 31.0068,121.822 31.0065,121.823 31.0009,121.823 30.9996,121.823 30.998,121.824 30.9978,121.824 30.9967,121.823 30.9968,121.823 30.9967,121.822 30.9944,121.823 30.9942,121.822 30.9906,121.829 30.9893,121.834 30.9881,121.836 30.9878,121.836 30.9868,121.835 30.9823,121.839 30.981,121.838 30.9791,121.844 30.977,121.844 30.9749,121.845 30.9745,121.844 30.9708,121.844 30.962,121.842 30.9533,121.841 30.9483,121.841 30.9458,121.841 30.937,121.841 30.931,121.841 30.9301,121.842 30.9295,121.841 30.9287,121.841 30.9291,121.841 30.9275,121.839 30.9282,121.838 30.9268,121.84 30.9261,121.841 30.9253,121.863 30.9152,121.887 30.9032,121.881 30.8911,121.881 30.8891,121.88 30.8874,121.887 30.8823,121.87 30.8671,121.88 30.8578,121.898 30.8727,121.904 30.8829,121.902 30.8856,121.9 30.8897,121.899 30.8921,121.898 30.8943,121.898 30.896,121.898 30.8977,121.897 30.9014,121.897 30.9052,121.898 30.9084,121.899 30.9124,121.901 30.9166,121.903 30.9192,121.905 30.9218,121.907 30.9241,121.909 30.9255,121.91 30.9297,121.911 30.938,121.91 30.9427,121.909 30.9534,121.907 30.9632,121.904 30.9715,121.891 30.9731,121.889 30.9788,121.882 30.9987,121.856 31.0034,121.857 31.0011,121.855 31.0009,121.854 31.0006,121.853 31.0008,121.851 31.0012,121.85 31.0014,121.85 31.0009,121.85 31.001,121.85 31,121.841 31.0003,121.841 31.0058,121.837 31.006,121.837 31.0066,121.822 31.0072))",
-      styleStition:{
-        '0-500':{
-                url: require('@/assets/image/cyan.png'),
-                anchor: new AMap.Pixel(6,6),
-                size: new AMap.Size(11,11)
-              },
-        '500-1000':{
-                url: require('@/assets/image/blue1.png'),
-                anchor: new AMap.Pixel(6,6),
-                size: new AMap.Size(11,11)
-              },
-        '1000-2000':{
-                url: require('@/assets/image/green1.png'),
-                anchor: new AMap.Pixel(6,6),
-                size: new AMap.Size(11,11)
-              },
-        '2000-3000':{
-                url: require('@/assets/image/yellow1.png'),
-                anchor: new AMap.Pixel(6,6),
-                size: new AMap.Size(11,11)
-              },
-        '3000-4000':{
-                url: require('@/assets/image/icon_purple1.png'),
-                anchor: new AMap.Pixel(6,6),
-                size: new AMap.Size(11,11)
-              },
-        '4000+':{
-               url: require('@/assets/image/icon_red1.png'),
-                anchor: new AMap.Pixel(6,6),
-                size: new AMap.Size(11,11)
-        }
-      }
+      
     }
   },
   watch:{
-    '$route':{
-      handler(val,oldval){
-        if(val){
-          this.judgeRoute(val)
-        }
-      },
-    },
-    '$store.getters.regionData':{
-      handler(val,oldval){
-        if(val){
-          MyMap.addOverlayGroup(MyMap.getRegionMark(val))
-        }
-      },
-    },
-    '$store.getters.allStation':{
-      handler(val,oldval){
-       if(val){
-        for(let key  in val){
-            MyMap.xrhld(key,val[key],this.styleStition[key])
-          }
-       }
-      },
-    },
+    // '$route':{
+    //   handler(val,oldval){
+    //     if(val){
+    //       this.judgeRoute(val)
+    //     }
+    //   },
+    // },
+    // '$store.getters.regionData':{
+    //   handler(val,oldval){
+    //     if(val){
+    //       MyMap.addOverlayGroup(MyMap.getRegionMark(val))
+    //     }
+    //   },
+    // },
+    // '$store.getters.allStation':{
+    //   handler(val,oldval){
+    //    if(val){
+    //     for(let key  in val){
+    //         MyMap.xrhld(key,val[key],this.styleStition[key])
+    //       }
+    //    }
+    //   },
+    // },
   },
   mounted(){
-    MyMap = new Map({ el: "passengerMap" });
-    this.judgeRoute(this.$route);
+    
     // this.getTest()
     //  console.log(this.testpoly(this.testdata))
     //   let pathou=this.testpoly(this.testdata)

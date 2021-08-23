@@ -84,8 +84,8 @@ export default {
       pswFlag: false,
       loginForm: {
         // 登录数据
-        username: "",
-        password: ""
+        username: "dsg",
+        password: "",//999999999
       },
       loginRules: {
         username: [{ required: true, trigger: "blur", validator: check }],

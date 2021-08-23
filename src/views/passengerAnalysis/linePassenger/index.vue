@@ -1,5 +1,5 @@
 <template>
-  <div class="linePassenger">
+  <div class="linePassenger" id="linePassenger">
       <div class="search-box">
       <div style="margin-right:0.6vw;width:3vw;">时间</div>
       <el-date-picker
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import Map from "../passengerMap.js";
+let MyMap = null; // 地图实例
 export default {
     
     data(){
@@ -50,9 +52,21 @@ export default {
         }
     },
     created() {
+      console.log(this.$route.query.idName)
     },
     mounted() {
+      MyMap = new Map({ el: "linePassenger" });
+      console.log(this.$route.query.idName)
       this.getAllline()
+    },
+    watch:{
+      '$route.query.idName':{
+        handler(val,oldval){
+          if(val){
+           this.getAllline(val)
+          }
+        },
+      },
     },
     methods: {
      
@@ -66,16 +80,23 @@ export default {
       changeDate(){
         this.getLinepassenger()
       },
-      getAllline(){ 
+      getAllline(val){ 
+        this.value=val
+        // this.getLinepassenger()
+
+        // console.log(val)
         this.$fetchGet("route/routeList").then(res=>{
           this.options=res.result
-         if(this.$route.query.idName){
-            this.options.forEach(iteam=>{
-              if(iteam.routeName==this.$route.query.idName){
-                this.value=iteam.routeId
-                this.getLinepassenger()
-              }
-            })
+         if(val){
+           this.getLinepassenger()
+            // this.options.forEach(iteam=>{
+              // if(iteam.routeName==val){
+              //   this.value=iteam.routeId
+                
+              // }else{
+
+              // }
+            // })
 
           }else{
                setTimeout(()=>{
@@ -97,10 +118,11 @@ export default {
               let obj=res.result['线路走向']
               obj.geom=this.setData(obj.geom)
               
-              this.$emit('changeKl',{
-                toLine:obj,
-                toLinestation:res.result['线路站点列表']
-              })
+              // this.$emit('changeKl',{
+              //   toLine:obj,
+              //   toLinestation:res.result['线路站点列表']
+              // })
+              MyMap.drawbusLine(obj,res.result['线路站点列表'])
             }else{
               this.$message({
                   message: '无此线路信息!',
@@ -124,6 +146,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .linePassenger{
+  width:100%;
+  height:100%;
+  position: relative;
   .search-box {
     background: rgba(12, 38, 104, 0.7);
     box-sizing: border-box;
@@ -132,6 +157,7 @@ export default {
     top: vh(138);
     left: vw(20);
     display: flex;
+    z-index:10;
     align-items: center;
     color: #dae4ff;
     .qhbtn{

@@ -1618,7 +1618,7 @@ export default {
   },
   mounted() {
     this.M_initMap("compreMapks1");
-    this.M_setZoomAndCenter([121.473658, 31.230378], 12);
+    this.M_setZoomAndCenter([121.473658, 31.230378], 12,true);
     this.M_map.on("moveend", e => {
       this.carSearch.leftlon = e.target.getBounds().southWest.lng;
       this.carSearch.rightlon = e.target.getBounds().northEast.lng;
@@ -1890,13 +1890,13 @@ export default {
         });
         switch (row.name) {
           case "车辆实时运行":
-            this.M_setZoomAndCenter([121.473658, 31.230378], 13);
+            this.M_setZoomAndCenter([121.473658, 31.230378], 13,true);
             this.realTownGroups.hide();
             this.realbusGroups.hide();
             this.overlayGroupsgl.hide();
             break;
           case "站点现状":
-            this.M_setZoomAndCenter([121.510737, 31.230525], 12);
+            this.M_setZoomAndCenter([121.510737, 31.230525], 12,true);
             this.realTownGroups.hide();
             this.realbusGroups.hide();
             this.overlayGroupsgl.hide();
@@ -2043,8 +2043,9 @@ export default {
             `;
           this.M_InfoWindow.setAnchor("bottom-center");
           this.M_openInfoWin([str.lng, str.lat], content);
+          // this.M_setZoomAndCenter([str.lng, str.lat], 18,true);
         } else {
-          this.M_setZoomAndCenter(str.centre, 17);
+          this.M_setZoomAndCenter(str.centre, 17,true);
           this.getData();
         }
       });

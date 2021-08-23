@@ -23,29 +23,22 @@ const user = {
     threeMap2:[],//300米
     btnAuth: '', //按钮权限
     isBreak: "",//是否刷新页面
-   
     constructionCode: '', // 项目code
     constructionName: '',
     isbtn:1,
-    allStation:{},//站点客流
     dataArrLine:[],
-    stationHeat:[],//站点客流的热力图
     regionData:[],//区域客流
   
   },
   mutations: {
-    SET_KLSTATION:(state, allStation) => { //站点客流
-      state.allStation = allStation
-    },
+    
     SET_CODEMEAU:(state, codeMeau) => { //菜单的CODE
       state.codeMeau = codeMeau
     },
     SET_REGIONDATA:(state, regionData) => { //区域客流
       state.regionData = regionData
     },
-    SET_HEATSTATION:(state, stationHeat) => { //站点客流热力图
-      state.stationHeat = stationHeat
-    },
+   
     SET_ARRLINE:(state, dataArrLine) => { //公交线网
       state.dataArrLine = dataArrLine
     },

@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import MapMixin from '../../networkExcellent/networkMap'
+import MapMixin from '@/libs/myMap.js'
 export default {
   mixins: [MapMixin],
   components: {},

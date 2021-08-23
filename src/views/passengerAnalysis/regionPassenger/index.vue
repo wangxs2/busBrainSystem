@@ -1,5 +1,5 @@
 <template>
-  <div class="regionPassenger">
+  <div class="regionPassenger" id="regionPassenger">
     <div class="search-box">
       <div style="margin-right:0.6vw;width:3vw;">时间</div>
       <el-date-picker
@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import Map from "../passengerMap.js";
+let MyMap = null; // 地图实例
 export default {
     data(){
         return {
@@ -56,6 +58,7 @@ export default {
 
     },
     mounted() {
+       MyMap = new Map({ el: "regionPassenger" });
       window.onresize = ()=> {
         // this.myChart.resize()
         // this.myChart1.resize()
@@ -85,7 +88,8 @@ export default {
             })
           
             this.lineaData=res.result
-            this.$store.commit('SET_REGIONDATA', res.result)
+            // this.$store.commit('SET_REGIONDATA', res.result)
+            MyMap.addOverlayGroup(MyMap.getRegionMark(res.result))
             setTimeout(()=>{
             this.$store.commit('SET_LOADING',false)
             },500)
@@ -103,6 +107,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .regionPassenger{
+  width:100%;
+  height:100%;
+
 
   .search-box {
     background: rgba(12, 38, 104, 0.7);
@@ -111,6 +118,7 @@ export default {
     position: absolute;
     top: vh(138);
     left: vw(20);
+    z-index:10;
     display: flex;
     align-items: center;
     color: #dae4ff;
@@ -119,6 +127,7 @@ export default {
     position: absolute;
     top: vh(140);
     right: vw(12);
+     z-index:10;
     background: rgba(26, 66, 118, 0.2);
     border: 1px solid #27b6ff;
     box-shadow: 0px 0px vh(10) rgba(69, 120, 255, 1) inset;
@@ -154,6 +163,7 @@ export default {
     position: absolute;
     top: vh(190);
     right: vw(20);
+     z-index:10;
     width: vw(300);
     height: vh(864);
     background: url("~@/assets/image/form_bj.png");

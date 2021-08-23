@@ -1,7 +1,7 @@
 <template>
   <div style="width:100%;height:100%">
     <keep-alive>
-      <router-view @changefun="sonClick"></router-view>
+      <router-view></router-view>
     </keep-alive>
   </div>
 </template>
@@ -35,14 +35,14 @@ export default {
     
   },
   watch:{
-    '$route':{
-      handler:function(val,oldval){
-        console.log('watch')
-       this.judgeRouteLine(val)
-      },
-      deep:true,
-      immediate: true
-    },
+    // '$route':{
+    //   handler:function(val,oldval){
+    //     console.log('watch')
+    //    this.judgeRouteLine(val)
+    //   },
+    //   deep:true,
+    //   immediate: true
+    // },
     // '$store.getters.userStation':{
     //   handler(val,oldval){
     //    if(val.length>0){
@@ -70,9 +70,9 @@ export default {
   },
   mounted(){
   //  MyMapLine = new Map({ el: "lineCharacteristics" });
-    let nowroute=this.$route
-    console.log('mounted')
-    this.judgeRouteLine(nowroute)
+    // let nowroute=this.$route
+    // console.log('mounted')
+    // this.judgeRouteLine(nowroute)
   },
   methods:{
      setSz(baseArray){
@@ -126,6 +126,7 @@ export default {
         }
         return newArray;
     },
+  
     judgeRouteLine(val){
       switch(val.name) {
           case "道路网":

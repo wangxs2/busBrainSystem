@@ -23,7 +23,6 @@
         <div>道路名称</div>
         <div>拥堵指数</div>
         <div>平均速度</div>
-      
       </div>
       <div class="tablbox">
         <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">
@@ -63,6 +62,7 @@ export default {
        this.$fetchGet("curve/list").then(res => {
         this.lineaData=res.result
         this.M_autoInput(this.lineaData)
+        // this.pointEvent()
         // setTimeout(()=>{
         // this.$store.commit('SET_LOADING',false)
         // },200)
@@ -70,6 +70,21 @@ export default {
       })
 
     },
+    pointEvent() {
+      this.M_addGroupEvent((str,position) => {
+        // console.log(str)
+        //  this.$fetchGet("curve/detail", {
+        //   roadName: str.roadsegid
+        // }).then(res => {
+        //   this.M_openRoad(position, res)
+        // })
+         this.$fetchGet("curve/detail",{
+            roadName:str.roadsegid
+          }).then(res => {
+            this.M_searroad(str.roadsegid,res)
+          })
+      });
+  },
    getLocation(){
      this.M_addGroupEvent((ExtData,position)=>{
      })

@@ -1,5 +1,5 @@
 <template>
-  <div class="stationPassenger">
+  <div class="stationPassenger" id="stationPassenger">
     <div class="search-box">
       <div style="margin-right:0.6vw;width:3vw;">时间</div>
       <el-date-picker
@@ -74,9 +74,12 @@
 </template>
 
 <script>
+import Map from "../passengerMap.js";
+let MyMap = null; // 地图实例
 export default {
      data(){
         return {
+          echload:true,
           options:[
             {
               name:'工作日',
@@ -90,6 +93,38 @@ export default {
           value:'',
           state2:'',
           allStation:[],
+          styleStition:{
+            '0-500':{
+                    url: require('@/assets/image/cyan.png'),
+                    anchor: new AMap.Pixel(6,6),
+                    size: new AMap.Size(11,11)
+                  },
+            '500-1000':{
+                    url: require('@/assets/image/blue1.png'),
+                    anchor: new AMap.Pixel(6,6),
+                    size: new AMap.Size(11,11)
+                  },
+            '1000-2000':{
+                    url: require('@/assets/image/green1.png'),
+                    anchor: new AMap.Pixel(6,6),
+                    size: new AMap.Size(11,11)
+                  },
+            '2000-3000':{
+                    url: require('@/assets/image/yellow1.png'),
+                    anchor: new AMap.Pixel(6,6),
+                    size: new AMap.Size(11,11)
+                  },
+            '3000-4000':{
+                    url: require('@/assets/image/icon_purple1.png'),
+                    anchor: new AMap.Pixel(6,6),
+                    size: new AMap.Size(11,11)
+                  },
+            '4000+':{
+                  url: require('@/assets/image/icon_red1.png'),
+                    anchor: new AMap.Pixel(6,6),
+                    size: new AMap.Size(11,11)
+            }
+          },
           tlstation:[
             {
               name:'0-500',
@@ -147,11 +182,14 @@ export default {
     watch:{
     },
     mounted() {
+      MyMap = new Map({ el: "stationPassenger" });
       this.$nextTick( ()=> {
            $(".passengerAnalysis").on("click", ".unclick-stations-lis", e => {
+             console.log($(e.target).data("code"))
             this.testroute($(e.target).data("code"))
           })
       })
+
     },
     methods: {
       initechart(data,data1){
@@ -275,9 +313,9 @@ export default {
       testroute(val){
         this.$router.push({
           path:'/passengerAnalysis/linePassenger',
-          query:{
-            idName:val
-          }
+            query:{
+              idName:val
+            }
           });
       },
       getAllData(){
@@ -298,8 +336,14 @@ export default {
                   })
                 })
               }
-            this.$store.commit('SET_HEATSTATION', arrheat)
-            this.$store.commit('SET_KLSTATION', res.result)
+            // this.$store.commit('SET_HEATSTATION', arrheat)
+            // this.$store.commit('SET_KLSTATION', res.result)
+            // MyMap.xrhld(key,val[key],this.styleStition[key])
+            MyMap.zdklMapOption.heat.setDataSet({data: arrheat, max: 100})
+             MyMap.zdklMapOption.heat.hide()
+            for(let key  in res.result){
+              MyMap.xrhld(key,res.result[key],this.styleStition[key])
+            }
             setTimeout(()=>{
               this.$store.commit('SET_LOADING',false)
             },500)
@@ -327,22 +371,22 @@ export default {
           code:iteam.stationName,
           direction:iteam.routeDirection
         }).then(res => {
-          this.$emit('changefun',{
-            stattiondetail:res.result
-        })
+          // this.$emit('changefun',{
+          //     stattiondetail:res.result
+          // })
         })
       },
       toheat(){
         this.isheat=!this.isheat
-         this.$emit('changeKl',{
-            isheat:this.isheat
-        })
+        this.isheat==true?MyMap.zdklMapOption.heat.show():MyMap.zdklMapOption.heat.hide()
       },
       toShow(row,index){
         this.tlstation[index].isxz=!this.tlstation[index].isxz
-        this.$emit('changeKl',{
-            isStation:row
-        })
+        if(row.isxz){
+          MyMap.zdklMapOption.mass[row.value].show()
+        }else{
+          MyMap.zdklMapOption.mass[row.value].hide()
+        }
       }
         
     }
@@ -350,6 +394,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .stationPassenger{
+  width:100%;
+  height:100%;
   // box-sizing: border-box;
   // position: absolute;
   // z-index: 100;
@@ -363,6 +409,7 @@ export default {
     top: vh(130);
     left: vw(20);
     display: flex;
+    z-index:10;
     align-items: center;
     color: #dae4ff;
   }
@@ -371,6 +418,7 @@ export default {
     top: vh(170);
     right: vw(20);
     width: vw(300);
+    z-index:10;
     // height: vh(424);
     background: rgba(26, 66, 118, 1);
     border: 1px solid rgba(39, 182, 255, 0.5);
@@ -422,6 +470,7 @@ export default {
     left: vw(20);
     width:vw(1880);
     height:vh(312);
+    z-index:10;
     background: url("~@/assets/image/zdbj.png");
     background-size: 100% 100%;
 
