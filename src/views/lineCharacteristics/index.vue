@@ -1,15 +1,15 @@
 <template>
-<div style="width:100%;height:100%">
-  <div v-show="$route.name!=='道路网'&&$route.name!=='公交专用道'" class="lineCharacteristicsc" id="lineCharacteristics">
+  <div style="width:100%;height:100%">
+    <keep-alive>
+      <router-view @changefun="sonClick"></router-view>
+    </keep-alive>
   </div>
-   <router-view @changefun="sonClick"></router-view>
-   </div>
 </template>
 
 <script>
-import Map from "@/libs/myMap.js";
-let MyMapLine = null; // 地图实例
-let dataLine=require('./car.js')
+// import Map from "@/libs/myMap.js";
+// let MyMapLine = null; // 地图实例
+// let dataLine=require('./car.js')
 export default {
   data(){
     return{
@@ -43,32 +43,24 @@ export default {
       deep:true,
       immediate: true
     },
-    '$store.getters.userStation':{
-      handler(val,oldval){
-       if(val.length>0){
-         MyMapLine.pointAll3(val)
-       }
-      },
-      deep:true,
-      immediate: true
-    },
-    '$store.getters.dataArrLine':{
-      handler(val,oldval){
-       if(val.length>0){
-        MyMapLine.pathSimplifierIns.setData(this.$store.getters.dataArrLine)
-        MyMapLine.pathSimplifierIns.show()
-       }
-      },
-
-    },
-    '$store.getters.keyunData2':{
-      handler(val,oldval){
-       if(val){
-          MyMapLine.addGjMarker(this.$store.getters.keyunData)
-          MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
-       }
-      },
-    },
+    // '$store.getters.userStation':{
+    //   handler(val,oldval){
+    //    if(val.length>0){
+    //      MyMapLine.pointAll3(val)
+    //    }
+    //   },
+    //   deep:true,
+    //   immediate: true
+    // },
+    
+    // '$store.getters.keyunData2':{
+    //   handler(val,oldval){
+    //    if(val){
+    //       MyMapLine.addGjMarker(this.$store.getters.keyunData)
+    //       MyMapLine.addOverlayGroup4(MyMapLine.passCorrline(this.$store.getters.keyunData2))
+    //    }
+    //   },
+    // },
    
   },
   created(){
@@ -77,7 +69,7 @@ export default {
     
   },
   mounted(){
-   MyMapLine = new Map({ el: "lineCharacteristics" });
+  //  MyMapLine = new Map({ el: "lineCharacteristics" });
     let nowroute=this.$route
     console.log('mounted')
     this.judgeRouteLine(nowroute)
@@ -139,99 +131,64 @@ export default {
           case "道路网":
               break;
           case "公交站点":
-             if(MyMapLine){
-                if(MyMapLine.infoWindow){
-                    MyMapLine.infoWindow.close()
-                }
-                if(MyMapLine.busLaneGroups){
-                  MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
-                        MyMapLine.map.remove(iy)
-                      })
-                }
-                // if(MyMapLine.massall){
-                //   MyMapLine.massall.show()
-                //   if(MyMapLine.polygonLine){
-                //     MyMapLine.polygonLine.show()
-                //   }
-                // }
-                // else{
-                //   MyMapLine.pointAll3(this.$store.getters.userStation)
-                // }
-                if(MyMapLine.kymassnew){
-                  MyMapLine.kymassnew.hide()
-                    MyMapLine.kyLineOver.hide()
-                }
-                if(MyMapLine.pathSimplifierIns){
-                    MyMapLine.pathSimplifierIns.setData(null)
-                }
-                // if(this.$store.getters.userStation){
-                //   // MyMapLine.pointAll3(this.$store.getters.userStation)
-                // }
+            //  if(MyMapLine){
+            //     if(MyMapLine.infoWindow){
+            //         MyMapLine.infoWindow.close()
+            //     }
+            //     if(MyMapLine.busLaneGroups){
+            //       MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
+            //             MyMapLine.map.remove(iy)
+            //           })
+            //     }
+            //     // if(MyMapLine.massall){
+            //     //   MyMapLine.massall.show()
+            //     //   if(MyMapLine.polygonLine){
+            //     //     MyMapLine.polygonLine.show()
+            //     //   }
+            //     // }
+            //     // else{
+            //     //   MyMapLine.pointAll3(this.$store.getters.userStation)
+            //     // }
+            //     if(MyMapLine.kymassnew){
+            //       MyMapLine.kymassnew.hide()
+            //         MyMapLine.kyLineOver.hide()
+            //     }
+               
+            //     // if(this.$store.getters.userStation){
+            //     //   // MyMapLine.pointAll3(this.$store.getters.userStation)
+            //     // }
                 
-             }
+            //  }
               break;
           case "公交线路网":
-           if(MyMapLine){
-              if(MyMapLine.kymassnew){
-                 MyMapLine.kymassnew.hide()
-                MyMapLine.kyLineOver.hide()
-              }
-              if(MyMapLine.busLaneGroups){
-                 MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
-                      MyMapLine.map.remove(iy)
-                    })
-              }
-            
-              if(MyMapLine.infoWindow){
-                  MyMapLine.infoWindow.close()
-                }
-              if(MyMapLine.massall){
-                MyMapLine.massall.hide()
-                if(MyMapLine.polygonLine){
-                  MyMapLine.polygonLine.hide()
-                  MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
-                    MyMapLine.map.remove(iy)
-                  })
-                }
-              }
-           }
-              
+          
               break;
           case "公交专用道":
               
               break;
           case "客运走廊":
-              if(MyMapLine){
-                if(MyMapLine.infoWindow){
-                    MyMapLine.infoWindow.close()
-                }
-                if(MyMapLine.busLaneGroups){
-                 MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
-                      MyMapLine.map.remove(iy)
-                    })
-              }
+              // if(MyMapLine){
+              //   if(MyMapLine.infoWindow){
+              //       MyMapLine.infoWindow.close()
+              //   }
+              //   if(MyMapLine.busLaneGroups){
+              //    MyMapLine.busLaneGroups.getOverlays().forEach(iy=>{
+              //         MyMapLine.map.remove(iy)
+              //       })
+              // }
                
-                if(MyMapLine.massall){
-                  MyMapLine.massall.hide()
-                  if(MyMapLine.polygonLine){
-                    MyMapLine.polygonLine.hide()
-                    MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
-                      MyMapLine.map.remove(iy)
-                    })
-                  }
-                }
-                // if(MyMapLine.kymassnew){
-                 
-                //   MyMapLine.kymassnew.show()
-                //   MyMapLine.kyLineOver.show()
-                // }
+              //   if(MyMapLine.massall){
+              //     MyMapLine.massall.hide()
+              //     if(MyMapLine.polygonLine){
+              //       MyMapLine.polygonLine.hide()
+              //       MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+              //         MyMapLine.map.remove(iy)
+              //       })
+              //     }
+              //   }
                
-                //隐藏公交线网里面的数据
-                if(MyMapLine.pathSimplifierIns){
-                  MyMapLine.pathSimplifierIns.setData(null)
-                }
-                MyMapLine.heatmap.hide()
-              }
+              //   MyMapLine.heatmap.hide()
+              // }
               
               break;
           default:
@@ -259,37 +216,37 @@ export default {
       }
 
 
-      if(row.isinfobtn){
-        MyMapLine.searchStation(row.isinfobtn.stationName,[row.isinfobtn.longitude==undefined?row.isinfobtn.lon:row.isinfobtn.longitude,row.isinfobtn.latitude==undefined?row.isinfobtn.lat:row.isinfobtn.latitude]) 
-      }
-      if(row.stattiondetail){
-        MyMapLine.infoWindow.setContent(MyMapLine.createInfoWindow(2,row.stattiondetail))
-        MyMapLine.infoWindow.open(MyMapLine.map,[row.stattiondetail.longitude,row.stattiondetail.latitude]);
-        MyMapLine.map.setZoomAndCenter(16,[row.stattiondetail.longitude,row.stattiondetail.latitude])
-      }
+      // if(row.isinfobtn){
+      //   MyMapLine.searchStation(row.isinfobtn.stationName,[row.isinfobtn.longitude==undefined?row.isinfobtn.lon:row.isinfobtn.longitude,row.isinfobtn.latitude==undefined?row.isinfobtn.lat:row.isinfobtn.latitude]) 
+      // }
+      // if(row.stattiondetail){
+      //   MyMapLine.infoWindow.setContent(MyMapLine.createInfoWindow(2,row.stattiondetail))
+      //   MyMapLine.infoWindow.open(MyMapLine.map,[row.stattiondetail.longitude,row.stattiondetail.latitude]);
+      //   MyMapLine.map.setZoomAndCenter(16,[row.stattiondetail.longitude,row.stattiondetail.latitude])
+      // }
 
-      if(row.stationdata){
-        MyMapLine.pointAll3(row.stationdata)
-        if(row.adminArea){
-          MyMapLine.createPolygon(row.adminArea)
-          MyMapLine.addOverlayGroup(MyMapLine.threeCircle(row.stationdata,300))
-        }
+      // if(row.stationdata){
+      //   MyMapLine.pointAll3(row.stationdata)
+      //   if(row.adminArea){
+      //     MyMapLine.createPolygon(row.adminArea)
+      //     MyMapLine.addOverlayGroup(MyMapLine.threeCircle(row.stationdata,300))
+      //   }
        
 
-      }
+      // }
 
-      if(row.isclaear==1){
-        MyMapLine.map.remove(MyMapLine.polygonLine);
-        if(MyMapLine.overlayGroups){
-          MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
-            MyMapLine.map.remove(iy)
-          })
-        }
-      }
+      // if(row.isclaear==1){
+      //   MyMapLine.map.remove(MyMapLine.polygonLine);
+      //   if(MyMapLine.overlayGroups){
+      //     MyMapLine.overlayGroups.getOverlays().forEach(iy=>{
+      //       MyMapLine.map.remove(iy)
+      //     })
+      //   }
+      // }
 
-       if(row.isbtn){
-          MyMapLine.setRadius(row.isbtn)
-        }
+      //  if(row.isbtn){
+      //     MyMapLine.setRadius(row.isbtn)
+      //   }
        
     },
     separateArr(data, n) {

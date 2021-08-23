@@ -1,5 +1,8 @@
 <template>
-  <div class="publicTransport-box">
+  <div class="publicTransport-box" id="publicTransport"    v-loading="lloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
     <div class="leftlinemsg">
       <div class="tit">线网分布信息</div>
       <div class="itmsg-box">
@@ -90,10 +93,14 @@
 </template>
 
 <script>
+import MapMixin from '../../networkExcellent/networkMap'
 export default {
+  mixins: [MapMixin],
   components: {},
+  
   data() {
     return {
+      lloading:false,
       lisData: [
         {
           name: "最长线路",
@@ -112,10 +119,6 @@ export default {
   beforeCreate() {},
   created() {
     this.getLinelength()
-     this.getAllLine()
-   
-    
-     
   },
   mounted() {
     // if(this.$store.getters.dataArrLine.length!==0){
@@ -123,6 +126,15 @@ export default {
     // }else{
     //   this.getAllLine()
     // }
+    this.M_initMap('publicTransport')
+    this.M_map.setStatus({
+      dragEnable: false, // 地图是否可通过鼠标拖拽平移，默认为true
+      keyboardEnable: false, //地图是否可通过键盘控制，默认为true
+      doubleClickZoom: false, // 地图是否可通过双击鼠标放大地图，默认为true
+      zoomEnable: false, //地图是否可缩放，默认值为true
+
+    })
+    this.getAllLine()
   },
 
   methods: {
@@ -131,6 +143,7 @@ export default {
       this.lineaData=this.lineaData.reverse()
     },
     getAllLine(){
+      this.lloading=true
       
       this.$fetchGet("route/baseTotal").then(res =>{
         this.objline=res.result
@@ -185,10 +198,10 @@ export default {
             lastArr.push(opl)
           })
         })
-        this.$store.commit('SET_ARRLINE',lastArr)
-        setTimeout(()=>{
-          this.$store.commit('SET_LOADING',false)
-        },500)
+        this.pathSimplifierIns.setData(lastArr)
+        this.pathSimplifierIns.show()
+        this.lloading=false
+       
 
       })
     },
@@ -228,8 +241,11 @@ export default {
 <style lang="scss" scoped>
 .publicTransport-box {
   box-sizing: border-box;
-  margin-top: vw(70);
-  z-index: 10;
+  // margin-top: vw(70);
+ width:100%;
+  height:100%;
+ 
+   position:relative;
   .leftlinemsg {
     position: absolute;
     top: vh(140);
@@ -238,6 +254,7 @@ export default {
     height: vh(330);
     background: url("~@/assets/image/msgLine.png");
     background-size: 100% 100%;
+     z-index: 10;
     .tit {
       width: 100%;
       height: vh(60);
@@ -271,6 +288,7 @@ export default {
     left: vw(20);
     width: vw(370);
     height: vh(588);
+     z-index: 10;
     background: url("~@/assets/image/bigline.png");
     background-size: 100% 100%;
     flex-direction: column;
@@ -354,6 +372,7 @@ export default {
     right: vw(12);
     width: vw(300);
     height: vh(86);
+     z-index: 10;
     background: rgba(26, 66, 118, 0.2);
     border: 1px solid #27b6ff;
     box-shadow: 0px 0px vh(10) rgba(69, 120, 255, 1) inset;

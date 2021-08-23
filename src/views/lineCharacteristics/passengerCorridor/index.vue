@@ -1,5 +1,5 @@
 <template>
-<div class="passengerCorridor-box">
+<div class="passengerCorridor-box" id="passengerCorridor">
 
     <div class="leftlinemsg">
         <div class="tit-line">
@@ -59,8 +59,9 @@
 </template>
 
 <script>
-
+import MapMixin from '../../networkExcellent/networkMap'
 export default {
+mixins: [MapMixin],
   components: {
   },
   data() {
@@ -81,6 +82,7 @@ export default {
 
   },
   mounted() {
+       this.M_initMap('passengerCorridor')
 
       window.onresize = ()=> {
         this.myChart.resize()
@@ -90,9 +92,10 @@ export default {
   methods: {
     //站点显示信息窗口
     datastation(rows){
-        this.$emit('changefun',{
-        isinfobtn:rows
-    })
+        // this.$emit('changefun',{
+        // isinfobtn:rows
+        // })
+        this.searchStation(rows.stationName,[rows.longitude==undefined?rows.lon:rows.longitude,rows.latitude==undefined?rows.lat:rows.latitude]) 
     },
     initechart(data){
         this.myChart = this.$echarts.init(document.getElementById('echstation'));
@@ -218,14 +221,13 @@ export default {
                 });
                 sdata.push(obj)
             }
-            this.$store.commit('SET_KEYUNDATA', (allStation1.concat(allStation)))
+            // this.$store.commit('SET_KEYUNDATA', (allStation1.concat(allStation)))
+            this.addGjMarker(allStation1.concat(allStation))
             // this.$store.commit('SET_KEYUNDATA1', (allStation))
             // console.log(this.$store.getters.keyunData)
             this.setTwo(res.result.corridorList)
             this.mlinedata=mdata
             this.slinedata=sdata
-            this.$store.commit('SET_LOADING',false)
-
             for(let key  in res.result.corridorPassenger){
                 let obj={} 
                 obj.name=key
@@ -252,7 +254,8 @@ export default {
             iteam.lonlat1=this.setSz(iteam.lonlat.replace(/[\r\n]/g,"").split(' '))
             data2.push(iteam)
         })
-        this.$store.commit('SET_KEYUNDATA2',data2)
+        // this.$store.commit('SET_KEYUNDATA2',data2)
+        this.addOverlayGroup4(this.passCorrline(data2))
     },
     setSz(baseArray){
         let len = baseArray.length;
@@ -291,19 +294,79 @@ export default {
 };
 </script>
 <style lang="scss">
+.passengerCorridor-box{
+ .info-win {
+      padding-right: vw(20);
+      // height: vw(110);
+      position: relative;
+      .win-triangle {
+        position: absolute;
+        top: 0;
+        right: vw(16);
+        width: vw(20);
+        height: vw(20);
+        transform: skewX(-45deg);
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+      }
+      .info-box {
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+        border-radius: 4px;
+        .info-content {
+          position: relative;
+          background: rgba(1, 11, 66, 1);
+          border-radius: 4px;
+          padding: vh(12) vw(16) vh(10) vw(10);
+          color: #fff;
+          // display: flex;
+          .icon {
+            width: vw(98);
+            height: vw(88);
+            background: #000;
+            margin-right: vw(10);
+            float: left;
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+          .info {
+            width: vw(180);
+            min-height: vh(20);
+            .info-name {
+              font-size: vw(16);
+              font-weight: bold;
+              margin-bottom: vw(9);
+            }
+            .info-item {
+              font-size: vw(14);
+              line-height: vw(20);
+              margin-top: vw(6);
+              // overflow: hidden;
+              // white-space: nowrap;
+              // text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+  }
+}
 </style>
 
 <style lang="scss" scoped>
 .passengerCorridor-box {
   box-sizing: border-box;
-  margin-top: vw(70);
-  z-index: 10;
+  width:100%;
+  height:100%;
+   position:relative;
   .lkicon {
     position: absolute;
     top: vh(140);
     right: vw(12);
     width: vw(260);
     height: vh(55);
+    z-index: 10;
     background: rgba(26, 66, 118, 0.2);
     border: 1px solid #27b6ff;
     box-shadow: 0px 0px vh(10) rgba(69, 120, 255, 1) inset;
@@ -327,6 +390,7 @@ export default {
     top: vh(150);
     left: vw(20);
     width: vw(370);
+    z-index: 10;
     height: vh(292);
     background: url("~@/assets/image/bjk.png");
     background-size: 100% 100%;
@@ -398,6 +462,7 @@ export default {
     left: vw(20);
     width: vw(370);
     height: vh(219);
+    z-index: 10;
     
   }
 .erach-box{
@@ -409,6 +474,7 @@ export default {
     background: url("~@/assets/image/zdbj.png");
     background-size: 100% 100%;
     margin-top:vh(8);
+    z-index: 10;
   }
 }
 </style>

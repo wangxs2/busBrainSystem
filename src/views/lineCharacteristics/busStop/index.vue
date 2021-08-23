@@ -1,5 +1,5 @@
 <template>
-  <div class="busStop-box">
+  <div class="busStop-box" id="busStop">
     <div class="search-box">
       <div style="margin-right:0.8vw">行政区域</div>
       <el-select style="margin-right:1.5vw" clearable  @clear="claearstop()" filterable @change="getpatharea" size="small" v-model="value" placeholder="请选择">
@@ -44,11 +44,13 @@
 </template>
 
 <script>
+import MapMixin from '../../networkExcellent/networkMap'
 import {
   getCookie,
   delCookie
 } from '@/libs/util'
 export default {
+  mixins: [MapMixin],
   components: {},
   data() {
     return {
@@ -66,10 +68,11 @@ export default {
         }
       ],
       listMsg:[],
-      isbtn:-1,
+      isbtn:300,
       point:1,
       isheat:1,
       adminArea:[],
+      thfivearr:[],
       data:[
         [116.40537166077495,39.89448780861658],
         [116.412076,39.899135],
@@ -88,6 +91,7 @@ export default {
     
   },
   mounted() {
+    this.M_initMap('busStop')
     this.pointAll()
     this.getAreaLine()
   },
@@ -113,28 +117,35 @@ export default {
         code:iteam.stationName,
         direction:iteam.routeDirection
       }).then(res => {
-        this.$emit('changefun',{
-          stattiondetail:res.result
-      })
+        // this.$emit('changefun',{
+        //   stattiondetail:res.result
+        // })
+        this.setConwidow(res.result)
       })
     },
     tobtn(row){
+      console.log(row)
       this.isbtn=row.name
-      this.$emit('changefun',{
-          isbtn:row.name
-      })
+
+      // this.threeCircle(this.thfivearr,row.name)
+      // this.$emit('changefun',{
+      //     isbtn:row.name
+      // })
+
+      // this.threeCircle()
     },
     getpatharea(){
       let arr=[]
-       this.$emit('changefun',{
-            isclaear:2
-        })
+      //  this.$emit('changefun',{
+      //       isclaear:2
+      //   })
       if(this.value==''){
       
-         this.$emit('changefun',{
-            adminArea:'',
-            stationdata:this.restaurants
-        })
+        //  this.$emit('changefun',{
+        //     adminArea:'',
+        //     stationdata:this.restaurants
+        // })
+        // this.pointAll3()
         delCookie("reagonName")
       }else{
        
@@ -151,10 +162,15 @@ export default {
           }
         })
         
-        this.$emit('changefun',{
-            adminArea:obj,
-            stationdata:arr
-        })
+        // this.$emit('changefun',{
+        //     adminArea:obj,
+        //     stationdata:arr
+        // })
+        this.thfivearr=arr
+        this.createPolygon(obj)
+        this.pointAll3(arr)
+
+        // this.threeCircle(arr,300)
 
       }
       
@@ -172,23 +188,25 @@ export default {
     },
     allpoint(){
       if(this.point==1){
+        this.massall.hide()
         this.point=2
       }else{
         this.point=1
+        this.massall.show()
       }
-      this.$emit('changefun',{
-          ispoint:this.point
-      })
+     
     },
     allheat(){
       if(this.isheat==1){
         this.isheat=2
+        this.heatmap.show()
       }else{
         this.isheat=1
+        this.heatmap.hide()
       }
-      this.$emit('changefun',{
-          isheat:this.isheat
-      })
+      // this.$emit('changefun',{
+      //     isheat:this.isheat
+      // })
     },
     // getAreaData(){
     //    this.$fetchGet("indicator/stationCoverArea",{
@@ -220,17 +238,22 @@ export default {
         if(res.result&&res.result['站点的详细属性']){
           let arr=this.cloneObj(res.result['站点的详细属性']),heatOption = [];
           this.restaurants =this.cloneObj(res.result['站点的详细属性'])
-          this.$store.commit('SET_STATION', res.result['站点的详细属性'])
+          // this.$store.commit('SET_STATION', res.result['站点的详细属性'])
+          // this.pointAll3(res.result['站点的详细属性'])
+
           arr.forEach(iteam=>{
             var heatOptionObj = {};
             heatOptionObj.lng = iteam.longitude;
             heatOptionObj.lat = iteam.latitude;
             heatOption.push(heatOptionObj);
           })
-          this.$store.commit('SET_HEATMAP',heatOption)
-          setTimeout(()=>{
-              this.$store.commit('SET_LOADING',false)
-            },500)
+          // this.$store.commit('SET_HEATMAP',heatOption)
+          this.heatmap.hide()
+          this.setHeatemap(heatOption)
+          
+          // setTimeout(()=>{
+          //     this.$store.commit('SET_LOADING',false)
+          //   },500)
         }
       });  
 
@@ -244,13 +267,72 @@ export default {
 };
 </script>
 <style lang="scss">
+.busStop-box {
+ .info-win {
+      padding-right: vw(20);
+      // height: vw(110);
+      position: relative;
+      .win-triangle {
+        position: absolute;
+        top: 0;
+        right: vw(16);
+        width: vw(20);
+        height: vw(20);
+        transform: skewX(-45deg);
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+      }
+      .info-box {
+        background: rgba(1, 11, 66, 1);
+        border: 1px solid rgba(45, 125, 241, 1);
+        border-radius: 4px;
+        .info-content {
+          position: relative;
+          background: rgba(1, 11, 66, 1);
+          border-radius: 4px;
+          padding: vh(12) vw(16) vh(10) vw(10);
+          color: #fff;
+          // display: flex;
+          .icon {
+            width: vw(98);
+            height: vw(88);
+            background: #000;
+            margin-right: vw(10);
+            float: left;
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+          .info {
+            width: vw(180);
+            min-height: vh(20);
+            .info-name {
+              font-size: vw(16);
+              font-weight: bold;
+              margin-bottom: vw(9);
+            }
+            .info-item {
+              font-size: vw(14);
+              line-height: vw(20);
+              margin-top: vw(6);
+              // overflow: hidden;
+              // white-space: nowrap;
+              // text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+  }
+}
 </style>
 
 <style lang="scss" scoped>
 .busStop-box {
   box-sizing: border-box;
-  margin-top: vw(70);
-  z-index: 10;
+  width:100%;
+  height:100%;
+  position: relative;
   .search-box {
     background: rgba(12, 38, 104, 0.7);
     box-sizing: border-box;
@@ -258,6 +340,8 @@ export default {
     position: absolute;
     top: vh(140);
     left: vw(20);
+     z-index: 10;
+
     display: flex;
     align-items: center;
     color: #dae4ff;
@@ -332,6 +416,8 @@ export default {
     top: vh(210);
     left: vw(20);
     width: vw(370);
+    z-index: 10;
+
     // height: vh(420);
     background: url("~@/assets/image/bigline.png");
     background-size: 100% 100%;

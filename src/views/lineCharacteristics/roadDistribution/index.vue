@@ -39,7 +39,6 @@
 </template>
 <script>
 import MapMixin from '../../networkExcellent/networkMap'
-
 export default {
   mixins: [MapMixin],
   components: {
@@ -56,7 +55,7 @@ export default {
   },
   mounted() {
     this.M_initMap('roaddistr')
-    this.trafficLayer.setMap(this.M_map);
+    // this.trafficLayer.setMap(this.M_map);
   },
 
   methods: {
@@ -64,9 +63,9 @@ export default {
        this.$fetchGet("curve/list").then(res => {
         this.lineaData=res.result
         this.M_autoInput(this.lineaData)
-        setTimeout(()=>{
-        this.$store.commit('SET_LOADING',false)
-        },200)
+        // setTimeout(()=>{
+        // this.$store.commit('SET_LOADING',false)
+        // },200)
         
       })
 
@@ -77,7 +76,7 @@ export default {
     },
     toDetail(row,n){
       this.nowindex=n
-       this.$store.commit('SET_LOADING',true)
+      //  this.$store.commit('SET_LOADING',true)
        this.$fetchGet("curve/detail",{
          roadName:row.roadsegid
        }).then(res => {

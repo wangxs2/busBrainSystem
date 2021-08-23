@@ -4,7 +4,7 @@ import {
 const user = {
   state: {
     userId: "",
-    aloading:true,
+    aloading:false,
     roleId: "",
     userName: '',
     ishuadata:2,//从项目材料回来是否刷新
@@ -23,9 +23,7 @@ const user = {
     threeMap2:[],//300米
     btnAuth: '', //按钮权限
     isBreak: "",//是否刷新页面
-    keyunData:[],//客运走廊的数据
-    keyunData1:[],//客运走廊的数据
-    keyunData2:[],//客运走廊的数据
+   
     constructionCode: '', // 项目code
     constructionName: '',
     isbtn:1,
@@ -63,15 +61,7 @@ const user = {
     SET_THREEMAP2: (state, threeMap2) => { //500米
       state.threeMap2 = threeMap2
     },
-     SET_KEYUNDATA: (state, keyunData) => { //客运走廊
-      state.keyunData = keyunData
-    },
-    SET_KEYUNDATA1: (state, keyunData1) => { //客运走廊
-      state.keyunData1 = keyunData1
-    },
-    SET_KEYUNDATA2: (state, keyunData2) => { //客运走廊线
-      state.keyunData2 = keyunData2
-    },
+    
     SET_HEATMAP: (state, heatData) => { //储存热力图的值
       state.heatData = heatData
     },

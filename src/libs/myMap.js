@@ -149,7 +149,7 @@ export default class Map {
 
       function onerror(e) {
       }
-  });
+      });
 
       this.infoWindow = new AMap.InfoWindow({
           isCustom: true,  //使用自定义窗体
@@ -478,7 +478,6 @@ export default class Map {
     //客运走廊的线
   addOverlayGroup4(Groups){
     this.kyLineOver.addOverlays(Groups)
-
   }
   
 

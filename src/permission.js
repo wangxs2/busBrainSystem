@@ -16,7 +16,7 @@ NProgress.configure({
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 进度条开始
-  store.commit('SET_LOADING',true)
+  // store.commit('SET_LOADING',true)
   let arour=[]
   let routenow = to.matched.slice(2)[0]
   // store.commit('SET_ROLES', [])
