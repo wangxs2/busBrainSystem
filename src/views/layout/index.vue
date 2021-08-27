@@ -1,10 +1,5 @@
 <template>
-  <div class="layout" 
-    v-loading="$store.getters.aloading"
-    element-loading-text="拼命加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.6)"
-  >
+  <div class="layout">
    <app-main></app-main>
    <div :class="typeclass()">
      <div class="menu-box">

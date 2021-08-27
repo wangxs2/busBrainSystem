@@ -1,6 +1,10 @@
 <template>
 <!-- 辅助决策的可视化 -->
-  <div class="assistPolicy">
+  <div class="assistPolicy"    
+   v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
     <div class="left-box">
       <div class="titbox" style="margin-bottom:8px">非直线系数</div>
        <div class="con-box table-data" >
@@ -248,6 +252,7 @@ export default {
       personData:[],
       value:'',
       swipertable:null,
+      assloading:true,
       swipertable2:null,
       swipertable3:null,
       swipertable4:null,
@@ -492,7 +497,7 @@ export default {
 
 
           setTimeout(()=>{
-          this.$store.commit('SET_LOADING',false)
+          this.assloading=false
           },2000)
       })
 

@@ -331,72 +331,72 @@ height: 100%;
         background: rgba(0, 255, 255,1)
       }
     }
-    .lightLine1{
-      right: vw(120);
-      animation: lightan1 1.7s linear infinite;
-    }
-    .lightLine2{
-      right: vw(150);
-      animation: lightan1 1.9s linear infinite;
-    }
-    .lightLine3{
-      right: vw(160);
-      animation: lightan 1.2s linear infinite;
-    }
-    .lightLine4{
-      right: vw(840);
-      animation: lightan1 1.2s linear infinite;
-    }
-    .lightLine5{
-      right: vw(900);
-      animation: lightan1 1.4s linear infinite;
-    }
-    .lightLine6{
-      right: vw(980);
-      animation: lightan1 1.6s linear infinite;
-    }
-     .lightLine7{
-      right: vw(1100);
-      animation: lightan1 1.8s linear infinite;
-    }
-     .lightLine8{
-      left: vw(100);
-      animation: lightan1 1.1s linear infinite;
-    }
-     .lightLine9{
-      left: vw(140);
-      animation: lightan1 1.4s linear infinite;
-    }
-     .lightLine10{
-      left: vw(180);
-      animation: lightan1 1.6s linear infinite;
-    }
-     .lightLine11{
-      left: vw(220);
-      animation: lightan1 1s linear infinite;
-    }
-    @-webkit-keyframes lightan{
-      from {
-        opacity: 0.5;
-        bottom: vw(0);
-        }
-      to {
-        opacity: 1;
-        bottom: vw(640);
-        }
+    // .lightLine1{
+    //   right: vw(120);
+    //   animation: lightan1 1.7s linear infinite;
+    // }
+    // .lightLine2{
+    //   right: vw(150);
+    //   animation: lightan1 1.9s linear infinite;
+    // }
+    // .lightLine3{
+    //   right: vw(160);
+    //   animation: lightan 1.2s linear infinite;
+    // }
+    // .lightLine4{
+    //   right: vw(840);
+    //   animation: lightan1 1.2s linear infinite;
+    // }
+    // .lightLine5{
+    //   right: vw(900);
+    //   animation: lightan1 1.4s linear infinite;
+    // }
+    // .lightLine6{
+    //   right: vw(980);
+    //   animation: lightan1 1.6s linear infinite;
+    // }
+    //  .lightLine7{
+    //   right: vw(1100);
+    //   animation: lightan1 1.8s linear infinite;
+    // }
+    //  .lightLine8{
+    //   left: vw(100);
+    //   animation: lightan1 1.1s linear infinite;
+    // }
+    //  .lightLine9{
+    //   left: vw(140);
+    //   animation: lightan1 1.4s linear infinite;
+    // }
+    //  .lightLine10{
+    //   left: vw(180);
+    //   animation: lightan1 1.6s linear infinite;
+    // }
+    //  .lightLine11{
+    //   left: vw(220);
+    //   animation: lightan1 1s linear infinite;
+    // }
+    // @-webkit-keyframes lightan{
+    //   from {
+    //     opacity: 0.5;
+    //     bottom: vw(0);
+    //     }
+    //   to {
+    //     opacity: 1;
+    //     bottom: vw(640);
+    //     }
 
-    }
-    @-webkit-keyframes lightan1{
-      0% {
-        opacity: 0.5;
-        bottom: vw(0);
-        }
-      100% {
-        opacity: 1;
-        bottom: vw(640);
-        }
+    // }
+    // @-webkit-keyframes lightan1{
+    //   0% {
+    //     opacity: 0.5;
+    //     bottom: vw(0);
+    //     }
+    //   100% {
+    //     opacity: 1;
+    //     bottom: vw(640);
+    //     }
 
-    }
+    // }
     
     .userName{
       position: absolute;
@@ -540,8 +540,8 @@ height: 100%;
         position: absolute;
         bottom: vw(98);
         left: vw(140);
-        opacity: 0;
-        animation: dipanan 6s linear infinite;
+        opacity: 1;
+        // animation: dipanan 6s linear infinite;
       }
       @-webkit-keyframes dipanan{
           0% {

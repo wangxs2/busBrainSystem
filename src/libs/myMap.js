@@ -257,19 +257,20 @@ const Map = {
       }];
     this.massall = new AMap.MassMarks(datapoint, {
         opacity: 0.8,
+        zIndex: 111,
         cursor: 'pointer',
         style: style[0]
     });
     this.massall.setMap(this.M_map);
-    let marker = new AMap.Marker({content: ' ', map: this.M_map});
-    this.massall.on('mouseover',  (e)=> {
-        marker.setPosition(e.data.lnglat);
-        marker.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>`})
-    });
-    this.massall.on('mouseout',  (e)=> {
-        marker.setPosition(e.data.lnglat);
-        marker.setLabel({content:null})
-    });
+    // let marker = new AMap.Marker({content: ' ', map: this.M_map});
+    // this.massall.on('mouseover',  (e)=> {
+    //     marker.setPosition(e.data.lnglat);
+    //     marker.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>`})
+    // });
+    // this.massall.on('mouseout',  (e)=> {
+    //     marker.setPosition(e.data.lnglat);
+    //     marker.setLabel({content:null})
+    // });
     this.massall.on('click',  (e)=> {
       http.fetchGet('indicator/stationDetail',{
         code:e.data.stationName,

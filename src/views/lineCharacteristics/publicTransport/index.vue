@@ -100,7 +100,7 @@ export default {
   
   data() {
     return {
-      lloading:false,
+      lloading:true,
       lisData: [
         {
           name: "最长线路",
@@ -143,7 +143,7 @@ export default {
       this.lineaData=this.lineaData.reverse()
     },
     getAllLine(){
-      this.lloading=true
+      
       
       this.$fetchGet("route/baseTotal").then(res =>{
         this.objline=res.result
@@ -198,9 +198,13 @@ export default {
             lastArr.push(opl)
           })
         })
+        console.log(lastArr)
         this.pathSimplifierIns.setData(lastArr)
         this.pathSimplifierIns.show()
-        this.lloading=false
+        
+         setTimeout(() => {
+          this.lloading=false
+        }, 4000);
        
 
       })

@@ -1,8 +1,8 @@
 <template>
-  <div class="repetitionRactor" id="alldisplay">
+  <div class="repetitionRactor" id="alldisplay" ref="fields">
     <div class="search-box">
 
-      <div style="margin-right:0.6vw;">地铁</div>
+      <div style="margin-right:0.6vw;" @click="handlerBulder">地铁</div>
       <el-select style="width:200px" size="small" filterable @change="getDetail" v-model="value" placeholder="请选择">
         <el-option
           v-for="(item,n) in metrodata"
@@ -37,7 +37,7 @@
         <div style="text-align:center" v-if="lineaData.length==0">暂无数据~</div>
       </div>
     </div>
-    <!-- <div class="rightlinemsg rightlinemsg1">
+    <div class="rightlinemsg rightlinemsg1">
       <div class="tit">轨交接驳站点</div>
       <div class="bttit">
         <div style="white-space:nowrap;">地铁站名称</div>
@@ -56,8 +56,8 @@
         </div>
         <div style="text-align:center" v-if="lineaData.length==0">暂无数据~</div>
       </div>
-    </div> -->
-    <!-- <div class="rightlinemsg leftlinemsg">
+    </div>
+    <div class="rightlinemsg leftlinemsg">
       <div class="tit">途径线路</div>
       <div class="bttit">
         <div>线路名称</div>
@@ -71,7 +71,7 @@
 
         <div style="text-align:center" v-if="lineaData.length==0">暂无数据~</div>
       </div>
-    </div> -->
+    </div>
     
   </div>
 </template>
@@ -119,6 +119,27 @@ export default {
       this.getData()
     },
     methods:{
+
+
+      handlerBulder () {
+          const html = this.$refs.fields.outerHTML
+          console.log(this.$refs.fields.outerHTML)
+
+          var a = document.createElement('a');
+
+          var url = window.URL.createObjectURL(new Blob([html],
+
+          { type: "text/plain;charset='utf-8'" }));
+
+          a.href = url;
+
+          a.download = 'form.html';
+
+          a.click();
+
+          window.URL.revokeObjectURL(url);
+
+          },
       getData(){
         this.$store.commit('SET_LOADING',false)
          

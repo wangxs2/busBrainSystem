@@ -1,5 +1,8 @@
 <template>
-  <div class="regionPassenger" id="regionPassenger">
+  <div class="regionPassenger" id="regionPassenger" v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
     <div class="search-box">
       <div style="margin-right:0.6vw;width:3vw;">时间</div>
       <el-date-picker
@@ -49,6 +52,7 @@ export default {
         return {
           value1:[new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
           lineaData: [],
+          assloading:true,
         }
     },
     created() {
@@ -90,9 +94,9 @@ export default {
             this.lineaData=res.result
             // this.$store.commit('SET_REGIONDATA', res.result)
             MyMap.addOverlayGroup(MyMap.getRegionMark(res.result))
-            setTimeout(()=>{
-            this.$store.commit('SET_LOADING',false)
-            },500)
+            setTimeout(() => {
+                this.assloading=false
+            }, 1000);
 
           })
           // this.$store.commit('SET_REGIONDATA', res.result)

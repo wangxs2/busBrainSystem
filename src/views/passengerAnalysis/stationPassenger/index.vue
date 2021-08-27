@@ -1,5 +1,8 @@
 <template>
-  <div class="stationPassenger" id="stationPassenger">
+  <div class="stationPassenger" id="stationPassenger" v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
     <div class="search-box">
       <div style="margin-right:0.6vw;width:3vw;">时间</div>
       <el-date-picker
@@ -80,6 +83,7 @@ export default {
      data(){
         return {
           echload:true,
+          assloading:true,
           options:[
             {
               name:'工作日',
@@ -345,8 +349,8 @@ export default {
               MyMap.xrhld(key,res.result[key],this.styleStition[key])
             }
             setTimeout(()=>{
-              this.$store.commit('SET_LOADING',false)
-            },500)
+              this.assloading=false
+            },2000)
           })
 
       },

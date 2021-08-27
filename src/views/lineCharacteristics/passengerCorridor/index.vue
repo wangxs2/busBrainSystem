@@ -1,5 +1,8 @@
 <template>
-<div class="passengerCorridor-box" id="passengerCorridor">
+<div class="passengerCorridor-box" id="passengerCorridor"  v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
 
     <div class="leftlinemsg">
         <div class="tit-line">
@@ -69,6 +72,7 @@ mixins: [MapMixin],
       lineData:[],
       echloadsd:false,
       mlinedata:{},
+      assloading:true,
       slinedata:{},
     };
   },
@@ -244,6 +248,10 @@ mixins: [MapMixin],
             }
             console.log(zxtdata)
             this.initechart(zxtdata)
+
+              setTimeout(() => {
+                this.assloading=false
+                }, 1000);
 
 
         });

@@ -1,5 +1,8 @@
 <template>
-  <div class="realNetwork">
+  <div class="realNetwork" v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
     <div class="top-box">
       <div class="top-left">
         <div class="tl-box1">
@@ -1555,6 +1558,7 @@ export default {
 
       nowName: "车辆实时运行",
       nowName1: "区域",
+      assloading:true,
       listMsg: [], //客流分布规律的接口
       listMsg1: [], //客流分布规律的接口
 
@@ -1644,7 +1648,6 @@ export default {
     });
     // this.initSwipertable()
     // this.trafficLayer.setMap(this.M_map);
-
     window.onresize = () => {
       this.myChart.resize();
       this.myChart1.resize();
@@ -1654,11 +1657,9 @@ export default {
   methods: {
     getSSyx() {
       //街镇的
-
       //主干道
       this.$fetchGet("gps/realBusRoad").then(res => {
         this.M_autoInputzgt(res.result);
-
         // console.log(this.TestsetData(res.result[0].geom,2))
       });
     },
@@ -1778,7 +1779,7 @@ export default {
           },
           axisLabel: {
             interval: 3,
-            rotate: 0,
+            rotate: 30,
             formatter: "{value}",
             textStyle: {
               color: "#ffffff",
@@ -2008,7 +2009,7 @@ export default {
           let content = `
             <div class="myinfobox1">
               <div class="line-lsi">
-                <div class="tithear">车辆编号:</div>
+                <div class="tithear">${this.tlstation[1].isxz==true?'站点编号:':'车辆编号:'}</div>
                 <div style="flex:1;text-align:right">${str.code ||str.busId}</div>
               </div>
               <div class="line-lsi" style="display:${str.plateNum==undefined?'none':'block'}">
@@ -2022,7 +2023,7 @@ export default {
                   ""}</div>
               </div>
               <div class="line-lsi">
-                <div class="tithear">线路名称:</div>
+                <div class="tithear">${this.tlstation[1].isxz==true?'经过线路:':'线路名称:'}</div>
                 <div style="flex:1;text-align:right">${str.route_name ||
                   str.routeName}</div>
               </div>
@@ -2031,7 +2032,7 @@ export default {
                 <div style="flex:1;text-align:right">${str.direction ||
                   str.routeDirection}</div>
               </div>
-               <div class="line-lsi">
+               <div class="line-lsi" style="display:${this.tlstation[1].isxz==true?'none':'block'}">
                 <div class="tithear">更新时间:</div>
                 <div style="flex:1;text-align:right">${this.$moment(
                   str.updateTime
@@ -2338,8 +2339,8 @@ export default {
         }
         this.initechart(arr.slice(2, arr.length));
         setTimeout(() => {
-          this.$store.commit("SET_LOADING", false);
-        }, 200);
+          this.assloading=false
+        }, 2000);
       });
     },
     // 设置地图全屏显示
@@ -2357,10 +2358,7 @@ export default {
   .regionMark {
     width: 120px;
     height: 120px;
-    // background-image: radial-gradient(circle, rgb(49, 144, 228) 0%, rgb(41, 122, 204) 30%, rgb(29, 84, 166) 70%);
     border-radius: 50%;
-    // background: url("~@/assets/image/reginmark.png");
-    // background-size: 100% 100%;
     background-size: contain;
     display: flex;
     flex-direction: column;
@@ -2394,7 +2392,6 @@ export default {
 
   .info-win {
     padding-right: vw(20);
-    // height: vw(110);
     position: relative;
     .win-triangle {
       position: absolute;
@@ -2416,7 +2413,6 @@ export default {
         border-radius: 4px;
         padding: vh(12) vw(16) vh(10) vw(10);
         color: #fff;
-        // display: flex;
         .icon {
           width: vw(98);
           height: vw(88);
@@ -2429,7 +2425,6 @@ export default {
           }
         }
         .info {
-          // width: vw(180);
           min-height: vh(20);
           .info-name {
             font-size: vw(16);
@@ -2440,9 +2435,6 @@ export default {
             font-size: vw(14);
             line-height: vw(20);
             margin-top: vw(6);
-            // overflow: hidden;
-            // white-space: nowrap;
-            // text-overflow: ellipsis;
           }
         }
       }

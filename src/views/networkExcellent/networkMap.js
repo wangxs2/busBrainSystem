@@ -144,9 +144,11 @@ const Map = {
         // pitch: 50, // 俯仰角度，默认0，[0,83]，2D地图下无效
         // viewMode: '3D',
         zoom: 10, // 地图级别
-        center: this.M_center, // 中心点
-        resizeEnable: true, // 监控地图容器尺寸变化
-        expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
+        showIndoorMap: false,
+        viewMode: '3D',
+        // center: this.M_center, // 中心点
+        // resizeEnable: true, // 监控地图容器尺寸变化
+        // expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
 
       this.M_map.plugin(["AMap.HeatMap"],  ()=> {      //加载热力图插件
@@ -162,18 +164,6 @@ const Map = {
         }); 
       })   //在地图对象叠加热力图
 
-
-
-      
-
-
-      // setTimeout(()=>{
-      //   http.fetchPost('route/approve',this.testLIneda,'json').then(res=>{
-
-      //   })
-      // },50000)
-      // this.trafficLayer = new AMap.TileLayer.Traffic();
-      // this.mouseTool = new AMap.MouseTool(this.M_map)
       this.M_pointGroup = new AMap.OverlayGroup()
       
       this.M_createInfoWin()
@@ -183,7 +173,6 @@ const Map = {
         pageSize: 60, //单页显示结果条数
         city: ''   //确定搜索城市
       });
-
 
       this.M_map.on('click', (e) => {
         this.M_closeInfoWin()
@@ -474,18 +463,22 @@ const Map = {
         offset: new AMap.Pixel(-6, -6)
       })
     },
+    // url: require('../../assets/image/alpoint1.png'),
+    // anchor: new AMap.Pixel(28, 16),
+    // size: new AMap.Size(16, 16),
+    // zIndex: 20,
     M_pointAll4(datapoint){
       let style = [
         {
-          url: require('../../assets/image/alpoint1.png'),
-          anchor: new AMap.Pixel(28, 16),
-          size: new AMap.Size(16, 16),
-          zIndex: 20,
+          url: 'https://webapi.amap.com/images/mass/mass2.png',
+          anchor: new AMap.Pixel(3, 3),
+          size: new AMap.Size(5, 5),
+          zIndex: 1,
         }];
       this.massall1 = new AMap.MassMarks(datapoint, {
           opacity: 0.8,
           cursor: 'pointer',
-          style: style[0]
+          style: style
       });
 
 
@@ -838,8 +831,24 @@ const Map = {
           outlineColor: "#A200FF",
           zIndex: 100,
           cursor:'pointer',
-          strokeWeight: 1//线宽
+          strokeWeight: 4//线宽
         });
+        busPolyline.on('mouseover',(e) => {
+          e.target.setOptions({
+            strokeColor: "#00FFFF",
+            zIndex: 200,
+          })
+          
+        })
+
+
+        busPolyline.on('mouseout', (e) => {
+          e.target.setOptions({
+            strokeColor: "#A200FF",
+            zIndex: 100,
+          })
+  
+        })
 
 
         busPolyline.on('click',e=>{
@@ -1555,6 +1564,7 @@ const Map = {
         strokeOpacity: 1,
         strokeWeight: 4,
         cursor: 'pointer',
+        zIndex: 50,
         strokeStyle: "solid",
         extData: iteam
       })
@@ -1600,6 +1610,7 @@ const Map = {
           </div>
         </div>`
         }
+        this.M_map.setZoomAndCenter(12,srt.geom[num],true)
         this.M_openInfoWin(srt.geom[num], infoWin)
         
       });
@@ -1607,15 +1618,18 @@ const Map = {
 
       kyLinedata.on('mouseover', (e) => {
 
+
         e.target.setOptions({
           strokeColor: "#A200FF",
-          zIndex: 100,
+          zIndex: 500,
         })
       })
       kyLinedata.on('mouseout', (e) => {
         e.target.setOptions({
           strokeColor: "#00FFFF",
+          zIndex: 50,
         })
+        // this.M_closeInfoWin()
 
       })
 

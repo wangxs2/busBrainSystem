@@ -7,7 +7,6 @@ const user = {
     aloading:false,
     roleId: "",
     userName: '',
-    ishuadata:2,//从项目材料回来是否刷新
     token: '',
     routerNow: "",
     userInfo: "",
@@ -26,8 +25,6 @@ const user = {
     constructionCode: '', // 项目code
     constructionName: '',
     isbtn:1,
-    dataArrLine:[],
-    regionData:[],//区域客流
   
   },
   mutations: {

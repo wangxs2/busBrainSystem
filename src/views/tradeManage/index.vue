@@ -1,5 +1,10 @@
 <template>
-  <div class="tradeManage">
+  <div class="tradeManage" 
+   v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)"
+  >
     <div class="left-box">
       <div class="bitit-box">
         <div class="bitit">
@@ -48,7 +53,6 @@
                 <div style="display:flex;align-items: center;">
                   <div class="rounbox" style="background:#4578FF"></div>
                   三角站杆：
-
                 </div>
                 <!-- {{stadata['三角杆']}} -->
                 <div style="color:#4578FF">2536个</div>
@@ -73,6 +77,17 @@
               <div  class="table-iteanm" v-for="(iteam,n) in tlstation" :key="n" >
                 <img @click="toShow(iteam,n)" v-show="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
                 <img @click="toShow(iteam,n)" v-show="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
+                <div class="natit">{{iteam.name}}</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="seting-box seting-box1" v-show="tlstation[0].isxz==true" >
+            
+            <div class="table-box">
+              <div  class="table-iteanm" v-for="(iteam,n) in tlstation1" :key="n" >
+                <img @click="toShow1(iteam,n)" v-show="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
+                <img @click="toShow1(iteam,n)" v-show="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
                 <div class="natit">{{iteam.name}}</div>
                 
               </div>
@@ -129,7 +144,6 @@
           线路总数
         </div>
         <div>{{objline['线路总数']}}条</div>
-
       </div>
       <div class="team-rij">
         <div style="display:flex;align-items: center;">
@@ -137,7 +151,6 @@
           线路总长
         </div>
         <div>{{objline['线路总长']}}公里</div>
-
       </div>
       <div class="team-rij">
         <div style="display:flex;align-items: center;">
@@ -145,7 +158,6 @@
           线路重复系数
         </div>
         <div>{{objline['线路重复系数']}}</div>
-
       </div>
       <div class="team-rij">
         <div style="display:flex;align-items: center;">
@@ -153,7 +165,6 @@
           线网密度
         </div>
         <div>{{objline['线网密度(建成区)']}}</div>
-
       </div>
       <div class="team-rij">
         <div style="display:flex;align-items: center;">
@@ -161,12 +172,8 @@
           线网长度
         </div>
         <div>{{objline['线网长度']}}公里</div>
-
       </div>
-
         <div class="titbox" style="margin-top:24px;margin-bottom:0px">线网服务质量</div>
-
-
         <div class="table-contain swiper-container" id="swiperhy1">
           <div class="swiper-wrapper">
             <div class="swiper-slide"   v-for="(iteam,index) in fwpldata" :key="index">
@@ -245,9 +252,11 @@ export default {
       stadata:{},
       zonum:0,
       myChart2:null,
+      assloading:true,
        swipertable:null,
        value:"9号线",
        nowName:"站点智能化建设",
+       nowName1:"途径站",
        qdData:[],
        awdata:[],
        fwpldata:[],
@@ -281,25 +290,31 @@ export default {
             isxz:false,
              num:30,
           }
+      ],
+      tlstation1:[
+        {
+            name:'途径站',
+            isxz:true,
+            num:0.6,
+          },
+          {
+            name:'场站和枢纽站',
+            isxz:false,
+            num:0.5,
+          },
+         
       ]
     }
 
   },
     created(){
-        setTimeout(()=>{
-        this.$store.commit('SET_LOADING',false)
+       
         this.initSwipertable()
-        },200)
         this.getNoLi()
         this.getAllLine()
         this.getda()
-
-
-         this.awdata=arrGroup(wxjl.datawx,5)
-         this.fwpldata=arrGroup(wxjl.fwpj,2)
-         
-     
-        
+        this.awdata=arrGroup(wxjl.datawx,5)
+        this.fwpldata=arrGroup(wxjl.fwpj,2)
     },
     mounted(){
       this.M_initMap('compreMapks5')
@@ -330,6 +345,7 @@ export default {
       }
       screenfull.toggle(this.$refs.compreMapks5)
     },
+    
 
      getBusLine(){
          this.$fetchGet("gps/realBusRoute").then(res => {
@@ -389,6 +405,10 @@ export default {
 
         console.log("站点总数")
       })
+
+       setTimeout(()=>{
+          this.assloading=false
+        },2000)
     },
     getgpsLine(){
        this.$fetchGet("gps/route",this.carSearch).then(res => {
@@ -420,7 +440,41 @@ export default {
       })
     },
 
+    toShow1(row,n){
 
+       this.nowName1=row.name
+
+        if(row.isxz){
+        return
+      }else{
+
+      
+        this.tlstation1.forEach(iteam=>{
+          if(iteam.name==this.nowName){
+            iteam.isxz=true
+          }
+          if(iteam.name!==this.nowName1){
+          
+              iteam.isxz=false
+          }
+        })
+        switch (row.name) {
+            case '途径站' :
+            
+
+                break;
+            case '场站和枢纽站' :
+
+              
+            
+                break;
+            
+            default :
+                
+        }
+      }
+
+    },
     toShow(row,n){
       this.nowName=row.name
       if(row.isxz){
@@ -439,7 +493,10 @@ export default {
         })
         switch (row.name) {
             case '站点智能化建设' :
-              this.massall1.show()
+              if(this.massall1){
+                this.massall1.show()
+              }
+              
 
                if(this.xwrhGroups){
                   this.xwrhGroups.hide()
@@ -465,7 +522,7 @@ export default {
             case '线网现状规划' :
 
               this.M_setZoomAndCenter([121.473658,31.230378],12)
-
+              this.getgpsLine()
               //  if(this.realbusGroups.getOverlays().length>0){
               //       this.realbusGroups.show()
               //   }else{
@@ -489,15 +546,17 @@ export default {
                 break;
             case '线网融合' :
 
-              this.massall1.hide()
+              if(this.massall1){
+                this.massall1.hide()
 
+              }
+
+              
                if(this.xwrhGroups2){
                   this.xwrhGroups2.hide()
                 }
 
               if(this.realbusGroups.getOverlays().length>0){
-                    console.log(4555)
-                    console.log(this.realbusGroups)
                     this.realbusGroups.hide()
                 }
 
@@ -558,11 +617,17 @@ export default {
           //     this.restaurants =this.cloneObj(res.result['站点的详细属性'])
           //     this.M_pointAll4(this.restaurants)
           // }
+          let arr=[]
           res.result.data.forEach(iteam=>{
-            iteam.lnglat=[iteam.lon,iteam.lat]
-            this.restaurants.push(iteam)
+            let obj={}
+            obj.lnglat=[iteam.lon,iteam.lat]
+            obj.style=0
+            obj.code=iteam.code
+            arr.push(obj)
+            // this.restaurants.push(iteam)
           })
-          this.M_pointAll4(this.restaurants)
+          console.log(arr)
+          this.M_pointAll4(arr)
         })
     },
     initSwipertable() {
@@ -1033,6 +1098,12 @@ export default {
             }
           }
         }
+      }
+      .seting-box1{
+          position: absolute;
+          left: vw(212);
+          bottom: vw(14);
+          z-index:10;
       }
       .tulibox{
         

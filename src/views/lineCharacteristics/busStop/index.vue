@@ -1,5 +1,8 @@
 <template>
-  <div class="busStop-box" id="busStop">
+  <div class="busStop-box" id="busStop" v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
     <div class="search-box">
       <div style="margin-right:0.8vw">行政区域</div>
       <el-select style="margin-right:1.5vw" clearable  @clear="claearstop()" filterable @change="getpatharea" size="small" v-model="value" placeholder="请选择">
@@ -72,6 +75,7 @@ export default {
       point:1,
       isheat:1,
       adminArea:[],
+      assloading:true,
       thfivearr:[],
       data:[
         [116.40537166077495,39.89448780861658],
@@ -240,20 +244,23 @@ export default {
           this.restaurants =this.cloneObj(res.result['站点的详细属性'])
           // this.$store.commit('SET_STATION', res.result['站点的详细属性'])
           this.pointAll3(res.result['站点的详细属性'])
-
           arr.forEach(iteam=>{
             var heatOptionObj = {};
             heatOptionObj.lng = iteam.longitude;
             heatOptionObj.lat = iteam.latitude;
             heatOption.push(heatOptionObj);
           })
+          
           // this.$store.commit('SET_HEATMAP',heatOption)
           this.heatmap.hide()
           this.setHeatemap(heatOption)
+
+
           
-          // setTimeout(()=>{
-          //     this.$store.commit('SET_LOADING',false)
-          //   },500)
+           setTimeout(() => {
+                this.assloading=false
+            }, 1000);
+
         }
       });  
 

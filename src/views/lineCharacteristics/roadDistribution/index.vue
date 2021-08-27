@@ -1,5 +1,8 @@
 <template>
-  <div class="roadDistribution-box" id="roaddistr">
+  <div class="roadDistribution-box" id="roaddistr" v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
     <div class="lkicon">
       <div>拥堵指数</div>
       <div style=" display:flex;align-items:center;margin-top:0.8vh">
@@ -46,6 +49,7 @@ export default {
     return {
        lineaData:[],
        nowindex:-1,
+       assloading:true,
     };
   },
   beforeCreate() {},
@@ -63,9 +67,9 @@ export default {
         this.lineaData=res.result
         this.M_autoInput(this.lineaData)
         // this.pointEvent()
-        // setTimeout(()=>{
-        // this.$store.commit('SET_LOADING',false)
-        // },200)
+         setTimeout(() => {
+          this.assloading=false
+        }, 1000);
         
       })
 

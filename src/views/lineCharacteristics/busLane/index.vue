@@ -1,5 +1,8 @@
 <template>
-  <div class="busLane-box" id="busLane">
+  <div class="busLane-box" id="busLane"  v-loading="assloading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.6)">
      <div class="leftlinemsg1">
       <div class="titbox">
         <div class="titboxname">
@@ -42,7 +45,9 @@ export default {
   data() {
     return {
       lineData:[],
-      myChart:null
+      myChart:null,
+      assloading:true
+
     };
   },
   beforeCreate() {},
@@ -98,6 +103,10 @@ export default {
           }
             console.log(zxtdata)
             this.initechart(zxtdata)
+
+             setTimeout(() => {
+                this.assloading=false
+            }, 1000);
 
 
 
