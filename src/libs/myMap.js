@@ -10,6 +10,8 @@ const Map = {
       // 地图样式
       M_style: 'amap://styles/d67717253a691e523956e9482ca38f1e',
       kymassnew:null,//客运走廊的点
+      lcalzd:null,
+      layerzd:null,//站点的客流
       pathSimplifierIns:null,//公交线网
       heatmap:null,//热力图
       // 信息窗口
@@ -33,109 +35,92 @@ const Map = {
       this.M_map = new AMap.Map(el, {
         mapStyle: this.M_style, // 自定义地图样式
         // pitch: 50, // 俯仰角度，默认0，[0,83]，2D地图下无效
-        // viewMode: '3D',
+        viewMode: '3D',
         zoom: 10, // 地图级别
         center: this.M_center, // 中心点
         resizeEnable: true, // 监控地图容器尺寸变化
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
 
-      this.M_map.plugin(["AMap.HeatMap"],  ()=> {      //加载热力图插件
-        this.heatmap = new AMap.HeatMap(this.M_map, {
-            opacity: [0, 0.8], 
-            gradient: {
-                0.5: '#3EFF8F',
-                0.65: '#67E8FF',
-                0.7: '#1CD1FF',
-                0.9: '#FFEE0E',
-                1.0: '#FF5E41'
-            }
-        }); 
-      })   //在地图对象叠加热力图
-
-
-      AMapUI.load(['ui/misc/PathSimplifier', 'lib/$', 'lib/utils'], (PathSimplifier, $, utils)=> {
-          if (!PathSimplifier.supportCanvas) {
-              alert('当前环境不支持 Canvas！');
-              return;
-          }
-
-          let color
-          this.pathSimplifierIns = new PathSimplifier({
-            zIndex: 200,
-            map: this.M_map, //所属的地图实例
-            getPath: function (pathData, pathIndex) {
-                return pathData.path;
-            },
-            getHoverTitle: function (pathData, pathIndex, pointIndex) {
-              
-            },
-            renderOptions: {
-                pathLineStyle: {
-                    dirArrowStyle: true
-                },
-                getPathStyle:  (pathItem, zoom)=> {
-                  color = this.colors[pathItem.pathData.name];
-                    return {
-                        pathLineStyle: {
-                            strokeStyle: color,
-                            borderWidth: 0,
-                            lineWidth: 3
-                        },
-                        pathLineSelectedStyle: {
-                            lineWidth: 0,
-                            borderWidth: 0,
-                            strokeStyle: null
-                        },
-                        pathNavigatorStyle: {
-                            fillStyle: color
-                        },
-                        startPointStyle: {
-                            radius: 0,
-                            fillStyle: '#109618',
-                            lineWidth: 0,
-                            strokeStyle: '#eeeeee'
-                        },
-                        endPointStyle: {
-                            radius: 0,
-                            fillStyle: '#dc3912',
-                            lineWidth: 0,
-                            strokeStyle: '#eeeeee'
-                        },
-                        keyPointHoverStyle: {
-                            radius: 4,
-                            fillStyle: 'rgba(0, 0, 0, 0)',
-                            lineWidth: 0,
-                            strokeStyle: '#ffa500'
-                        },
-                        pathLineHoverStyle: {
-                            lineWidth: 0,
-                            strokeStyle: 'rgba(204, 63, 88,1)',
-                            borderWidth: 0,
-                            borderStyle: '#00000000',
-                            dirArrowStyle: false
-                        }
-                    };
-                }
-            }
-        });
-
-        // window.pathSimplifierIns = this.pathSimplifierIns;
-        // this.pathSimplifierIns.setData(this.linePaths);
-        //initRoutesContainer(d);
-        function onload() {
-            this.pathSimplifierIns.renderLater();
-        }
-
-        function onerror(e) {
-        }
+      this.lcalzd = new Loca.Container({
+          map: this.M_map,
       });
+
+      // this.M_map.plugin(["AMap.HeatMap"],  ()=> {      //加载热力图插件
+      //   this.heatmap = new AMap.HeatMap(this.M_map, {
+      //       opacity: [0, 0.8], 
+      //       gradient: {
+      //           0.5: '#3EFF8F',
+      //           0.65: '#67E8FF',
+      //           0.7: '#1CD1FF',
+      //           0.9: '#FFEE0E',
+      //           1.0: '#FF5E41'
+      //       }
+      //   }); 
+      // })   //在地图对象叠加热力图
+
+     
+
       this.M_createInfoWin()
       this.M_map.on('click', (e) => {
         this.M_closeInfoWin()
       });
-    
     },
+    initLineAllbus(datapoint){
+
+
+      let _events = datapoint;
+    
+      var list = _events.map(e => {
+         
+          return {
+              "type": "Feature",
+              "properties": {
+                type: e.name
+              },
+              "geometry": {
+                  "type": "LineString",
+                  "coordinates": e.path
+              }
+          }
+      })
+
+      var data = {
+          "type": "FeatureCollection",
+          "features": list,
+      };
+
+      var geo = new Loca.GeoJSONSource({
+        data: data,
+      });
+
+      var ll = new Loca.LineLayer({
+          loca:this.lcalzd
+      });
+      // var colors = ['#f7fcf5', '#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'].reverse();
+      var colors={
+        '1-2':"#34b000",
+        '2-4':"#FECB00",
+        '4-6':"#FF2A2A",
+        '6+':"#B10400",
+      }
+      ll.setSource(geo, {
+          color: function (index, prop) {
+              var i = prop.properties.type;
+              return colors[i];
+          },
+          lineWidth: 2,
+          altitude: 100,
+          // dashArray: [10, 5, 10, 0],
+          dashArray: [10, 0, 10, 0],
+      });
+
+
+
+
+    },
+
+    
 
 
           //客运走廊的公交站点内
@@ -262,15 +247,6 @@ const Map = {
         style: style[0]
     });
     this.massall.setMap(this.M_map);
-    // let marker = new AMap.Marker({content: ' ', map: this.M_map});
-    // this.massall.on('mouseover',  (e)=> {
-    //     marker.setPosition(e.data.lnglat);
-    //     marker.setLabel({content: `<div style='color:rgba(26, 66, 118, 1)'>${e.data.stationName}</div>`})
-    // });
-    // this.massall.on('mouseout',  (e)=> {
-    //     marker.setPosition(e.data.lnglat);
-    //     marker.setLabel({content:null})
-    // });
     this.massall.on('click',  (e)=> {
       http.fetchGet('indicator/stationDetail',{
         code:e.data.stationName,
@@ -285,7 +261,171 @@ const Map = {
     
   },
 
+  redbreath(){
+
+      var geoLevelF = new Loca.GeoJSONSource({
+          // data: [],
+          url: 'https://a.amap.com/Loca/static/loca-v2/demos/mock_data/sz_road_F.json',
+      });
+      var breathRed = new Loca.ScatterLayer({
+          loca,
+          zIndex: 113,
+          opacity: 1,
+          visible: true,
+          zooms: [2, 22],
+      });
+      breathRed.setSource(geoLevelF);
+      breathRed.setStyle({
+          unit: 'meter',
+          size: [660, 660],
+          borderWidth: 0,
+          texture: 'https://a.amap.com/Loca/static/loca-v2/demos/images/breath_red.png',
+          duration: 500,
+          animate: true,
+      });
+
+
+      this.lcalzd.animate.start();
+
+  },
+
+  maplocalMain(datapoint){
+    console.log(datapoint)
+
+  
+    let _events = datapoint;
+    
+      var list = _events.map(e => {
+          let arr =e.lnglat
+          return {
+              "type": "Feature",
+              "properties": {
+                  rawData: e
+              },
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": arr
+              }
+          }
+      })
+
+      var data = {
+          "type": "FeatureCollection",
+          "features": list,
+      };
+
+
+        // 拾取测试
+     
+  
+
+      let geo = new Loca.GeoJSONSource({
+          data: data,
+      });
+      this.layerzd = new Loca.IconLayer({
+          zIndex: 10,
+          opacity: 1,
+      });
+      this.layerzd.setSource(geo);
+      this.layerzd.setStyle({
+          unit: 'px',
+          icon:require('../assets/image/alpoint1.png'),
+          iconSize: [11,11],
+          rotation: 0,
+      })
+
+      console.log(this.layerzd)
+
+      this.lcalzd.add(this.layerzd);
+      this.M_map.on('click', (e) => {
+        const feat = this.layerzd.queryFeature(e.pixel.toArray());
+        if (feat) {
+          let data = feat.properties.rawData;
+          http.fetchGet('indicator/stationDetail',{
+            code:data.stationName,
+            direction:data.routeDirection
+          }).then(res=>{
+            this.setConwidow(res.result)
+          
+          })
+        }
+    });
+
+      // var dat = new Loca.Dat();
+      // dat.addLayer(layer);
+
+  },
+  localheat(dare){
+
+
+    let _events = dare;
+    
+      var list = _events.map(e => {
+          let arr =e.lnglat
+          return {
+              "type": "Feature",
+              "properties": {
+                count: 1
+              },
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": arr
+              }
+          }
+      })
+
+      var data = {
+          "type": "FeatureCollection",
+          "features": list,
+      };
+
+
+
+
+ 
+      var geo = new Loca.GeoJSONSource({
+        data: data,
+      });
+
+      this.heatmap = new Loca.HeatMapLayer({
+          // loca,
+          zIndex: 10,
+          opacity: 1,
+          visible: true,
+          zooms: [2, 22],
+      });
+
+      this.heatmap.setSource(geo, {
+          radius: 20,
+          unit: 'px',
+          height: 0,
+          // radius: 10,
+          // unit: 'px',
+          // height: 10,
+          gradient: {
+            0.5: '#3EFF8F',
+            0.65: '#67E8FF',
+            0.7: '#1CD1FF',
+            0.9: '#FFEE0E',
+            1.0: '#FF5E41'
+          },
+          value: function (index, feature) {
+              return feature.properties.count;
+          },
+          min: 0,
+          max: 10,  //4.6
+          heightBezier: [0, .53, .37, .98],
+      });
+      this.lcalzd.add(this.heatmap);
+
+
+  },
+
   setHeatemap(val){
+
+
+   
+
     this.heatmap.setDataSet({
       data: val,
       max: 100

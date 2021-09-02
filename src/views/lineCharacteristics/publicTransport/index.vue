@@ -127,13 +127,13 @@ export default {
     //   this.getAllLine()
     // }
     this.M_initMap('publicTransport')
-    this.M_map.setStatus({
-      dragEnable: false, // 地图是否可通过鼠标拖拽平移，默认为true
-      keyboardEnable: false, //地图是否可通过键盘控制，默认为true
-      doubleClickZoom: false, // 地图是否可通过双击鼠标放大地图，默认为true
-      zoomEnable: false, //地图是否可缩放，默认值为true
+    // this.M_map.setStatus({
+    //   dragEnable: false, // 地图是否可通过鼠标拖拽平移，默认为true
+    //   keyboardEnable: false, //地图是否可通过键盘控制，默认为true
+    //   doubleClickZoom: false, // 地图是否可通过双击鼠标放大地图，默认为true
+    //   zoomEnable: false, //地图是否可缩放，默认值为true
 
-    })
+    // })
     this.getAllLine()
   },
 
@@ -143,11 +143,8 @@ export default {
       this.lineaData=this.lineaData.reverse()
     },
     getAllLine(){
-      
-      
       this.$fetchGet("route/baseTotal").then(res =>{
         this.objline=res.result
-
       })
       this.$fetchGet("route/lineSegment").then(res => {
         let dataArr=[]
@@ -199,8 +196,9 @@ export default {
           })
         })
         console.log(lastArr)
-        this.pathSimplifierIns.setData(lastArr)
-        this.pathSimplifierIns.show()
+        this.initLineAllbus(lastArr)
+        // this.pathSimplifierIns.setData(lastArr)
+        // this.pathSimplifierIns.show()
         
          setTimeout(() => {
           this.lloading=false

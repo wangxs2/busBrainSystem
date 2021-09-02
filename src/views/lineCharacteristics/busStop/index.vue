@@ -99,6 +99,16 @@ export default {
     this.pointAll()
     this.getAreaLine()
   },
+  beforeRouteLeave(to, from, next){
+    //  console.log('准备销毁地图实例')
+    // console.log(this.lcalzd)
+     
+    //  if(this.lcalzd){
+    //    this.lcalzd.destroy()
+    //    this.M_map.destroy()
+    //  }
+     next()
+  },
   methods: {
     querySearch(queryString, cb) {
       var restaurants = this.restaurants;
@@ -208,18 +218,7 @@ export default {
         this.isheat=1
         this.heatmap.hide()
       }
-      // this.$emit('changefun',{
-      //     isheat:this.isheat
-      // })
     },
-    // getAreaData(){
-    //    this.$fetchGet("indicator/stationCoverArea",{
-    //     radius:this.isbtn
-    //   }).then(res => {
-    //     this.listMsg=res.result.res
-    //   });
-
-    // },
     getAreaLine(){
       this.$fetchGet("passenger/region",{
         pid:1002
@@ -227,14 +226,13 @@ export default {
         this.options=res.result
       })
       this.$fetchGet("indicator/stationBasicMessage").then(res => {
-
         for(let key  in res.result){
           let obj={}
           obj.name=key
           obj.value=res.result[key]
           this.listMsg.push(obj)
         }
-        console.log(this.listMsg)
+        
       })
     },
     pointAll(){
@@ -243,23 +241,26 @@ export default {
           let arr=this.cloneObj(res.result['站点的详细属性']),heatOption = [];
           this.restaurants =this.cloneObj(res.result['站点的详细属性'])
           // this.$store.commit('SET_STATION', res.result['站点的详细属性'])
-          this.pointAll3(res.result['站点的详细属性'])
-          arr.forEach(iteam=>{
-            var heatOptionObj = {};
-            heatOptionObj.lng = iteam.longitude;
-            heatOptionObj.lat = iteam.latitude;
-            heatOption.push(heatOptionObj);
-          })
+          // this.pointAll3(res.result['站点的详细属性'])
+          this.maplocalMain(res.result['站点的详细属性'])
+          this.localheat(res.result['站点的详细属性'])
+          this.heatmap.hide()
+          // arr.forEach(iteam=>{
+          //   var heatOptionObj = {};
+          //   heatOptionObj.lng = iteam.longitude;
+          //   heatOptionObj.lat = iteam.latitude;
+          //   heatOption.push(heatOptionObj);
+          // })
           
           // this.$store.commit('SET_HEATMAP',heatOption)
-          this.heatmap.hide()
-          this.setHeatemap(heatOption)
+          // this.heatmap.hide()
+          // this.setHeatemap(heatOption)
 
 
           
            setTimeout(() => {
                 this.assloading=false
-            }, 1000);
+            }, 2000);
 
         }
       });  

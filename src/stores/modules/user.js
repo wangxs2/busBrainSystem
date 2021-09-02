@@ -16,10 +16,6 @@ const user = {
     userRole: [],
     codeMeau:'',//菜单的CODE
     routehistroy: [], //用户路由记录
-    userStation: [], //站点的信息
-    threeMap:[],//300米
-    threeMap1:[],//300米
-    threeMap2:[],//300米
     btnAuth: '', //按钮权限
     isBreak: "",//是否刷新页面
     constructionCode: '', // 项目code
@@ -42,15 +38,7 @@ const user = {
     SET_BTNAUTH: (state, isbtn) => { //子路由的传值300米
       state.isbtn = isbtn
     },
-     SET_THREEMAP: (state, threeMap) => { //300米
-      state.threeMap = threeMap
-    },
-    SET_THREEMAP1: (state, threeMap1) => { //500米
-      state.threeMap1 = threeMap1
-    },
-    SET_THREEMAP2: (state, threeMap2) => { //500米
-      state.threeMap2 = threeMap2
-    },
+ 
     
     SET_HEATMAP: (state, heatData) => { //储存热力图的值
       state.heatData = heatData
@@ -88,9 +76,7 @@ const user = {
     SET_ROUTEHISTROY: (state, routehistroy) => { //用户路由记录
       state.routehistroy = routehistroy
     },
-    SET_STATION: (state, userStation) => {
-      state.userStation = userStation
-    },
+  
     SET_ROUTERNOW: (state, routerNow) => { //用户组织
       state.routerNow = routerNow
     },

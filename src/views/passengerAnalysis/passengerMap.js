@@ -9,6 +9,7 @@ export default class Map {
       el: data.el, // 地图容器
       datar: {},
       linesearch: null,
+      locakl:null,//客流的海量点
       polygonLine: null,
       mapCenter: [121.460752,31.011182], // 默认地图中心点
       infoWindow:null,//信息窗口
@@ -35,10 +36,16 @@ export default class Map {
     this.map = new AMap.Map(this.el, {
       zoom: 10, // 地图级别
       center: this.mapCenter, // 中心点
+      viewMode: '3D',
       // resizeEnable: true, //监控地图容器尺寸变化
       mapStyle: 'amap://styles/d67717253a691e523956e9482ca38f1e',
       expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
     })
+
+
+    this.locakl = new Loca.Container({
+        map: this.map,
+    });
     
     this.map.add(this.overlayGroups);
     this.infoWindow = new AMap.InfoWindow({
@@ -48,22 +55,21 @@ export default class Map {
     });
     this.infoWindow.open(this.mapCenter)
     console.log(this.infoWindow)
-    this.map.plugin(["AMap.HeatMap"], () => {      //加载热力图插件
-      this.zdklMapOption.heat = new AMap.HeatMap(this.map, {
-        opacity: [0, 0.8], zIndex: 110,
-        gradient: {
-          0.5: '#3EFF8F',
-          0.65: '#67E8FF',
-          0.7: '#1CD1FF',
-          0.95: '#FFEE0E',
-          1.0: '#FF5E41'
-        }
-      }
-      );
-      //在地图对象叠加热力图
-      // this.zdklMapOption.heat.setDataSet({data: heatOption, max: zdklMapOption.heatMaxCount}); //设置热力图数据集
+    // this.map.plugin(["AMap.HeatMap"], () => {      //加载热力图插件
+    //   this.zdklMapOption.heat = new AMap.HeatMap(this.map, {
+    //     opacity: [0, 0.8], zIndex: 110,
+    //     gradient: {
+    //       0.5: '#3EFF8F',
+    //       0.65: '#67E8FF',
+    //       0.7: '#1CD1FF',
+    //       0.95: '#FFEE0E',
+    //       1.0: '#FF5E41'
+    //     }
+    //   }
+    //   );
+ 
 
-    });
+    // });
 
   }
 
@@ -79,31 +85,151 @@ export default class Map {
       cursor: 'pointer',
       style: style
     });
-    var marker = new AMap.Marker({ content: ' ', map: this.map });
-    var marker1 = new AMap.Marker({ content: ' <div class="myinfobox"></div> ', map: this.map,anchor :"top-center" });
-    this.zdklMapOption.mass[massIndex].on('mouseover', function (e) {
-      marker.setPosition(e.data.lnglat);
-      marker.setLabel({ content: `<div style='{background:"#ffffff","color":rgba(26, 66, 118, 1)}'>${e.data.stationName}</div>` })
-    });
-    this.zdklMapOption.mass[massIndex].on('mouseout', function (e) {
-      marker.setPosition(e.data.lnglat);
-      marker.setLabel({ content: null })
-    });
+    
     this.zdklMapOption.mass[massIndex].on('click',  (e)=> {
       http.fetchGet('indicator/stationDetail',{
         code:e.data.stationName,
         direction:e.data.routeDirection
       }).then(res=>{
-        // marker1.setPosition(e.data.lnglat);
-        // marker1.setLabel({ content: this.createInfoWindow(res.result) })
         this.map.setZoomAndCenter(16,e.data.lnglat,true)
         this.infoWindow.setContent(this.createInfoWindow(res.result))
         this.infoWindow.open(this.map,e.data.lnglat);
-        // this.map.setZoomAndCenter(15,[e.data.longitude,e.data.latitude],true)
       })
-        // StopDetail.showMarker(zdklMap, e.data.id, beginDate, endDate);
     });
     this.zdklMapOption.mass[massIndex].setMap(this.map);
+  }
+
+
+  localMain(massIndex,datapoint,style){
+
+  
+    let _events = datapoint;
+    console.log(datapoint)
+    
+      var list = _events.map(e => {
+          let arr =e.lnglat
+          return {
+              "type": "Feature",
+              "properties": {
+                  rawData: e
+              },
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": arr
+              }
+          }
+      })
+
+      var data = {
+          "type": "FeatureCollection",
+          "features": list,
+      };
+
+
+        // 拾取测试
+     
+  
+
+      var geo = new Loca.GeoJSONSource({
+          data: data,
+      });
+      // var layer = new Loca.IconLayer({
+      //     zIndex: 10,
+      //     opacity: 1,
+      // });
+      this.zdklMapOption.mass[massIndex]=new Loca.IconLayer({
+          zIndex: 10,
+          opacity: 1,
+      });
+      this.zdklMapOption.mass[massIndex].setSource(geo);
+      this.zdklMapOption.mass[massIndex].setStyle(style)
+      console.log(this.zdklMapOption.mass[massIndex])
+      this.locakl.add(this.zdklMapOption.mass[massIndex]);
+      
+      this.map.on('click', (e) => {
+        const feat = this.zdklMapOption.mass[massIndex].queryFeature(e.pixel.toArray());
+        if (feat) {
+          let data = feat.properties.rawData;
+          http.fetchGet('indicator/stationDetail',{
+            code:data.stationName,
+            direction:data.routeDirection
+          }).then(res=>{
+            this.map.setZoomAndCenter(16,data.lnglat,true)
+            this.infoWindow.setContent(this.createInfoWindow(res.result))
+            this.infoWindow.open(this.map,data.lnglat);
+          })
+        }
+      });
+
+     
+
+  }
+
+
+  localheat(dare){
+
+
+    let _events = dare;
+    
+      var list = _events.map(e => {
+          let arr =e.lnglat
+          return {
+              "type": "Feature",
+              "properties": {
+                count: e.sd
+              },
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": arr
+              }
+          }
+      })
+
+      var data = {
+          "type": "FeatureCollection",
+          "features": list,
+      };
+
+
+
+
+ 
+      var geo = new Loca.GeoJSONSource({
+        data: data,
+      });
+
+      this.zdklMapOption.heat = new Loca.HeatMapLayer({
+          // loca,
+          zIndex: 10,
+          opacity: 1,
+          visible: true,
+          zooms: [2, 22],
+      });
+
+      this.zdklMapOption.heat.setSource(geo, {
+          radius: 20,
+          unit: 'px',
+          height: 0,
+          // radius: 10,
+          // unit: 'px',
+          // height: 10,
+          gradient: {
+            0.5: '#3EFF8F',
+            0.65: '#67E8FF',
+            0.7: '#1CD1FF',
+            0.9: '#FFEE0E',
+            1.0: '#FF5E41'
+          },
+          value: function (index, feature) {
+              return feature.properties.count;
+          },
+          min: 0,
+          max: 10,  //4.6
+          heightBezier: [0, .53, .37, .98],
+      });
+      this.locakl.add(this.zdklMapOption.heat);
+
+
   }
 
 

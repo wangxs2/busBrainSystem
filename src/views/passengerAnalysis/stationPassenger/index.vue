@@ -99,34 +99,40 @@ export default {
           allStation:[],
           styleStition:{
             '0-500':{
-                    url: require('@/assets/image/cyan.png'),
-                    anchor: new AMap.Pixel(6,6),
-                    size: new AMap.Size(11,11)
+                    unit: 'px',
+                    icon:require('@/assets/image/cyan.png'),
+                    iconSize: [11,11],
+                    rotation: 0,
                   },
             '500-1000':{
-                    url: require('@/assets/image/blue1.png'),
-                    anchor: new AMap.Pixel(6,6),
-                    size: new AMap.Size(11,11)
+                    unit: 'px',
+                    icon:require('@/assets/image/blue1.png'),
+                    iconSize: [11,11],
+                    rotation: 0,
                   },
             '1000-2000':{
-                    url: require('@/assets/image/green1.png'),
-                    anchor: new AMap.Pixel(6,6),
-                    size: new AMap.Size(11,11)
+                    unit: 'px',
+                    icon:require('@/assets/image/green1.png'),
+                    iconSize: [11,11],
+                    rotation: 0,
                   },
             '2000-3000':{
-                    url: require('@/assets/image/yellow1.png'),
-                    anchor: new AMap.Pixel(6,6),
-                    size: new AMap.Size(11,11)
+                    unit: 'px',
+                    icon:require('@/assets/image/yellow1.png'),
+                    iconSize: [11,11],
+                    rotation: 0,
                   },
             '3000-4000':{
-                    url: require('@/assets/image/icon_purple1.png'),
-                    anchor: new AMap.Pixel(6,6),
-                    size: new AMap.Size(11,11)
+                    unit: 'px',
+                    icon:require('@/assets/image/icon_purple1.png'),
+                    iconSize: [11,11],
+                    rotation: 0,
                   },
             '4000+':{
-                  url: require('@/assets/image/icon_red1.png'),
-                    anchor: new AMap.Pixel(6,6),
-                    size: new AMap.Size(11,11)
+                    unit: 'px',
+                    icon:require('@/assets/image/icon_red1.png'),
+                    iconSize: [11,11],
+                    rotation: 0,
             }
           },
           tlstation:[
@@ -187,6 +193,7 @@ export default {
     },
     mounted() {
       MyMap = new Map({ el: "stationPassenger" });
+      MyMap.map.clearMap()
       this.$nextTick( ()=> {
            $(".passengerAnalysis").on("click", ".unclick-stations-lis", e => {
              console.log($(e.target).data("code"))
@@ -333,20 +340,15 @@ export default {
             this.stationroll=res.result
              for(let key  in this.stationroll){
                 this.stationroll[key].forEach(station=>{
-                  arrheat.push({
-                    lng: station.lnglat[0],
-                    lat: station.lnglat[1],
-                    count: station.sd,
-                  })
+                  arrheat.push(station)
                 })
               }
-            // this.$store.commit('SET_HEATSTATION', arrheat)
-            // this.$store.commit('SET_KLSTATION', res.result)
-            // MyMap.xrhld(key,val[key],this.styleStition[key])
-            MyMap.zdklMapOption.heat.setDataSet({data: arrheat, max: 100})
+        
+
+             MyMap.localheat(arrheat)
              MyMap.zdklMapOption.heat.hide()
             for(let key  in res.result){
-              MyMap.xrhld(key,res.result[key],this.styleStition[key])
+              MyMap.localMain(key,res.result[key],this.styleStition[key])
             }
             setTimeout(()=>{
               this.assloading=false

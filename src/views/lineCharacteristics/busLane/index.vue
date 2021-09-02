@@ -14,13 +14,11 @@
       <div class="bttit">
         <div>名称</div>
         <div>里程(km)</div>
-        <!-- <div>线路条数</div> -->
       </div>
       <div class="tablbox">
         <div class="bttit bttit1" v-for="(item,n) in lineData" :key="n">
           <div style="text-align:left;padding-left:1vw">{{item.name}}</div>
           <div>{{item.length}}</div>
-          <!-- <div>{{item.lineNumber}}</div> -->
         </div>
       </div>
     </div>
@@ -32,7 +30,7 @@
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.6)"></div>
   
-  </div>
+</div>
 </template>
 
 <script>
@@ -53,14 +51,10 @@ export default {
   beforeCreate() {},
   created() {
     let arr=this.cloneObj(dataLine.datafg)
-    console.log(arr)
-    // console.log(arr)
     arr.forEach(iteam=>{
       iteam.path=this.TestsetData(iteam.path,2)
       this.lineData.push(iteam)
     })
-    console.log(this.lineData)
-    
      this.$store.commit('SET_LOADING',false)
      this.getData()
     
@@ -79,10 +73,8 @@ export default {
       this.echloadsd=true
 
        this.$fetchGet("base-bus-exclusive-road/msg").then(res => {
-         console.log()
          let zxtdata=[],arr=[]
          for(let key  in res.result){
-          //  let obj1={}
            if(res.result.[key].list!==null){
 
              let obj={} 
@@ -101,7 +93,6 @@ export default {
            }
                 
           }
-            console.log(zxtdata)
             this.initechart(zxtdata)
 
              setTimeout(() => {
@@ -124,12 +115,8 @@ export default {
         },
         tooltip:{
             trigger: 'axis',
-            // formatter:'客流量：{c}人次',
             backgroundColor:'#144A8C',
-            // borderWidth:0,
-            // textStyle:{
-            // color:'#D9EFFF',
-            // }
+         
         },
         legend:{
             top:'8%',
@@ -208,7 +195,6 @@ export default {
 .busLane-box{
  .info-win {
       padding-right: vw(20);
-      // height: vw(110);
       position: relative;
       .win-triangle {
         position: absolute;
@@ -230,7 +216,6 @@ export default {
           border-radius: 4px;
           padding: vh(12) vw(16) vh(10) vw(10);
           color: #fff;
-          // display: flex;
           .icon {
             width: vw(98);
             height: vw(88);

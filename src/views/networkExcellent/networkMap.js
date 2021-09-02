@@ -15,7 +15,9 @@ const Map = {
       M_style: 'amap://styles/d67717253a691e523956e9482ca38f1e',
       // 覆盖物点组
       M_pointGroup: null,
+      massall1: null,//站点智能化建设
       M_pointEvent: [],
+      czsnzmas:null,
       markerarr: [],
       testLIneda:[],
       // 信息窗口
@@ -467,6 +469,79 @@ const Map = {
     // anchor: new AMap.Pixel(28, 16),
     // size: new AMap.Size(16, 16),
     // zIndex: 20,
+    M_czsnz(datapoint){
+      let style = [
+        {
+          url: require('../../assets/image/czp.png'),
+          anchor: new AMap.Pixel(24,24),
+          size: new AMap.Size(48,48),
+          zIndex: 1,
+        },
+        {
+          url: require('../../assets/image/snp.png'),
+          anchor: new AMap.Pixel(24,24),
+          size: new AMap.Size(48,48),
+          zIndex: 1,
+        },
+        {
+          url: require('../../assets/image/snpn.png'),
+          anchor: new AMap.Pixel(24,24),
+          size: new AMap.Size(48,48),
+          zIndex: 1,
+        },
+        {
+          url: require('../../assets/image/czpn.png'),
+          anchor: new AMap.Pixel(24,24),
+          size: new AMap.Size(48,48),
+          zIndex: 1,
+        }
+      ];
+      this.czsnzmas = new AMap.MassMarks(datapoint, {
+          opacity: 0.8,
+          cursor: 'pointer',
+          style: style
+      });
+
+
+      this.czsnzmas.on('click',  (e)=> {
+
+       
+        let infoWin = `<div class="info-win">
+        <div class="win-triangle"></div>
+        <div class="info-box">
+          <div class="info-content">
+            <div class="info">
+              <div class="info-name">站点名称：${e.data.name}</div>
+            </div>
+            <div class="info">
+              <div class="info-name">站点地址：${e.data.address}</div>
+            </div>
+            <div class="info">
+              <div class="info-name">线路：${e.data.route}</div>
+            </div>
+            <div class="info">
+              <div class="info-name">现场管理主体：${e.data.manageEntity}</div>
+            </div>
+            <div class="info">
+              <div class="info-name">责任所属：${e.data.responsibility}</div>
+            </div>
+            <div class="info">
+              <div class="info-name">智能安防：${e.data.security=='0'?'未安装':'已安装'}</div>
+            </div>
+            <div class="info">
+              <div class="info-name">信息化：${e.data.information=='0'?'未改造':'已改造'}</div>
+            </div>
+         
+          </div>
+        </div>
+      </div>`
+
+      this.M_openInfoWin(e.data.lnglat, infoWin)
+      });
+      
+      this.czsnzmas.setMap(this.M_map);
+
+    },
     M_pointAll4(datapoint){
       let style = [
         {
@@ -534,6 +609,65 @@ const Map = {
       
       this.massall1.setMap(this.M_map);
       
+    },
+
+    localMain(datapoint){
+
+      var loca = new Loca.Container({
+          map: this.M_map,
+      });
+      let _events = datapoint;
+      
+        var list = _events.map(e => {
+            let arr =e.lnglat
+            return {
+                "type": "Feature",
+                "properties": {
+                    rawData: e
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": arr
+                }
+            }
+        })
+  
+        var data = {
+            "type": "FeatureCollection",
+            "features": list,
+        };
+  
+  
+          // 拾取测试
+       
+    
+  
+        var geo = new Loca.GeoJSONSource({
+            data: data,
+        });
+        var layer = new Loca.IconLayer({
+            zIndex: 10,
+            opacity: 1,
+        });
+        layer.setSource(geo);
+        layer.setStyle({
+            unit: 'px',
+            icon:require('../../assets/image/alpoint1.png'),
+            iconSize: [11,11],
+            rotation: 0,
+        })
+  
+        loca.add(layer);
+        this.M_map.on('click', (e) => {
+          const feat = layer.queryFeature(e.pixel.toArray());
+          if (feat) {
+           
+          }
+      });
+  
+        // var dat = new Loca.Dat();
+        // dat.addLayer(layer);
+  
     },
     getStationLisLinesDomStr(data){
 
@@ -1316,14 +1450,14 @@ const Map = {
     },
 
     pointSearch(row, data) {
-      Myanmation = new Anmation({
-        center: [row.location.lng, row.location.lat],
-        color: {
-          fillColor: "#b40100",
-          fillOpacity: 0.7
-        }
-      });
-      this.M_map.add(Myanmation.circleGroup)
+      // Myanmation = new Anmation({
+      //   center: [row.location.lng, row.location.lat],
+      //   color: {
+      //     fillColor: "#b40100",
+      //     fillOpacity: 0.7
+      //   }
+      // });
+      // this.M_map.add(Myanmation.circleGroup)
       let marker1 = new AMap.Marker({
         content: `<div style='width:12px;height:12px;border-radius:50%;background:#b40100'></div> `,
         offset: new AMap.Pixel(-6, -6),

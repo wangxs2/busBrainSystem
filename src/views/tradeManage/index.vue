@@ -94,6 +94,24 @@
             </div>
 
           </div>
+          <div class="tulibox" v-show="tlstation1[1].isxz==true&&tlstation[0].isxz==true">
+            <div style="display:flex;align-items: center">
+              <img style="margin-right:0.3vw"  src="@/assets/image/snp.png" alt="" srcset="">
+              <div class="fonttu">枢纽站已改造</div>
+            </div>
+             <div style="display:flex;align-items: center;margin-top:1vh">
+              <img style="margin-right:0.3vw"  src="@/assets/image/snpn.png" alt="" srcset="">
+              <div class="fonttu">枢纽站未改造</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <img style="margin-right:0.3vw"  src="@/assets/image/czp.png" alt="" srcset="">
+              <div class="fonttu">场站已改造</div>
+            </div>
+             <div style="display:flex;align-items: center;margin-top:1vh">
+              <img style="margin-right:0.3vw"  src="@/assets/image/czpn.png" alt="" srcset="">
+              <div class="fonttu">场站未改造</div>
+            </div>
+          </div>
           <div class="search-box" v-show="tlstation[2].isxz">
             <div style="margin-right:0.6vw;white-space: nowrap">地铁线路名称</div>
               <el-select style="width:75%" size="small" filterable @change="getDetail" v-model="value" placeholder="请选择">
@@ -261,10 +279,6 @@ export default {
        awdata:[],
        fwpldata:[],
       carSearch:{
-        // leftlon:null,
-        // rightlon:null,
-        // leftlat:null,
-        // rightlat:null,
         zoom:0,
       },
        toxidata:[ {num: 297, name: "浦东新区", centre: [121.550734,31.227827]}],
@@ -313,6 +327,7 @@ export default {
         this.getNoLi()
         this.getAllLine()
         this.getda()
+        
         this.awdata=arrGroup(wxjl.datawx,5)
         this.fwpldata=arrGroup(wxjl.fwpj,2)
     },
@@ -325,12 +340,6 @@ export default {
          
 
           if(this.tlstation[1].isxz==true){
-            // if(this.carSearch.zoom>15){
-            //   this.xwrhGroups2.hide()
-            // }
-            // if(this.carSearch.zoom<13){
-            //   this.realbusGroups.hide()
-            // }
             this.getgpsLine()
           }
         
@@ -345,8 +354,6 @@ export default {
       }
       screenfull.toggle(this.$refs.compreMapks5)
     },
-    
-
      getBusLine(){
          this.$fetchGet("gps/realBusRoute").then(res => {
            res.result.forEach(iteam=>{
@@ -395,14 +402,12 @@ export default {
       this.$fetchGet("indicator/basicBusInfo").then(res =>{
         this.lefttda=res.result
       })
-
       this.$fetchGet("gps/stationMessage").then(res => {
         this.stadata=res.result.brackets
         this.initechart2(this.stadata.total,this.stadata['三角杆'],this.stadata['亭牌合一'])
         // let noli=this.stadata.stationsInRun-this.stadata.stations
         this.zonum=res.result.stations
         this.initechart1(res.result.stations)
-
         console.log("站点总数")
       })
 
@@ -433,11 +438,39 @@ export default {
 
     },
     getAllLine(){
-      
       this.$fetchGet("route/baseTotal").then(res =>{
         this.objline=res.result
+      })
+    },
+
+    getczsn(){
+      this.assloading=true
+      
+      this.$fetchGet("base-station/list",{
+        // security:1,
+        // information:1
+      }).then(res =>{
+        res.result.forEach(iteam=>{
+          if(iteam.longitude&&iteam.latitude){
+            if(iteam.axis=='1'&&iteam.information=='1'){
+              iteam.style=1
+            }else if(iteam.axis=='0'&&iteam.information=='1'){
+              iteam.style=0
+            }else if(iteam.axis=='1'&&iteam.information=='0'){
+              iteam.style=2
+            }else if(iteam.axis=='0'&&iteam.information=='0'){
+              iteam.style=3
+            }
+            
+            iteam.lnglat=[Number(iteam.longitude),Number(iteam.latitude)]
+          }
+          
+        })
+        this.M_czsnz(res.result)
+        this.assloading=false
 
       })
+
     },
 
     toShow1(row,n){
@@ -450,7 +483,7 @@ export default {
 
       
         this.tlstation1.forEach(iteam=>{
-          if(iteam.name==this.nowName){
+          if(iteam.name==this.nowName1){
             iteam.isxz=true
           }
           if(iteam.name!==this.nowName1){
@@ -460,11 +493,20 @@ export default {
         })
         switch (row.name) {
             case '途径站' :
-            
+              if(this.massall1){
+               this.massall1.show()
+              }
+              if(this.czsnzmas){
+               this.czsnzmas.hide()
+              }
 
                 break;
             case '场站和枢纽站' :
-
+                  if(this.czsnzmas){
+                    this.czsnzmas.show()
+                  }else{
+                    this.getczsn()
+                  }
               
             
                 break;
@@ -495,6 +537,9 @@ export default {
             case '站点智能化建设' :
               if(this.massall1){
                 this.massall1.show()
+              }
+              if(this.czsnzmas){
+                 this.czsnzmas.show()
               }
               
 
@@ -531,6 +576,10 @@ export default {
               if(this.massall1){
                 this.massall1.hide()
               }
+               if(this.czsnzmas){
+                 this.czsnzmas.hide()
+              }
+              
               
 
                if(this.xwrhGroups){
@@ -550,6 +599,11 @@ export default {
                 this.massall1.hide()
 
               }
+
+              if(this.czsnzmas){
+                 this.czsnzmas.hide()
+              }
+              
 
               
                if(this.xwrhGroups2){
@@ -866,6 +920,7 @@ export default {
   .info-win {
       padding-right: vw(20);
       // height: vw(110);
+      max-width:vw(300);
       position: relative;
       .win-triangle {
         position: absolute;
@@ -1106,8 +1161,23 @@ export default {
           z-index:10;
       }
       .tulibox{
-        
-      
+        position: absolute;
+        right: vw(12);
+        bottom: vw(14);
+        // width:vw(200);
+        // height:vh(90);
+        z-index:10;
+        box-shadow: 0px 0px vh(6)  #4578FF inset;
+         background: rgba(12, 38, 104,1);
+        box-sizing:border-box;
+        padding:vh(18) vw(10);
+        img{
+          width:vw(32);
+          height:vw(32);
+        }
+        .fonttu{
+          // font-size:vw(15);
+        }
       }
     }
 
