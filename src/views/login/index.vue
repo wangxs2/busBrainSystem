@@ -203,22 +203,9 @@ export default {
                 document.cookie = "flag=true";
                 document.cookie = "user=" + res.info.id;
                 document.cookie ="metabase.SESSION="+res.info.metabaseSession;
-                // document.cookie = "userName=" + res.result.userInfo.username;
-                // document.cookie = "Token=" + res.result.token;
-                // document.cookie = "roleid=" + res.result.role[0].id;
-                // document.cookie = "realname=" + res.result.userInfo.realname;
-                // document.cookie = "orgname=" + res.result.org[0].name;
-                // document.cookie = "realcode=" +  res.result.role[0].code;
-                // this.$store.commit('SET_TOKEN', res.result.token)
+            
                 this.$store.commit("SET_ID", res.info.id);
-                // this.$store.commit("SET_USERINFO", res.result.userInfo);
-                // this.$store.commit("SET_NAME", res.result.userInfo.username);
-                // this.$store.commit("SET_REALNAME", res.result.userInfo.realname);
-               
-                // localStorage.setItem("userNameSa", this.loginForm.username);
-                // this.$store.commit("SET_ROLEID", res.result.role[0].id);
-                // this.$store.commit("SET_ROLECODE", res.result.role[0].code);
-                //  this.$router.push("/lineCharacteristics");
+              
                 this.$message({
                   duration: 1000,
                   message: '登陆成功',
@@ -321,8 +308,8 @@ export default {
             position: relative;
             width: vw(360);
             height: wh(44);
-            background: rgba(255, 255, 255, 1);
-            border: 1px solid rgba(223, 226, 233, 1);
+            // background: rgba(255, 255, 255, 1);
+            // border: 1px solid rgba(223, 226, 233, 1);
             border-radius: vw(4);
           }
           .error-message {

@@ -22,8 +22,6 @@
         <div >匹配线路</div>
         <div >站点名称</div>
         <div style="white-space:nowrap;">末班车时间</div>
-       
-       
       </div>
       <div class="tablbox">
         <div  :class="nowindex==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="toDetail(item,n)" v-for="(item,n) in lineaData" :key="n">

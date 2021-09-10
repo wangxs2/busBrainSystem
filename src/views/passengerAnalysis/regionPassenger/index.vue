@@ -82,7 +82,6 @@ export default {
           this.$fetchGet("/passenger/region").then(resall => {
             res.result.forEach(iteam=>{
               resall.result.forEach(itam=>{
-
                 if(iteam.regionName==itam.regionName){
                   iteam.centerLatitude=itam.centerLatitude
                   iteam.centerLongitude=itam.centerLongitude
@@ -90,20 +89,12 @@ export default {
                 }
               })
             })
-          
             this.lineaData=res.result
-            // this.$store.commit('SET_REGIONDATA', res.result)
             MyMap.addOverlayGroup(MyMap.getRegionMark(res.result))
             setTimeout(() => {
                 this.assloading=false
             }, 1000);
-
           })
-          // this.$store.commit('SET_REGIONDATA', res.result)
-          //  setTimeout(()=>{
-          //   this.$store.commit('SET_LOADING',false)
-          //   },500)
-
         })
       },
     }

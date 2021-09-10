@@ -219,36 +219,7 @@
             </div>
           </div>
         </div>
-        <!-- <div class="rightpj-box">
-            <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
-              <div>线路名称：</div>
-              <div>1101路</div>
-            </div>
-            <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
-              <div>反映时间：</div>
-              <div>1101路</div>
-            </div>
-            <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.5vh">
-              <div>反映内容：</div>
-              <div>1101路</div>
-            </div>
-            <img  src="@/assets/image/4.6_1.png" alt="" srcset="">
-        </div> -->
-        <!-- <div class="rightpj-box">
-          <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
-            <div>线路名称：</div>
-            <div>1101路</div>
-          </div>
-          <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.2vh">
-            <div>反映时间：</div>
-            <div>1101路</div>
-          </div>
-          <div style="display:flex;align-items: center;justify-content:space-between;margin-bottom:1.5vh">
-            <div>反映内容：</div>
-            <div>1101路</div>
-          </div>
-          <img  src="@/assets/image/4.6_2.png" alt="" srcset="">
-        </div> -->
+      
     </div>
   </div>
 </template>
@@ -716,8 +687,6 @@ export default {
               },
               legend: {
                 show:false,
-                  // top: '5%',
-                  // left: 'center'
               },
                title: [
                   {
@@ -729,7 +698,8 @@ export default {
                       fontWeight: 'bold',
                       fontSize: 32,
                       textAlign: 'center',
-                      color: '#00FFFF'
+                      color: '#00FFFF',
+
                     }
                   },
                 {
@@ -740,7 +710,6 @@ export default {
                     fontSize: 14,
                     color: '#fff',
                     textAlign: 'center'
-                    // align:'left'
                   }
                 }
               ],

@@ -497,7 +497,7 @@ const Map = {
         }
       ];
       this.czsnzmas = new AMap.MassMarks(datapoint, {
-          opacity: 0.8,
+          opacity: 1,
           cursor: 'pointer',
           style: style
       });

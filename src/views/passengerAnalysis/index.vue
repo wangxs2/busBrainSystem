@@ -1,15 +1,13 @@
 <template>
   <div class="passengerAnalysis">
-    <!-- <div v-show="$route.name!=='断面客流'" class="passengerMap" id="passengerMap">
-    </div> -->
+  
     <keep-alive>
          <router-view @changeKl="klsonClick"></router-view>
     </keep-alive>
   </div>
 </template>
 <script>
-// import Map from "./passengerMap.js";
-// let MyMap = null; // 地图实例
+
 export default {
   data(){
     return{
@@ -20,36 +18,11 @@ export default {
     }
   },
   watch:{
-    // '$route':{
-    //   handler(val,oldval){
-    //     if(val){
-    //       this.judgeRoute(val)
-    //     }
-    //   },
-    // },
-    // '$store.getters.regionData':{
-    //   handler(val,oldval){
-    //     if(val){
-    //       MyMap.addOverlayGroup(MyMap.getRegionMark(val))
-    //     }
-    //   },
-    // },
-    // '$store.getters.allStation':{
-    //   handler(val,oldval){
-    //    if(val){
-    //     for(let key  in val){
-    //         MyMap.xrhld(key,val[key],this.styleStition[key])
-    //       }
-    //    }
-    //   },
-    // },
+    
   },
   mounted(){
     
-    // this.getTest()
-    //  console.log(this.testpoly(this.testdata))
-    //   let pathou=this.testpoly(this.testdata)
-    //   MyMap.testpou(pathou)
+
   },
   methods:{
       testpoly(iteam){

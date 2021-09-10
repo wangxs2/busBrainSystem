@@ -57,8 +57,6 @@ export default {
     })
      this.$store.commit('SET_LOADING',false)
      this.getData()
-    
-  
   },
   mounted() {
     this.M_initMap('busLane')

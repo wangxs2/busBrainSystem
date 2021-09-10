@@ -32,42 +32,32 @@
         </div>
       </div>
       <div class="titbox" style="margin-bottom:8px;margin-top:14px">线路重复系数</div>
-      <div class="con-box table-data" >
-        <!-- <div class="table-header">
-        
-          <div style="width:10%"></div>
-          <div style="width:45%">线路名称</div>
-          <div style="width:45%">线路重复系数</div>
-          
-        </div>
-        <div class="table-contain swiper-container" id="swiper4">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide"   v-for="(iteam,index) in qdData1" :key="index">
-              <div class="tableTr" v-for="(item,o) in iteam" :key="item.index">
-          
-                <div  style="width:10%">
-                  <div :class="item.index==1?'roud roud1':item.index==2?'roud roud2':item.index==3?'roud roud3':'roud'">{{item.index}}</div>
-                </div>
-                <div style="width:45%">{{item.routeName}}</div>
-                <div style="width:45%">{{Number(item.coefficient).toFixed(2)}}</div>
-              </div>
-            </div>
-          </div>
-          <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;" v-show="alldata.length==0">无数据</div>
-        </div> -->
-
+      <div class="con-box table-data table-data1" >
         <div id="assech2"></div>
+         <img class="imgcs" src="@/assets/image/ccline.png" alt="" srcset="">
+        <div style="position:absolute;right:36px;top:85px;display:flex; flex-direction: column;align-items: center">
+          <div style="display:flex;align-items: center">
+            <div style="width:10px;height:10px;border-radius:50%;background:#F5256A;margin-right:8px"></div>≥0.5
+          </div>
+          <div style="display:flex;align-items: center;margin-top:20px">
+            <div style="width:10px;height:10px;border-radius:50%;background:#4578FF;margin-right:6px;margin-left:6px"></div>＜0.5
+          </div>
+        </div>
       </div>
       <div class="titbox" style="margin-top:14px">线路长度</div>
       <div class="big-tab big-tab4">
-        <!-- <rank-block
-          :rank-data="OverlengData"
-          :gradient-ramp="['#E9795B', '#FF9A85']"
-          block-tit
-          font-color="#FF9A85"
-        ></rank-block> -->
 
         <div id="assech1"></div>
+        <img class="imgcs" src="@/assets/image/cfxx.png" alt="" srcset="">
+        <div style="position:absolute;right:36px;top:60px;display:flex; flex-direction: column;align-items: center">
+          <div style="display:flex;align-items: center">
+            <div style="width:10px;height:10px;border-radius:50%;background:#F5256A;margin-right:8px"></div>≥30km
+          </div>
+          <div style="display:flex;align-items: center;margin-top:20px">
+            <div style="width:10px;height:10px;border-radius:50%;background:#4578FF;margin-right:6px;margin-left:6px"></div>＜30km
+          </div>
+        </div>
+
         
       </div>
     </div>
@@ -336,38 +326,61 @@ export default {
     initechart1(data1,data2){
       this.myChart1 = this.$echarts.init(document.getElementById('assech1'));
       this.myChart1.setOption({
-
            tooltip: {
                 show:false,
                   trigger: 'item'
               },
               legend: {
-                  show:false
+                show:false,
               },
-              title: [
-              ],
+              title: [],
               series: [
-                  {
-                      name: '',
-                      type: 'pie',
-                      radius: ['55%', '75%'],
-                      color: ['#D53838','#3EAABA'],
+                {
+                  name: ' ',
+                  type: 'pie',
+                  radius: ['75%', '95%'],
+                  center: ['40%', '55%'],
+                  startAngle: 180,
+                  color: ['#0263FF', '#F5256A', 'transparent'],
+                  hoverAnimation: false,
+                  legendHoverLink: false,
+                  labelLine:{
+                    length:1,
+                    lineStyle:{
+                      color:'transparent'
+                    }
                    
-                      emphasis: {
-                          itemStyle: {
+                  },
+                  itemStyle:{
+                  },
+                  emphasis: {
+                      itemStyle: {
                           shadowBlur: 10,
                           shadowOffsetX: 0,
                           shadowColor: 'rgba(0, 0, 0, 0.5)'
                       }
+                  },
+                    data: [
+                     
+                      {
+                        value: (data2/(data1+data2))*50,
+                        name: Math.round((data2/(data1+data2))*100)+'%',
+                        label: {
+                            color: "rgba(255, 255, 255, 1)"
+                          }
                       },
-                      labelLine:{
-                        length:2
+                       {
+                        value: (data1/(data1+data2))*50,
+                        name: Math.round((data1/(data1+data2))*100)+'%',
+                         label: {
+                            color: "rgba(255, 255, 255, 1)"
+                          }
                       },
-                      data: [
-                          {value: data1, name: '线路长度≥30km('+Math.round((data1/(data1+data2))*100)+'%)'},
-                          {value: data2, name: '线路长度＜30km('+Math.round((data2/(data1+data2))*100)+'%)'},
-                         
-                      ]
+                      {
+                        value: 50,
+                        name: '3'
+                      }
+                    ]
                   }
               ]
          
@@ -377,35 +390,33 @@ export default {
     initechart2(data1,data2){
       this.myChart2 = this.$echarts.init(document.getElementById('assech2'));
       this.myChart2.setOption({
-          title: {
-              // text: '',
-              // subtext: '',
-              // left: 'center'
-          },
-          tooltip: {
-            show:false,
-              trigger: 'item'
-          },
-          color:['#5470c6','#73c0de'],
-          legend: {
-            show:false,
-              orient: 'vertical',
-              left: 'left',
-          },
-          series: [
-              {
-                  name: '',
-                  type: 'pie',
-                  radius: '60%',
-                  data: [
-                      {value: data1, name: '重复系数≥0.5('+Math.round((data1/(data1+data2))*100)+'%)'},
-                      {value: data2, name: '重复系数＜0.5('+Math.round((data2/(data1+data2))*100)+'%)'},
-                     
-                  ],
-                      hoverAnimation: false,
+           tooltip: {
+                show:false,
+                  trigger: 'item'
+              },
+              legend: {
+                show:false,
+              },
+              title: [],
+              series: [
+                {
+                    name: ' ',
+                    type: 'pie',
+                    radius: ['72%', '89%'],
+                    center: ['44%', '55%'],
+                    startAngle: 180,
+                    color: [ '#0263FF','#F5256A', 'transparent'],
+                        hoverAnimation: false,
                     legendHoverLink: false,
                   labelLine:{
-                    length:0.5,
+                    length:0,
+                     length2:0,
+                    lineStyle:{
+                      color:'transparent'
+                    }
+                   
+                  },
+                  itemStyle:{
                   },
                   emphasis: {
                       itemStyle: {
@@ -413,10 +424,30 @@ export default {
                           shadowOffsetX: 0,
                           shadowColor: 'rgba(0, 0, 0, 0.5)'
                       }
+                  },
+                    data: [
+                     
+                      {
+                        value: (data2/(data1+data2))*50,
+                        name: Math.round((data2/(data1+data2))*100)+'%',
+                        label: {
+                            color: "rgba(255, 255, 255, 1)"
+                          }
+                      },
+                       {
+                        value: (data1/(data1+data2))*50,
+                        name: Math.round((data1/(data1+data2))*100)+'%',
+                         label: {
+                            color: "rgba(255, 255, 255, 1)"
+                          }
+                      },
+                      {
+                        value: 50,
+                        name: '3'
+                      }
+                    ]
                   }
-              }
-          ]
-         
+              ]
       });
 
     },
@@ -444,7 +475,7 @@ export default {
             item.geom=this.Q_setData(item.geom)
             item.index = index + 1;
             if(Number(item.coefficient)>0.5){
-              console.log(item)
+              
               arr8.push(item)
             }else{
               arr9.push(item)
@@ -818,14 +849,29 @@ export default {
   .con-box1{
     height: vh(265);
   }
+  .table-data1{
+      position: relative;
+    .imgcs{
+      width: vw(90);
+      height: vw(90);
+      position: absolute;
+      left:vw(77);
+      top: vh(95);
+    }
+
+  }
   .table-data{
     box-sizing: border-box;
     overflow:hidden;
     display:flex;
     flex-direction: column;
     #assech2{
-      width:100%;
+      width:vw(230);
       height:100%;
+      box-sizing:border-box;
+      position: absolute;
+      left:vw(20);
+      top: vh(30);
     }
     .table-header{
       width:100%;
@@ -909,10 +955,12 @@ export default {
     display:flex;
     flex-wrap:wrap ;
     #assech1{
-      width:100%;
+      width:vw(220);
       height:100%;
       box-sizing:border-box;
-      // padding:vh(10);
+      position: absolute;
+      left:vw(50);
+      top: vh(30);
     }
     .big-tab2{
       margin-right:vw(24);
@@ -967,6 +1015,14 @@ export default {
     height:vh(198);
     padding-left:0;
     box-shadow: none;
+    position: relative;
+    .imgcs{
+      width: vw(80);
+      height: vw(80);
+      position: absolute;
+      left:vw(100);
+      top: vh(80);
+    }
     
   }
   #swiper1,#swiper3,#swiper4,#swiper5{
