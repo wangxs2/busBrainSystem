@@ -348,7 +348,7 @@ export default {
              MyMap.localheat(arrheat)
              MyMap.zdklMapOption.heat.hide()
             for(let key  in res.result){
-              MyMap.localMain(key,res.result[key],this.styleStition[key])
+              MyMap.localMain(key,res.result[key],this.styleStition[key],this.value1)
             }
             setTimeout(()=>{
               this.assloading=false
@@ -375,7 +375,9 @@ export default {
       handleSelect(iteam) {
         this.$fetchGet("/indicator/stationDetail",{
           code:iteam.stationName,
-          direction:iteam.routeDirection
+          direction:iteam.routeDirection,
+            st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
+            et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
         }).then(res => {
           // this.$emit('changefun',{
           //     stattiondetail:res.result

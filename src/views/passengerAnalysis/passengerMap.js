@@ -1,4 +1,5 @@
 import * as http from '../../libs/http'
+import moment from 'moment'//导入文件
 export default class Map {
   constructor(data) {
     Object.assign(this, this.data(data))
@@ -100,7 +101,7 @@ export default class Map {
   }
 
 
-  localMain(massIndex,datapoint,style){
+  localMain(massIndex,datapoint,style,value1){
 
   
     let _events = datapoint;
@@ -152,7 +153,9 @@ export default class Map {
           let data = feat.properties.rawData;
           http.fetchGet('indicator/stationDetail',{
             code:data.stationName,
-            direction:data.routeDirection
+            direction:data.routeDirection,
+            st:moment(value1[0]).format("YYYY-MM-DD"),
+            et:moment(value1[1]).format("YYYY-MM-DD"),
           }).then(res=>{
             this.map.setZoomAndCenter(16,data.lnglat,true)
             this.infoWindow.setContent(this.createInfoWindow(res.result))
@@ -306,8 +309,8 @@ export default class Map {
         // 将 html 传给 content background: url(icon) url(${iconm})
         content: `<div class="regionMark" style="background:url(${iconm})">
           <div> ${iteam.regionName}</div>
-           <div> 上车 ${iteam.sd}</div>
-           <div> 下车 ${iteam.sp}</div>
+           <div> 上车 ${iteam.sp}</div>
+           <div> 下车 ${iteam.sd}</div>
           </div>`,
           
         // 以 icon 的 [center bottom] 为原点
@@ -479,8 +482,8 @@ export default class Map {
           <div style="color: #00FFFF;font-size: 28px;margin-bottom:18px">${BusArr.routeName}</div>
           <div style="margin-bottom:18px;font-size: 18px">${datas[0].stationName}→${datas[datas.length-1].stationName}</div>
           <div style="color: #00FFFF;font-size: 22px;margin-bottom:18px">${iteam.stationName}</div>
-          <div style="margin-bottom:18px;font-size: 18px">上车人数 ：${iteam.sd}</div>
-          <div style="margin-bottom:8px;font-size: 18px">下车人数 ：${iteam.sp}</div>
+          <div style="margin-bottom:18px;font-size: 18px">上车人数 ：${iteam.sp}</div>
+          <div style="margin-bottom:8px;font-size: 18px">下车人数 ：${iteam.sd}</div>
         </div>
         `})
       });

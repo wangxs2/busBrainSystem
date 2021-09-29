@@ -1530,7 +1530,7 @@ export default {
           "961路": "守航夜宵线"
         }
       ],
-      echloadsd: true,
+      echloadsd: false,
       righavg: {},
       letopObj: {
         运营率: null
@@ -1606,6 +1606,10 @@ export default {
     this.getechdata();
     this.getroad();
     this.getcentre();
+
+    setTimeout(() => {
+          this.assloading=false
+        }, 2000);
     // this.getSSyx()
     // let arr=[]
     // this.texdc.forEach(iteam=>{
@@ -1665,7 +1669,7 @@ export default {
     },
     //客流分布规律
     getstion() {
-      this.echloadsd1 = true;
+      // this.echloadsd1 = true;
       this.$fetchGet("passenger/all", {
         type: 1,
         st: this.$moment(this.value1[0]).format("YYYY-MM"),

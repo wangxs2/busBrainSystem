@@ -46,7 +46,6 @@ export default {
     // myallroute:function(){
     //   return this.quc(this.$store.getters.userRole)
     // },
-    
   },
    data () {
     return {

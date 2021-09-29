@@ -16,19 +16,47 @@
         <div>里程(km)</div>
       </div>
       <div class="tablbox">
-        <div class="bttit bttit1" v-for="(item,n) in lineData" :key="n">
+        <div class="bttit bttit1" @click="todetail(item)" v-for="(item,n) in lineData" :key="n">
           <div style="text-align:left;padding-left:1vw">{{item.name}}</div>
           <div>{{item.length}}</div>
         </div>
       </div>
     </div>
 
+    <div class="erach-box">
 
-    <div class="erach-box" id="echstation"  
-      v-loading="echloadsd"
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
-      element-loading-background="rgba(0, 0, 0, 0.6)"></div>
+      <div class="search-box">
+         <div class="qhbtn">
+            <div :class="isbtn==iteam.name?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
+          </div>
+
+        <div>
+          <el-select size="small"   filterable @change="todetailsa()" v-model="values" placeholder="请选择">
+            <el-option
+              v-for="(item,index) in lineData"
+              :key="index"
+              :label="item.name"
+              :value="item.name">
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+
+     
+
+      <div  id="echstation"  
+        v-loading="echloadsd"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.6)">
+
+        
+      </div>
+
+    </div>
+
+
+    
   
 </div>
 </template>
@@ -42,7 +70,23 @@ export default {
   },
   data() {
     return {
+      echloadsd:false,
+      values:'',
       lineData:[],
+      zxtdata:[],
+      isbtn:'日',
+      typelst:[
+        {
+          name:'日',
+          id:1
+        },{
+          name:'周',
+          id:2
+        },{
+          name:'月',
+          id:3
+        }
+      ],
       myChart:null,
       assloading:true
 
@@ -66,12 +110,44 @@ export default {
       }
   },
   methods: {
+    tobtn(row){
+      this.values=''
+      this.isbtn=row.name
+      this.getData()
 
+    },
+    todetail(row){
+      this.myChart.clear()
+      this.S_setbulne(row)
+      this.zxtdata.forEach(iteam=>{
+        if(iteam.name==row.name){
+         
+          this.initechart([iteam])
+        }
+      })
+
+    },
+    todetailsa(){
+
+      console.log(this.values)
+      
+       this.myChart.clear()
+      this.zxtdata.forEach(iteam=>{
+        if(iteam.name==this.values){
+         
+          this.initechart([iteam])
+        }
+      })
+
+    },
+ 
     getData(){
       this.echloadsd=true
-
-       this.$fetchGet("base-bus-exclusive-road/msg").then(res => {
-         let zxtdata=[],arr=[]
+       this.$fetchGet("base-bus-exclusive-road/msg",{
+         type:this.isbtn
+       }).then(res => {
+         this.zxtdata=[]
+         let arr=[]
          for(let key  in res.result){
            if(res.result.[key].list!==null){
 
@@ -82,16 +158,27 @@ export default {
                  obj.type='line'
                 obj.stack='总量'
                 obj.smooth= true
+                obj.markLine= {
+                      data: [
+                          {type: 'average', name: '平均值'}
+                      ]
+                  }
                 res.result[key].list.forEach(iteam=>{
                     obj.data.push(Number(iteam.passengerNum))
-                    obj.dataX.push(iteam.passengerDate)
+                    if(this.isbtn=='周'){
+                      obj.dataX.push(iteam.passengerDate.split('-')[1]+'周')
+                    }else{
+                      obj.dataX.push(iteam.passengerDate)
+                    }
+                    
                 })
-                zxtdata.push(obj)
+                this.zxtdata.push(obj)
 
            }
                 
           }
-            this.initechart(zxtdata)
+          
+            this.initechart(this.zxtdata)
 
              setTimeout(() => {
                 this.assloading=false
@@ -103,10 +190,12 @@ export default {
 
     },
     initechart(data){
+      console.log(data)
+   
         this.myChart = this.$echarts.init(document.getElementById('echstation'));
         this.myChart.setOption({
         grid:{
-            top:60,
+            top:40,
             left:80,
             right:40,
             bottom:60,
@@ -117,7 +206,7 @@ export default {
          
         },
         legend:{
-            top:'8%',
+            top:'1%',
             left:"center",
             textStyle:{
                 color:'#ffffff'
@@ -131,7 +220,7 @@ export default {
             fontSize:16,
             
             },
-            top:26,
+            top:6,
             left:10,
         },
         color:['#ffca40','#00a08a','#e20048','#447bd4','#2e16b1','#5ab91b','#d35f1a','#8c2eca'],
@@ -150,7 +239,7 @@ export default {
                 show:false
             },
             splitLine:{
-                show:true,
+                show:false,
                 lineStyle:{
                 color:'#194F95',
                 type:'dashed'
@@ -168,12 +257,13 @@ export default {
         
             type: 'value',
             axisLabel:{
+                // show:false,
                 color:"#D9EFFF",
                 borderType:"dashed",
                 borderColor:"#194F95",
             },
             splitLine:{
-                show:true,
+                show:false,
                 lineStyle:{
                 color:'#194F95',
                 type:'dashed'
@@ -334,6 +424,47 @@ export default {
     background: url("~@/assets/image/zdbj.png");
     background-size: 100% 100%;
     margin-top:vh(8);
+    display:flex;
+    flex-direction: column;
+    .search-box{
+      display:flex;
+      align-items: center;
+      margin-top:vh(16);
+    }
+    #echstation{
+      flex:1;
+    }
+    .qhbtn{
+      width: vw(120);
+      height: vh(36);
+      background: rgba(26, 66, 118, 0.2);
+      border: 1px solid #27B6FF;
+      border-radius: vw(18);
+      box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 1) inset;
+      display:flex;
+      align-items: center;
+      margin-left:vw(12);
+       margin-right:vw(12);
+      //  margin-top:vh(16);
+      .btnnow{
+        flex:1;
+        text-align:center;
+        height:100%;
+        line-height:vh(36);
+        cursor:pointer;
+      }
+      .btnnow:first-child{
+        border-top-left-radius:vw(18);
+        border-bottom-left-radius:vw(18);
+      }
+      .btnnow:last-child{
+        border-top-right-radius:vw(18);
+        border-bottom-right-radius:vw(18);
+      }
+      .activebtn{
+        background: #4578FF;
+      }
+    }
   }
 }
 </style>

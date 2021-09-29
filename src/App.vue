@@ -150,6 +150,7 @@ color: #dae4ff !important;
   }
 .el-picker-panel{
   border:none !important;
+  background: rgba(26, 66, 118,0) !important;
 }
 .el-date-range-picker__content.is-left{
   border-right:1px solid rgba(39, 182, 255, 0.5)!important;

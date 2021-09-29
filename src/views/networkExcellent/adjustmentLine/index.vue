@@ -78,6 +78,7 @@
         <div >满载率</div>
         <div>线路长度(km)</div>
         <div>非直线系数</div>
+        <div>轨交重复站数</div>
        
       </div>
       <div class="tablbox">
@@ -89,6 +90,7 @@
           <div >{{item.mzl==null?'0':item.mzl.toFixed(2)}}</div>
           <div >{{item.cd==null?'0':item.cd.toFixed(2)}}</div>
           <div >{{item.fzxxs==null?'':item.fzxxs.toFixed(2)}}</div>
+          <div >{{item.gjcf}}</div>
           <!-- <div ></div> -->
         </div>
 

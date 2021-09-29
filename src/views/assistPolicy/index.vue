@@ -76,7 +76,7 @@
             </div>
 
           </div>
-          <div class="tulibox" v-show="nowName!=='长期拥堵路段'&&nowName!=='百公里人次'">
+          <div class="tulibox" v-show="nowName!=='长期拥堵路段'&&nowName!=='百公里人次'&&nowName!=='换乘压力'">
             <div style="display:flex;align-items: center">
               <div class="linetu"></div>
               <div class="fonttu">{{nowName}} ≤ {{nownum}}</div>
@@ -104,6 +104,38 @@
               <div class="fonttu">100以上</div>
             </div>
           </div>
+           <div class="tulibox tulibox1" v-show="nowName=='换乘压力'">
+            <div style="display:flex;align-items: center">
+              <div class="">
+                <img width="20" height="20" src="@/assets/image/1hc.png" alt="" srcset="">
+              </div>
+              <div class="fonttu">1-5</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class=""><img width="20" height="20" src="@/assets/image/2hc.png" alt="" srcset=""></div>
+              <div class="fonttu">6-10</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class=""><img width="20" height="20" src="@/assets/image/3hc.png" alt="" srcset=""></div>
+              <div class="fonttu">10-30</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class=""><img width="20" height="20" src="@/assets/image/4hc.png" alt="" srcset=""></div>
+              <div class="fonttu">30-50</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class=""><img width="20" height="20" src="@/assets/image/5hc.png" alt="" srcset=""></div>
+              <div class="fonttu">50-100</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class=""><img width="20" height="20" src="@/assets/image/6hc.png" alt="" srcset=""></div>
+              <div class="fonttu">100-500</div>
+            </div>
+            <div style="display:flex;align-items: center;margin-top:1vh">
+              <div class=""><img width="20" height="20" src="@/assets/image/7hc.png" alt="" srcset=""></div>
+              <div class="fonttu">500-6000</div>
+            </div>
+          </div>
       </div>
       <div class="cen-bottom">
         <div class="cen-bottom-left">
@@ -125,20 +157,8 @@
         </div>
         <div class="cen-bottom-right">
            <div class="titbox" style="margin-top:18px;margin-bottom:8px">换乘压力</div>
-          <div class="big-tab swiper-container" id="swiper7" >
-            <div class="swiper-wrapper">
-              <div class="swiper-slide"  > 
-                <!-- v-for="(iteam,index) in personData" :key="index" -->
-                <!-- <div class="big-tab2"  v-for="(item,index) in iteam" :key="item.index">
-                  <div :class="item.index==1?'itea-per itea-per3':item.index==2?'itea-per itea-per4':item.index==3?'itea-per itea-per5':'itea-per'">{{item.index}}</div>
-                  <div :class="item.index==1?'itea-per1 itea-per7':item.index==2?'itea-per1 itea-per8':item.index==3?'itea-per1 itea-per9':'itea-per1'">{{item.xlmc}}</div>
-                  <div class="itea-per2">{{item.baipass}}人</div>
-                </div> -->
-
-                <div style="width:100%;height:100%;display:flex;justify-content:center; align-items: center;color: #4578FF;">暂无数据~</div>
-
-              </div>
-            </div>
+          <div class="big-tab" id="hcechbox2">
+          
           
             
           </div>
@@ -245,6 +265,7 @@ export default {
       assloading:true,
       swipertable2:null,
       swipertable3:null,
+      myCharthc:null,
       swipertable4:null,
       swipertable5:null,
       swipertable6:null,
@@ -268,6 +289,7 @@ export default {
       
       ],//manzailv
       mlgdata:[],
+      hvdataall:[],//换乘压力
       options:[],
       personData1:[],
       value1:[new Date().getTime() - 3600 * 1000 * 24 * 30,new Date()],
@@ -304,6 +326,11 @@ export default {
             name:'超长线路',
             isxz:false,
             num:'30km',
+          },
+          {
+            name:'换乘压力',
+            isxz:false,
+            num:'',
           }
       ],
       myChart1:null,
@@ -315,6 +342,8 @@ export default {
   mounted() {
     this.M_initMap('compreMapks')
     this.initSwipertable()
+   
+    this.gethcData()
     // this.trafficLayer.setMap(this.M_map);
     // this.initechart1()
   },
@@ -451,11 +480,56 @@ export default {
       });
 
     },
+    //获取换乘压力的明细
+    gethcData(){
+       this.$fetchGet("http://180.167.126.126:3005/pos/transfer/avg").then(res => {
+         let echobjd={
+           arr1:[],
+           arr2:[],
+           arr3:[],
+           arr4:[],
+           arr5:[],
+           arr6:[],
+           arr7:[]
+         }
+         
+         this.hvdataall=res.result
+        res.result.forEach(iteam=>{
+          if(iteam.count&&iteam.count<6){
+            echobjd.arr1.push(iteam)
+          }else if(iteam.count>5&&iteam.count<11){
+            echobjd.arr2.push(iteam)
+          }else if(iteam.count>10&&iteam.count<31){
+            echobjd.arr3.push(iteam)
+          }else if(iteam.count>30&&iteam.count<51){
+            echobjd.arr4.push(iteam)
+          }else if(iteam.count>50&&iteam.count<101){
+            echobjd.arr5.push(iteam)
+          }else if(iteam.count>100&&iteam.count<501){
+            echobjd.arr6.push(iteam)
+          }else if(iteam.count>500){
+            echobjd.arr7.push(iteam)
+          }
+        })
+
+          console.log(echobjd)
+          this.initecharthc(echobjd)
+
+
+       })
+
+       this.$fetchGet("curve/often").then(res => {
+
+       })
+    },
     getNoLi(){
       //非直线系数的数据
       this.$fetchGet("route/straightCoefficient").then(res => {
         res.result.forEach((item,index)=>{
-            item.geom=this.Q_setData(item.geom)
+            if(item.geom){
+              item.geom=this.Q_setData(item.geom)
+            }
+            
         })
         this.alldata=res.result;
         let arr=this.alldata.sort(this.compare('coefficient',false))
@@ -472,7 +546,10 @@ export default {
       this.$fetchGet("route/lineCoefficient").then(res => {
         let arr8=[],arr9=[]
         res.result.forEach((item,index)=>{
-            item.geom=this.Q_setData(item.geom)
+            // item.geom=this.Q_setData(item.geom)
+            if(item.geom){
+              item.geom=this.Q_setData(item.geom)
+            }
             item.index = index + 1;
             if(Number(item.coefficient)>0.5){
               
@@ -481,7 +558,6 @@ export default {
               arr9.push(item)
             }
         })
-        console.log(arr8.length,arr9.length)
         this.initechart2(arr8.length,arr9.length)
         this.alldata1=res.result;
         this.qdData1=arrGroup(res.result,5)
@@ -494,7 +570,10 @@ export default {
       }).then(res => {
 
         res.result.forEach((item,index)=>{
-            item.geom=this.Q_setData(item.geom)
+            // item.geom=this.Q_setData(item.geom)
+            if(item.geom){
+              item.geom=this.Q_setData(item.geom)
+            }
         })
         this.alldata3=res.result;
         let arr=this.alldata3.sort(this.compare('baipass',false))
@@ -510,7 +589,10 @@ export default {
         let arr8=[],arr9=[];
         
           res.result.forEach((item,index)=>{
+              // item.geom=this.Q_setData(item.geom)
+              if(item.geom){
               item.geom=this.Q_setData(item.geom)
+            }
               if(Number(item.lineLength)>30){
                 arr8.push(item)
               }else{
@@ -540,7 +622,10 @@ export default {
       }).then(res => {
         
           res.result.forEach((item,index)=>{
-            item.geom=this.Q_setData(item.geom)
+            if(item.geom){
+              item.geom=this.Q_setData(item.geom)
+            }
+            
              if(item.mzl==null){
                 item.mzl=0
               }
@@ -553,12 +638,11 @@ export default {
           })
           this.mlldata=arr;
           this.mlgdata=arrGroup(arr,3);
-          console.log(this.mlgdata)
       })
 
 
     //  长期拥堵的路段
-      this.$fetchGet("curve/list").then(res => {
+      this.$fetchGet("curve/often").then(res => {
         res.result.forEach((iteam,index)=>{
               iteam.index = index + 1;
               
@@ -605,6 +689,69 @@ export default {
         return 0;
       }
     },
+
+    //换乘压力的统计图
+    initecharthc(echobjd){
+          this.myCharthc = this.$echarts.init(document.getElementById('hcechbox2'));
+          this.myCharthc.setOption({
+              tooltip: {
+                show:false,
+                  trigger: 'item'
+              },
+              legend: {
+                    orient: 'vertical',
+                    right: '10%',
+                    top:'center',
+                    icon:'circle',
+                    textStyle:{
+                        color:'#ffffff'
+                    },
+              },
+              title: [],
+              series: [
+                  {
+                      name: '',
+                      type: 'pie',
+                      radius: ['60%', '75%'],
+                       center: ["33%", "50%"],
+                      color: ['#00FFFF', '#4578FF', '#F5256A','#5AB91B','#FFCA40','#D35F1A','#00A08A'],
+                      avoidLabelOverlap: false,
+                      label:{
+                        color:'#ffffff',
+                        formatter:'{d}%'
+
+                    },
+                    labelLine: {
+                        show: true,
+                        length:0,
+                        length2:0,
+                    },
+                      hoverAnimation: false,
+                    legendHoverLink: false,
+                      emphasis: {
+                          label: {
+                              show: true,
+                              fontSize: '18',
+                               color:'#ffffff',
+
+                          }
+                      },
+                     
+                      data: 
+                      [
+                          {value: echobjd.arr1.length, name: '1-5'},
+                          {value: echobjd.arr2.length, name: '6-10'},
+                          {value: echobjd.arr3.length, name: '10-30'},
+                          {value: echobjd.arr4.length, name: '30-50'},
+                          {value: echobjd.arr5.length, name: '50-100'},
+                          {value: echobjd.arr6.length, name: '100-500'},
+                          {value: echobjd.arr7.length, name: '500-6000'},
+                         
+                      ]
+                  }
+              ]
+          });
+      },
     
     toShow(row,n){
       this.nowName=row.name
@@ -613,13 +760,11 @@ export default {
         return 
       }else{
         //  row.isxz=!row.isxz
-        console.log(this.nowName)
          this.tlstation.forEach(iteam=>{
            if(iteam.name==this.nowName){
              iteam.isxz=true
            }
            if(iteam.name!==this.nowName){
-             console.log(777)
               iteam.isxz=false
            }
          })
@@ -644,6 +789,11 @@ export default {
             case '超长线路' :
 
              this.M_BUSLINE(this.OverlengData,16)  
+                
+                break;
+            case '换乘压力' :
+
+            this.localMainhcyl(this.hvdataall)
                 
                 break;
             default :
@@ -735,15 +885,15 @@ export default {
         observer: true, //修改swiper自己或子元素时，自动初始化swiper
         observeParents: true //修改swiper的父元素时，自动初始化swiper
       });
-      this.swipertable7 = new Swiper("#swiper7", {
-        loop: true, // 循环模式选项
-        mousewheel: true,
-        autoplay: {
-          delay: 5000 // 切换时间
-        },
-        observer: true, //修改swiper自己或子元素时，自动初始化swiper
-        observeParents: true //修改swiper的父元素时，自动初始化swiper
-      });
+      // this.swipertable7 = new Swiper("#swiper7", {
+      //   loop: true, // 循环模式选项
+      //   mousewheel: true,
+      //   autoplay: {
+      //     delay: 5000 // 切换时间
+      //   },
+      //   observer: true, //修改swiper自己或子元素时，自动初始化swiper
+      //   observeParents: true //修改swiper的父元素时，自动初始化swiper
+      // });
 
     },
   }

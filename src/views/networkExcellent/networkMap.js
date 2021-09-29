@@ -15,6 +15,7 @@ const Map = {
       M_style: 'amap://styles/d67717253a691e523956e9482ca38f1e',
       // 覆盖物点组
       M_pointGroup: null,
+      hcloca:null,//换乘要的local
       massall1: null,//站点智能化建设
       M_pointEvent: [],
       czsnzmas:null,
@@ -25,9 +26,6 @@ const Map = {
       busPolyline: null,
       busPolyline1: null,
       massall: null,
-      
-      
-      
       polyEditor: null,
       mouseTool: null,
       station: null,
@@ -55,6 +53,15 @@ const Map = {
       xwrhGroups: new AMap.OverlayGroup(),//线网融合
       xwrhGroups1: new AMap.OverlayGroup(),//线网融合
       xwrhGroups2: new AMap.OverlayGroup(),//线网融合
+
+      linkLayer:null,
+        labelLayer:null,
+        marker1:null,
+        marker2:null,
+        busPolylineod:null,
+        scatterLayer1:null,
+        scatterLayer2:null,
+        linesearch1:null,
       
       
       nework: {
@@ -665,8 +672,99 @@ const Map = {
           }
       });
   
-        // var dat = new Loca.Dat();
-        // dat.addLayer(layer);
+    },
+    //换乘压力的数据
+    localMainhcyl(datapoint){
+      this.M_map.clearMap()
+
+     this.hcloca = new Loca.Container({
+          map: this.M_map,
+      });
+      let _events = datapoint;
+      
+        var list = _events.map(e => {
+            let arr =[e.longitude,e.latitude]
+            return {
+                "type": "Feature",
+                "properties": {
+                    rawData: e
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": arr
+                }
+            }
+        })
+  
+        var data = {
+            "type": "FeatureCollection",
+            "features": list,
+        };
+  
+  
+          // 拾取测试
+       
+    
+  
+        var geo = new Loca.GeoJSONSource({
+            data: data,
+        });
+        this.hclayer = new Loca.IconLayer({
+            zIndex: 10,
+            opacity: 1,
+        });
+        this.hclayer.setSource(geo);
+        this.hclayer.setStyle({
+            unit: 'px',
+            icon:function (index, item) {
+              let iconh=''
+              let num=item.properties.rawData.count
+              if(num>0&&num<6){
+                iconh=require("../../assets/image/1hc.png")
+              }else if(num>5&&num<11){
+                iconh=require("../../assets/image/2hc.png")
+              }else if(num>10&&num<31){
+                iconh=require("../../assets/image/3hc.png")
+              }else if(num>30&&num<51){
+                iconh=require("../../assets/image/4hc.png")
+              }else if(num>50&&num<101){
+                iconh=require("../../assets/image/5hc.png")
+              }else if(num>100&&num<501){
+                iconh=require("../../assets/image/6hc.png")
+              }else if(num>500){
+                iconh=require("../../assets/image/7hc.png")
+              }
+                  return iconh
+              },
+            
+            iconSize: [11,11],
+            rotation: 0,
+        })
+  
+        this.hcloca.add(this.hclayer);
+        this.M_map.on('click', (e) => {
+          const feat = this.hclayer.queryFeature(e.pixel.toArray());
+          if (feat) {
+            console.log(feat)
+            let strn=feat.properties.rawData
+
+            let infoWin = `<div class="info-win">
+            <div class="win-triangle"></div>
+            <div class="info-box">
+              <div class="info-content">
+                <div class="info">
+                  <div class="info-name">站名：${strn.stationName}</div>
+                </div>
+                <div class="info">
+                  <div class="info-name">换乘: ${strn.count}</div>
+                </div>
+              </div>
+            </div>
+          </div>`
+            this.M_openInfoWin([strn.longitude, strn.latitude], infoWin)
+           
+          }
+      });
   
     },
     getStationLisLinesDomStr(data){
@@ -1267,7 +1365,11 @@ const Map = {
     },
     //辅助决策绘制的线路
     M_BUSLINE(data, type) {
-      this.M_map.clearMap()
+
+      if(this.hclayer){
+        this.hcloca.remove(this.hclayer)
+      }
+      
       let lineArr = []
 
       data.forEach(iteam => {
@@ -1540,28 +1642,8 @@ const Map = {
 
         kyLinedata.on('click', (e) => {
           let srt = e.target.getExtData()
-          let num = Math.floor((srt.path.length) / 2)
-
-          let infoWin = `<div class="info-win">
-            <div class="win-triangle"></div>
-            <div class="info-box">
-              <div class="info-content">
-                <div class="info">
-                  <div class="info-name">名称：${srt.name}</div>
-                </div>
-                <div class="info">
-                  <div class="info-name">里程：${srt.length}km</div>
-                </div>
-                <div class="info">
-                  <div class="info-name">备注：${srt.remark == undefined ? '无' : ''}</div>
-                </div>
-                <div class="info">
-                  <div class="info-name">线路条数：${srt.lineNumber}</div>
-                </div>
-              </div>
-            </div>
-          </div>`
-          this.M_openInfoWin(srt.path[num], infoWin)
+          this.S_setbulne(srt)
+        
         });
 
         datalin.push(kyLinedata)
@@ -1569,6 +1651,33 @@ const Map = {
 
       this.M_map.setFitView(this.datalin, true, [60, 200, 60, 60]);
       //  
+
+    },
+    S_setbulne(srt){
+
+      let num = Math.floor((srt.path.length) / 2)
+
+      let infoWin = `<div class="info-win">
+        <div class="win-triangle"></div>
+        <div class="info-box">
+          <div class="info-content">
+            <div class="info">
+              <div class="info-name">名称：${srt.name}</div>
+            </div>
+            <div class="info">
+              <div class="info-name">里程：${srt.length}km</div>
+            </div>
+            <div class="info">
+              <div class="info-name">备注：${srt.remark == undefined ? '无' : ''}</div>
+            </div>
+            <div class="info">
+              <div class="info-name">线路条数：${srt.lineNumber}</div>
+            </div>
+          </div>
+        </div>
+      </div>`
+      this.M_openInfoWin(srt.path[num], infoWin)
+      // this.M_map.setZoomAndCenter(16,srt.path[num],true)
 
     },
     M_addPolygon(data,data1) {

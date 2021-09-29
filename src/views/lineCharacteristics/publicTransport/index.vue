@@ -25,14 +25,44 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
             线路重复系数
           </div>
-          <div>{{objline['线路重复系数']}}</div>
+          <div style="display:flex;align-items: center;">{{objline['线路重复系数']}}
+
+              <el-tooltip v-if="objline['线路重复系数']<2.5"  effect="dark" content="参考系数2.5" placement="right-start">
+                  <img style="margin-left:0.4vw" src="@/assets/image/xjt.png" /> 
+              </el-tooltip>  
+              <el-tooltip v-if="objline['线路重复系数']>2.5"  effect="dark" content="参考系数2.5" placement="right-start">
+                  <img  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+              </el-tooltip>  
+
+                <!-- <el-popover
+                  placement="right-start"
+                  title=""
+                  width="200"
+                  trigger="hover"
+                  content="参考系数2.5">
+                  <div slot="reference">
+                      <img v-show="objline['线路重复系数']<2.5" style="margin-left:0.4vw" src="@/assets/image/xjt.png" /> 
+                      <img v-show="objline['线路重复系数']>2.5" style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+                  </div>
+                  
+                </el-popover> -->
+            
+          </div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
-            线网密度
+            线网密度 
           </div>
-          <div>{{objline['线网密度(建成区)']}}</div>
+          <div style="display:flex;align-items: center;">{{objline['线网密度(建成区)']}}  
+
+              <el-tooltip v-if="objline['线网密度(建成区)']<3"  effect="dark" content="参考系数3" placement="right-start">
+                  <img style="margin-left:0.4vw" src="@/assets/image/xjt.png" /> 
+              </el-tooltip>  
+              <el-tooltip v-if="objline['线网密度(建成区)']>3"  effect="dark" content="参考系数3" placement="right-start">
+                  <img  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+              </el-tooltip>  
+          </div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
@@ -276,7 +306,7 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: vh(22);
+        margin-bottom: vh(16);
         .itmsgs {
           display: flex;
           align-items: center;

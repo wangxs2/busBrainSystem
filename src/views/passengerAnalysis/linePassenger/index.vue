@@ -1,28 +1,28 @@
 <template>
   <div class="linePassenger" id="linePassenger">
-      <div class="search-box">
-      <div style="margin-right:0.6vw;width:3vw;">时间</div>
-      <el-date-picker
-        v-model="value1"
-        size="small"
-        type="daterange"
-        range-separator="至"
-        @change="changeDate"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期">
-      </el-date-picker>
-      <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.6vw;">线路名称</div>
-      <el-select size="small" filterable @change="toLine()" v-model="value" placeholder="请选择">
-        <el-option
-          v-for="item in options"
-          :key="item.routeId"
-          :label="item.routeName"
-          :value="item.routeId">
-        </el-option>
-      </el-select>
-      <div class="qhbtn">
-      <div :class="isbtn==iteam.id?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
-      </div>
+    <div class="search-box">
+        <div style="margin-right:0.6vw;width:3vw;">时间</div>
+        <el-date-picker
+          v-model="value1"
+          size="small"
+          type="daterange"
+          range-separator="至"
+          @change="changeDate"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+        <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.6vw;">线路名称</div>
+        <el-select size="small" filterable @change="toLine()" v-model="value" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.routeId"
+            :label="item.routeName"
+            :value="item.routeId">
+          </el-option>
+        </el-select>
+        <div class="qhbtn">
+        <div :class="isbtn==iteam.id?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
+        </div>
     
     
     </div>
@@ -53,6 +53,7 @@ export default {
     },
     created() {
       console.log(this.$route.query.idName)
+      this.getTestod()
     },
     mounted() {
       MyMap = new Map({ el: "linePassenger" });
@@ -79,6 +80,12 @@ export default {
       },
       changeDate(){
         this.getLinepassenger()
+      },
+      getTestod(){
+        this.$fetchGet("http://180.167.126.126:3005/pos/tbl-pos-txn-nor/odList",{
+          date:20200131,
+          lineName:''
+        }).then(res=>{})
       },
       getAllline(val){ 
         this.value=val

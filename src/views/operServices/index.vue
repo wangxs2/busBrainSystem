@@ -25,7 +25,7 @@
           <div v-if="tlstation[2].isxz">{{item.mzl}}</div>
           <div v-if="tlstation[3].isxz">{{item.cd==null?'':item.cd.toFixed(2)}}</div>
           <div v-if="tlstation[4].isxz">{{item.fzxxs==null?'':item.fzxxs.toFixed(2)}}</div>
-          <div v-if="tlstation[5].isxz"></div>
+          <div v-if="tlstation[5].isxz">{{item.gjcf}}</div>
         </div>
       </div>
     </div>
@@ -44,6 +44,23 @@
       </div>
       
     </div>
+
+
+      <div class="search-box">
+       
+        <div style="margin-right:0.6vw;width:3.6vw;">线路名称</div>
+        <el-select size="small" clearable  filterable @change="toDetail1(value)" v-model="value" placeholder="请选择">
+          <el-option
+            v-for="(item,index) in lineaData"
+            :key="index"
+            :label="item.lineName"
+            :value="item.lineName">
+          </el-option>
+        </el-select>
+        
+    
+    
+    </div>
     
   </div>
 </template>
@@ -58,6 +75,8 @@ export default {
       poloading:true,
       nowindex:-1,
       lineaData: [],
+      options: [],
+      value:'',
       tlstation:[
           {
             name:'线路重复系数',
@@ -117,9 +136,18 @@ export default {
     this.initMap()
   },
   created(){
-   
+   this.getdataline()
   },
   methods:{
+    toLine(){
+
+    },
+    getdataline(){
+      this.$fetchGet("route/routeList").then(res=>{
+          this.options=res.result
+      })
+
+    },
     initMap(){
        this.MyMapper=new AMap.Map('operMap', {
         zoom: 10, // 地图级别
@@ -149,16 +177,23 @@ export default {
       }
         this.$fetchPost("route/composite",{
             cfd: this.tlstation[0].value||-1,   // 重复度
+            gjcf:this.tlstation[5].isxz==false?-1:this.tlstation[5].value,
             fzxxs: this.tlstation[4].isxz==false?-1:this.tlstation[4].value,  // 非直线系数
             cd:this.tlstation[3].isxz==false?-1:this.tlstation[3].value,  // 长度
             bglrc:this.tlstation[1].isxz==false?-1:this.tlstation[1].value, // 百公里人次
             mzl:this.tlstation[2].isxz==false?-1:this.tlstation[2].value // 满载率
         },'json').then(res => {
-          res.result.forEach(ite=>{
+          if(res.code!==500){
+
+            res.result.forEach(ite=>{
             ite.geom=this.setData(ite.geom)
           })
            this.lineaData=res.result
            this.passCorrline(this.lineaData)
+
+          }
+          this.poloading=false
+          
         })
     },
     passCorrline(data){
@@ -196,7 +231,7 @@ export default {
 
       this.polineGroups.addOverlays(lines)
       this.MyMapper.add(this.polineGroups);
-      this.poloading=false
+      
       
     },
     setData(data){
@@ -215,11 +250,11 @@ export default {
                 <div class="info-content">
                   <div class="info">
                     <div class="info-name">${ExtData.lineName}</div>
-                    <div class="info-item">重复系数：${ExtData.cfd==null?'':ExtData.cfd}</div>
-                    <div class="info-item">百公里人次：${ExtData.bglrc==null?'':ExtData.bglrc}</div>
-                    <div class="info-item">满载率：${ExtData.mzl==null?'':ExtData.mzl}</div> 
-                    <div class="info-item">非直线系数：${ExtData.fzxxs==null?'':ExtData.fzxxs}</div> 
-                    <div class="info-item">线路长度(km)：${ExtData.cd==null?'':ExtData.cd}</div> 
+                    <div class="info-item"  style="display:${ExtData.cfd==null?'none':'block'}">重复系数：${ExtData.cfd==null?'':ExtData.cfd}</div>
+                    <div class="info-item"  style="display:${ExtData.bglrc==null?'none':'block'}">百公里人次：${ExtData.bglrc==null?'':ExtData.bglrc}</div>
+                    <div class="info-item" style="display:${ExtData.mzl==null?'none':'block'}">满载率：${ExtData.mzl==null?'':ExtData.mzl}</div> 
+                    <div class="info-item" style="display:${ExtData.fzxxs==null?'none':'block'}">非直线系数：${ExtData.fzxxs==null?'':ExtData.fzxxs}</div> 
+                    <div class="info-item" style="display:${ExtData.cd==null?'none':'block'}">线路长度(km)：${ExtData.cd==null?'':ExtData.cd}</div> 
                   </div>
                 </div>
               </div>
@@ -251,11 +286,34 @@ export default {
         }
       })
     },
+    toDetail1(name){
+      this.polineGroups._overlays.forEach(iteam=>{
+        if(iteam.getExtData().lineName==name){
+           iteam.setOptions({
+             strokeColor: "#A200FF",
+             zIndex :18,
+          })
+          let num=Math.round((iteam.getPath().length)/2)
+          
+          this.setConten(iteam.getPath()[num],iteam.getExtData())
+          this.MyMapper.setFitView(iteam,true,[120,200,60,100])
+        }else{
+          // this.$message.error({
+          //   message: '无此线路信息'
+          // });
+          iteam.setOptions({
+             strokeColor: "#35A594",
+             zIndex :10,
+          })
+        }
+      })
+    },
     toShow(row,n){
       row.isxz=!row.isxz
-      if(row.isxz){
-        this.getData()
-      }
+      // if(row.isxz){
+        
+      // }
+      this.getData()
     },
     //输入框的数值发生改变的时候
     getChangeData(row){
@@ -370,6 +428,19 @@ export default {
     width:100%;
     height:100%;
   }
+  .search-box {
+    background: rgba(12, 38, 104, 0.7);
+    box-sizing: border-box;
+    padding: vh(10) vw(16);
+    position: absolute;
+    top: vh(160);
+    left: vw(20);
+    display: flex;
+    z-index:10;
+    align-items: center;
+    color: #dae4ff;
+    
+  }
   .rightlinemsg{
     position: absolute;
     top: vh(200);
@@ -463,7 +534,7 @@ export default {
   }
   .left-box{
     position: absolute;
-    top: vh(200);
+    top: vh(260);
     left: vw(20);
     width: vw(314);
     height: vh(480);

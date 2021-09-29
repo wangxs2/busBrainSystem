@@ -50,11 +50,46 @@
     </div>
 
 
-    <div class="erach-box" id="echstation"  
+    <!-- <div class="erach-box" id="echstation"  
       v-loading="echloadsd"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      element-loading-background="rgba(0, 0, 0, 0.6)"></div>
+      element-loading-background="rgba(0, 0, 0, 0.6)"></div> -->
+
+
+   <div class="erach-box">
+
+       <div class="search-box">
+         <div class="qhbtn">
+            <div :class="isbtn==iteam.name?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
+          </div>
+
+        <div>
+          <el-select size="small"   filterable @change="todetailsa()" v-model="values" placeholder="请选择">
+            <el-option
+              v-for="(item,index) in zxtdata"
+              :key="index"
+              :label="item.name"
+              :value="item.name">
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+
+      <!-- <div class="qhbtn">
+          <div :class="isbtn==iteam.name?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
+        </div> -->
+
+      <div  id="echstation"  
+        v-loading="echloadsd"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.6)">
+
+        
+      </div>
+
+    </div>
     
 </div>
 
@@ -69,7 +104,22 @@ mixins: [MapMixin],
   },
   data() {
     return {
+          isbtn:'日',
+        typelst:[
+        {
+          name:'日',
+          id:1
+        },{
+          name:'周',
+          id:2
+        },{
+          name:'月',
+          id:3
+        }
+      ],
       lineData:[],
+      zxtdata:[],
+      values:'',
       echloadsd:false,
       mlinedata:{},
       assloading:true,
@@ -94,6 +144,22 @@ mixins: [MapMixin],
       
   },
   methods: {
+    tobtn(row){
+      this.values=''
+      this.isbtn=row.name
+      this.getkyzlData()
+
+    },
+    todetailsa(){
+      this.myChart.clear()
+      this.zxtdata.forEach(iteam=>{
+        if(iteam.name==this.values){
+         
+          this.initechart([iteam])
+        }
+      })
+
+    },
     //站点显示信息窗口
     datastation(rows){
         // this.$emit('changefun',{
@@ -105,7 +171,7 @@ mixins: [MapMixin],
         this.myChart = this.$echarts.init(document.getElementById('echstation'));
         this.myChart.setOption({
         grid:{
-            top:60,
+            top:40,
             left:80,
             right:40,
             bottom:60,
@@ -120,7 +186,7 @@ mixins: [MapMixin],
             // }
         },
         legend:{
-            top:'8%',
+            top:'1%',
             left:"center",
             textStyle:{
                 color:'#ffffff'
@@ -134,7 +200,7 @@ mixins: [MapMixin],
             fontSize:16,
             
             },
-            top:26,
+            top:6,
             left:10,
         },
         color:['#ffca40','#00a08a','#e20048','#447bd4','#2e16b1','#5ab91b','#d35f1a','#8c2eca'],
@@ -153,7 +219,7 @@ mixins: [MapMixin],
                 show:false
             },
             splitLine:{
-                show:true,
+                show:false,
                 lineStyle:{
                 color:'#194F95',
                 type:'dashed'
@@ -176,7 +242,7 @@ mixins: [MapMixin],
                 borderColor:"#194F95",
             },
             splitLine:{
-                show:true,
+                show:false,
                 lineStyle:{
                 color:'#194F95',
                 type:'dashed'
@@ -201,8 +267,11 @@ mixins: [MapMixin],
         return res;
     },
     getkyzlData(){
-        this.$fetchGet("indicator/corridor").then(res => {
-            let mdata=[],sdata=[],allStation=[],allStation1=[],zxtdata=[]
+        this.$fetchGet("indicator/corridor",{
+            type:this.isbtn
+        }).then(res => {
+          this.zxtdata=[]
+            let mdata=[],sdata=[],allStation=[],allStation1=[]
             for(let key  in res.result.mmap){
                 let obj={} 
                 obj.name=key
@@ -240,14 +309,25 @@ mixins: [MapMixin],
                  obj.type='line'
                 obj.stack='总量'
                 obj.smooth= true
+               obj.markLine= {
+                      data: [
+                          {type: 'average', name: '平均值'}
+                      ]
+                  }
                 res.result.corridorPassenger[key].forEach(iteam=>{
                     obj.data.push(Number(iteam.passengerNum))
-                    obj.dataX.push(iteam.passengerDate)
+                    // obj.dataX.push(iteam.passengerDate)
+
+                     if(this.isbtn=='周'){
+                      obj.dataX.push(iteam.passengerDate.split('-')[1]+'周')
+                    }else{
+                      obj.dataX.push(iteam.passengerDate)
+                    }
                 })
-                zxtdata.push(obj)
+                this.zxtdata.push(obj)
             }
-            console.log(zxtdata)
-            this.initechart(zxtdata)
+            // console.log(zxtdata)
+            this.initechart(this.zxtdata)
 
               setTimeout(() => {
                 this.assloading=false
@@ -479,10 +559,50 @@ mixins: [MapMixin],
     left: vw(20);
     width:vw(1880);
     height:vh(312);
+    z-index:10;
     background: url("~@/assets/image/zdbj.png");
     background-size: 100% 100%;
     margin-top:vh(8);
-    z-index: 10;
+    display:flex;
+    flex-direction: column;
+     .search-box{
+      display:flex;
+      align-items: center;
+      margin-top:vh(16);
+    }
+    #echstation{
+      flex:1;
+    }
+    .qhbtn{
+      width: vw(120);
+      height: vh(36);
+      background: rgba(26, 66, 118, 0.2);
+      border: 1px solid #27B6FF;
+      border-radius: vw(18);
+      box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 1) inset;
+      display:flex;
+      align-items: center;
+      margin-left:vw(12);
+      margin-right:vw(12);
+      .btnnow{
+        flex:1;
+        text-align:center;
+        height:100%;
+        line-height:vh(36);
+        cursor:pointer;
+      }
+      .btnnow:first-child{
+        border-top-left-radius:vw(18);
+        border-bottom-left-radius:vw(18);
+      }
+      .btnnow:last-child{
+        border-top-right-radius:vw(18);
+        border-bottom-right-radius:vw(18);
+      }
+      .activebtn{
+        background: #4578FF;
+      }
+    }
   }
 }
 </style>
