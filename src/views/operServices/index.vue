@@ -114,18 +114,18 @@ export default {
             isxz:false,
             img:require('@/assets/image/icon_red1.png')
           },
-          {
-            name:'拥堵情况',
-            value:null,
-            isxz:false,
-            img:require('@/assets/image/icon_red1.png')
-          },
-          {
-            name:'换乘压力',
-            value:null,
-            isxz:false,
-            img:require('@/assets/image/icon_red1.png')
-          }
+          // {
+          //   name:'拥堵情况',
+          //   value:null,
+          //   isxz:false,
+          //   img:require('@/assets/image/icon_red1.png')
+          // },
+          // {
+          //   name:'换乘压力',
+          //   value:null,
+          //   isxz:false,
+          //   img:require('@/assets/image/icon_red1.png')
+          // }
         ],
     }
 
@@ -537,7 +537,9 @@ export default {
     top: vh(260);
     left: vw(20);
     width: vw(314);
-    height: vh(480);
+    // height: vh(480);
+    box-sizing: border-box;
+    padding-bottom: vh(12);
     .table-box{
       flex-direction: column;
       display: flex;

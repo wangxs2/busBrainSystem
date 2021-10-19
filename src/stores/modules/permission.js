@@ -22,6 +22,7 @@ const localList = `
 /tradeManage,
 /assistPolicy,
 /lineModel,/busModel,/roadModel,/controlModel,
+/infrastructure,
 ` //本地列表 注意最后加逗号
 /**
  * 递归菜单

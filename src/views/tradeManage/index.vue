@@ -82,7 +82,7 @@
             </div>
 
           </div>
-          <div class="seting-box seting-box1" v-show="tlstation[0].isxz==true" >
+          <!-- <div class="seting-box seting-box1" v-show="tlstation[0].isxz==true" >
             
             <div class="table-box">
               <div  class="table-iteanm" v-for="(iteam,n) in tlstation1" :key="n" >
@@ -93,7 +93,7 @@
               </div>
             </div>
 
-          </div>
+          </div> -->
           <div class="tulibox" v-show="tlstation1[1].isxz==true&&tlstation[0].isxz==true">
             <div style="display:flex;align-items: center">
               <img style="margin-right:0.3vw"  src="@/assets/image/snp.png" alt="" srcset="">
@@ -506,12 +506,12 @@ export default {
         })
         switch (row.name) {
             case '站点智能化建设' :
-              if(this.massall1){
-                this.massall1.show()
-              }
-              if(this.czsnzmas){
-                 this.czsnzmas.show()
-              }
+              // if(this.massall1){
+              //   this.massall1.show()
+              // }
+              // if(this.czsnzmas){
+              //    this.czsnzmas.show()
+              // }
               
 
                if(this.xwrhGroups){

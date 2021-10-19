@@ -22,6 +22,11 @@
         value-format="yyyyMMdd"
         placeholder="选择日期">
         </el-date-picker>
+
+
+        <div class="qhbtn">
+        <div :class="isbtn==iteam.id?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
+        </div>
     
       
     </div>
@@ -38,9 +43,18 @@ export default {
   mixins: [MapMixin],
    data(){
         return {
-          value:'85路',
+        value:'85路',
         value1:'20191231',
-          
+        isbtn:0,
+        typelst:[
+            {
+                name:'本线',
+                id:0
+            },{
+                name:'换乘',
+                id:1
+            }
+            ],
         metrodata:[],
         // loca:null,
         // linkLayer:null,
@@ -79,7 +93,11 @@ export default {
     methods:{
 
 
-     
+     tobtn(row){
+        this.isbtn=row.id
+        this.getallsd()
+        
+      },
       getData(){
           this.$fetchGet("route/routeList").then(res => {
             this.metrodata=res.result;
@@ -88,13 +106,13 @@ export default {
       },
     getallsd(){
 
-         if(this.linkLayer){
-                        this.hcloca.remove(this.linkLayer)
-                        this.M_map.remove(this.labelLayer)
-                        this.hcloca.remove(this.scatterLayer1)
-                        this.hcloca.remove(this.scatterLayer2)
-                        
-                    }
+        if(this.linkLayer){
+            this.hcloca.remove(this.linkLayer)
+            this.M_map.remove(this.labelLayer)
+            this.hcloca.remove(this.scatterLayer1)
+            this.hcloca.remove(this.scatterLayer2)
+            
+        }
         this.getall()
         this.lineSearch(this.value)
 
@@ -102,7 +120,8 @@ export default {
       getall(){
           this.$fetchGet("http://180.167.126.126:3005/pos/tbl-pos-txn-nor/odList",{
             date:this.value1,
-            lineName:this.value
+            lineName:this.value,
+            type:this.isbtn
           }).then(res => {
             this.setoline(res)
             
@@ -175,7 +194,7 @@ export default {
                         this.busPolylineod = new AMap.Polyline({
                             map: this.M_map,
                             path: BusArr,
-                            strokeColor: "#ffeb3b",//线颜色
+                            strokeColor: "#00FFFF",//线颜色
                             strokeOpacity: 0.8,//线透明度
                             isOutline:true,
                             outlineColor:'white',
@@ -194,12 +213,21 @@ export default {
             map: this.M_map,
         });
 
-         this.linkLayer = new Loca.LinkLayer({
-                        zIndex: 20,
-                        opacity: 1,
-                        visible: true,
-                        zooms: [2, 22],
-                    });
+        //  this.linkLayer = new Loca.LinkLayer({
+        //                 zIndex: 20,
+        //                 opacity: 1,
+        //                 visible: true,
+        //                 zooms: [2, 22],
+        //             });
+
+      this.linkLayer = new Loca.PulseLinkLayer({
+            // loca,
+            zIndex: 10,
+            opacity: 1,
+            visible: true,
+            zooms: [2, 22],
+            depth: true,
+        });
 
                     // 文字图层
                     this.labelLayer = new AMap.LabelsLayer({
@@ -281,8 +309,6 @@ export default {
 
                     setLabelsLayer(testrt)
 
-
-
                     var list = testrt.map(e => {
                     let arr =[Number(e.destinationLngLat.split(',')[0]),Number(e.destinationLngLat.split(',')[1])]
                     return {
@@ -337,11 +363,11 @@ export default {
 
                     this.scatterLayer2.setSource(geo1);
                     this.scatterLayer2.setStyle({
-                        size: [100, 100],
+                        size: [20, 20],
                         unit: 'miter',
-                        animate: true,
-                        duration: 1000,
-                        texture: 'https://a.amap.com/Loca/static/static/orange.png',
+                        // animate: true,
+                        // duration: 1000,
+                        texture: 'https://a.amap.com/Loca/static/loca-v2/demos/images/blue.png',
                     });
                     this.hcloca.add(this.scatterLayer2);
 
@@ -373,17 +399,38 @@ export default {
                 this.linkLayer.setSource(geo2);
                 this.linkLayer.setStyle({
                     
-                    lineColors: function (index, item) {
-                        return ['#00779d'];
-                    },
-                    height: function (index, item) {
-                        return item.distance / 3;
-                    },
-                    smoothSteps: function (index, item) {
-                        return 200;
-                    },
+                    // lineColors: function (index, item) {
+                    //     return  ['#25CDEA', '#12BFBF'];
+                    // },
+                    // height: function (index, item) {
+                    //     return item.distance / 3;
+                    // },
+                    // smoothSteps: function (index, item) {
+                    //     return 200;
+                    // },
+                          unit: 'px',
+                            // dash: [40000, 0, 40000, 0],
+                            lineWidth: function () {
+                                return [2, 1];
+                            },
+                            height: function (index, feat) {
+                                return feat.distance / 3 + 10;
+                            },
+                            // altitude: 1000,
+                            // smoothSteps: 30,
+                            // speed: function (index, prop) {
+                            //     return index * 10;
+                            // },
+                            // flowLength: 100,
+                            lineColors: function (index, feat) {
+                                return ['#25CDEA','#00779d'];
+                            },
+                            // maxHeightScale: 0.3, // 弧顶位置比例
+                            headColor: 'rgb(255,228,105)',
+                            trailColor: 'rgb(255,228,105)',
                 });
                 this.hcloca.add(this.linkLayer);
+                  this.hcloca.animate.start();
 
          },
       
@@ -458,6 +505,35 @@ export default {
     align-items: center;
     color: #dae4ff;
     z-index:10;
+     .qhbtn{
+      width: vw(120);
+      height: vh(36);
+      background: rgba(26, 66, 118, 0.2);
+      border: 1px solid #27B6FF;
+      border-radius: vw(18);
+      box-shadow: 0px 0px vh(10) rgba(39, 182, 255, 1) inset;
+      display:flex;
+      align-items: center;
+      margin-left:vw(12);
+      .btnnow{
+        flex:1;
+        text-align:center;
+        height:100%;
+        line-height:vh(36);
+        cursor:pointer;
+      }
+      .btnnow:first-child{
+        border-top-left-radius:vw(18);
+        border-bottom-left-radius:vw(18);
+      }
+      .btnnow:last-child{
+        border-top-right-radius:vw(18);
+        border-bottom-right-radius:vw(18);
+      }
+      .activebtn{
+        background: #4578FF;
+      }
+    }
   }
 
  

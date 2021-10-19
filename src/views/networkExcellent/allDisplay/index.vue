@@ -117,8 +117,6 @@ export default {
       this.getData()
     },
     methods:{
-
-
       handlerBulder () {
           const html = this.$refs.fields.outerHTML
           console.log(this.$refs.fields.outerHTML)

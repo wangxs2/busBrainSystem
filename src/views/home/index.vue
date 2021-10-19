@@ -74,11 +74,11 @@
       <div class="right-home">
         <div class="left-l23 left-l4" @click="toHome(4,'MODEL')">运力计算模型
         </div>
-        <div class="left-l23 left-l5">
+        <div class="left-l23 left-l5" @click="toHome(5,'BASIC')">
           <!-- 公交测试系统 -->
+          基础设施实施布局系统
         </div>
       </div>
-        
     </div>
   </div>
 </template>
@@ -261,6 +261,8 @@ export default {
             // 180.167.126.126：3006
         }else if(name==4){
           this.$router.push("/busModel");
+        }else if(name==5){
+          this.$router.push("/infrastructure");
         }
       },500)
       

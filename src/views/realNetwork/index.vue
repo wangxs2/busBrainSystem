@@ -1960,13 +1960,19 @@ export default {
       });
 
       this.$fetchGet("gps/stationMessage").then(res => {
-        this.stadata = res.result;
+        if(res.result){
+
+
+          this.stadata = res.result;
         let noli = this.stadata.stationsInRun - this.stadata.stations;
         this.initechart1(
           this.stadata.stationsInRun,
           this.stadata.stations,
           noli
         );
+
+        }
+        
       });
 
       this.$fetchGet("gps/realAverageBusRoute").then(res => {

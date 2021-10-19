@@ -63,7 +63,7 @@ export default {
 
   methods: {
     getroaddata(){
-       this.$fetchGet("curve/often").then(res => {
+       this.$fetchGet("curve/list").then(res => {
         this.lineaData=res.result
         this.M_autoInput(this.lineaData)
         // this.pointEvent()

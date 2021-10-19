@@ -90,6 +90,8 @@ const Map = {
           "features": list,
       };
 
+      console.log(data)
+
       var geo = new Loca.GeoJSONSource({
         data: data,
       });
@@ -114,6 +116,8 @@ const Map = {
           // dashArray: [10, 5, 10, 0],
           dashArray: [10, 0, 10, 0],
       });
+
+      console.log(ll)
 
 
 

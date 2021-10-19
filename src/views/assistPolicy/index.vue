@@ -518,9 +518,9 @@ export default {
 
        })
 
-       this.$fetchGet("curve/often").then(res => {
+      //  this.$fetchGet("curve/often").then(res => {
 
-       })
+      //  })
     },
     getNoLi(){
       //非直线系数的数据
