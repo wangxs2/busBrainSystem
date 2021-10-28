@@ -40,6 +40,7 @@ const Map = {
       geocoder: null,//逆地址解析
       markers: [],
       trafficGroups: new AMap.OverlayGroup(),//拥堵路段
+      overlayopi: new AMap.OverlayGroup(),//拥堵路段
       overlayGroupthree: new AMap.OverlayGroup(),//300米的圆
       overlayGroups: new AMap.OverlayGroup(),//调整方案站点集合
       overlayGroups1: new AMap.OverlayGroup(),//车辆可视化公交车集合
@@ -1551,36 +1552,43 @@ const Map = {
 
     },
 
-    pointSearch(row, data) {
-      // Myanmation = new Anmation({
-      //   center: [row.location.lng, row.location.lat],
-      //   color: {
-      //     fillColor: "#b40100",
-      //     fillOpacity: 0.7
-      //   }
-      // });
-      // this.M_map.add(Myanmation.circleGroup)
-      let marker1 = new AMap.Marker({
-        content: `<div style='width:12px;height:12px;border-radius:50%;background:#b40100'></div> `,
-        offset: new AMap.Pixel(-6, -6),
-        extData: data,
-        zIndex: 5000,
-        cursor:'pointer',
-        position: [row.location.lng, row.location.lat],
-      });
-      marker1.on('click', e => {
-        this.$fetchGet("curve/detail", {
-          roadName: data.roadsegid
-        }).then(res => {
-          this.M_openRoad(row.location, res)
-        })
+    pointSearch(arr) {
+      arr.forEach(iteam => {
+        console.log(iteam)
+        console.log(iteam.path.length)
+        if(iteam.path.length>0){
+          console.log(iteam)
+          let marker1 = new AMap.Marker({
+            content: `<div class="marker_container">
+            <span  class="${((iteam.congestIndex>1&&iteam.congestIndex<1.5)||iteam.congestIndex==1)?'green_marker':((iteam.congestIndex<1.8&&iteam.congestIndex>1.5)||iteam.congestIndex==1.5)?'yellow_marker'
+            :((iteam.congestIndex<2&&iteam.congestIndex>1.8)||iteam.congestIndex==1.8)?'red_marker':'reds_marker'}"></span>
+            </div> `,
+            offset: new AMap.Pixel(-6, -6),
+            extData: iteam,
+            zIndex: 5000,
+            cursor:'pointer',
+            position: [iteam.centerpoint.pointX, iteam.centerpoint.pointY],
+          });
+          marker1.on('click', e => {
+            // this.S_ply(iteam)
+            this.M_getlindata(iteam)
+            this.$fetchGet("curve/detail", {
+              roadName: iteam.roadsegid
+            }).then(res => {
+              this.M_openRoad(iteam.centerpoint, res)
+            })
+  
+          })
+         
+          this.markerarr.push(marker1)
+          this.overlayGroups3.addOverlay(marker1)
+          this.M_map.add(this.overlayGroups3);
 
+        }
+       
       })
-     
-      this.markerarr.push(marker1)
-
-      this.overlayGroups3.addOverlay(marker1)
-      this.M_map.add(this.overlayGroups3);
+      
+      
 
     },
     M_searroad(name, res) {
@@ -1602,10 +1610,87 @@ const Map = {
         </div>
       </div>
     </div>`
-      this.M_openInfoWin([position.lng, position.lat], infoWin)
-      this.M_map.setZoomAndCenter(16, [position.lng, position.lat],true)
+      this.M_openInfoWin([position.lng||position.pointX, position.lat||position.pointY], infoWin)
+      this.M_map.setZoomAndCenter(16, [position.lng||position.pointX, position.lat||position.pointY],true)
       this.$store.commit('SET_LOADING', false)
 
+    },
+
+    S_ply(iteam,arrList){
+      let allploy=[]
+      if(this.overlayopi){
+        this.overlayopi.clearOverlays()
+      }
+      let colorline=((iteam.congestIndex>1&&iteam.congestIndex<1.5)||iteam.congestIndex==1)?'rgb(22, 206, 149)':((iteam.congestIndex<1.8&&iteam.congestIndex>1.5)||iteam.congestIndex==1.5)?'#ea8900'
+      :((iteam.congestIndex<2&&iteam.congestIndex>1.8)||iteam.congestIndex==1.8)?'rgb(216, 3, 4)':'rgb(143, 0, 33)'
+      if(this.saLinedata){
+        this.M_map.remove(this.saLinedata)
+      }
+      arrList.forEach(itrm=>{
+        let saLinedata = new AMap.Polyline({
+          path: itrm.deviceArr,
+          strokeColor: colorline,
+          strokeOpacity: 1,
+          strokeWeight: 4,
+          cursor: 'pointer',
+          strokeStyle: "solid",
+          zIndex: 30,
+          // map: this.M_map,
+          extData: iteam
+        })
+
+
+        allploy.push(saLinedata)
+        
+
+      })
+      this.overlayopi.addOverlays(allploy)
+      this.M_map.add(this.overlayopi);
+      // this.saLinedata = new AMap.Polyline({
+      //   path: iteam.path,
+      //   strokeColor: colorline,
+      //   strokeOpacity: 1,
+      //   strokeWeight: 4,
+      //   cursor: 'pointer',
+      //   strokeStyle: "solid",
+      //   zIndex: 30,
+      //   map: this.M_map,
+      //   extData: iteam
+      // })
+    },
+
+
+    M_getlindata(arrno){
+
+      
+
+      let list = []
+      let deviceArr = [];
+      arrno.path.map((item,index) => {
+          if(deviceArr.indexOf(item.origFid) === -1){
+              list.push({
+                  windowIdArr: item.origFid,
+                  deviceArr: []
+              });
+              deviceArr.push(item.origFid)
+          }
+      });
+      list.map(item => {
+        arrno.path.map(items => {
+              if(item.windowIdArr == items.origFid){
+              item.deviceArr.push([items.pointX,items.pointY])
+              }
+          })
+      })
+      console.log(list);
+
+      this.S_ply(arrno,list)
+
+
+     
+        
+
+    
     },
 
 

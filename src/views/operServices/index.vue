@@ -57,6 +57,11 @@
             :value="item.lineName">
           </el-option>
         </el-select>
+
+      <div class="marker_container dynamic" >
+        <span class="yellow_marker scaleHide dynamic css3delay4"></span>
+      </div>
+        
         
     
     
@@ -181,16 +186,15 @@ export default {
             fzxxs: this.tlstation[4].isxz==false?-1:this.tlstation[4].value,  // 非直线系数
             cd:this.tlstation[3].isxz==false?-1:this.tlstation[3].value,  // 长度
             bglrc:this.tlstation[1].isxz==false?-1:this.tlstation[1].value, // 百公里人次
-            mzl:this.tlstation[2].isxz==false?-1:this.tlstation[2].value // 满载率
+            mzl:this.tlstation[2].isxz==false?-1:this.tlstation[2].value,// 满载率
+            ifFilter:true
         },'json').then(res => {
           if(res.code!==500){
-
             res.result.forEach(ite=>{
             ite.geom=this.setData(ite.geom)
           })
            this.lineaData=res.result
            this.passCorrline(this.lineaData)
-
           }
           this.poloading=false
           
@@ -428,6 +432,45 @@ export default {
     width:100%;
     height:100%;
   }
+  .marker_container{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: relative;
+  }
+  .yellow_marker{
+    width: 2px;
+    height: 2px;
+    display: block;
+    background: #ffffff;
+    border-radius: 100%;
+    box-shadow:0 0 0 3px rgb(224 158 0 / 75%), 0px 0 0 6px rgb(243 152 0 / 58%);
+  }
+  
+ .yellow_marker:after{
+   content:'';
+   display:block;
+   width:2000%;
+   height: 2000%;
+   border-radius:100%;
+   background:#ea8900;
+   animation:scaleHide 3s ease 0s infinite;
+   top:-974%;
+   left:-955%;
+   position:relative;
+   z-index:-1;
+   opacity: 0;
+ }
+ @-webkit-keyframes scaleHide{0%{transform:scale(0.1,0.1);opacity:1}100%{transform:scale(1,1);opacity:.05}}
+//  .scaleHide{
+//    position: relative;
+//    margin-left: 50%;
+//    line-height: 20px;
+//    top: 50%
+//  }
+//  .css3delay4:after{
+//    animation-delay:.4s!important;
+//  }
   .search-box {
     background: rgba(12, 38, 104, 0.7);
     box-sizing: border-box;
@@ -439,7 +482,6 @@ export default {
     z-index:10;
     align-items: center;
     color: #dae4ff;
-    
   }
   .rightlinemsg{
     position: absolute;

@@ -54,12 +54,12 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             线网密度 
           </div>
-          <div style="display:flex;align-items: center;">{{objline['线网密度(建成区)']}}  
+          <div style="display:flex;align-items: center;">{{objline['线网密度(浦东新区总面积)']}}  
 
-              <el-tooltip v-if="objline['线网密度(建成区)']<3"  effect="dark" content="参考系数3" placement="right-start">
+              <el-tooltip v-if="objline['线网密度(浦东新区总面积)']<3"  effect="dark" content="参考系数3" placement="right-start">
                   <img style="margin-left:0.4vw" src="@/assets/image/xjt.png" /> 
               </el-tooltip>  
-              <el-tooltip v-if="objline['线网密度(建成区)']>3"  effect="dark" content="参考系数3" placement="right-start">
+              <el-tooltip v-if="objline['线网密度(浦东新区总面积)']>3"  effect="dark" content="参考系数3" placement="right-start">
                   <img  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
               </el-tooltip>  
           </div>

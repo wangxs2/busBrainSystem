@@ -140,6 +140,14 @@ export default {
     tobtn(row){
       console.log(row)
       this.isbtn=row.name
+      if(row.name==300){
+         this.lcalzd.remove(this.plfive);
+         this.lcalzd.add(this.plthree);
+      }else{
+         this.lcalzd.remove(this.plthree);
+         this.lcalzd.add(this.plfive);
+      }
+      
 
       // this.threeCircle(this.thfivearr,row.name)
       // this.$emit('changefun',{
@@ -202,11 +210,14 @@ export default {
     },
     allpoint(){
       if(this.point==1){
-        this.massall.hide()
+        // this.massall.hide()
+        this.lcalzd.remove(this.layerzd);
         this.point=2
       }else{
         this.point=1
-        this.massall.show()
+        // this.massall.show()
+        this.lcalzd.add(this.layerzd);
+
       }
      
     },
@@ -217,6 +228,7 @@ export default {
       }else{
         this.isheat=1
         this.heatmap.hide()
+
       }
     },
     getAreaLine(){
@@ -244,7 +256,10 @@ export default {
           // this.pointAll3(res.result['站点的详细属性'])
           this.maplocalMain(res.result['站点的详细属性'])
           this.localheat(res.result['站点的详细属性'])
+          this.radiusms(res.result['站点的详细属性'])
+          this.radiusmsfive(res.result['站点的详细属性'])
           this.heatmap.hide()
+          this.lcalzd.remove(this.plfive);
           // arr.forEach(iteam=>{
           //   var heatOptionObj = {};
           //   heatOptionObj.lng = iteam.longitude;

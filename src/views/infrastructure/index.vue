@@ -151,7 +151,8 @@
 </template>
 
 <script>
-// import gaosudata from './d.json'
+import gaosudata from './eoad.json'
+import "./ecstyle.js";//下载自定义主题
 export default {
   name: '',
   data(){
@@ -244,7 +245,7 @@ export default {
     
   },
   created() {
-    // this.testdata=gaosudata
+    this.testdata=gaosudata
     this.getTjstation()
     this.getBasesta()
     this.getStation()
@@ -306,6 +307,7 @@ export default {
             break;
           case "途径站":
            this.getTjstation1()
+            this.gettjmap1()
             break;
           default:
       }
@@ -335,12 +337,8 @@ export default {
        this.MyMapper.on('click', (e) => {
         this.M_InfoWindow.close()
       });
-
-      
-      //  this.getlindata()
-     
+       this.getlindata()
         // this.setline()
-     
     },
     closedia(){
       this.page=1
@@ -355,6 +353,7 @@ export default {
             this.getBasesta1()
             break;
           case "首末站":
+
             this.getStation1()
             break;
           case "途径站":
@@ -412,19 +411,11 @@ export default {
       })
 
       this.smap.forEach((iteam,inna)=>{
-        // let obj={
-        //   path:[],
-        //   name:inna
-        // }
-        //  obj.name=inna+'iop'
         let arr=[]
         iteam.forEach(iam=>{
           arr.push([iam.POINT_X,iam.POINT_Y])
         })
          this.testdata1.push(arr)
-        
-
-        
       })
 
       // console.log(this.testdata1)
@@ -490,7 +481,6 @@ export default {
           this.tjzData=res.result.list
         }
       })
-
     },
     getTjstation1(){
       this.$fetchGet("/config-way-station/way",
@@ -503,7 +493,6 @@ export default {
           this.total=res.result.total
         }
       })
-
     },
     //场站和枢纽站
     getBasesta(){
@@ -578,7 +567,34 @@ export default {
 
     },
     gettjmap1(){
-      this.$fetchGet("way/map").then(res =>{
+      this.$fetchGet("config-way-station/map").then(res =>{
+         let arr1=[],arr2=[],arr3=[]
+        for (let key in res.result['区域']) {
+            
+            let obj={
+              name:key,
+              value:res.result['区域'][key]
+            }
+            arr1.push(obj)
+        }
+         for (let key in res.result['环区']) {
+            
+            let obj={
+              name:key,
+              value:res.result['环区'][key]
+            }
+            arr2.push(obj)
+        }
+         for (let key in res.result['设备类型']) {
+            
+            let obj={
+              name:key,
+              value:res.result['设备类型'][key]
+            }
+            arr3.push(obj)
+        }
+
+        this.initechart1(arr1,arr2,arr3)
 
       })
 
@@ -635,7 +651,7 @@ export default {
       console.log(ll)
     },
     initechart(arr1,arr2,arr3){
-      this.myChart1 = this.$echarts.init(document.getElementById("echarebox1"));
+      this.myChart1 = this.$echarts.init(document.getElementById("echarebox1"),'customed');
       this.myChart1.setOption({
           title: {
             text: '街镇统计',
@@ -682,7 +698,7 @@ export default {
             }
           ]
       });
-      this.myChart2 = this.$echarts.init(document.getElementById("echarebox2"));
+      this.myChart2 = this.$echarts.init(document.getElementById("echarebox2"),'customed');
       this.myChart2.setOption({
           title: {
             text: '现场管理主体统计',
@@ -734,7 +750,7 @@ export default {
             }
           ]
       });
-      this.myChart3 = this.$echarts.init(document.getElementById("echarebox3"));
+      this.myChart3 = this.$echarts.init(document.getElementById("echarebox3"),'customed');
       this.myChart3.setOption({
           title: {
             text: '责任所属统计',
@@ -790,7 +806,7 @@ export default {
       });
 
     },
-    initechart1(){
+    initechart1(arr1,arr2,arr3){
       this.myChart4 = this.$echarts.init(document.getElementById("echarebox4"));
       this.myChart4.setOption({
           title: {
@@ -804,6 +820,7 @@ export default {
               fontSize:'12'
             }
           },
+          color: ['#0263FF', '#F5256A'],
           tooltip: {
             trigger: 'item'
           },
@@ -816,16 +833,13 @@ export default {
           },
           series: [
             {
-              name: 'Access From',
+              name: '区域',
               type: 'pie',
               radius: '50%',
-              data: [
-                { value: 1048, name: 'Search Engine' },
-                { value: 735, name: 'Direct' },
-                { value: 580, name: 'Email' },
-                { value: 484, name: 'Union Ads' },
-                { value: 300, name: 'Video Ads' }
-              ],
+              data:arr1,
+               label: {
+                            color: "rgba(255, 255, 255, 1)"
+                          },
               emphasis: {
                 itemStyle: {
                   shadowBlur: 10,
@@ -849,6 +863,7 @@ export default {
               fontSize:'12'
             }
           },
+          color: ['#00FFFF', '#4578FF','#00A08A','#2E16B1'],
           tooltip: {
             trigger: 'item'
           },
@@ -861,16 +876,13 @@ export default {
           },
           series: [
             {
-              name: 'Access From',
+              name: '环域',
               type: 'pie',
               radius: '50%',
-              data: [
-                { value: 1048, name: 'Search Engine' },
-                { value: 735, name: 'Direct' },
-                { value: 580, name: 'Email' },
-                { value: 484, name: 'Union Ads' },
-                { value: 300, name: 'Video Ads' }
-              ],
+              data: arr2,
+               label: {
+                            color: "rgba(255, 255, 255, 1)"
+                          },
               emphasis: {
                 itemStyle: {
                   shadowBlur: 10,
@@ -881,13 +893,13 @@ export default {
             }
           ]
       });
-      this.myChart6 = this.$echarts.init(document.getElementById("echarebox6"));
+      this.myChart6 = this.$echarts.init(document.getElementById("echarebox6"),'customed');
       this.myChart6.setOption({
           title: {
             text: '设备类型统计',
             // subtext: 'Fake Data',
              bottom: '0',
-            left: 'center',
+            left: 'right',
             textStyle: {
               color: "#D9EFFF",
               fontWeight:'normal',
@@ -898,24 +910,27 @@ export default {
             trigger: 'item'
           },
           legend: {
+             type: 'scroll',
             orient: 'vertical',
-            left: 'left',
+           left: 'left',
+             pageIconColor:'#ffffff',
+             pageTextStyle:{
+               color:'#ffffff'
+             },
+               pageIconSize: [10, 10],
             textStyle: {
               color: "#D9EFFF",
             }
           },
           series: [
             {
-              name: 'Access From',
+              name: '设备类型',
               type: 'pie',
               radius: '50%',
-              data: [
-                { value: 1048, name: 'Search Engine' },
-                { value: 735, name: 'Direct' },
-                { value: 580, name: 'Email' },
-                { value: 484, name: 'Union Ads' },
-                { value: 300, name: 'Video Ads' }
-              ],
+              data:arr3,
+               label: {
+                            color: "rgba(255, 255, 255, 1)"
+                          },
               emphasis: {
                 itemStyle: {
                   shadowBlur: 10,
@@ -1012,10 +1027,10 @@ export default {
                     <div class="info-name">地址：${res.address}</div>
                     <div class="info-name">线路：${res.route}</div> 
                     <div class="info-name">现场管理主体：${res.manageEntity}</div> 
-                    <div class="info-name">责任所属：${res.responsibility}</div> 
-                    <div class="info-name">占地面积：${res.areaCovered}</div> 
-                    <div class="info-name">管理用房面积：${res.areaManage}</div> 
-                    <div class="info-name">备注：${res.other}</div> 
+                    <div class="info-name">责任所属：${res.responsibility||'--'}</div> 
+                    <div class="info-name">占地面积：${res.areaCovered||'--'}</div> 
+                    <div class="info-name">管理用房面积：${res.areaManage||'--'}</div> 
+                    <div class="info-name">备注：${res.other||'--'}</div> 
                   </div>
                 </div>
               </div>

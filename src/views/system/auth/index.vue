@@ -237,6 +237,15 @@
             </div>
           </el-col>
         </el-row>
+        <el-form-item label="所属系统" prop="code">
+          <el-select v-model="authForm.code">
+            <el-option label="公交线网辅助决策系统" value="LINE_DECIDE"></el-option>
+            <el-option label="公交大数据观测系统" value="OBSERVATION"></el-option>
+            <!-- <el-option label="公交行业数据管理子系统" value="1"></el-option> -->
+            <el-option label="运力计算模型" value="MODEL"></el-option>
+            <el-option label="基础设施实施布局系统" value="BASIC"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="描述" prop="descr">
           <el-input
             type="textarea"
@@ -245,6 +254,7 @@
             v-model="authForm.descr"
           ></el-input>
         </el-form-item>
+      
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogform = false">取 消</el-button>
@@ -321,6 +331,9 @@ export default {
         descr: [
           { required: true, validator: checkid, trigger: "blur" },
           { min: 1, max: 100, message: '长度在 1 到 100个字符', trigger: 'blur' }
+        ],
+        code:[
+          { required: true, validator: checkid, trigger: "change" }
         ],
       },
       FtypeData: ["", "菜单", "", "方法"] //格式资源类型数据

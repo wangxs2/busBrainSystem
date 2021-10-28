@@ -55,6 +55,7 @@ export default {
   beforeCreate() {},
   created() {
      this.getroaddata()
+    //  this.getRoadline()
   },
   mounted() {
     this.M_initMap('roaddistr')
@@ -64,12 +65,32 @@ export default {
   methods: {
     getroaddata(){
        this.$fetchGet("curve/list").then(res => {
-        this.lineaData=res.result
-        this.M_autoInput(this.lineaData)
-        // this.pointEvent()
+        
+        res.result.forEach(iteam=>{
+          iteam.path=[]
+          iteam.centerpoint={}
+          this.$fetchGet("config-road-paint/list",{
+              name:iteam.roadsegid
+            }).then(resro => {
+              iteam.centerpoint=resro.result[parseInt(resro.result.length/2)]
+              iteam.path=resro.result
+              // resro.result.forEach(item=>{
+              //   iteam.path.push([item.pointX,item.pointY])
+              // })
+              
+            
+            })
+            this.lineaData.push(iteam)
+        })
+          console.log(this.lineaData)
+          
+        // this.lineaData=res.result
+        
+   
          setTimeout(() => {
           this.assloading=false
-        }, 1000);
+          this.pointSearch(this.lineaData)
+        }, 2000);
         
       })
 
@@ -93,9 +114,25 @@ export default {
      this.M_addGroupEvent((ExtData,position)=>{
      })
     },
+
+    getRoadline(){
+         this.$fetchGet("config-road-paint/list",{
+              name:''
+            }).then(resro => {
+
+            })
+      
+    },
     toDetail(row,n){
       this.nowindex=n
       //  this.$store.commit('SET_LOADING',true)
+      // this.S_ply(row)
+      this.M_getlindata(row)
+       this.$fetchGet("config-road-paint/list",{
+          name:row.roadsegid
+        }).then(res => {
+          // iteam.path.push()
+        })
        this.$fetchGet("curve/detail",{
          roadName:row.roadsegid
        }).then(res => {
@@ -109,6 +146,62 @@ export default {
 </script>
 <style lang="scss">
 .roadDistribution-box{
+  .marker_container{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: relative;
+  }
+ .red_marker,.green_marker,.yellow_marker,.reds_marker{
+    width: 2px;
+    height: 2px;
+    display: block;
+    background: #ffffff;
+    border-radius: 100%;
+    
+  }
+  .red_marker{
+    box-shadow:0 0 0 3px rgb(216 3 4 / 75%), 0px 0 0 6px rgb(216 3 4 / 58%);
+  }
+  .green_marker{
+    box-shadow:0 0 0 3px rgb(22 206 149 / 75%), 0px 0 0 6px rgb(22 206 149 / 58%);
+  }
+  .yellow_marker{
+    box-shadow:0 0 0 3px rgb(224 158 0 / 75%), 0px 0 0 6px rgb(243 152 0 / 58%);
+  }
+  .reds_marker{
+    box-shadow:0 0 0 3px rgb(143 0 33 / 75%), 0px 0 0 6px rgb(143 0 33 / 58%);
+  }
+  
+ .red_marker:after,.green_marker:after,.yellow_marker:after,.reds_marker:after{
+   content:'';
+   display:block;
+   width:2000%;
+   height: 2000%;
+   border-radius:100%;
+  
+   animation:scaleHide 3s ease 0s infinite;
+   top:-974%;
+   left:-955%;
+   position:relative;
+   z-index:-1;
+   opacity: 0;
+ }
+.yellow_marker:after{
+  background:#ea8900;
+}
+
+.red_marker:after{
+   background: rgb(216, 3, 4);
+}
+.green_marker:after{
+  background: rgb(22, 206, 149);
+}
+.reds_marker:after{
+   background: rgb(143, 0, 33);
+}
+  
+ @-webkit-keyframes scaleHide{0%{transform:scale(0.1,0.1);opacity:1}100%{transform:scale(1,1);opacity:.05}}
  .info-win {
       padding-right: vw(20);
       // height: vw(110);

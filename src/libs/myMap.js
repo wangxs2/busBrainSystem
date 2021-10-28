@@ -18,6 +18,8 @@ const Map = {
       M_InfoWindow: null,
       polygonLine:null,//行政区域的范围
       massall1: null,
+      plfive:null,
+      plthree:null,
       kyLineOver:new AMap.OverlayGroup(),//客运走廊的线
       colors:{
         '1-2':"#34b000",
@@ -327,7 +329,7 @@ const Map = {
           data: data,
       });
       this.layerzd = new Loca.IconLayer({
-          zIndex: 10,
+          zIndex: 60,
           opacity: 1,
       });
       this.layerzd.setSource(geo);
@@ -424,6 +426,102 @@ const Map = {
 
 
   },
+  //300米和500米的覆盖面积
+  radiusms(datapoint){
+
+    
+    let _events = datapoint;
+    
+      var list = _events.map(e => {
+          let arr =e.lnglat
+          return {
+              "type": "Feature",
+              "properties": {
+                  rawData: e
+              },
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": arr
+              }
+          }
+      })
+
+      var data = {
+          "type": "FeatureCollection",
+          "features": list,
+      };
+
+      // 拾取测试
+
+      let geo = new Loca.GeoJSONSource({
+          data: data,
+      });
+
+    this.plthree = window.pl = new Loca.PointLayer({
+        zIndex: 10,
+        blend: 'lighter' //lighter normal
+    });
+
+    this.plthree.setSource(geo);
+    this.plthree.setStyle({
+        radius: 300,
+        color: 'rgba(26, 66, 118, 0.6)',
+        borderWidth: 0,
+        blurRadius: -1,
+        unit: 'meter',
+    });
+    this.lcalzd.add(this.plthree);
+
+  },
+   //300米和500米的覆盖面积
+   radiusmsfive(datapoint){
+
+    
+    let _events = datapoint;
+    
+      var list = _events.map(e => {
+          let arr =e.lnglat
+          return {
+              "type": "Feature",
+              "properties": {
+                  rawData: e
+              },
+              "geometry": {
+                  "type": "Point",
+                  "coordinates": arr
+              }
+          }
+      })
+
+      var data = {
+          "type": "FeatureCollection",
+          "features": list,
+      };
+
+      // 拾取测试
+
+      let geo = new Loca.GeoJSONSource({
+          data: data,
+      });
+
+    this.plfive = window.pl = new Loca.PointLayer({
+        zIndex: 10,
+        blend: 'lighter' //lighter normal
+    });
+
+    this.plfive.setSource(geo);
+    this.plfive.setStyle({
+        radius: 500,
+        color: 'rgba(26, 66, 118, 0.6)',
+        borderWidth: 0,
+        blurRadius: -1,
+        unit: 'meter',
+    });
+    this.lcalzd.add(this.plfive);
+
+  },
+
+
 
   setHeatemap(val){
 

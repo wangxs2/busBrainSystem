@@ -17,7 +17,7 @@ const _import = require('@/router/_import_' + process.env.NODE_ENV)
 const localList = `
 ,/errorPage,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/passengerCorridor,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
 /passengerAnalysis,/passengerAnalysis/linePassenger,/passengerAnalysis/sectionPassenger,/passengerAnalysis/stationPassenger,/passengerAnalysis/regionPassenger,
-/networkExcellent,/networkExcellent/busflowod,/networkExcellent/annualPlan,/networkExcellent/allDisplay,/networkExcellent/adjustmentLine,/operServices,
+/networkExcellent,/networkExcellent/busflowod,/networkExcellent/annualPlan,/networkExcellent/allDisplay,/networkExcellent/adjustmentLine,/networkExcellent/routeEvaluate,/networkExcellent/thimgEvaluate,/operServices,
 /realNetwork,
 /tradeManage,
 /assistPolicy,

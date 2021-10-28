@@ -44,7 +44,7 @@ export default {
    data(){
         return {
         value:'85路',
-        value1:'20191231',
+        value1:'20200801',
         isbtn:0,
         typelst:[
             {
