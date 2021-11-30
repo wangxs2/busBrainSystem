@@ -17,12 +17,12 @@ const _import = require('@/router/_import_' + process.env.NODE_ENV)
 const localList = `
 ,/errorPage,/system,/system/roles,/system/orgs,/system/users,/system/auth,/lineCharacteristics,/lineCharacteristics/passengerCorridor,/lineCharacteristics/roadDistribution,/lineCharacteristics/publicTransport,/lineCharacteristics/busStop,/lineCharacteristics/busLane,
 /passengerAnalysis,/passengerAnalysis/linePassenger,/passengerAnalysis/sectionPassenger,/passengerAnalysis/stationPassenger,/passengerAnalysis/regionPassenger,
-/networkExcellent,/networkExcellent/busflowod,/networkExcellent/annualPlan,/networkExcellent/allDisplay,/networkExcellent/adjustmentLine,/networkExcellent/routeEvaluate,/networkExcellent/thimgEvaluate,/operServices,
+/networkExcellent,/networkExcellent/busflowod,/networkExcellent/annualPlan,/networkExcellent/allDisplay,/networkExcellent/adjustmentLine,/networkExcellent/routeEvaluate,/networkExcellent/thimgEvaluate,/networkExcellent/optimization,/operServices,
 /realNetwork,
 /tradeManage,
 /assistPolicy,
 /lineModel,/busModel,/roadModel,/controlModel,
-/infrastructure,
+/infrastructure,/infrastructure/siteFacilities,/infrastructure/addedLine,/infrastructure/amodifyLine,/infrastructure/cancelLine,/infrastructure/plateLine,
 ` //本地列表 注意最后加逗号
 /**
  * 递归菜单

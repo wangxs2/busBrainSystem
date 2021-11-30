@@ -84,8 +84,8 @@
           >{{item.name}}</div>
         </div>
         <div class="imgtit">
-          <img style="margin-right:0.4vw" src="@/assets/image/download.png" />
-          下载
+          <!-- <img style="margin-right:0.4vw" src="@/assets/image/download.png" />
+          下载 -->
         </div>
       </div>
       <div class="bttit">
@@ -94,7 +94,7 @@
         <div>线长(公里)</div>
       </div>
       <div class="tablbox">
-        <div class="bttit bttit1" v-for="(item,n) in lineaData" :key="n">
+        <div :class="iscline==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="hzline(item,n)" v-for="(item,n) in lineaData" :key="n">
           <div>{{n+1}}</div>
           <div>{{item.routeName}}</div>
           <div>{{item.lineLength}}</div>
@@ -131,6 +131,7 @@ export default {
   data() {
     return {
       lloading:true,
+      iscline:-1,
       lisData: [
         {
           name: "最长线路",
@@ -168,6 +169,11 @@ export default {
   },
 
   methods: {
+    hzline(row,index){
+      this.iscline=index
+      this.gjxlwmsg(row)
+
+    },
     tomeay(row) {
       this.islist = row.id;
       this.lineaData=this.lineaData.reverse()
@@ -225,7 +231,6 @@ export default {
             lastArr.push(opl)
           })
         })
-        console.log(lastArr)
         this.initLineAllbus(lastArr)
         // this.pathSimplifierIns.setData(lastArr)
         // this.pathSimplifierIns.show()
@@ -384,6 +389,12 @@ export default {
     }
     .bttit1:hover {
       background: rgba(93, 137, 255, 0.1);
+      color:#2968E8;
+      box-shadow: 0px 0px vh(6) rgba(69, 120, 255, 0.6) inset;
+    }
+    .bttit2{
+      background: rgba(93, 137, 255, 0.1);
+      color:#2968E8;
       box-shadow: 0px 0px vh(6) rgba(69, 120, 255, 0.6) inset;
     }
     .tablbox {

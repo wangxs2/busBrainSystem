@@ -41,6 +41,7 @@
 </template>
 <script>
 import MapMixin from '../../networkExcellent/networkMap'
+import ymdta from './ym.js'
 export default {
   mixins: [MapMixin],
   components: {
@@ -55,6 +56,10 @@ export default {
   beforeCreate() {},
   created() {
      this.getroaddata()
+    //  console.log(ymdta)
+    //  let arrop=ymdta.data1.concat(ymdta.data2,ymdta.data3,ymdta.data4,ymdta.data5,ymdta.data6,ymdta.data7,ymdta.data8,ymdta.data9)
+    //  console.log(arrop)
+    //  console.info(JSON.stringify(arrop).replace(/,/g, ",\n"));
     //  this.getRoadline()
   },
   mounted() {
@@ -65,28 +70,20 @@ export default {
   methods: {
     getroaddata(){
        this.$fetchGet("curve/list").then(res => {
-        
         res.result.forEach(iteam=>{
           iteam.path=[]
           iteam.centerpoint={}
           this.$fetchGet("config-road-paint/list",{
               name:iteam.roadsegid
             }).then(resro => {
-              iteam.centerpoint=resro.result[parseInt(resro.result.length/2)]
-              iteam.path=resro.result
-              // resro.result.forEach(item=>{
-              //   iteam.path.push([item.pointX,item.pointY])
-              // })
-              
-            
+              if(resro.result&&resro.result.length>0){
+                iteam.centerpoint=resro.result[parseInt(resro.result.length/2)]
+                iteam.path=resro.result
+              }
             })
             this.lineaData.push(iteam)
         })
           console.log(this.lineaData)
-          
-        // this.lineaData=res.result
-        
-   
          setTimeout(() => {
           this.assloading=false
           this.pointSearch(this.lineaData)
@@ -97,17 +94,16 @@ export default {
     },
     pointEvent() {
       this.M_addGroupEvent((str,position) => {
-        // console.log(str)
-        //  this.$fetchGet("curve/detail", {
-        //   roadName: str.roadsegid
-        // }).then(res => {
-        //   this.M_openRoad(position, res)
-        // })
-         this.$fetchGet("curve/detail",{
-            roadName:str.roadsegid
-          }).then(res => {
-            this.M_searroad(str.roadsegid,res)
-          })
+
+         let info=((str.congestIndex>1&&str.congestIndex<1.5)||str.congestIndex==1)?'双向畅通':((str.congestIndex<1.8&&str.congestIndex>1.5)||str.congestIndex==1.5)?'行驶缓慢'
+            :((str.congestIndex<2&&str.congestIndex>1.8)||str.congestIndex==1.8)?'拥堵':'严重拥堵'
+
+         this.M_searroad(str.roadsegid,info)
+        //  this.$fetchGet("curve/detail",{
+        //     roadName:str.roadsegid
+        //   }).then(res => {
+        //     this.M_searroad(str.roadsegid,res)
+        //   })
       });
   },
    getLocation(){
@@ -128,16 +124,21 @@ export default {
       //  this.$store.commit('SET_LOADING',true)
       // this.S_ply(row)
       this.M_getlindata(row)
-       this.$fetchGet("config-road-paint/list",{
-          name:row.roadsegid
-        }).then(res => {
-          // iteam.path.push()
-        })
-       this.$fetchGet("curve/detail",{
-         roadName:row.roadsegid
-       }).then(res => {
-         this.M_searroad(row.roadsegid,res)
-       })
+      //  this.$fetchGet("config-road-paint/list",{
+      //     name:row.roadsegid
+      //   }).then(res => {
+          
+      //   })
+        let info=((row.congestIndex>1&&row.congestIndex<1.5)||row.congestIndex==1)?'双向畅通':((row.congestIndex<1.8&&row.congestIndex>1.5)||row.congestIndex==1.5)?'行驶缓慢'
+            :((row.congestIndex<2&&row.congestIndex>1.8)||row.congestIndex==1.8)?'拥堵':'严重拥堵'
+
+         this.M_searroad(row.roadsegid,info)
+
+      //  this.$fetchGet("curve/detail",{
+      //    roadName:row.roadsegid
+      //  }).then(res => {
+      //    this.M_searroad(row.roadsegid,res)
+      //  })
 
     },
 

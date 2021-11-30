@@ -168,23 +168,23 @@
     <div class="right-box">
       <div class="titbox" style="margin-bottom:8px">满载率</div>
       <div class="right-svg">
-        <div class="node-one">
+        <div class="node-one" v-if="mlldata[0]!==undefined">
             <el-progress type="circle" color="#E1453E" :width="120" stroke-linecap="butt" :stroke-width="16" :percentage="mlldata[0].mzl"></el-progress>
             <div class="btfon btfon6">
               <div  class="btfon1 btfon3">1</div>
              <div style="flex:1;text-align:center"> {{mlldata[0].xlmc}}</div>
             </div>
         </div>
-        <div class="two-one">
-           <div>
-              <el-progress type="circle" color="#E19E3E" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="mlldata[1].mzl"></el-progress>
+        <div class="two-one" >
+           <div v-if="mlldata[1]!==undefined" >
+              <el-progress  type="circle" color="#E19E3E" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="mlldata[1].mzl"></el-progress>
               <div class="btfon btfon7">
                 <div  class="btfon1 btfon4">2</div>
                 <div style="flex:1;text-align:center"> {{mlldata[1].xlmc}}</div>
               </div>
            </div>
-           <div>
-               <el-progress type="circle" color="#38CE97" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="mlldata[2].mzl"></el-progress>
+           <div v-if="mlldata[2]!==undefined">
+               <el-progress type="circle"   color="#38CE97" :width="96" stroke-linecap="butt" :stroke-width="16" :percentage="mlldata[2].mzl"></el-progress>
               <div class="btfon btfon8">
                 <div  class="btfon1 btfon5">3</div>
                 <div style="flex:1;text-align:center"> {{mlldata[2].xlmc}}</div>
@@ -482,7 +482,7 @@ export default {
     },
     //获取换乘压力的明细
     gethcData(){
-       this.$fetchGet("http://180.167.126.126:3005/pos/transfer/avg").then(res => {
+       this.$fetchGet("transfer/avg").then(res => {
          let echobjd={
            arr1:[],
            arr2:[],
@@ -713,9 +713,9 @@ export default {
                       name: '',
                       type: 'pie',
                       radius: ['60%', '75%'],
-                       center: ["33%", "50%"],
+                       center: ["33%", "60%"],
                       color: ['#00FFFF', '#4578FF', '#F5256A','#5AB91B','#FFCA40','#D35F1A','#00A08A'],
-                      avoidLabelOverlap: false,
+                      avoidLabelOverlap: true,
                       label:{
                         color:'#ffffff',
                         formatter:'{d}%'
@@ -723,8 +723,8 @@ export default {
                     },
                     labelLine: {
                         show: true,
-                        length:0,
-                        length2:0,
+                        // length:0,
+                        // length2:0,
                     },
                       hoverAnimation: false,
                     legendHoverLink: false,
@@ -784,6 +784,7 @@ export default {
               this.M_autoInput(this.lineaData1)
                 break;
             case '满载率' :
+              console.log(this.mlldata)
                 this.M_BUSLINE(this.mlldata,17)
                 break;
             case '超长线路' :
@@ -901,6 +902,62 @@ export default {
 }
 </script>
 <style lang="scss">
+.marker_container{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: relative;
+  }
+ .red_marker,.green_marker,.yellow_marker,.reds_marker{
+    width: 2px;
+    height: 2px;
+    display: block;
+    background: #ffffff;
+    border-radius: 100%;
+    
+  }
+  .red_marker{
+    box-shadow:0 0 0 3px rgb(216 3 4 / 75%), 0px 0 0 6px rgb(216 3 4 / 58%);
+  }
+  .green_marker{
+    box-shadow:0 0 0 3px rgb(22 206 149 / 75%), 0px 0 0 6px rgb(22 206 149 / 58%);
+  }
+  .yellow_marker{
+    box-shadow:0 0 0 3px rgb(224 158 0 / 75%), 0px 0 0 6px rgb(243 152 0 / 58%);
+  }
+  .reds_marker{
+    box-shadow:0 0 0 3px rgb(143 0 33 / 75%), 0px 0 0 6px rgb(143 0 33 / 58%);
+  }
+  
+ .red_marker:after,.green_marker:after,.yellow_marker:after,.reds_marker:after{
+   content:'';
+   display:block;
+   width:2000%;
+   height: 2000%;
+   border-radius:100%;
+  
+   animation:scaleHide 3s ease 0s infinite;
+   top:-974%;
+   left:-955%;
+   position:relative;
+   z-index:-1;
+   opacity: 0;
+ }
+.yellow_marker:after{
+  background:#ea8900;
+}
+
+.red_marker:after{
+   background: rgb(216, 3, 4);
+}
+.green_marker:after{
+  background: rgb(22, 206, 149);
+}
+.reds_marker:after{
+   background: rgb(143, 0, 33);
+}
+  
+ @-webkit-keyframes scaleHide{0%{transform:scale(0.1,0.1);opacity:1}100%{transform:scale(1,1);opacity:.05}}
 .el-progress__text{
   color:#ffffff;
 }

@@ -16,7 +16,7 @@
         <div>里程(km)</div>
       </div>
       <div class="tablbox">
-        <div class="bttit bttit1" @click="todetail(item)" v-for="(item,n) in lineData" :key="n">
+        <div :class="iszyd==n?'bttit bttit1 bttit2':'bttit bttit1'" @click="todetail(item,n)" v-for="(item,n) in lineData" :key="n">
           <div style="text-align:left;padding-left:1vw">{{item.name}}</div>
           <div>{{item.length}}</div>
         </div>
@@ -72,6 +72,7 @@ export default {
     return {
       echloadsd:false,
       values:'',
+      iszyd:-1,
       lineData:[],
       zxtdata:[],
       isbtn:'日',
@@ -116,7 +117,8 @@ export default {
       this.getData()
 
     },
-    todetail(row){
+    todetail(row,index){
+      this.iszyd=index
       this.myChart.clear()
       this.S_setbulne(row)
       this.zxtdata.forEach(iteam=>{
@@ -125,6 +127,22 @@ export default {
           this.initechart([iteam])
         }
       })
+
+
+       this.datalin.forEach(iteam=>{
+            if(iteam.getExtData().name==row.name){
+               iteam.setOptions({
+                 strokeColor: "#A200FF",
+                 zIndex :18,
+              })
+            
+            }else{
+              iteam.setOptions({
+                 strokeColor: "#BE7322",
+                 zIndex :10,
+              })
+            }
+          })
 
     },
     todetailsa(){
@@ -400,6 +418,12 @@ export default {
     }
     .bttit1:hover {
       background: rgba(93, 137, 255, 0.2);
+      color:#2968E8;
+      box-shadow: 0px 0px vh(6) rgba(69, 120, 255, 0.6) inset;
+    }
+    .bttit2{
+      background: rgba(93, 137, 255, 0.2);
+      color:#2968E8;
       box-shadow: 0px 0px vh(6) rgba(69, 120, 255, 0.6) inset;
     }
     .tablbox {

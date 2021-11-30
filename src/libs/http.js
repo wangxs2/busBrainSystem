@@ -12,7 +12,7 @@ import {
 export const Axios = axios.create({
   baseURL:'/busbrain',
   // baseURL: "/api2db/",
-  timeout: 30000,
+  timeout: 100000,
   withCredentials: true // 是否允许带cookie这些
 });
 
@@ -47,9 +47,9 @@ Axios.interceptors.response.use(
           Message.error({
             message: '登录过期，请重新登录'
           });
-          router.replace({
-            path: '/login?flag=true'
-          })
+          // router.replace({
+          //   path: '/login?flag=true'
+          // })
           break;
         // case 500:
         //   Message.error({

@@ -55,42 +55,42 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             与轨交重复站数
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.gjcf}}站</div>
+          <div style="display:flex;align-items: center;">{{objleft.gjcf||'--'}}站</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             公交线路重复度 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.cfd}}</div>
+          <div style="display:flex;align-items: center;">{{objleft.cfd||'--'}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             线路长度 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.cd}}km</div>
+          <div style="display:flex;align-items: center;">{{objleft.cd||'--'}}km</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             线路非直线系数 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.fzxxs}}</div>
+          <div style="display:flex;align-items: center;">{{objleft.fzxxs||'--'}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             线路百公里人次 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.bglrc}}</div>
+          <div style="display:flex;align-items: center;">{{objleft.bglrc||'--'}}</div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             高峰满载率 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.mzl}}</div>
+          <div style="display:flex;align-items: center;">{{objleft.mzl||'--'}}</div>
         </div>
       </div>
     </div>
@@ -207,7 +207,7 @@ export default {
     initMap(){
        this.MyMapper=new AMap.Map('operMap', {
         zoom: 10, // 地图级别
-        center: this.mapCenter, // 中心点
+        center: [121.460752,31.011182], // 中心点
         // resizeEnable: true, //监控地图容器尺寸变化
         mapStyle: 'amap://styles/d67717253a691e523956e9482ca38f1e',
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
@@ -267,7 +267,7 @@ export default {
           extData :iteam
         })
         
-        kyLinedata.on('mouseover',(e)=>{
+        kyLinedata.on('click',(e)=>{
           e.target.setOptions({
              strokeColor: "#A200FF",
              zIndex :18,
@@ -275,13 +275,13 @@ export default {
           let num=Math.round((e.target.getPath().length)/2)
           this.setConten(e.target.getPath()[num],e.target.getExtData())
         })
-        kyLinedata.on('mouseout',(e)=>{
-          e.target.setOptions({
-             strokeColor: "#35A594",
-             zIndex :10,
-          })
-          this.M_InfoWindow.close()
-        })
+        // kyLinedata.on('mouseout',(e)=>{
+        //   e.target.setOptions({
+        //      strokeColor: "#35A594",
+        //      zIndex :10,
+        //   })
+        //   this.M_InfoWindow.close()
+        // })
         lines.push(kyLinedata)
       
       })
@@ -351,15 +351,10 @@ export default {
              zIndex :18,
           })
           let num=Math.round((iteam.getPath().length)/2)
-          
           this.setConten(iteam.getPath()[num],iteam.getExtData())
           this.MyMapper.setFitView(iteam,true,[120,200,60,100])
-
           this.objleft=iteam.getExtData()
         }else{
-          // this.$message.error({
-          //   message: '无此线路信息'
-          // });
           iteam.setOptions({
              strokeColor: "#35A594",
              zIndex :10,

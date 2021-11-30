@@ -12,7 +12,7 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_3.png" />
             公交线网重复系数
           </div>
-          <div style="display:flex;align-items: center;">2.71
+          <div @click="lineechart(cfxsdata,'公交线网重复系数')" style="display:flex;align-items: center;cursor:pointer">2.78
 
           </div>
         </div>
@@ -21,7 +21,7 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             公交线网密度 
           </div>
-          <div style="display:flex;align-items: center;">1.62  
+          <div  @click="lineechart(xwmddata,'公交线网密度')" style="display:flex;align-items: center;cursor:pointer">1.46 
 
            
           </div>
@@ -33,7 +33,7 @@
             <div class="iili">
                 <div class="itleftdioa">
                     <div class="trbha">全区</div>
-                    <div style="width:45%;text-align:center">66.7%</div>
+                    <div @click="lineechart(qqddata,'全区公交站点500米覆盖率')" style="width:45%;text-align:center;cursor:pointer">64.80%</div>
                 </div>
                 <!-- <div class="itleftdioa">
                     <div class="trbha">建成区</div>
@@ -41,11 +41,11 @@
                 </div> -->
                  <div class="itleftdioa">
                     <div class="trbha">中心城区(外环以内)</div>
-                    <div></div>
+                    <div style="width:45%;text-align:center;cursor:pointer" @click="lineechart(fivzxddata,'中心城区(外环以内)公交站点500米覆盖率')">89.60%</div>
                 </div>
                  <div class="itleftdioa">
                     <div class="trbha">外环以外区域</div>
-                    <div></div>
+                    <div style="width:45%;text-align:center;cursor:pointer" @click="lineechart(fivwhddata,'外环以外区域公交站点500米覆盖率')">58.20%</div>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
             <div class="iili">
                 <div class="itleftdioa">
                     <div class="trbha">全区</div>
-                    <div  style="width:45%;text-align:center">43.67%</div>
+                    <div @click="lineechart(trqqddata,'全区公交站点300米覆盖率')" style="width:45%;text-align:center;cursor:pointer">43%</div>
                 </div>
                 <!-- <div class="itleftdioa"> 
                     <div class="trbha">建成区</div>
@@ -62,11 +62,11 @@
                 </div> -->
                  <div class="itleftdioa">
                     <div class="trbha">中心城区(外环以内)</div>
-                    <div  style="width:45%;text-align:center">69.74%</div>
+                    <div @click="lineechart(trzxddata,'中心城区(外环以内)公交站点300米覆盖率')"  style="width:45%;text-align:center;cursor:pointer">69.90%</div>
                 </div>
                  <div class="itleftdioa">
                     <div class="trbha">外环以外区域</div>
-                    <div style="width:45%;text-align:center">37.12%</div>
+                    <div @click="lineechart(trwhddata,'外环以外区域公交站点300米覆盖率')"  style="width:45%;text-align:center;cursor:pointer">36.20%</div>
                 </div>
             </div>
         </div>
@@ -118,6 +118,18 @@
         </div>
       </div>
     </div>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="60%"
+      :append-to-body="true"
+       custom-class="disadioa"
+      :before-close="handleClose">
+      <div class="linechbox" id="ysechart"></div>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -130,6 +142,7 @@ export default {
   data() {
     return {
       lloading:true,
+      dialogVisible:false,
       lisData: [
         {
           name: "最长线路",
@@ -142,7 +155,16 @@ export default {
       ],
       objline:{},
       islist: 1,
-      lineaData: []
+      lineaData: [],
+      cfxsdata:[2.78,0,2.71,2.06],
+      xwmddata:[1.46,0,1.62,2.38],
+       qqddata:[64.80,0,66.70,0],
+        fivzxddata:[89.60,0,0,0],
+        fivwhddata:[58.20,0,0,0],
+       trqqddata:[43,43.67,0,0],
+       trzxddata:[69.90,69.74,0,0],
+       trwhddata:[36.20,37.12,0,0],
+       myChart:null,
     };
   },
   beforeCreate() {},
@@ -167,6 +189,128 @@ export default {
   },
 
   methods: {
+    lineechart(datame,tit){
+      this.dialogVisible=true
+      this.$nextTick(()=> {
+        this.initechart(datame,tit)
+      })
+      
+    },
+    handleClose(){
+      this.dialogVisible=false
+    },
+     initechart(datame,tit) {
+      this.myChart = this.$echarts.init(document.getElementById("ysechart"));
+      this.myChart.setOption({
+        grid: {
+          top: 60,
+          left: 80,
+          right: 40,
+          bottom: 60
+        },
+        tooltip: {
+          trigger: "axis",
+          // formatter: "客流量：{c}人次",
+          backgroundColor: "#144A8C",
+          borderWidth: 0,
+          textStyle: {
+            color: "#D9EFFF"
+          }
+        },
+        title: {
+          text: tit+"(历年数据)",
+          textStyle: {
+            color: "#ffffff",
+            fontWeight: "normal",
+            fontSize: 16
+          },
+          top: 26,
+          left: 10
+        },
+        color: ["#836DF0"],
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          axisLabel: {
+            interval: 0,
+            rotate: 0,
+            color: "#D9EFFF",
+            borderType: "dashed",
+            borderColor: "#194F95"
+          },
+          axisTick: {
+            show: false
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: "#194F95",
+              type: "dashed"
+            }
+          },
+          axisLine: {
+            lineStyle: {
+              color: "#194F95",
+              type: "dashed"
+            }
+          },
+          data: [
+            "2018年",
+            "2019年",
+            "2020年",
+            "2021年"]
+        },
+        yAxis: {
+          type: "value",
+          axisLabel: {
+            color: "#D9EFFF",
+            borderType: "dashed",
+            borderColor: "#194F95"
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: "#194F95",
+              type: "dashed"
+            }
+          }
+        },
+        series: [
+          {
+            data: datame,
+            type: "line",
+            smooth: true,
+            legendHoverLink: true,
+            showSymbol: false,
+            symbolSize: 10,
+            areaStyle: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "rgba(131, 109, 240, 0.7)" // 0% 处的颜色
+                  },
+                  {
+                    offset: 0.08,
+                    color: "rgba(131, 109, 240, 0.7)" // 100% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(131, 109, 240, 0)" // 100% 处的颜色
+                  }
+                ],
+                global: false // 缺省为 false
+              }
+            }
+          }
+        ]
+      });
+    },
     tomeay(row) {
       this.islist = row.id;
       this.lineaData=this.lineaData.reverse()
@@ -267,6 +411,18 @@ export default {
 };
 </script>
 <style lang="scss">
+  .disadioa, .el-pager li{
+    background:rgba(0,0,0,0.5) !important;
+    
+  }
+ .disadioa{
+
+   .linechbox{
+      width:vw(800);
+      height:vh(400)
+    }
+
+ } 
 </style>
 
 <style lang="scss" scoped>

@@ -260,19 +260,6 @@ export default {
           this.radiusmsfive(res.result['站点的详细属性'])
           this.heatmap.hide()
           this.lcalzd.remove(this.plfive);
-          // arr.forEach(iteam=>{
-          //   var heatOptionObj = {};
-          //   heatOptionObj.lng = iteam.longitude;
-          //   heatOptionObj.lat = iteam.latitude;
-          //   heatOption.push(heatOptionObj);
-          // })
-          
-          // this.$store.commit('SET_HEATMAP',heatOption)
-          // this.heatmap.hide()
-          // this.setHeatemap(heatOption)
-
-
-          
            setTimeout(() => {
                 this.assloading=false
             }, 2000);

@@ -118,7 +118,7 @@ export default {
 
     },
       getall(){
-          this.$fetchGet("http://180.167.126.126:3005/pos/tbl-pos-txn-nor/odList",{
+          this.$fetchGet("tranfer/odList",{
             date:this.value1,
             lineName:this.value,
             type:this.isbtn

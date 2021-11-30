@@ -23,6 +23,7 @@ const Map = {
       testLIneda:[],
       // 信息窗口
       M_InfoWindow: null,
+      lineArrer:[],
       busPolyline: null,
       busPolyline1: null,
       massall: null,
@@ -39,6 +40,9 @@ const Map = {
       },
       geocoder: null,//逆地址解析
       markers: [],
+      layerzhjs:null,
+      hcloca1:null,
+      datalin:[],
       trafficGroups: new AMap.OverlayGroup(),//拥堵路段
       overlayopi: new AMap.OverlayGroup(),//拥堵路段
       overlayGroupthree: new AMap.OverlayGroup(),//300米的圆
@@ -138,7 +142,7 @@ const Map = {
 
       this.M_map = new AMap.Map(el, {
         zoom: 10, // 地图级别
-        center: this.mapCenter, // 中心点
+        center: [121.460752,31.011182], // 中心点
         // resizeEnable: true, //监控地图容器尺寸变化
         mapStyle: 'amap://styles/d67717253a691e523956e9482ca38f1e',
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
@@ -156,10 +160,21 @@ const Map = {
         zoom: 10, // 地图级别
         showIndoorMap: false,
         viewMode: '3D',
-        // center: this.M_center, // 中心点
+        center: this.M_center, // 中心点
         // resizeEnable: true, // 监控地图容器尺寸变化
         // expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级
       })
+
+
+       //构造公交换乘类
+       var transOptions = {
+              map: this.M_map,
+              city: '上海市',
+              panel: 'panel',                            
+              //cityd:'乌鲁木齐',
+              policy: AMap.TransferPolicy.LEAST_TIME
+          };
+      this.transfer = new AMap.Transfer(transOptions);
 
       this.M_map.plugin(["AMap.HeatMap"],  ()=> {      //加载热力图插件
         this.heatmap = new AMap.HeatMap(this.M_map, {
@@ -619,11 +634,14 @@ const Map = {
       
     },
 
-    localMain(datapoint){
+    localMain(datapoint,ops){
 
-      var loca = new Loca.Container({
-          map: this.M_map,
-      });
+      // let loca = new Loca.Container({
+      //     map: this.M_map,
+      // });
+      this.hcloca1 = new Loca.Container({
+        map: this.M_map,
+    });
       let _events = datapoint;
       
         var list = _events.map(e => {
@@ -653,22 +671,71 @@ const Map = {
         var geo = new Loca.GeoJSONSource({
             data: data,
         });
-        var layer = new Loca.IconLayer({
+        this.layerzhjs = new Loca.IconLayer({
             zIndex: 10,
             opacity: 1,
         });
-        layer.setSource(geo);
-        layer.setStyle({
+        this.layerzhjs.setSource(geo);
+        this.layerzhjs.setStyle({
             unit: 'px',
             icon:require('../../assets/image/alpoint1.png'),
             iconSize: [11,11],
             rotation: 0,
         })
   
-        loca.add(layer);
+        this.hcloca1.add(this.layerzhjs);
         this.M_map.on('click', (e) => {
-          const feat = layer.queryFeature(e.pixel.toArray());
-          if (feat) {
+          const feat = this.layerzhjs.queryFeature(e.pixel.toArray());
+          if (feat&&ops==2) {
+            console.log(feat)
+            let rops=feat.properties.rawData
+
+
+            http.fetchGet('gps/ebusManage',{
+              pdbCode:rops.code,  
+            }).then(res=>{
+    
+              let str=''
+              let sf=''
+              if(res.result.routeInfor.length>0){
+                str =this.getStationLisLinesDomStr(res.result.routeInfor)
+              }
+              if(res.result.terminalSta.length>0){
+                sf =this.getStationLisLinesDomStr1(res.result.terminalSta)
+              }
+              let infoWin = 
+              `<div class="marhznbox">
+    
+                <div class="titit">
+                  <div class="omgtit"></div>
+                  <div style="margin:0 4px">${rops.code}</div>
+                  <div>${rops.address}</div>    
+                </div>
+    
+                <div style="font-size:18px" class="linlist">
+                  经过线路：${str}
+                </div>
+    
+                <div class="tablebox">
+                  <div class="tablehead">
+                    <div style="width:20%">设备编号</div>
+                    <div style="width:20%">设备类型</div>
+                    <div style="width:20%">在线状态</div>
+                    <div style="width:40%">绑定线路</div>
+                  </div>
+    
+                  <div class="tablebody">
+                    ${sf}
+                  </div>
+                </div>
+              
+            
+              </div>`
+              this.M_openInfoWin1(rops.lnglat, infoWin)
+    
+    
+            
+            })
            
           }
       });
@@ -1115,6 +1182,7 @@ const Map = {
               this.M_map.add(this.zgdGroups)
 
       })
+      this.M_map.setZoomAndCenter(12,[121.61482,31.203711])
       // this.M_map.add(this.zgdGroups)
 
 
@@ -1243,8 +1311,11 @@ const Map = {
         })
         this.xwrhGroups.addOverlay(busPolyline)
         this.xwrhGroups.addOverlays(markers)
+       
+        //
 
         this.M_map.add(this.xwrhGroups)
+        this.M_map.setFitView(busPolyline, true, [60, 60, 60, 60]);
 
 
 
@@ -1370,8 +1441,14 @@ const Map = {
       if(this.hclayer){
         this.hcloca.remove(this.hclayer)
       }
+      if(this.overlayGroups3){
+        this.M_map.remove(this.overlayGroups3);
+      }
+      if(this.lineArrer.length>0){
+        this.M_map.remove(this.lineArrer)
+      }
       
-      let lineArr = []
+      this.lineArrer = []
 
       data.forEach(iteam => {
         let color=""
@@ -1424,7 +1501,7 @@ const Map = {
           extData: iteam,
           strokeWeight: 2//线宽
         });
-        lineArr.push(busPolyline)
+        this.lineArrer.push(busPolyline)
         if (type == 3) {
           let busPolyline2 = new AMap.Polyline({
             map: this.M_map,
@@ -1479,7 +1556,7 @@ const Map = {
         }
       })
 
-      this.M_map.setFitView(lineArr, true,[0,0,0,0])
+      this.M_map.setFitView(this.lineArrer, true,[0,0,0,0])
       // this.M_map.setZoom(11)
     },
     M_ishow(flag, type) {
@@ -1528,25 +1605,82 @@ const Map = {
 
 
     },
+    //规划公交线路
+    Lineghreal(row){
+    //根据起、终点坐标查询公交换乘路线
+    this.transfer.search(new AMap.LngLat(row[0],row[1]), new AMap.LngLat(row[2],row[3]), (status, result)=> {
+        // result即是对应的公交路线数据信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_TransferResult
+        if (status === 'complete') {
+          console.log(result)
+           if(result.info=='OK'){
+            this.plansmsg=result.plans[0]
+            
+            this.transstaion=[]
+
+           }else{
+            this.plansmsg={
+              cost:'',
+              distance:'',
+              segments:[],
+              time:''
+            }
+            this.transstaion=[]
+           }
+        } else {
+            
+        }
+    });
+
+    },
     // 获取搜索信息
     M_autoInput(data) {
       this.M_map.clearMap()
-      let markerarr = []
-      data.forEach(iteam => {
-        var placeSearch = new AMap.PlaceSearch({
-          city: '全国'
-        });
-        placeSearch.search('上海市' + iteam.roadsegid, (status, result) => {
-          // 搜索成功时，result即是对应的匹配数据
-          if (result.poiList.pois[0]) {
-            this.pointSearch(result.poiList.pois[0], iteam)
-          }
+      if(this.hclayer){
+        this.hcloca.remove(this.hclayer)
+      }
+      
+    
+      
 
+      let lineaData=[]
+      this.$fetchGet("curve/often").then(res => {
+        res.result.forEach(iteam=>{
+          iteam.path=[]
+          iteam.centerpoint={}
+          this.$fetchGet("config-road-paint/list",{
+              name:iteam.roadsegid
+            }).then(resro => {
+              if(resro.result&&resro.result.length>0){
+                iteam.centerpoint=resro.result[parseInt(resro.result.length/2)]
+                iteam.path=resro.result
+              }
+            })
+            lineaData.push(iteam)
         })
-
-
-
+          // console.log(this.lineaData)
+         setTimeout(() => {
+          // this.assloading=false
+          this.pointSearch(lineaData)
+        }, 2000);
+        
       })
+
+      // let markerarr = []
+      // data.forEach(iteam => {
+      //   var placeSearch = new AMap.PlaceSearch({
+      //     city: '全国'
+      //   });
+      //   placeSearch.search('上海市' + iteam.roadsegid, (status, result) => {
+      //     // 搜索成功时，result即是对应的匹配数据
+      //     if (result.poiList.pois[0]) {
+      //       this.pointSearch(result.poiList.pois[0], iteam)
+      //     }
+
+      //   })
+
+
+
+      // })
       // 
 
 
@@ -1554,37 +1688,56 @@ const Map = {
 
     pointSearch(arr) {
       arr.forEach(iteam => {
-        console.log(iteam)
-        console.log(iteam.path.length)
-        if(iteam.path.length>0){
-          console.log(iteam)
-          let marker1 = new AMap.Marker({
-            content: `<div class="marker_container">
-            <span  class="${((iteam.congestIndex>1&&iteam.congestIndex<1.5)||iteam.congestIndex==1)?'green_marker':((iteam.congestIndex<1.8&&iteam.congestIndex>1.5)||iteam.congestIndex==1.5)?'yellow_marker'
-            :((iteam.congestIndex<2&&iteam.congestIndex>1.8)||iteam.congestIndex==1.8)?'red_marker':'reds_marker'}"></span>
-            </div> `,
-            offset: new AMap.Pixel(-6, -6),
-            extData: iteam,
-            zIndex: 5000,
-            cursor:'pointer',
-            position: [iteam.centerpoint.pointX, iteam.centerpoint.pointY],
-          });
-          marker1.on('click', e => {
-            // this.S_ply(iteam)
-            this.M_getlindata(iteam)
-            this.$fetchGet("curve/detail", {
-              roadName: iteam.roadsegid
-            }).then(res => {
-              this.M_openRoad(iteam.centerpoint, res)
-            })
-  
-          })
-         
-          this.markerarr.push(marker1)
-          this.overlayGroups3.addOverlay(marker1)
-          this.M_map.add(this.overlayGroups3);
+        let pou=[]
+        AMap.convertFrom( [iteam.centerpoint.pointX, iteam.centerpoint.pointY], 'gps',  (status, result)=> {
+          if (result.info === 'ok') {
+            // console.log(result.locations[0].lng)
+            pou=[result.locations[0].lng,result.locations[0].lat]
+            // pou=result.locations
 
-        }
+            if(iteam.path.length>0){
+              console.log(iteam)
+              let marker1 = new AMap.Marker({
+                content: `<div class="marker_container">
+                <span  class="${((iteam.congestIndex>1&&iteam.congestIndex<1.5)||iteam.congestIndex==1)?'green_marker':((iteam.congestIndex<1.8&&iteam.congestIndex>1.5)||iteam.congestIndex==1.5)?'yellow_marker'
+                :((iteam.congestIndex<2&&iteam.congestIndex>1.8)||iteam.congestIndex==1.8)?'red_marker':'reds_marker'}"></span>
+                </div> `,
+                offset: new AMap.Pixel(-6, -6),
+                extData: iteam,
+                zIndex: 5000,
+                cursor:'pointer',
+                position:pou,
+              });
+              marker1.on('click', e => {
+                // this.S_ply(iteam)
+                this.M_getlindata(iteam)
+                // this.$fetchGet("curve/detail", {
+                //   roadName: iteam.roadsegid
+                // }).then(res => {
+                //   this.M_openRoad(iteam.centerpoint, res)
+                // })
+    
+                let info=((iteam.congestIndex>1&&iteam.congestIndex<1.5)||iteam.congestIndex==1)?'双向畅通':((iteam.congestIndex<1.8&&iteam.congestIndex>1.5)||iteam.congestIndex==1.5)?'行驶缓慢'
+                :((iteam.congestIndex<2&&iteam.congestIndex>1.8)||iteam.congestIndex==1.8)?'拥堵':'严重拥堵'
+    
+                console.log()
+                let obg={
+                  pointX:pou[0],
+                  pointY:pou[1],
+                }
+                this.M_openRoad(obg, iteam.roadsegid+":"+info)
+      
+              })
+             
+              this.markerarr.push(marker1)
+              this.overlayGroups3.addOverlay(marker1)
+              this.M_map.add(this.overlayGroups3);
+    
+            }
+              
+          }
+      });
+        
        
       })
       
@@ -1595,7 +1748,7 @@ const Map = {
       let arr = this.overlayGroups3.getOverlays()
       arr.forEach(iteam => {
         if (iteam.getExtData().roadsegid == name) {
-          this.M_openRoad(iteam.getPosition(), res)
+          this.M_openRoad(iteam.getPosition(), name+":"+res)
         }
       })
     },
@@ -1605,7 +1758,7 @@ const Map = {
       <div class="info-box">
         <div class="info-content">
           <div class="info">
-            <div class="info-name">${res.result.description}</div>
+            <div class="info-name">${res}</div>
           </div>
         </div>
       </div>
@@ -1626,6 +1779,7 @@ const Map = {
       if(this.saLinedata){
         this.M_map.remove(this.saLinedata)
       }
+      console.log(arrList)
       arrList.forEach(itrm=>{
         let saLinedata = new AMap.Polyline({
           path: itrm.deviceArr,
@@ -1638,11 +1792,7 @@ const Map = {
           // map: this.M_map,
           extData: iteam
         })
-
-
         allploy.push(saLinedata)
-        
-
       })
       this.overlayopi.addOverlays(allploy)
       this.M_map.add(this.overlayopi);
@@ -1678,13 +1828,23 @@ const Map = {
       list.map(item => {
         arrno.path.map(items => {
               if(item.windowIdArr == items.origFid){
-              item.deviceArr.push([items.pointX,items.pointY])
+
+
+                  AMap.convertFrom([items.pointX,items.pointY], 'gps',  (status, result)=> {
+                      if (result.info === 'ok') {
+                        // console.log(result.locations[0].lng)
+                          item.deviceArr.push([result.locations[0].lng,result.locations[0].lat])
+                      }
+                  });
+              // item.deviceArr.push([items.pointX,items.pointY])
               }
           })
       })
-      console.log(list);
-
-      this.S_ply(arrno,list)
+        console.log(list)
+        setTimeout(()=>{
+          this.S_ply(arrno,list)
+        },1000)
+      
 
 
      
@@ -1711,7 +1871,7 @@ const Map = {
     },
     //公交专用道
     M_passCorrline(data) {
-      let datalin = []
+      this.datalin = []
       data.forEach(iteam => {
         let kyLinedata = new AMap.Polyline({
           path: iteam.path,
@@ -1728,10 +1888,15 @@ const Map = {
         kyLinedata.on('click', (e) => {
           let srt = e.target.getExtData()
           this.S_setbulne(srt)
+          e.target.setOptions({
+            strokeColor: "#A200FF",
+            zIndex :18,
+         })
+
         
         });
 
-        datalin.push(kyLinedata)
+        this.datalin.push(kyLinedata)
       })
 
       this.M_map.setFitView(this.datalin, true, [60, 200, 60, 60]);

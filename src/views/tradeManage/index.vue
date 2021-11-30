@@ -512,6 +512,7 @@ export default {
               // if(this.czsnzmas){
               //    this.czsnzmas.show()
               // }
+              this.pointAll2()
               
 
                if(this.xwrhGroups){
@@ -544,9 +545,10 @@ export default {
               //   }else{
               //     this.getBusLine()
               //   }
-              if(this.massall1){
-                this.massall1.hide()
+              if(this.layerzhjs){
+                 this.hcloca1.remove(this.layerzhjs);
               }
+              // console.log(this.layerzhjs)
                if(this.czsnzmas){
                  this.czsnzmas.hide()
               }
@@ -566,9 +568,8 @@ export default {
                 break;
             case '线网融合' :
 
-              if(this.massall1){
-                this.massall1.hide()
-
+               if(this.layerzhjs){
+                 this.hcloca1.remove(this.layerzhjs);
               }
 
               if(this.czsnzmas){
@@ -648,11 +649,14 @@ export default {
             obj.lnglat=[iteam.lon,iteam.lat]
             obj.style=0
             obj.code=iteam.code
+            obj.address=iteam.address
             arr.push(obj)
             // this.restaurants.push(iteam)
           })
           console.log(arr)
-          this.M_pointAll4(arr)
+          // this.M_pointAll4(arr)
+          this.localMain(arr,2)
+          
         })
     },
     initSwipertable() {

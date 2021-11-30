@@ -31,14 +31,14 @@
             <div class="bitit">
               <img src="@/assets/image/home/4.1_icon_zzry.png" alt srcset />
               <div>
-                <div class="bigttn">{{rightObj.count.active}}</div>
+                <div class="bigttn">{{rightObj.runningValue.num}}</div>
                 <div class="bigttn1">车辆活跃数</div>
               </div>
             </div>
             <div class="bitit">
               <img src="@/assets/image/home/4.1_icon_gjxl.png" alt srcset />
               <div>
-                <div class="bigttn">{{rightObj.count.percent}}</div>
+                <div class="bigttn">{{rightObj.runningValue.percent}}</div>
                 <div class="bigttn1">车辆活跃率</div>
               </div>
             </div>
@@ -100,6 +100,18 @@
               </div>
             </div>
           </div>
+
+          <div v-show="ishcxx" class="seting-box seting-box3">
+            <div class="settit">路线规划信息</div>
+            <div v-if="plansmsg.cost!==''" class="">
+              <div>全称距离：{{plansmsg.distance}}m</div>
+              <div>通行时间：{{plansmsg.time}}s</div>
+              <div>换乘次数：{{plansmsg.segments.length}}次</div>
+              <div>通行费用：{{plansmsg.cost}}元</div>
+              
+            </div>
+            <div v-if="plansmsg.cost==''">暂无出行规划！</div>
+          </div>
           <!-- v-show="tlstation[3].isxz" -->
           <div class="seting-box seting-box1" v-show="tlstation[3].isxz">
             <div class="table-box">
@@ -144,8 +156,12 @@
             <div class="fonq1">平均运行准点率</div>
             <div class="fonq2">{{righavg.rightOnTime}}%</div>
           </div>
+           <div class="itlist">
+            <div class="fonq1">平均班次执行率</div>
+            <div class="fonq2">{{righavg.balanceBc||'—'}}%</div>
+          </div>
         </div>
-        <div class="titbox" style="margin-top:18px;margin-bottom:8px">站点信息</div>
+        <!-- <div class="titbox" style="margin-top:18px;margin-bottom:8px">站点信息</div> -->
         <div class="right-ech">
           <div id="echbox"></div>
           <div class="echleng">
@@ -184,6 +200,13 @@ export default {
   mixins: [MapMixin],
   data() {
     return {
+      ishcxx:false,
+      plansmsg:{
+        cost:'',
+        distance:'',
+        segments:[],
+        time:''
+      },
       texdc: [
         {
           "961路": "798路"
@@ -1564,6 +1587,8 @@ export default {
 
       jzeaData: [], //车辆运行街镇的的车辆实时运行
       buslineData: [],
+      transstaion:[],
+      istrans:false,
       tlstation: [
         {
           name: "车辆实时运行",
@@ -1896,17 +1921,20 @@ export default {
         switch (row.name) {
           case "车辆实时运行":
             this.M_setZoomAndCenter([121.473658, 31.230378], 13,true);
+            this.istrans=false
             this.realTownGroups.hide();
             this.realbusGroups.hide();
             this.overlayGroupsgl.hide();
             break;
           case "站点现状":
             this.M_setZoomAndCenter([121.510737, 31.230525], 12,true);
+            this.istrans=true
             this.realTownGroups.hide();
             this.realbusGroups.hide();
             this.overlayGroupsgl.hide();
             break;
           case "站点客流分布规律":
+            this.istrans=false
             if (this.M_pointGroup) {
               this.M_pointGroup.clearOverlays();
             }
@@ -1925,6 +1953,7 @@ export default {
             }
             break;
           case "运行分析":
+            this.istrans=false
             if (this.M_pointGroup) {
               this.M_pointGroup.clearOverlays();
             }
@@ -2054,6 +2083,17 @@ export default {
             `;
           this.M_InfoWindow.setAnchor("bottom-center");
           this.M_openInfoWin([str.lng, str.lat], content);
+
+          if(this.istrans){
+            this.transstaion.push(str.lng,str.lat)
+            console.log(this.transstaion)
+          }
+
+          if(this.transstaion.length==4){
+            this.ishcxx=true
+            this.Lineghreal(this.transstaion)
+
+          }
           // this.M_setZoomAndCenter([str.lng, str.lat], 18,true);
         } else {
           this.M_setZoomAndCenter(str.centre, 17,true);
@@ -2636,8 +2676,9 @@ export default {
       }
       .right-ech {
         width: vw(380);
-        height: vh(270);
+        height: vh(280);
         box-shadow: 0px 0px vh(8) rgba(69, 120, 255, 1) inset;
+        margin-top:vh(68);
         #echbox {
           width: 100%;
           height: vh(200);
@@ -2729,6 +2770,12 @@ export default {
         .seting-box1 {
           position: absolute;
           left: vw(200);
+          bottom: vw(14);
+          z-index: 10;
+        }
+        .seting-box3{
+          position: absolute;
+          left: vw(800);
           bottom: vw(14);
           z-index: 10;
         }

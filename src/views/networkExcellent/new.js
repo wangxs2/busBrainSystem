@@ -112,7 +112,7 @@ const Map = {
 
       this.M_map = new AMap.Map(el, {
         zoom: 10, // 地图级别
-        center: this.mapCenter, // 中心点
+        center: [121.460752,31.011182], // 中心点
         // resizeEnable: true, //监控地图容器尺寸变化
         mapStyle: 'amap://styles/d67717253a691e523956e9482ca38f1e',
         expandZoomRange: true // 是否支持可以扩展最大缩放级别 到20级

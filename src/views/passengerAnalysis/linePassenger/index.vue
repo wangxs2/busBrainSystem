@@ -53,7 +53,7 @@ export default {
     },
     created() {
       console.log(this.$route.query.idName)
-      this.getTestod()
+      // this.getTestod()
     },
     mounted() {
       MyMap = new Map({ el: "linePassenger" });
@@ -82,7 +82,7 @@ export default {
         this.getLinepassenger()
       },
       getTestod(){
-        this.$fetchGet("http://180.167.126.126:3005/pos/tbl-pos-txn-nor/odList",{
+        this.$fetchGet("tranfer/odList",{
           date:20200131,
           lineName:''
         }).then(res=>{})

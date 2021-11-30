@@ -262,7 +262,7 @@ export default {
         }else if(name==4){
           this.$router.push("/busModel");
         }else if(name==5){
-          this.$router.push("/infrastructure");
+          this.$router.push("/infrastructure/siteFacilities");
         }
       },500)
       

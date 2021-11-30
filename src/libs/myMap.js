@@ -11,6 +11,7 @@ const Map = {
       M_style: 'amap://styles/d67717253a691e523956e9482ca38f1e',
       kymassnew:null,//客运走廊的点
       lcalzd:null,
+      linegjxlw:null,
       layerzd:null,//站点的客流
       pathSimplifierIns:null,//公交线网
       heatmap:null,//热力图
@@ -92,7 +93,6 @@ const Map = {
           "features": list,
       };
 
-      console.log(data)
 
       var geo = new Loca.GeoJSONSource({
         data: data,
@@ -119,7 +119,6 @@ const Map = {
           dashArray: [10, 0, 10, 0],
       });
 
-      console.log(ll)
 
 
 
@@ -177,6 +176,27 @@ const Map = {
     })
     return lines
   },
+
+  //公交线路网画公交线
+  gjxlwmsg(iteam){
+    
+    if(this.linegjxlw){
+      this.M_map.remove(this.linegjxlw);
+    }
+    this.linegjxlw = new AMap.Polyline({
+      path: this.Q_setData(iteam.geom),
+      strokeColor: "#00ffff",
+      strokeOpacity: 1,
+      strokeWeight: 8,
+      zIndex:9999,
+      map:this.M_map,
+      strokeStyle: "solid",
+    })
+
+    this.M_map.setFitView(this.linegjxlw,true)
+
+  },
+
 
   //客运走廊的线
   addOverlayGroup4(Groups){
@@ -296,7 +316,6 @@ const Map = {
   },
 
   maplocalMain(datapoint){
-    console.log(datapoint)
 
   
     let _events = datapoint;
@@ -340,7 +359,6 @@ const Map = {
           rotation: 0,
       })
 
-      console.log(this.layerzd)
 
       this.lcalzd.add(this.layerzd);
       this.M_map.on('click', (e) => {
