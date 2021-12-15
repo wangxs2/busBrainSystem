@@ -64,8 +64,10 @@ const Map = {
      
 
       this.M_createInfoWin()
+      this.allstationin_createInfoWin()
       this.M_map.on('click', (e) => {
         this.M_closeInfoWin()
+        this.allstationin_closeInfoWin()
       });
       this.M_zzploy()
     },
@@ -76,7 +78,8 @@ const Map = {
 
 
   //查询线路的信息
-  lineSearchPudong(busLineName) {
+  lineSearchPudong(busLineName,item) {
+    // console.log(busLineName,item,3333)
     let  linesearch;
     //实例化公交线路查询类，只取回一条路线
     if(!linesearch){
@@ -91,8 +94,8 @@ const Map = {
     linesearch.search(busLineName, (status, result)=> {
         if (status === 'complete' && result.info === 'OK') {
             // lineSearch_Callback(result);
-            console.log(result)
-            this.objLine=result.lineInfo[0]
+            // console.log(result)
+            this.gjxlwmsg(result.lineInfo[0].path,item)
         } else {
             // alert(result);
         }
@@ -102,14 +105,14 @@ const Map = {
   
 
   //绘制上南路
-  gjxlwmsg(path){
-    
+  gjxlwmsg(path,item){
+    // console.log(11111)
     
     this.linegjxlw = new AMap.Polyline({
       path: path,
-      strokeColor: "#FF5E41",
+      strokeColor: item.lineColor,
       strokeOpacity: 1,
-      strokeWeight: 8,
+      strokeWeight: 5,
       zIndex:9999,
       map:this.M_map,
       strokeStyle: "solid",
@@ -162,7 +165,7 @@ const Map = {
         })
         var text=null
         libug.on('mouseover',e=>{
-          console.log(e)
+          // console.log(e)
 
            text = new AMap.Text({
               text:iteam.name,
@@ -247,70 +250,104 @@ const Map = {
   },
 
 
-    //绘制所有的站点
-    allstation1(arr){
+  //绘制所有的站点
+  allstation1(arr){
 
-      let lir=[]
-      // if(this.kymassnew){
-      //   this.kymassnew.clearOverlays()
-      // }
-      arr.forEach(iteam=>{
-        if(iteam.lnglat){
-          let icons=null
-          if(iteam.nxb>0&&iteam.nxb<4){
-            icons= new AMap.Icon({
-              image:require('../../assets/image/rollbig.png'),
-              size: [20, 20],
-              imageSize: [20, 20],
-            })
-          }else if(iteam.nxb>3&&iteam.nxb<7){
-            icons= new AMap.Icon({
-              image:require('../../assets/image/rollbig.png'),
-              size: [25, 25],
-              imageSize: [25, 25],
-            })
-          }else if(iteam.nxb>6&&iteam.nxb<9){
-            icons= new AMap.Icon({
-              image:require('../../assets/image/rollbig.png'),
-              size: [30, 30],
-              imageSize: [30, 30],
-            })
-          }else if(iteam.nxb>8&&iteam.nxb<13){
-            icons= new AMap.Icon({
-              image:require('../../assets/image/rollbig.png'),
-              size: [35, 35],
-              imageSize: [35, 35],
-            })
-          }else if(iteam.nxb>12){
-            icons= new AMap.Icon({
-              image:require('../../assets/image/rollbig.png'),
-              size: [40, 40],
-              imageSize: [40, 40],
-            })
-          }
-          let libug=new AMap.Marker({
-            position: iteam.lnglat,
-            icon: icons,
-            offset: new AMap.Pixel(-12, -12),
-            extData: iteam,
-            cursor: 'pointer',
+    let lir=[]
+    // if(this.kymassnew){
+    //   this.kymassnew.clearOverlays()
+    // }
+    arr.forEach(iteam=>{
+      if(iteam.lnglat){
+        let icons=null
+        if(iteam.nxb>0&&iteam.nxb<4){
+          icons= new AMap.Icon({
+            image:require('../../assets/image/rollbig.png'),
+            size: [20, 20],
+            imageSize: [20, 20],
           })
-          libug.on('click',e=>{
-            this.iszd=true
-              this.detailobj=e.target.getExtData()
-              this.toDetail(this.detailobj)
-            
+        }else if(iteam.nxb>3&&iteam.nxb<7){
+          icons= new AMap.Icon({
+            image:require('../../assets/image/rollbig.png'),
+            size: [25, 25],
+            imageSize: [25, 25],
           })
-          lir.push(libug)
+        }else if(iteam.nxb>6&&iteam.nxb<9){
+          icons= new AMap.Icon({
+            image:require('../../assets/image/rollbig.png'),
+            size: [30, 30],
+            imageSize: [30, 30],
+          })
+        }else if(iteam.nxb>8&&iteam.nxb<13){
+          icons= new AMap.Icon({
+            image:require('../../assets/image/rollbig.png'),
+            size: [35, 35],
+            imageSize: [35, 35],
+          })
+        }else if(iteam.nxb>12){
+          icons= new AMap.Icon({
+            image:require('../../assets/image/rollbig.png'),
+            size: [40, 40],
+            imageSize: [40, 40],
+          })
         }
-        
-        
-        
-      })
-      this.kymassnew.addOverlays(lir)
-        this.M_map.add(this.kymassnew)
-  
-    },
+        // console.log(iteam)
+        let libug=new AMap.Marker({
+          position: iteam.lnglat,
+          icon: icons,
+          offset: new AMap.Pixel(-12, -12),
+          extData: iteam,
+          cursor: 'pointer',
+        })
+        libug.on('click',e=>{
+          this.iszd=true
+          this.detailobj=e.target.getExtData()
+          // console.log(this.detailobj)
+          this.toDetail(this.detailobj)
+          this.allstationin_openInfoWin([this.detailobj.lnglat[0],this.detailobj.lnglat[1]],this.detailobj)
+          this.M_openInfoWin(this.detailobj)
+          
+        })
+        lir.push(libug)
+      }
+      
+      
+      
+    })
+    this.kymassnew.addOverlays(lir)
+      this.M_map.add(this.kymassnew)
+
+  },
+
+   // 创建站点窗口
+  allstationin_createInfoWin(data) {
+    // console.log(data)
+    this.allstationin_InfoWindow = new AMap.InfoWindow({
+      isCustom: true,
+      autoMove: true,
+      content: '',
+      anchor: 'top-left',
+      offset: new AMap.Pixel(30,-8)
+    })
+  },
+
+ // 打开站点信息窗口
+  allstationin_openInfoWin(pos, info) {
+    // console.log(pos)
+    
+    let kcontent=  `<div class="info-win-sition">
+    <div class="info-name">${info.name}</div>
+</div>`
+    this.allstationin_InfoWindow.setContent(kcontent)
+    this.allstationin_InfoWindow.open(this.M_map, pos)
+  },
+    
+  // 关闭站点信息窗
+  allstationin_closeInfoWin() {
+
+    this.allstationin_InfoWindow.close()
+  },
+
 
 
  
@@ -493,7 +530,7 @@ const Map = {
   },
 
     // 打开信息窗口
-    M_openInfoWin(pos, info) {
+    M_openInfoWin(pos,info) {
       this.M_InfoWindow.setContent(info)
       this.M_InfoWindow.open(this.M_map, pos)
     },

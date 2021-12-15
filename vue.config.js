@@ -23,6 +23,8 @@ module.exports = {
         // target: 'http://10.1.30.204:50020/busbrain',
         // target: 'http://shnavi.itcics.com:3003/busbrain', // 测试
         target: 'http://180.167.126.126:3001/busbrain', // 测试
+        // target: 'http://192.168.30.23:8005/busbrain', // 测试
+        
         changeOrigin: true,
         pathRewrite: {
           '/busbrain': '/'
