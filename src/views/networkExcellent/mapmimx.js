@@ -152,7 +152,7 @@ const Map = {
       if(iteam.geom){
         let libug=new AMap.Polyline({
           path: this.Q_setData(iteam.geom),
-          strokeColor: type==2?iteam.colors:"#00ffff",
+          strokeColor: type==2?iteam.colors:type!==2&&iteam.company=='浦东公交'?"#00ffff":'#35a700',
           strokeOpacity: 1,
           strokeWeight: 4,
           zIndex:10,

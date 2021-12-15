@@ -54,36 +54,36 @@
     <div class="rightlinemsg3">
       <div class="tit">站点公交线路数量</div>
       <div style="display:flex;align-items: center;padding-left:1.5vw;margin-top:0.6vh">
-        <img src="../../../assets/image/rollbig.png" width="20" height="20" alt="" srcset="">1-3
+        <img src="../../../assets/image/rollbig.png" width="20" height="20" alt="" srcset="">1-4
       </div>
       <div style="display:flex;align-items: center;padding-left:1.4vw;margin-top:0.6vh">
-        <img src="../../../assets/image/rollbig.png" width="25" height="25" alt="" srcset="">4-6
+        <img src="../../../assets/image/rollbig.png" width="25" height="25" alt="" srcset="">5-8
       </div>
       <div style="display:flex;align-items: center;padding-left:1.3vw;margin-top:0.6vh">
-        <img src="../../../assets/image/rollbig.png" width="30" height="30" alt="" srcset="">7-8
+        <img src="../../../assets/image/rollbig.png" width="30" height="30" alt="" srcset="">9-12
       </div>
        <div style="display:flex;align-items: center;padding-left:1.2vw;margin-top:0.6vh">
-        <img src="../../../assets/image/rollbig.png" width="35" height="35" alt="" srcset="">9-12
+        <img src="../../../assets/image/rollbig.png" width="35" height="35" alt="" srcset="">13及以上
       </div>
-      <div style="display:flex;align-items: center;padding-left:1.1vw;margin-top:0.3vh">
+      <!-- <div style="display:flex;align-items: center;padding-left:1.1vw;margin-top:0.3vh">
         <img src="../../../assets/image/rollbig.png" width="40" height="40" alt="" srcset="">13-17
-      </div>
+      </div> -->
       <div class="tit">路段公交线路数量</div>
 
       <div style="display:flex;align-items: center;padding-left:1.5vw;margin-top:0.6vh">
-        <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#35a700;margin-right:0.3vw"></span> 1-3
+        <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#35a700;margin-right:0.3vw"></span> 1-4
       </div>
       <div style="display:flex;align-items: center;padding-left:1.5vw;margin-top:0.6vh">
-        <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#90d20d;margin-right:0.3vw"></span> 4-6
+        <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#90d20d;margin-right:0.3vw"></span> 5-8
       </div>
-      <div style="display:flex;align-items: center;padding-left:1.5vw;margin-top:0.6vh">
+      <!-- <div style="display:flex;align-items: center;padding-left:1.5vw;margin-top:0.6vh">
         <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#fdfd4d;margin-right:0.3vw"></span> 7-9
+      </div> -->
+      <div style="display:flex;align-items: center;padding-left:1.5vw;margin-top:0.6vh">
+        <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#ff7a00;margin-right:0.3vw"></span> 9-12
       </div>
       <div style="display:flex;align-items: center;padding-left:1.5vw;margin-top:0.6vh">
-        <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#ff7a00;margin-right:0.3vw"></span> 10-12
-      </div>
-      <div style="display:flex;align-items: center;padding-left:1.5vw;margin-top:0.6vh">
-        <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#ff0000;margin-right:0.3vw"></span> 13-19
+        <span style="display:inline-block;width:1.5vw;height:0.4vh;background:#ff0000;margin-right:0.3vw"></span> 13及以上
       </div>
     </div>
   </div>

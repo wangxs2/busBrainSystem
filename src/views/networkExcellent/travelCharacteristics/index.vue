@@ -8,7 +8,7 @@
 
     <div class="rightlinemsg" >
         <div class="tit">上南路出行特征</div>
-        <div>
+        <div style="box-sizing:border-box;padding:0 1.2vw">
            <p> （1）现状公交客流走廊主要为: 上南路（世博大道-林恒路）；</p>
            <p> （2）全天客流共计88497人次，其中到发客流占比最高，为51534人次，占比58.2%，过境客流为27995人次，占比31.6%；</p>
            <p> （3）上南路上客流分配占比最高的线路为576路(15.4%) 与周南线(12.9%)。</p>
@@ -44,6 +44,8 @@
         </div>
         
       </div>
+      <div class="tit">结论</div>
+      <div style="box-sizing:border-box;padding:1.2vh 1.2vw">上南路到发客流量占总体客流量的50%以上，属于到发型客运走廊。</div>
     </div>
 
 
@@ -407,7 +409,7 @@ export default {
     width: vw(460);
     // max-width: vw(600);
      z-index:10;
-    max-height: vh(800);
+    max-height: vh(820);
     overflow: hidden;
     flex-direction: column;
     display: flex;
