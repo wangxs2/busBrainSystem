@@ -47,6 +47,7 @@ export default class Map {
     this.locakl = new Loca.Container({
         map: this.map,
     });
+    this.M_zzploy()
     
     this.map.add(this.overlayGroups);
     this.infoWindow = new AMap.InfoWindow({
@@ -54,6 +55,9 @@ export default class Map {
       content: this.createInfoWindow(this.ijsa),
       offset: new AMap.Pixel(0, -35)
     });
+    this.map.on('click',e=>{
+      this.infoWindow.close()
+    })
     this.infoWindow.open(this.mapCenter)
     console.log(this.infoWindow)
     // this.map.plugin(["AMap.HeatMap"], () => {      //加载热力图插件
@@ -267,7 +271,36 @@ export default class Map {
     return content
 
   }
+  M_zzploy(){
+    new AMap.DistrictSearch({
+      extensions:'all',
+      subdistrict:0
+    }).search('浦东新区',(status,result)=>{
+        // 外多边形坐标数组和内多边形坐标数组
+        var outer = [
+            new AMap.LngLat(-360,90,true),
+            new AMap.LngLat(-360,-90,true),
+            new AMap.LngLat(360,-90,true),
+            new AMap.LngLat(360,90,true),
+        ];
+        var holes = result.districtList[0].boundaries
 
+        var pathArray = [
+            outer
+        ];
+        pathArray.push.apply(pathArray,holes)
+        var polygon = new AMap.Polygon( {
+            pathL:pathArray,
+            strokeColor: '#00eeff',
+            strokeWeight: 1,
+            fillColor: '#71B3ff',
+            fillOpacity: 0.05
+        });
+        polygon.setPath(pathArray);
+        this.map.add(polygon)
+    })
+  
+  }
   getStationLisLinesDomStr(data) {
       var domStr = '';
       for (var i = 0; i < data.length; i++) {

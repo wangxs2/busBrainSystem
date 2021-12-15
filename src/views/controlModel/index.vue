@@ -3,6 +3,23 @@
     <div class="search-box titbox">
       <div class="titf">发车时间对比</div>
       <div style="display:flex;align-items: center">
+        <div style="display:flex;align-items: center">
+          <div style="margin-right:0.6vw;width:3.6vw;">线路名称</div>
+            <el-select
+              size="small"
+              filterable
+              @change="getData()"
+              v-model="value"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="(item,index) in lineaData"
+                :key="index"
+                :label="item.routeName"
+                :value="item.routeId"
+              ></el-option>
+            </el-select>
+        </div>
          <div class="qhbtn">
            <div :class="isbtn==iteam.id?'btnnow activebtn':'btnnow' " @click="tobtn(iteam)" v-for="(iteam,n) in typelst" :key="n">{{iteam.name}}</div>
         </div>
@@ -27,6 +44,8 @@ export default {
     return{
       myChart:null,
       myChart1:null,
+      lineaData:[],
+      value:'10236',
       roadName:"",
       roadNameData:[],
       histsx:[],//历史上行数据
@@ -49,7 +68,7 @@ export default {
   },
    created() {
       
-      // this.getList()
+      this.getdataline()
       this.getData()
       console.log(new Date("2020-11-15 23:59:59").getTime())
       console.log(new Date("2020-11-15 0:00:00").getTime())
@@ -74,6 +93,9 @@ export default {
       this.isbtn=row.id
     
     },
+    toDetail1(){
+
+    },
     getList(){
       this.$fetchGet("main-road/list").then(res => {
         this.roadNameData=res.result
@@ -82,9 +104,22 @@ export default {
       })
 
     },
+     getdataline() {
+      this.$fetchGet("route/routeList").then(res => {
+        this.lineaData = res.result;
+      });
+    },
     getData(){
+      this.histsx=[];//历史上行数据
+      this.histxx=[];
+      this.realsx=[];//实际上行的数据
+      this.realxx=[];
+      this.dataX=[];
+      this.dataXj=[];//下行的横坐标
       this.$store.commit('SET_LOADING',true)
-      this.$fetchGet("/real-depart-data/compareList?direction=0").then(res => {
+      this.$fetchGet("/real-depart-data/compareList?direction=0",{
+        routeId:this.value
+      }).then(res => {
         let arr=[],arr1=[],arr2=[]
         // res.result.forEach(iteam=>{
         //   arr.push(iteam.datatime)

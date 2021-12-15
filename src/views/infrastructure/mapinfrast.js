@@ -40,7 +40,7 @@ const Map = {
 
       this.mouseTool = new AMap.MouseTool(this.M_map)
 
-     
+     this.M_zzploy()
      
 
       this.M_createInfoWin()
@@ -67,6 +67,37 @@ const Map = {
       this.M_map.setFitView(this.polylineRoute, true,[0,0,0,0])
       this.polyEditor = new AMap.PolylineEditor(this.M_map, this.polylineRoute);
 
+    },
+
+    M_zzploy(){
+      new AMap.DistrictSearch({
+        extensions:'all',
+        subdistrict:0
+      }).search('浦东新区',(status,result)=>{
+          // 外多边形坐标数组和内多边形坐标数组
+          var outer = [
+              new AMap.LngLat(-360,90,true),
+              new AMap.LngLat(-360,-90,true),
+              new AMap.LngLat(360,-90,true),
+              new AMap.LngLat(360,90,true),
+          ];
+          var holes = result.districtList[0].boundaries
+
+          var pathArray = [
+              outer
+          ];
+          pathArray.push.apply(pathArray,holes)
+          var polygon = new AMap.Polygon( {
+              pathL:pathArray,
+              strokeColor: '#00eeff',
+              strokeWeight: 1,
+              fillColor: '#71B3ff',
+              fillOpacity: 0.05
+          });
+          polygon.setPath(pathArray);
+          this.M_map.add(polygon)
+      })
+    
     },
     
 

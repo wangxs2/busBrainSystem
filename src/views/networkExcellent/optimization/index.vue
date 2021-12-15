@@ -14,7 +14,7 @@
           <div class="itmsg">
               <div style="width:8vw;text-align:left;margin-right:0.4vw">线路长度</div>
                <el-input style="width:50px" size="mini" v-model="searchbox.minDis"></el-input>-
-               <el-input style="width:50px;margin-right:0.3vw" size="mini" v-model="searchbox.maxDis"></el-input> km
+               <el-input style="width:50px;margin-right:0.3vw" size="mini" v-model="searchbox.maxDis"></el-input> m
 
           </div>
           <div class="itmsg">
@@ -71,7 +71,7 @@
            <div class="itmsg">
               <div style="width:8vw;text-align:left;margin-right:0.4vw">线路长度</div>
                <el-input style="width:50px" size="mini" v-model="updtaobj.confLenMin"></el-input>-
-               <el-input style="width:50px;margin-right:0.3vw" size="mini" v-model="updtaobj.confLenMax"></el-input> km
+               <el-input style="width:50px;margin-right:0.3vw" size="mini" v-model="updtaobj.confLenMax"></el-input> m
           </div>
           <div class="itmsg">
               <div style="width:8vw;text-align:left;margin-right:0.4vw">站点数</div>
@@ -123,10 +123,10 @@
 
 
     <div class="tulibox1" v-show="isupdate2">
-
+        <div style="margin-bottom:1.5vh">已设计线网</div>
        <div style="display:flex;align-items: center;cursor:pointer;margin-bottom:0.6vh" @click="lincolor1(iteam)" v-for="(iteam,n) in updateall45" :key="n">
-        <div :style="{'background':iteam.iscolor==true?iteam.color:'grey','border':'1px solid #ffffff'}" class="iyline1"></div> 
-        <div :style="{'color':iteam.iscolor==true?'#ffffff':'grey'}">{{iteam.routeName}}</div>
+        <div :style="{'background':iteam.iscolor1==true?iteam.color:'grey','border':'1px solid #ffffff'}" class="iyline1"></div> 
+        <div :style="{'color':iteam.iscolor1==true?'#ffffff':'grey'}">{{iteam.routeName}}</div>
       </div>
 
     </div>
@@ -151,12 +151,12 @@ export default {
       searchbox:{
         line:'',
         metroName:'',
-        minDis:"2",
-        maxDis:"15",
-        maxStationNum:"15",
-        minStationNum:"6",
+        minDis:"800",
+        maxDis:"5000",
+        maxStationNum:"10",
+        minStationNum:"3",
         adjacentMaxDis:"1000",
-        adjacentMinDis:"300",
+        adjacentMinDis:"200",
         routeConfList:[],
         adjacentMinDis4:'',
         adjacentMinDis3:'',
@@ -319,18 +319,17 @@ export default {
 
     },
     lincolor1(row){
-       row.iscolor=!row.iscolor
+       row.iscolor1=!row.iscolor1
         this.kyLineOver1.getOverlays().forEach(iteam=>{
-        if(row.iscolor==false&&row.routeName==iteam.getExtData().routeName){
+        if(row.iscolor1==false&&row.routeName==iteam.getExtData().routeName){
           iteam.hide()
         }
-        if(row.iscolor==true&&row.routeName==iteam.getExtData().routeName){
+        if(row.iscolor1==true&&row.routeName==iteam.getExtData().routeName){
           iteam.show()
         }
       })
     },
     lincolor(row){
-      console.log(444444)
       row.iscolor=!row.iscolor
       // if(this.kyLineOver.getOverlays().length>0){
       //   this.kyLineOver.clearOverlays()
@@ -399,8 +398,9 @@ export default {
        arr.forEach(iteam=>{
           // this.driving.search(new AMap.LngLat(row.geneStart.lng, row.geneStart.lat), new AMap.LngLat(row.geneEnd.lng, row.geneEnd.lat),{
           // waypoints:arr
-
-         this.driving.search(new AMap.LngLat(iteam[0].lng,iteam[0].lat),new AMap.LngLat(iteam[1].lng,iteam[1].lat), (status, result)=> {
+//  this.driving.search(new AMap.LngLat(iteam[0].lng,iteam[0].lat),new AMap.LngLat(iteam[1].lng,iteam[1].lat), (status, result)=> { 两个点的
+         this.driving.search(new AMap.LngLat(row.geneStart.lng, row.geneStart.lat), new AMap.LngLat(row.geneEnd.lng, row.geneEnd.lat),{
+          waypoints:arr}, (status, result)=> {
             // result即是对应的驾车导航信息，相关数据结构文档请参考 https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
             if (status === 'complete') {
                 if (result.routes && result.routes.length) {
@@ -473,73 +473,86 @@ export default {
       return arr;
     },
     searchDaline(){
+      this.poloading=true
         this.updateall=[]
         this.updateall45=[]
+        this.isupdate2=false
+        this.isupdate2=false
       if(this.kyLineOver.getOverlays().length>0){
         this.kyLineOver.clearOverlays()
+      }
+      if(this.kyLineOver1.getOverlays().length>0){
+        this.kyLineOver1.clearOverlays()
       }
       
       this.$fetchPost("net/qy",this.searchbox,'json').then(res=>{
         this.poloading=false
 
       //  =this.cloneObj(res.result.curGsList)
+      if(res.result){
+
       
 
         res.result.curGsList.forEach((iteam,inx)=>{
-          iteam.cfstaion=[]
-          iteam.cfstaion=this.arr_unique4(iteam.genes)
-      
-          if(iteam.cfstaion.length>1&&iteam.fq!==true){
-             
-            iteam.pointarr=[]
-            iteam.iscolor=true
-            iteam.color=this.linecolors[inx]
-            this.updateall.push(this.cloneObj(iteam))
-            iteam.cfstaion.forEach((item,index)=>{
-              item.routeName=iteam.routeName
-              this.drawpoint(item)
-              iteam.pointarr.push([iteam.cfstaion[index],iteam.cfstaion[index+1]])
-            })
-
-            gaosudata.forEach(iy=>{
-              if(iteam.routeName==iy.routeName){
-                this.updateall45.push(this.cloneObj(iteam))
-                this.drawbusLine2(iy,iteam)
-              }
-            })
-            this.lineSearch(iteam.routeName,iteam,2)
-            this.toLine(iteam.pointarr.slice(0,iteam.pointarr.length-1),iteam.color,iteam)
-          }
-
-
-
-          //用途经点规划的
           // iteam.cfstaion=[]
           // iteam.cfstaion=this.arr_unique4(iteam.genes)
-          // if(iteam.cfstaion.length>0&&iteam.fq!==true){
-          //   iteam.iscolor=true
-          //   this.updateall.push(iteam)
+      
+          // if(iteam.cfstaion.length>1&&iteam.fq!==true){
+             
           //   iteam.pointarr=[]
+          //   iteam.iscolor=true
           //   iteam.color=this.linecolors[inx]
-            
+          //   this.updateall.push(this.cloneObj(iteam))
           //   iteam.cfstaion.forEach((item,index)=>{
           //     item.routeName=iteam.routeName
           //     this.drawpoint(item)
-          //     iteam.pointarr.push(new AMap.LngLat(item.lng,item.lat))
+          //     iteam.pointarr.push([iteam.cfstaion[index],iteam.cfstaion[index+1]])
           //   })
-          //   this.lineSearch(iteam.routeName,iteam,2)
-            
+
           //   gaosudata.forEach(iy=>{
           //     if(iteam.routeName==iy.routeName){
-          //       this.updateall45.push(iteam)
+          //       this.updateall45.push(this.cloneObj(iteam))
           //       this.drawbusLine2(iy,iteam)
           //     }
           //   })
-            
-          //   this.toLine(iteam.pointarr,iteam.color,iteam)
+          //   this.lineSearch(iteam.routeName,iteam,2)
+          //   this.toLine(iteam.pointarr.slice(0,iteam.pointarr.length-1),iteam.color,iteam)
           // }
-          
 
+
+
+          // 用途经点规划的
+          iteam.cfstaion=[]
+          iteam.cfstaion=this.arr_unique4(iteam.genes)
+          if(iteam.cfstaion.length>0&&iteam.fq!==true){
+             this.isupdate1=true
+             this.isupdate2=true
+              iteam.iscolor=true
+              iteam.iscolor1=false
+              
+              iteam.pointarr=[]
+              iteam.color=this.linecolors[inx]
+              this.updateall.push(this.cloneObj(iteam))
+              iteam.cfstaion.forEach((item,index)=>{
+                item.routeName=iteam.routeName
+                this.drawpoint(item)
+                iteam.pointarr.push(new AMap.LngLat(item.lng,item.lat))
+              })
+              this.lineSearch(iteam.routeName,iteam,2)
+              
+              gaosudata.forEach(iy=>{
+                if(iteam.routeName==iy.routeName){
+                  this.updateall45.push(this.cloneObj(iteam))
+                  this.drawbusLine2(iy,iteam)
+                }
+              })
+
+                console.log(this.updateall)
+              
+              this.toLine(iteam.pointarr,iteam.color,iteam)
+            
+            
+          }
           //直接画线的
           // if(iteam.fq!==true){
           //   iteam.genespath=[]
@@ -574,6 +587,26 @@ export default {
           // }
         })
 
+        }else{
+          this.$message.error({
+            message: '请调整参数后重新规划'
+          });
+      }
+
+
+      setTimeout(()=>{
+
+         if(this.updateall.length==0){
+            console.log(this.updateall)
+            this.$message.error({
+              message: '请调整参数后重新规划'
+            });
+          }
+
+      },1000)
+
+     
+
           
       })
 
@@ -599,6 +632,8 @@ export default {
         offset: new AMap.Pixel(-6, -6)
       })
 
+      this.M_zzploy()
+
 
         var drivingOption = {
           //   AMap.DrivingPolicy.LEAST_TIME
@@ -620,19 +655,43 @@ export default {
 
     this.driving.setAvoidPolygons([[AMap.LngLat(121.571872,31.253914)],[AMap.LngLat(121.571532,31.254462)]])
 
-
-   
-
-   
-
       setTimeout(()=>{
         this.$store.commit('SET_LOADING',false)
       },200)
-
-
       // this.drawRouteYm(gaosudata)
       
     //    this.getData()
+    },
+
+    M_zzploy(){
+      new AMap.DistrictSearch({
+        extensions:'all',
+        subdistrict:0
+      }).search('浦东新区',(status,result)=>{
+          // 外多边形坐标数组和内多边形坐标数组
+          var outer = [
+              new AMap.LngLat(-360,90,true),
+              new AMap.LngLat(-360,-90,true),
+              new AMap.LngLat(360,-90,true),
+              new AMap.LngLat(360,90,true),
+          ];
+          var holes = result.districtList[0].boundaries
+
+          var pathArray = [
+              outer
+          ];
+          pathArray.push.apply(pathArray,holes)
+          var polygon = new AMap.Polygon( {
+              pathL:pathArray,
+              strokeColor: '#00eeff',
+              strokeWeight: 1,
+              fillColor: '#71B3ff',
+              fillOpacity: 0.05
+          });
+          polygon.setPath(pathArray);
+          this.MyMapper.add(polygon)
+      })
+    
     },
   
     getData(){ 
@@ -804,6 +863,7 @@ export default {
         });
         this.kyLineOver1.addOverlay(busPolyline)
         this.MyMapper.add(this.kyLineOver1);
+        this.kyLineOver1.hide()
 
     },
 
@@ -957,31 +1017,52 @@ export default {
 
     },
     drawbusLine(startPot, endPot, BusArr,stops,row,type) {
+      console.log(stops)
       stops.forEach(iteam=>{
+            let icon=''
+            let colorfo=""
+            let curmg=''
+            if(iteam.name=='豫园'||iteam.name=='大世界'||iteam.name=="一大会址·黄陂南路"||iteam.name=="静安寺"||iteam.name=="武定路"||iteam.name=="武宁路"||iteam.name=="曹杨路"||iteam.name=="中宁路"||iteam.name=="真如"||iteam.name=="铜川路"||iteam.name=="真光路"||iteam.name=="真新新村"||iteam.name=="定边路"||iteam.name=="嘉怡路"||iteam.name=="临洮路"||iteam.name=="乐秀路"||iteam.name=="封浜"){
+              icon=require("../../../assets/image/unable.png")
+              colorfo='grey'
+               curmg='not-allowed'
+            }else if(type==4){
+              icon=require("../../../assets/image/icon_gj1.png")
+              colorfo='#ffffff'
+              curmg='pointer'
+            }else{
+              icon=require("../../../assets/image/icon_dt.png")
+              colorfo='#ffffff'
+              curmg='pointer'
+            }
            let marrk=new AMap.Marker({
             map: this.MyMapper,
             position: iteam.location, //基点位置
-            icon: type==4?require("../../../assets/image/icon_gj1.png"):require("../../../assets/image/icon_dt.png"),
+            icon: icon,
             zIndex: 10,
+            cursor: curmg,
             anchor: 'bottom-center',
         });
 
         
         marrk.on('click',(e)=>{
-          this.isupdate1=true
-          this.isupdate2=true
-          this.searchbox.line=row.name
-          this.searchbox.metroName=iteam.name
-          this.poloading=true
-             setTimeout(()=>{
-              this.searchDaline()
-            },500)
+          if(iteam.name=='豫园'||iteam.name=='大世界'||iteam.name=="一大会址·黄陂南路"||iteam.name=="静安寺"||iteam.name=="武定路"||iteam.name=="武宁路"||iteam.name=="曹杨路"||iteam.name=="中宁路"||iteam.name=="真如"||iteam.name=="铜川路"||iteam.name=="真光路"||iteam.name=="真新新村"||iteam.name=="定边路"||iteam.name=="嘉怡路"||iteam.name=="临洮路"||iteam.name=="乐秀路"||iteam.name=="封浜"){
+            return 
+          }else{
+                this.searchbox.line=row.name
+                this.searchbox.metroName=iteam.name
+                this.poloading=true
+                  setTimeout(()=>{
+                    this.searchDaline()
+                  },500)
+          }
+       
         })
 
          marrk.setLabel({
             direction:'right',
             offset: new AMap.Pixel(10, 0),  //设置文本标注偏移量
-            content: `<div class='info'>${iteam.name}</div>`, //设置文本标注内容
+            content: `<div class='info' style='color:${colorfo}' >${iteam.name}</div>`, //设置文本标注内容
         });
       })
         // //绘制起点，终点
@@ -1031,6 +1112,7 @@ export default {
       
     },
     svgg(){
+        
 
       if(this.searchbox.line==''||this.searchbox.metroName==''){
         this.$message.error({

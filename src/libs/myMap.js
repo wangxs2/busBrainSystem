@@ -68,6 +68,7 @@ const Map = {
       this.M_map.on('click', (e) => {
         this.M_closeInfoWin()
       });
+      this.M_zzploy()
     },
     initLineAllbus(datapoint){
 
@@ -175,6 +176,30 @@ const Map = {
 
     })
     return lines
+  },
+
+  //查询线路的信息
+  lineSearchPudong(busLineName) {
+    let  linesearch;
+    //实例化公交线路查询类，只取回一条路线
+    if(!linesearch){
+        linesearch = new AMap.LineSearch({
+            pageIndex: 1,
+            city: '上海',
+            pageSize: 1,
+            extensions: 'all'
+        });
+    }
+    //搜索“536”相关公交线路
+    linesearch.search(busLineName, (status, result)=> {
+        if (status === 'complete' && result.info === 'OK') {
+            // lineSearch_Callback(result);
+            console.log(result)
+            this.objLine=result.lineInfo[0]
+        } else {
+            // alert(result);
+        }
+    });
   },
 
   //公交线路网画公交线
@@ -316,6 +341,9 @@ const Map = {
   },
 
   maplocalMain(datapoint){
+    if(this.layerzd){
+      this.lcalzd.remove(this.layerzd)
+    }
 
   
     let _events = datapoint;
@@ -447,6 +475,10 @@ const Map = {
   //300米和500米的覆盖面积
   radiusms(datapoint){
 
+    if(this.plthree){
+      this.lcalzd.remove(this.plthree)
+    }
+
     
     let _events = datapoint;
     
@@ -491,10 +523,42 @@ const Map = {
     this.lcalzd.add(this.plthree);
 
   },
+  M_zzploy(){
+    new AMap.DistrictSearch({
+      extensions:'all',
+      subdistrict:0
+    }).search('浦东新区',(status,result)=>{
+        // 外多边形坐标数组和内多边形坐标数组
+        var outer = [
+            new AMap.LngLat(-360,90,true),
+            new AMap.LngLat(-360,-90,true),
+            new AMap.LngLat(360,-90,true),
+            new AMap.LngLat(360,90,true),
+        ];
+        var holes = result.districtList[0].boundaries
+
+        var pathArray = [
+            outer
+        ];
+        pathArray.push.apply(pathArray,holes)
+        var polygon = new AMap.Polygon( {
+            pathL:pathArray,
+            strokeColor: '#00eeff',
+            strokeWeight: 1,
+            fillColor: '#71B3ff',
+            fillOpacity: 0.05
+        });
+        polygon.setPath(pathArray);
+        this.M_map.add(polygon)
+    })
+  
+  },
    //300米和500米的覆盖面积
    radiusmsfive(datapoint){
 
-    
+    if(this.plfive){
+      this.lcalzd.remove(this.plfive)
+    }
     let _events = datapoint;
     
       var list = _events.map(e => {

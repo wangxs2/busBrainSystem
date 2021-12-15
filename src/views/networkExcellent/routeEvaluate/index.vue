@@ -55,42 +55,72 @@
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             与轨交重复站数
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.gjcf||'--'}}站</div>
+          <div style="display:flex;align-items: center;">{{objleft.gjcf||'--'}}站 
+            <div v-show="objleft.gjcf">
+             <img v-show="objleft.gjcf<3" style="margin-left:0.4vw" src="@/assets/image/xjt.png" />
+              <img v-show="objleft.gjcf>3"  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+            </div>
+          </div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             公交线路重复度 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.cfd||'--'}}</div>
+          <div style="display:flex;align-items: center;">{{objleft.cfd||'--'}}
+            <div v-show="objleft.cfd">
+              <img v-show="objleft.cfd<0.5" style="margin-left:0.4vw" src="@/assets/image/xjt.png" />
+              <img v-show="objleft.cfd>0.5"  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+            </div>
+          </div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             线路长度 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.cd||'--'}}km</div>
+          <div style="display:flex;align-items: center;">{{objleft.cd||'--'}}km
+            <div v-show="objleft.cd">
+             <img v-show="objleft.cd<30" style="margin-left:0.4vw" src="@/assets/image/xjt.png" />
+              <img v-show="objleft.cd>30"  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+            </div>
+          </div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             线路非直线系数 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.fzxxs||'--'}}</div>
+          <div style="display:flex;align-items: center;">{{objleft.fzxxs||'--'}}
+            <div v-show="objleft.fzxxs">
+              <img v-show="objleft.fzxxs<1.6" style="margin-left:0.4vw" src="@/assets/image/xjt.png" />
+              <img v-show="objleft.fzxxs>1.6"  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+            </div>
+          </div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             线路百公里人次 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.bglrc||'--'}}</div>
+          <div style="display:flex;align-items: center;">{{objleft.bglrc||'--'}}
+            <div v-show="objleft.bglrc">
+              <img v-show="objleft.bglrc<100" style="margin-left:0.4vw" src="@/assets/image/xjt.png" />
+              <img v-show="objleft.bglrc>100"  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+            </div>
+          </div>
         </div>
         <div class="itmsg">
           <div class="itmsgs">
             <img style="margin-right:0.4vw" src="@/assets/image/licon_4.png" />
             高峰满载率 
           </div>
-          <div style="display:flex;align-items: center;">{{objleft.mzl||'--'}}</div>
+          <div style="display:flex;align-items: center;">{{objleft.mzl||'--'}}
+            <div v-show="objleft.mzl">
+              <img v-show="objleft.mzl<70" style="margin-left:0.4vw" src="@/assets/image/xjt.png" />
+              <img v-show="objleft.mzl>70"  style="margin-left:0.4vw" src="@/assets/image/sst.png" />
+              </div>
+          </div>
         </div>
       </div>
     </div>
@@ -219,10 +249,41 @@ export default {
         anchor: 'top-right',
         offset: new AMap.Pixel(-6, -6)
       })
+      this.M_zzploy()
       setTimeout(()=>{
         this.$store.commit('SET_LOADING',false)
       },200)
        this.getData()
+    },
+    M_zzploy(){
+      new AMap.DistrictSearch({
+        extensions:'all',
+        subdistrict:0
+      }).search('浦东新区',(status,result)=>{
+          // 外多边形坐标数组和内多边形坐标数组
+          var outer = [
+              new AMap.LngLat(-360,90,true),
+              new AMap.LngLat(-360,-90,true),
+              new AMap.LngLat(360,-90,true),
+              new AMap.LngLat(360,90,true),
+          ];
+          var holes = result.districtList[0].boundaries
+
+          var pathArray = [
+              outer
+          ];
+          pathArray.push.apply(pathArray,holes)
+          var polygon = new AMap.Polygon( {
+              pathL:pathArray,
+              strokeColor: '#00eeff',
+              strokeWeight: 1,
+              fillColor: '#71B3ff',
+              fillOpacity: 0.05
+          });
+          polygon.setPath(pathArray);
+          this.MyMapper.add(polygon)
+      })
+    
     },
   
     getData(){ 

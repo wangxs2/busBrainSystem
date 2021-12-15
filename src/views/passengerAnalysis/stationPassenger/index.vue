@@ -10,6 +10,7 @@
         size="small"
         type="daterange"
         range-separator="至"
+        :picker-options="pickerOptions"
         @change="getAllData()"
         start-placeholder="开始日期"
         end-placeholder="结束日期">
@@ -82,6 +83,13 @@ let MyMap = null; // 地图实例
 export default {
      data(){
         return {
+          pickerOptions: {
+              disabledDate(date) {
+                //这里设置今天以前的不可选
+                let time =new Date("2021-05-31").getTime()
+                  return date.getTime()> Date.now() ||date.getTime()<time;
+              }
+            },
           echload:true,
           assloading:true,
           options:[
@@ -93,7 +101,7 @@ export default {
               value:2
             }
           ],
-          value1:[new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
+          value1:['2021-07-01','2021-07-31'],
           value:'',
           state2:'',
           allStation:[],
@@ -344,7 +352,7 @@ export default {
                 })
               }
         
-
+            this.restaurants=this.cloneObj(arrheat)
              MyMap.localheat(arrheat)
              MyMap.zdklMapOption.heat.hide()
             for(let key  in res.result){
@@ -382,6 +390,11 @@ export default {
           // this.$emit('changefun',{
           //     stattiondetail:res.result
           // })
+          console.log(MyMap)
+           console.log(iteam)
+          MyMap.map.setZoomAndCenter(16,iteam.lnglat,true)
+            MyMap.infoWindow.setContent(MyMap.createInfoWindow(res.result))
+            MyMap.infoWindow.open(MyMap.map,iteam.lnglat);
         })
       },
       toheat(){
@@ -414,7 +427,7 @@ export default {
     box-sizing: border-box;
     padding: vh(10) vw(16);
     position: absolute;
-    top: vh(130);
+    top: vh(150);
     left: vw(20);
     display: flex;
     z-index:10;

@@ -521,10 +521,41 @@ export default {
         anchor: "top-right",
         offset: new AMap.Pixel(-6, -6)
       });
+      this.M_zzploy()
       setTimeout(() => {
         this.$store.commit("SET_LOADING", false);
       }, 200);
       this.getData();
+    },
+     M_zzploy(){
+      new AMap.DistrictSearch({
+        extensions:'all',
+        subdistrict:0
+      }).search('浦东新区',(status,result)=>{
+          // 外多边形坐标数组和内多边形坐标数组
+          var outer = [
+              new AMap.LngLat(-360,90,true),
+              new AMap.LngLat(-360,-90,true),
+              new AMap.LngLat(360,-90,true),
+              new AMap.LngLat(360,90,true),
+          ];
+          var holes = result.districtList[0].boundaries
+
+          var pathArray = [
+              outer
+          ];
+          pathArray.push.apply(pathArray,holes)
+          var polygon = new AMap.Polygon( {
+              pathL:pathArray,
+              strokeColor: '#00eeff',
+              strokeWeight: 1,
+              fillColor: '#71B3ff',
+              fillOpacity: 0.05
+          });
+          polygon.setPath(pathArray);
+          this.MyMapper.add(polygon)
+      })
+    
     },
 
     getData() {
@@ -570,7 +601,7 @@ export default {
           extData: iteam
         });
 
-        kyLinedata.on("mouseover", e => {
+        kyLinedata.on("click", e => {
           e.target.setOptions({
             strokeColor: "#A200FF",
             zIndex: 18
@@ -578,13 +609,13 @@ export default {
           let num = Math.round(e.target.getPath().length / 2);
           this.setConten(e.target.getPath()[num], e.target.getExtData());
         });
-        kyLinedata.on("mouseout", e => {
-          e.target.setOptions({
-            strokeColor: "#35A594",
-            zIndex: 10
-          });
-          this.M_InfoWindow.close();
-        });
+        // kyLinedata.on("mouseout", e => {
+        //   e.target.setOptions({
+        //     strokeColor: "#35A594",
+        //     zIndex: 10
+        //   });
+        //   this.M_InfoWindow.close();
+        // });
         lines.push(kyLinedata);
       });
 
@@ -725,14 +756,13 @@ export default {
   .reds_marker{
     box-shadow:0 0 0 3px rgb(143 0 33 / 75%), 0px 0 0 6px rgb(143 0 33 / 58%);
   }
-  
- .red_marker:after,.green_marker:after,.yellow_marker:after,.reds_marker:after{
+  // .green_marker:after,.yellow_marker:after,
+ .red_marker:after,.reds_marker:after{
    content:'';
    display:block;
    width:2000%;
    height: 2000%;
    border-radius:100%;
-  
    animation:scaleHide 3s ease 0s infinite;
    top:-974%;
    left:-955%;
@@ -743,7 +773,6 @@ export default {
 .yellow_marker:after{
   background:#ea8900;
 }
-
 .red_marker:after{
    background: rgb(216, 3, 4);
 }
@@ -759,10 +788,8 @@ export default {
     background-color: transparent !important;
     border: none !important;
   }
-
   .info-win {
     padding-right: vw(20);
-    // height: vw(110);
     position: relative;
     .win-triangle {
       position: absolute;
@@ -784,7 +811,6 @@ export default {
         border-radius: 4px;
         padding: vh(12) vw(16) vh(10) vw(10);
         color: #fff;
-        // display: flex;
         .icon {
           width: vw(98);
           height: vw(88);
@@ -808,9 +834,6 @@ export default {
             font-size: vw(14);
             line-height: vw(20);
             margin-top: vw(6);
-            // overflow: hidden;
-            // white-space: nowrap;
-            // text-overflow: ellipsis;
           }
         }
       }

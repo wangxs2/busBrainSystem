@@ -928,8 +928,8 @@ export default {
   .reds_marker{
     box-shadow:0 0 0 3px rgb(143 0 33 / 75%), 0px 0 0 6px rgb(143 0 33 / 58%);
   }
-  
- .red_marker:after,.green_marker:after,.yellow_marker:after,.reds_marker:after{
+  // .green_marker:after,.yellow_marker:after,
+ .red_marker:after,.reds_marker:after{
    content:'';
    display:block;
    width:2000%;

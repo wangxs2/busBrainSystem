@@ -9,6 +9,7 @@
         v-model="value1"
         size="small"
         type="daterange"
+        :picker-options="pickerOptions"
         @change="getRegionData()"
         range-separator="至"
         start-placeholder="开始日期"
@@ -50,7 +51,14 @@ let MyMap = null; // 地图实例
 export default {
     data(){
         return {
-          value1:[new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
+          pickerOptions: {
+              disabledDate(date) {
+                //这里设置今天以前的不可选
+                let time =new Date("2021-05-31").getTime()
+                  return date.getTime()> Date.now() ||date.getTime()<time;
+              }
+            },
+          value1:['2021-07-01','2021-07-31'],
           lineaData: [],
           assloading:true,
         }

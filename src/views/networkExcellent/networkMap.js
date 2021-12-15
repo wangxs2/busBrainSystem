@@ -213,6 +213,8 @@ const Map = {
         zIndex: 1000,
         collision: false
       });
+
+      this.M_zzploy()
     },
     // 设置车辆可视化
     M_setAreasPoint(data) {
@@ -1271,6 +1273,7 @@ const Map = {
             if(this.xwrhGroups1){
               this.xwrhGroups1.clearOverlays()
             }
+            this.xwrhdatalinname=[]
             this.M_map.setFitView(marker, true, [150, 240, 60, 60]);
             let stationKeyWord=e.target.getExtData().name+'(地铁站)'
             this.station.search(stationKeyWord, (status, resd) => {
@@ -1278,9 +1281,12 @@ const Map = {
                 resd.stationInfo[1].buslines.forEach(itm=>{
 
                   linesearch.search(itm.name, (status, lida) => {
-
+                      
                     if (status === 'complete' && lida.info === 'OK') {
-
+                      console.log(lida)
+                      var obj = {};
+                      obj.name=lida.lineInfo[0].name
+                      this.xwrhdatalinname.push(obj)
                                     
                         let busPolyline1 = new AMap.Polyline({
                           // map: this.M_map,
@@ -1710,7 +1716,7 @@ const Map = {
               });
               marker1.on('click', e => {
                 // this.S_ply(iteam)
-                this.M_getlindata(iteam)
+                // this.M_getlindata(iteam)
                 // this.$fetchGet("curve/detail", {
                 //   roadName: iteam.roadsegid
                 // }).then(res => {
@@ -1840,7 +1846,6 @@ const Map = {
               }
           })
       })
-        console.log(list)
         setTimeout(()=>{
           this.S_ply(arrno,list)
         },1000)
@@ -2181,7 +2186,7 @@ const Map = {
               strokeColor: '#00eeff',
               strokeWeight: 1,
               fillColor: '#71B3ff',
-              fillOpacity: 0.5
+              fillOpacity: 0.05
           });
           polygon.setPath(pathArray);
           this.M_map.add(polygon)

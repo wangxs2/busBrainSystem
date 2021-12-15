@@ -41,7 +41,7 @@
                     未改造站点数：
 
                 </div>
-                <div style="color:#F5256A">{{zonum-2963}}个</div>
+                <div style="color:#F5256A">{{6594-2963}}个</div>
               </div>
             </div>
       </div>
@@ -78,6 +78,15 @@
                 <img @click="toShow(iteam,n)" v-show="iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxktrue.png" />
                 <img @click="toShow(iteam,n)" v-show="!iteam.isxz" style="cursor:pointer" width="18" height="18" src="@/assets/image/fxkfalse.png" />
                 <div class="natit">{{iteam.name}}</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="seting-box1" v-show="tlstation[2].isxz==true">
+            <div class="settit">线路名称</div>
+            <div class="table-box">
+              <div  class="table-iteanm" v-for="(iteam,n) in arr_unique4(xwrhdatalinname)" :key="n" >
+                {{iteam.name}}
               </div>
             </div>
 
@@ -237,6 +246,7 @@ export default {
       myChart1:null,
       objline:{},
       restaurants:[],
+      xwrhdatalinname:[],
       lefttda:{},
       stadata:{},
       zonum:0,
@@ -637,6 +647,14 @@ export default {
       
 
     },
+    arr_unique4 (arr) {
+     var obj = {};
+    arr = arr.reduce(function(item, next) {
+      obj[next.name] ? '' : obj[next.name] = true && item.push(next);
+      return item;
+    }, []);
+      return arr;
+    },
     pointAll2(){
         this.$fetchGet("gps/ebusList").then(res => {
           // if(res.result&&res.result['站点的详细属性']){
@@ -694,7 +712,8 @@ export default {
               },
                title: [
                   {
-                    text: dase,
+                    // text: dase,
+                    text: 6594,
                     itemGap: 5,
                     left: 'center',
                     top: '36%',
@@ -1128,10 +1147,38 @@ export default {
         }
       }
       .seting-box1{
-          position: absolute;
-          left: vw(212);
-          bottom: vw(14);
-          z-index:10;
+           position: absolute;
+        right: vw(60);
+        bottom: vw(0);
+        z-index:10;
+        background: rgba(12, 38, 104, 1);
+        box-shadow: 0px 0px vh(6) #27B6FF inset;
+        box-sizing:border-box;
+        padding:vh(12) vw(17);
+          .settit{
+            text-shadow: 0 0 1.2em rgba(255, 255, 255, 0.8),
+            -0 -0 1.4em rgba(255, 255, 255, 0.7);
+          font-weight: bold;
+        }
+        .table-box{
+          flex-direction: column;
+          display: flex;
+          box-sizing:border-box;
+          // padding-left:vw(20);
+          .table-iteanm{
+            box-sizing:border-box;
+            display: flex;
+            align-items: center;
+            padding-top:vh(20);
+            img{
+              margin-right:vw(6);
+            }
+            .natit{
+              display:inline-block;
+              width:6.6vw;
+            }
+          }
+        }
       }
       .tulibox{
         position: absolute;

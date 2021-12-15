@@ -190,7 +190,12 @@ export default {
         // })
         this.thfivearr=arr
         this.createPolygon(obj)
-        this.pointAll3(arr)
+        this.maplocalMain(arr)
+
+
+        this.radiusms(arr)
+          this.radiusmsfive(arr)
+        // this.pointAll3(arr)
 
         // this.threeCircle(arr,300)
 
@@ -200,9 +205,15 @@ export default {
     },
 
     claearstop(){
-        this.$emit('changefun',{
-            isclaear:1
-        })
+        // this.$emit('changefun',{
+        //     isclaear:1
+        // })
+
+
+          this.maplocalMain(this.restaurants)
+          // this.localheat(this.restaurants)
+          this.radiusms(this.restaurants)
+          this.radiusmsfive(this.restaurants)
 
 
 
@@ -212,10 +223,14 @@ export default {
       if(this.point==1){
         // this.massall.hide()
         this.lcalzd.remove(this.layerzd);
+        this.lcalzd.remove(this.plthree);
+        this.lcalzd.remove(this.plfive);
         this.point=2
       }else{
         this.point=1
         // this.massall.show()
+        this.lcalzd.add(this.plfive);
+        this.lcalzd.add(this.plthree);
         this.lcalzd.add(this.layerzd);
 
       }

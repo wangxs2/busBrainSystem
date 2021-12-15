@@ -164,22 +164,22 @@
         <!-- <div class="titbox" style="margin-top:18px;margin-bottom:8px">站点信息</div> -->
         <div class="right-ech">
           <div id="echbox"></div>
-          <div class="echleng">
-            <div class="echleng1">
+          <!-- <div class="echleng"> -->
+            <!-- <div class="echleng1">
               <div style="display:flex;align-items: center;">
                 <div class="rounbox"></div>
                 有线路经过：
               </div>
               <div style="color:#4578FF">{{stadata.stations}}个</div>
-            </div>
-            <div class="echleng1" style="margin-top:1.5vh">
+            </div> -->
+            <!-- <div class="echleng1" style="margin-top:1.5vh">
               <div style="display:flex;align-items: center;">
                 <div class="rounbox rounbox1"></div>
                无线路经过：
               </div>
               <div style="color:#F5256A">{{stadata.stationsInRun-stadata.stations}}个</div>
-            </div>
-          </div>
+            </div> -->
+          <!-- </div> -->
         </div>
       </div>
     </div>
@@ -1993,9 +1993,9 @@ export default {
 
 
           this.stadata = res.result;
-        let noli = this.stadata.stationsInRun - this.stadata.stations;
+        let noli = this.stadata.stations - this.stadata.stations;
         this.initechart1(
-          this.stadata.stationsInRun,
+          this.stadata.stations,
           this.stadata.stations,
           noli
         );
@@ -2029,6 +2029,9 @@ export default {
         if (res.result && res.result.length > 0) {
           if (this.carSearch.zoom > 11 && this.carSearch.zoom < 17) {
             res.result.forEach(iteam => {
+              if(iteam.name=='浦东新区'){
+                iteam.num=6594
+              }
               iteam.centre = iteam.centre.split(",");
             });
             this.M_setAreasPoint(res.result);
@@ -2305,7 +2308,8 @@ export default {
         },
         title: [
           {
-            text: stationsInRun,
+            // text: stationsInRun,
+            text: 6594,
             itemGap: 5,
             left: "center",
             top: "31%",
@@ -2681,7 +2685,7 @@ export default {
         margin-top:vh(68);
         #echbox {
           width: 100%;
-          height: vh(200);
+          height: vh(280);
           box-sizing: border-box;
           padding-top: vh(18);
         }

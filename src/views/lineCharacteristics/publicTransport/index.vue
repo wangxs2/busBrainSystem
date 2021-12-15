@@ -119,6 +119,43 @@
         </div>
       </div>
     </div>
+
+    <div class="rightlinemsg" v-show="isrour">
+      <div class="tit">
+        线路信息说明
+        <!-- <div>{{objLine.routeName}}</div> -->
+      </div>
+
+      <div class="conten-box">
+        <div class="ityu">
+            线路名称：{{objLine.name}}
+        </div>
+        <div class="ityu">
+            类型：{{objLine.type}}
+        </div>
+        <div class="ityu">
+            首班车时间：{{objLine.stime.length>0?objLine.stime.substring(0, 2):'--'}}:{{objLine.stime.length>0?objLine.stime.substring(2, 4):'--'}}
+        </div>
+        <div class="ityu">
+            末班车时间：{{objLine.etime.length>0?objLine.etime.substring(0, 2):'--'}}:{{objLine.etime.length>0?objLine.etime.substring(2, 4):'--'}}
+        </div>
+        <div class="ityu">
+            起点站：{{objLine.start_stop}}
+        </div>
+        <div class="ityu">
+            终点站：{{objLine.end_stop}}
+        </div>
+        <div class="ityu">
+            所属公司：{{objLine.company}}
+        </div>
+        <div class="ityu"  >重复系数：{{ExtData.cfd==null?'':ExtData.cfd}}</div>
+        <div class="ityu" >百公里人次：{{ExtData.bglrc==null?'':ExtData.bglrc}}</div>
+        <div class="ityu" >满载率：{{ExtData.mzl==null?'':ExtData.mzl}}</div> 
+        <div class="ityu">非直线系数：{{ExtData.fzxxs==null?'':ExtData.fzxxs}}</div> 
+        <div class="ityu" >线路长度(km)：{{ExtData.cd==null?'':ExtData.cd}}</div> 
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -131,7 +168,20 @@ export default {
   data() {
     return {
       lloading:true,
+      isrour:false,
+      lineaData1:[],
       iscline:-1,
+      ExtData:{},
+      objLine:{
+        name:"",
+        type:'',
+        stime:'',
+        etime:'',
+        start_stop:'',
+        end_stop:'',
+        company:'',
+
+      },
       lisData: [
         {
           name: "最长线路",
@@ -171,7 +221,15 @@ export default {
   methods: {
     hzline(row,index){
       this.iscline=index
+      this.lineaData1.forEach(iteam=>{
+        if(iteam.lineName==row.routeName){
+          this.ExtData=iteam
+        }
+      })
+      // this.objLine.routeName=row.routeName
+      this.lineSearchPudong(row.routeName)
       this.gjxlwmsg(row)
+      this.isrour=true
 
     },
     tomeay(row) {
@@ -247,6 +305,22 @@ export default {
         this.lineaData=res.result
 
       })
+
+       this.$fetchPost("route/composite",{
+            cfd:0,   // 重复度
+            gjcf:0,
+            fzxxs: 0,  // 非直线系数
+            cd:0,  // 长度
+            bglrc:1000, // 百公里人次
+            mzl:0,// 满载率
+            ifFilter:false
+        },'json').then(res => {
+          if(res.code!==500){
+
+            
+           this.lineaData1=res.result}
+          
+        })
     },
     setSz(baseArray){
       let len = baseArray.length;
@@ -283,6 +357,39 @@ export default {
   height:100%;
  
    position:relative;
+   .rightlinemsg{
+        position: absolute;
+    top: vh(440);
+    right: vw(20);
+    width: vw(370);
+    height: vh(588);
+    background: url("~@/assets/image/bigline.png");
+    background-size: 100% 100%;
+     z-index: 10;
+       .tit {
+      width: 100%;
+      height: vh(60);
+      font-size: vw(17);
+      color: #ffffff;
+      line-height: vh(80);
+      text-shadow: 0 0 1.2em rgba(255, 255, 255, 0.8),
+        -0 -0 1.4em rgba(255, 255, 255, 0.7);
+      text-indent: vw(32);
+      font-weight: bold;
+      display:flex;
+      justify-content: space-between;
+      box-sizing:border-box;
+      padding-right:vw(32);
+    }
+    .conten-box{
+        box-sizing:border-box;
+      padding-left:vw(32);
+      padding-right:vw(32);
+      .ityu{
+        margin-top:01vh;
+      }
+    }
+   }
   .leftlinemsg {
     position: absolute;
     top: vh(140);

@@ -8,6 +8,7 @@
         :clearable="false"
         type="date"
         @change="getData"
+        :picker-options="pickerOptions"
         placeholder="选择日期">
       </el-date-picker>
       <div style="margin-right:0.6vw;margin-left:1.8vw;width:3.6vw;">线路名称</div>
@@ -35,12 +36,19 @@
 export default {
    data(){
         return {
+            pickerOptions: {
+              disabledDate(date) {
+                //这里设置今天以前的不可选
+                let time =new Date("2021-05-31").getTime()
+                  return date.getTime()> Date.now() ||date.getTime()<time;
+              }
+            },
           options:[
             {
               name:'2021',
               value:'2021',
             },{
-               name:'2020',
+              name:'2020',
               value:'2020',
             }
           ],
@@ -56,9 +64,9 @@ export default {
             ],
           loading:true,
           query:{
-            date:'2021-06-29',
+            date:'2021-07-01',
             direction:0,
-            lineName:'610路'
+            lineName:'610路(客流采集仪)'
           },
           alldata:[],
           options:[],
@@ -71,7 +79,7 @@ export default {
    watch:{
    },
     created(){
-      this.getData()
+     
       this.getAllline()
     },
     mounted(){
@@ -82,8 +90,16 @@ export default {
     methods:{
       getAllline(){ 
         this.$fetchGet("route/routeList").then(res=>{
+          res.result.forEach(iteam=>{
+            if(iteam.routeName=='610路'||iteam.routeName=='871路'||iteam.routeName=='浦东73路'){
+              iteam.routeName=iteam.routeName+'(客流采集仪)'
+            }
+          })
           this.options=res.result
+
+           this.getData()
         })
+        
       },
    
       handleChange(file, fileList) {
@@ -96,22 +112,44 @@ export default {
       },
       getData(){
         this.loading=true
+        let routeId=''
         let arr=[],arr1=[],arr2=[]
-        this.$fetchGet("passenger/section",{
-            date:this.$moment(this.query.date).format("YYYY-MM-DD"),
-            direction:this.query.direction,
-            lineName:this.query.lineName
+        
+        this.options.forEach(iteam=>{
+          if(this.query.lineName==iteam.routeName){
+            routeId=iteam.routeId
+          }
+        })
+
+         this.$fetchGet("passenger/linePassengerNum",{
+          direction:this.query.direction,
+          st:this.$moment(this.query.date).format("YYYY-MM-DD"),
+          et:this.$moment(this.query.date).format("YYYY-MM-DD"),
+          routeId:routeId
+
         }).then(res => {
-          setTimeout(()=>{
-            this.$store.commit('SET_LOADING',false)
-          },200)
-          res.result.forEach(iteam=>{
-            arr.push(iteam.stationName)
-            arr1.push(iteam.onboard)
-            // arr2.push(iteam.sp)
-          })
-           this.loading=false
-           this.initechart(arr,arr1)
+            if(res.result['线路客流']==null){
+              this.$message({
+                  message: '由于数据清洗原因，暂无此线路数据!',
+                  type: 'warning'
+                });
+            }else{
+              this.$fetchGet("passenger/section",{
+                  date:this.$moment(this.query.date).format("YYYY-MM-DD"),
+                  direction:this.query.direction,
+                  lineName:this.query.lineName.replace("(客流采集仪)","")
+              }).then(res => {
+                setTimeout(()=>{
+                  this.$store.commit('SET_LOADING',false)
+                },200)
+                res.result.forEach(iteam=>{
+                  arr.push(iteam.stationName)
+                  arr1.push(iteam.onboard)
+                })
+                this.loading=false
+                this.initechart(arr,arr1)
+              })
+            }
         })
       },
       initechart(arr,arr1){

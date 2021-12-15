@@ -303,6 +303,7 @@ export default {
        this.lcalzd = new Loca.Container({
           map: this.MyMapper,
       });
+      this.M_zzploy()
       this.M_InfoWindow = new AMap.InfoWindow({
         isCustom: true,
         autoMove: true,
@@ -319,6 +320,36 @@ export default {
     },
     closedia(){
       this.page=1
+    },
+     M_zzploy(){
+      new AMap.DistrictSearch({
+        extensions:'all',
+        subdistrict:0
+      }).search('浦东新区',(status,result)=>{
+          // 外多边形坐标数组和内多边形坐标数组
+          var outer = [
+              new AMap.LngLat(-360,90,true),
+              new AMap.LngLat(-360,-90,true),
+              new AMap.LngLat(360,-90,true),
+              new AMap.LngLat(360,90,true),
+          ];
+          var holes = result.districtList[0].boundaries
+
+          var pathArray = [
+              outer
+          ];
+          pathArray.push.apply(pathArray,holes)
+          var polygon = new AMap.Polygon( {
+              pathL:pathArray,
+              strokeColor: '#00eeff',
+              strokeWeight: 1,
+              fillColor: '#71B3ff',
+              fillOpacity: 0.05
+          });
+          polygon.setPath(pathArray);
+          this.MyMapper.add(polygon)
+      })
+    
     },
     handleCurrentChange(val){
       this.page=val

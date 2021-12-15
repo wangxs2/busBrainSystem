@@ -8,6 +8,7 @@
           type="daterange"
           range-separator="至"
           @change="changeDate"
+          	:picker-options="pickerOptions"
           start-placeholder="开始日期"
           end-placeholder="结束日期">
         </el-date-picker>
@@ -36,8 +37,15 @@ export default {
     
     data(){
         return {
+           pickerOptions: {
+              disabledDate(date) {
+                //这里设置今天以前的不可选
+                let time =new Date("2021-05-31").getTime()
+                  return date.getTime()> Date.now() ||date.getTime()<time;
+              }
+            },
             options:[],
-            value1:[new Date() - 3600 * 1000 * 24 * 1,new Date()- 3600 * 1000 * 24 * 1],
+            value1:['2021-07-01','2021-07-31'],
             value:"",
             isbtn:0,
             typelst:[
@@ -93,6 +101,11 @@ export default {
 
         // console.log(val)
         this.$fetchGet("route/routeList").then(res=>{
+           res.result.forEach(iteam=>{
+            if(iteam.routeName=='610路'||iteam.routeName=='871路'||iteam.routeName=='浦东73路'){
+              iteam.routeName=iteam.routeName+'(客流采集仪)'
+            }
+          })
           this.options=res.result
          if(val){
            this.getLinepassenger()
@@ -114,30 +127,50 @@ export default {
       },
       getLinepassenger(){
         this.$store.commit('SET_LOADING',true)
-        this.$fetchGet("passenger/linePassenger",{
+
+
+        this.$fetchGet("passenger/linePassengerNum",{
           direction:this.isbtn,
           st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
           et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
           routeId:this.value
 
         }).then(res => {
-            if(res.result['线路走向']){
-              let obj=res.result['线路走向']
-              obj.geom=this.setData(obj.geom)
-              
-              // this.$emit('changeKl',{
-              //   toLine:obj,
-              //   toLinestation:res.result['线路站点列表']
-              // })
-              MyMap.drawbusLine(obj,res.result['线路站点列表'])
-            }else{
+            if(res.result['线路客流']==null){
+             
+
               this.$message({
-                  message: '无此线路信息!',
+                  message: '由于数据清洗原因，暂无此线路数据!',
                   type: 'warning'
                 });
+            }else{
+
+              this.$fetchGet("passenger/linePassenger",{
+              direction:this.isbtn,
+              st:this.$moment(this.value1[0]).format("YYYY-MM-DD"),
+              et:this.$moment(this.value1[1]).format("YYYY-MM-DD"),
+              routeId:this.value
+
+            }).then(res => {
+                if(res.result['线路走向']){
+                  let obj=res.result['线路走向']
+                  obj.geom=this.setData(obj.geom)
+                  MyMap.drawbusLine(obj,res.result['线路站点列表'])
+                }else{
+                  this.$message({
+                      message: '无此线路信息!',
+                      type: 'warning'
+                    });
+                }
+                this.$store.commit('SET_LOADING',false)
+            })
+              
             }
-            this.$store.commit('SET_LOADING',false)
+            
         })
+
+
+        
       },
       setData(data){
         let str=data.split(' ')
