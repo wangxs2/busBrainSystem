@@ -131,7 +131,11 @@
     <div class="rightlinemsg2" v-if="lineSortShow">
       <div class="tit">根据排名，上南路骨干线路为：</div>
       <div class="content">
-        {{ lineData && lineData.length > 0 ? lineData[0].routeName : '' }}
+        {{
+          lineData && lineData.length > 0
+            ? lineData[0].routeName + ',' + lineData[1].routeName
+            : ''
+        }}
       </div>
     </div>
     <!-- 线路排序 -->
@@ -173,12 +177,12 @@
     </div>
     <div class="rightlinemsg5" v-if="adjustwayScoreShow">
       <div class="tit">
-        调整方式-评分
+        评价
         <div class="btn confirm" @click="adjustScoreConfirm">确 定</div>
       </div>
       <div class="bttit">
         <div>调整方式</div>
-        <div>分值</div>
+        <div>结果</div>
       </div>
       <div class="tablbox">
         <div class="bttit bttit1" v-for="(item, n) in adjustType" :key="n">
@@ -236,7 +240,7 @@ export default {
       searchInputBoxShow: true,
       lineOpQuery: {
         length: 13,
-        lengthOnlineZlPer: 40,
+        lengthOnlineZlPer: 60,
         passengerOnlinePer: 40,
         passengerOnline: 1000,
       },
@@ -341,7 +345,7 @@ export default {
         this.lineData.forEach((item, index) => {
           item.lineColor = this.randomRgbColor()
           this.lineSearchPudong(item.routeName, item)
-          if (index !== 0) {
+          if (index !== 0 && index !== 1) {
             this.lineDataNo.push(item)
           }
         })

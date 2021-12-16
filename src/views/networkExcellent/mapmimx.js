@@ -21,6 +21,7 @@ const Map = {
       plfive:null,
       plthree:null,
       kyLineOver:new AMap.OverlayGroup(),//的线
+      stationOverlayGroup:new AMap.OverlayGroup(),//线路指标站点图标组
       colors:{
         '1-2':"#34b000",
         '2-4':"#FECB00",
@@ -79,7 +80,6 @@ const Map = {
 
   //查询线路的信息
   lineSearchPudong(busLineName,item) {
-    // console.log(busLineName,item,3333)
     let  linesearch;
     //实例化公交线路查询类，只取回一条路线
     if(!linesearch){
@@ -94,7 +94,6 @@ const Map = {
     linesearch.search(busLineName, (status, result)=> {
         if (status === 'complete' && result.info === 'OK') {
             // lineSearch_Callback(result);
-            // console.log(result)
             this.xwyhModelLine(result.lineInfo[0].path,item)
         } else {
             // alert(result);
@@ -102,14 +101,61 @@ const Map = {
     });
   },
 
-  
+  //查询线路指标线路站点的信息
+  stationSearchPudong(arr) {
+    let  stationSearch,stationArr=[],stationMarkerArr=[];
+
+    if(this.stationOverlayGroup){
+      this.stationOverlayGroup.clearOverlays()
+    }
+    let that=this
+    arr.forEach(iteam=>{
+      if(iteam.geom){
+        stationSearch = new AMap.LineSearch({
+          pageIndex: 1,
+          city: '上海',
+          pageSize: 1,
+          extensions: 'all'
+        });
+        //搜索“536”相关公交线路
+        stationSearch.search(iteam.name, (status, result)=> {
+            if (status === 'complete' && result.info === 'OK') {
+                stationArr=stationArr.concat(result.lineInfo[0].via_stops)
+            } else {
+                // alert(result);
+            }
+        });
+      } 
+    })
+    
+    setTimeout(()=> {
+      stationArr.forEach(item => {
+        let libug=new AMap.Marker({
+          position: item.location,
+          icon: new AMap.Icon({
+            image: require('../../assets/image/icon_gj1.png'),
+            size: [24, 24],
+            imageSize: [24, 24],
+          }),
+          offset: new AMap.Pixel(-12, -12),
+          extData: item,
+          cursor: 'pointer',
+        })
+        libug.on('click',e=>{
+          this.allstationin_openInfoWin(item.location,e.target.getExtData())
+        })
+        stationMarkerArr.push(libug)
+      })
+      that.stationOverlayGroup.addOverlays(stationMarkerArr)
+      that.M_map.add(this.stationOverlayGroup)
+    },1500)
+  },
 
   //绘制上南路
   gjxlwmsg(path,item){
-    // console.log(11111)
     this.linegjxlw = new AMap.Polyline({
       path: path,
-      strokeColor:'#d80304',
+      strokeColor:'#e95757',
       strokeOpacity: 1,
       strokeWeight: 10,
       zIndex:9999,
@@ -123,7 +169,6 @@ const Map = {
 
   //绘制线网优化页面公交线路
   xwyhModelLine(path,item){
-    // console.log(11111)
     
     this.linegjxlw = new AMap.Polyline({
       path: path,
@@ -201,6 +246,7 @@ const Map = {
     }
     arr.forEach(iteam=>{
       if(iteam.geom){
+        this.lineSearchPudong()
         let libug=new AMap.Polyline({
           path: this.Q_setData(iteam.geom),
           strokeColor: type==2?iteam.colors:type!==2&&iteam.company=='浦东公交'?"#00ffff":'#35a700',
@@ -213,7 +259,6 @@ const Map = {
         })
         var text=null
         libug.on('mouseover',e=>{
-          // console.log(e)
 
            text = new AMap.Text({
               text:iteam.name,
@@ -233,7 +278,7 @@ const Map = {
                   'font-size': '20px',
                   'color': 'blue'
               },
-              position: e.target.getPath()[2]
+              position: e.lnglat
           });
       
           text.setMap(this.M_map);
@@ -285,6 +330,7 @@ const Map = {
           if(type==5){
             this.toDetail(e.target.getExtData(),5)
           }
+          this.allstationin_openInfoWin([e.target.getExtData().lnglat[0],e.target.getExtData().lnglat[1]],e.target.getExtData())
         })
         lir.push(libug)
       }
@@ -339,7 +385,6 @@ const Map = {
             imageSize: [40, 40],
           })
         }
-        // console.log(iteam)
         let libug=new AMap.Marker({
           position: iteam.lnglat,
           icon: icons,
@@ -350,18 +395,11 @@ const Map = {
         libug.on('click',e=>{
           this.iszd=true
           this.detailobj=e.target.getExtData()
-          // console.log(this.detailobj)
-          this.toDetail(this.detailobj)
           this.allstationin_openInfoWin([this.detailobj.lnglat[0],this.detailobj.lnglat[1]],this.detailobj)  
-          this.M_openInfoWin(this.detailobj.lnglat,this.detailobj)
+          this.toDetail(this.detailobj)
+          // this.M_openInfoWin([this.detailobj.lnglat[0],this.detailobj.lnglat[1]],this.detailobj)
           
         })
-        // libug.on('mouseover',e=>{
-        // })
-        // libug.on('mouseout',e=>{
-        //  this.allstationin_closeInfoWin()
-
-        // })
         lir.push(libug)
       }
       
@@ -375,7 +413,6 @@ const Map = {
 
    // 创建站点窗口
   allstationin_createInfoWin(data) {
-    // console.log(data)
     this.allstationin_InfoWindow = new AMap.InfoWindow({
       isCustom: true,
       autoMove: true,
@@ -387,7 +424,6 @@ const Map = {
 
  // 打开站点信息窗口
   allstationin_openInfoWin(pos, info) {
-    // console.log(pos)
     
     let kcontent=  `<div class="info-win-sition">
     <div class="info-name">${info.name}</div>

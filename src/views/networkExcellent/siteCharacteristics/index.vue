@@ -350,17 +350,19 @@ export default {
         if (itam.name == row.name) {
           console.log(itam.routeLine)
           let routearr = []
-          let arr = itam.routeLine.split(';')
-          this.lineaData.forEach((iu, index) => {
-            arr.forEach(it => {
-              if (it == iu.name) {
-                iu.colors = this.allcolor[index]
-                routearr.push(iu)
-              }
+          if (itam.routeLine) {
+            let arr = itam.routeLine.split(';')
+            this.lineaData.forEach((iu, index) => {
+              arr.forEach(it => {
+                if (it == iu.name) {
+                  iu.colors = this.allcolor[index]
+                  routearr.push(iu)
+                }
+              })
             })
-          })
-          this.tjxuname = routearr
-          this.alllinepo(routearr, 2)
+            this.tjxuname = routearr
+            this.alllinepo(routearr, 2)
+          }
         }
       })
 
