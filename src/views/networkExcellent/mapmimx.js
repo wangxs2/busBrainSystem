@@ -107,7 +107,6 @@ const Map = {
   //绘制上南路
   gjxlwmsg(path,item){
     // console.log(11111)
-    
     this.linegjxlw = new AMap.Polyline({
       path: path,
       strokeColor:'#d80304',
@@ -117,7 +116,6 @@ const Map = {
       map:this.M_map,
       strokeStyle: "solid",
     })
-
     this.M_map.setFitView(this.linegjxlw,true)
 
   },
@@ -138,6 +136,37 @@ const Map = {
     })
 
     this.M_map.setFitView(this.linegjxlw,true)
+    
+    var text=null
+    this.linegjxlw.on('mouseover',e=>{
+
+       text = new AMap.Text({
+          text:item.routeName,
+          anchor:'center', // 设置文本标记锚点
+          draggable:true,
+          cursor:'pointer',
+          // angle:10,
+          style:{
+              'padding': '0.05rem 0.05rem',
+              'margin-bottom': '1rem',
+              'border-radius': '0.25rem',
+              'background-color': 'white',
+              'width': '1rem',
+              'border-width': 0,
+              'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+              'text-align': 'center',
+              'font-size': '20px',
+              'color': 'blue'
+          },
+          position: e.lnglat
+      });
+  
+      text.setMap(this.M_map);
+    })
+    this.linegjxlw.on('mouseout',e=>{
+      this.M_map.remove(text)
+
+    })
 
   },
   snmhx(arr){
@@ -324,7 +353,7 @@ const Map = {
           // console.log(this.detailobj)
           this.toDetail(this.detailobj)
           this.allstationin_openInfoWin([this.detailobj.lnglat[0],this.detailobj.lnglat[1]],this.detailobj)  
-          this.M_openInfoWin(this.detailobj)
+          this.M_openInfoWin(this.detailobj.lnglat,this.detailobj)
           
         })
         // libug.on('mouseover',e=>{

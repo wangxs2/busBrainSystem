@@ -181,11 +181,7 @@
         <div>分值</div>
       </div>
       <div class="tablbox">
-        <div
-          :class="nowindex == n ? 'bttit bttit1 bttit2' : 'bttit bttit1'"
-          v-for="(item, n) in adjustType"
-          :key="n"
-        >
+        <div class="bttit bttit1" v-for="(item, n) in adjustType" :key="n">
           <div>{{ item.name }}</div>
           <div>{{ item.value }}</div>
         </div>
@@ -251,7 +247,6 @@ export default {
   beforeCreate () { },
   created () {
     this.getroaddata()
-    this.assloading = false
     //  沪塘专线
     //     万周专线
     //     627路
@@ -277,6 +272,7 @@ export default {
     },
     // 线路排序
     lineSort () {
+      this.nowindex = null
       this.lineSortBtnShow = false
       this.lineSortShow = true
       this.searchInputBoxShow = false
@@ -291,13 +287,15 @@ export default {
       this.lineSortShow = false
       this.noLineOptimizeBtnShow = false
       this.noLineOptimizeShow = true
+      this.nowindex = null
     },
     // 非骨干线路优化确定按钮
     noLineOptionmizeConfirm () {
       this.adjustwayScoreShow = true
     },
-    // 调整方式-评分弹框
-    toDetailNoOptimize () {
+    // 点击非骨干列表展示调整方式-评分弹框
+    toDetailNoOptimize (row, index) {
+      this.nowindex = index
       this.lineSortBtnShow = false
       // 点击确定地图显示线路
     },
@@ -307,6 +305,7 @@ export default {
     },
     // 返回按钮
     goBack () {
+      this.nowindex = null
       this.searchInputBoxShow = true
       this.lineSortBtnShow = false
       this.lineSortShow = false
@@ -325,6 +324,7 @@ export default {
       return `rgb(${r},${g},${b})`; //返回rgb(r,g,b)格式颜色
     },
     getroaddata () {
+      this.assloading = true
       this.lineData = []
       this.lineDataNo = []
       this.$fetchPost(
@@ -336,6 +336,7 @@ export default {
           passengerOnline: Number(this.lineOpQuery.passengerOnline),
         }
       ).then(res => {
+        this.assloading = false
         this.lineData = res.result
         this.lineData.forEach((item, index) => {
           item.lineColor = this.randomRgbColor()
@@ -355,7 +356,7 @@ export default {
     toDetail (row, index) {
       this.nowindex = index
       this.alllinepo([row])
-      this.linewData1 = [itam]
+      this.linewData1 = [row]
 
     },
     toDetail1 () {
