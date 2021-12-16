@@ -83,9 +83,9 @@
       <div class="line-sort" @click="lineSort" v-if="lineSortBtnShow">
         线路排序
       </div>
-      <div class="line-sort" @click="lineOptimize" v-if="lineSortShow">
+      <!-- <div class="line-sort" @click="lineOptimize" v-if="lineSortShow">
         骨干线路优化
-      </div>
+      </div> -->
       <div
         class="line-sort"
         @click="noLineOptimize"
@@ -108,10 +108,10 @@
         <div style="position: relative">高峰发车间隔</div>
         <div>分值</div>
       </div>
+      <!-- @click="toDetail(item, n)" -->
       <div class="tablbox">
         <div
           :class="nowindex == n ? 'bttit bttit1 bttit2' : 'bttit bttit1'"
-          @click="toDetail(item, n)"
           v-for="(item, n) in lineData"
           :key="n"
         >
@@ -129,13 +129,9 @@
     </div>
 
     <div class="rightlinemsg2" v-if="lineSortShow">
-      <div class="tit">根据排名，上南路骨干线路为：</div>
+      <div class="tit">根据排名，上南路骨干线路如下所示，保持不动</div>
       <div class="content">
-        {{
-          lineData && lineData.length > 0
-            ? lineData[0].routeName + ',' + lineData[1].routeName
-            : ''
-        }}
+        {{ lineData && lineData.length > 0 ? lineData[0].routeName : '' }}
       </div>
     </div>
     <!-- 线路排序 -->
@@ -143,7 +139,7 @@
     <div class="rightlinemsg4" v-if="noLineOptimizeShow">
       <div class="tit">
         非骨干线路优化
-        <div class="btn confirm" @click="noLineOptionmizeConfirm">确 定</div>
+        <!-- <div class="btn confirm" @click="noLineOptionmizeConfirm">确 定</div> -->
       </div>
       <div class="bttit">
         <div>序号</div>
@@ -175,7 +171,7 @@
         </div>
       </div>
     </div>
-    <div class="rightlinemsg5" v-if="adjustwayScoreShow">
+    <!-- <div class="rightlinemsg5" v-if="adjustwayScoreShow">
       <div class="tit">
         评价
         <div class="btn confirm" @click="adjustScoreConfirm">确 定</div>
@@ -190,7 +186,7 @@
           <div>{{ item.value }}</div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- 非骨干线路优化 -->
   </div>
 </template>
@@ -279,13 +275,14 @@ export default {
       this.nowindex = null
       this.lineSortBtnShow = false
       this.lineSortShow = true
+      this.noLineOptimizeBtnShow = true
       this.searchInputBoxShow = false
     },
-    // 骨干线路优化
-    lineOptimize () {
-      // 点击地图显示线路
-      this.noLineOptimizeBtnShow = true
-    },
+    // // 骨干线路优化
+    // lineOptimize () {
+    // this.noLineOptimizeBtnShow = true
+    //   // 点击地图显示线路
+    // },
     // 非骨干线路优化
     noLineOptimize () {
       this.lineSortShow = false
@@ -294,9 +291,9 @@ export default {
       this.nowindex = null
     },
     // 非骨干线路优化确定按钮
-    noLineOptionmizeConfirm () {
-      this.adjustwayScoreShow = true
-    },
+    // noLineOptionmizeConfirm () {
+    //   this.adjustwayScoreShow = true
+    // },
     // 点击非骨干列表展示调整方式-评分弹框
     toDetailNoOptimize (row, index) {
       this.nowindex = index
@@ -345,7 +342,7 @@ export default {
         this.lineData.forEach((item, index) => {
           item.lineColor = this.randomRgbColor()
           this.lineSearchPudong(item.routeName, item)
-          if (index !== 0 && index !== 1) {
+          if (index !== 0) {
             this.lineDataNo.push(item)
           }
         })
