@@ -95,7 +95,7 @@ const Map = {
         if (status === 'complete' && result.info === 'OK') {
             // lineSearch_Callback(result);
             // console.log(result)
-            this.gjxlwmsg(result.lineInfo[0].path,item)
+            this.xwyhModelLine(result.lineInfo[0].path,item)
         } else {
             // alert(result);
         }
@@ -106,6 +106,25 @@ const Map = {
 
   //绘制上南路
   gjxlwmsg(path,item){
+    // console.log(11111)
+    
+    this.linegjxlw = new AMap.Polyline({
+      path: path,
+      strokeColor:'#d80304',
+      strokeOpacity: 1,
+      strokeWeight: 10,
+      zIndex:9999,
+      map:this.M_map,
+      strokeStyle: "solid",
+    })
+
+    this.M_map.setFitView(this.linegjxlw,true)
+
+  },
+  
+
+  //绘制线网优化页面公交线路
+  xwyhModelLine(path,item){
     // console.log(11111)
     
     this.linegjxlw = new AMap.Polyline({
@@ -304,10 +323,16 @@ const Map = {
           this.detailobj=e.target.getExtData()
           // console.log(this.detailobj)
           this.toDetail(this.detailobj)
-          this.allstationin_openInfoWin([this.detailobj.lnglat[0],this.detailobj.lnglat[1]],this.detailobj)
+          this.allstationin_openInfoWin([this.detailobj.lnglat[0],this.detailobj.lnglat[1]],this.detailobj)  
           this.M_openInfoWin(this.detailobj)
           
         })
+        // libug.on('mouseover',e=>{
+        // })
+        // libug.on('mouseout',e=>{
+        //  this.allstationin_closeInfoWin()
+
+        // })
         lir.push(libug)
       }
       

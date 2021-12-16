@@ -15,7 +15,6 @@
           v-model="lineOpQuery.length"
           placeholder="长度"
           type="number"
-          @change="toDetail1()"
         ></el-input>
         <div style="margin-left: 0.2vw">km</div>
         <!-- <el-select
@@ -43,7 +42,6 @@
           v-model="lineOpQuery.lengthOnlineZlPer"
           placeholder="长度"
           type="number"
-          @change="toDetail1()"
         ></el-input>
         <div style="margin-left: 0.2vw">%</div>
       </div>
@@ -55,7 +53,6 @@
           v-model="lineOpQuery.passengerOnlinePer"
           placeholder="客流量"
           type="number"
-          @change="toDetail1()"
         ></el-input>
         <div style="margin-left: 0.2vw">%</div>
       </div>
@@ -65,7 +62,6 @@
           v-model="lineOpQuery.passengerOnline"
           placeholder="客流量"
           type="number"
-          @change="toDetail1()"
         ></el-input>
       </div>
       <div class="search-box">
@@ -244,7 +240,7 @@ export default {
       searchInputBoxShow: true,
       lineOpQuery: {
         length: 13,
-        lengthOnlineZlPer: 80,
+        lengthOnlineZlPer: 40,
         passengerOnlinePer: 40,
         passengerOnline: 1000,
       },
@@ -275,6 +271,8 @@ export default {
     },
     // 确认搜索默认线网数据
     confirmSearch () {
+      this.M_map.clearMap();
+      this.getroaddata()
       this.lineSortBtnShow = true
     },
     // 线路排序
@@ -331,8 +329,12 @@ export default {
       this.lineDataNo = []
       this.$fetchPost(
         "net/xwyh",
-        this.lineOpQuery,
-        "json"
+        {
+          length: Number(this.lineOpQuery.length),
+          lengthOnlineZlPer: Number(this.lineOpQuery.lengthOnlineZlPer),
+          passengerOnlinePer: Number(this.lineOpQuery.passengerOnlinePer),
+          passengerOnline: Number(this.lineOpQuery.passengerOnline),
+        }
       ).then(res => {
         this.lineData = res.result
         this.lineData.forEach((item, index) => {
@@ -439,7 +441,7 @@ export default {
   .go-back {
     padding: vh(10) vw(16);
     position: absolute;
-    top: vh(120);
+    top: vh(140);
     left: vw(20);
     z-index: 10;
     background: rgba(12, 38, 104, 0.7);
@@ -453,7 +455,7 @@ export default {
   .search-box-wrapper {
     padding: vh(10) vw(16);
     position: absolute;
-    top: vh(180);
+    top: vh(200);
     left: vw(20);
     z-index: 10;
     background: rgba(12, 38, 104, 0.7);
@@ -713,7 +715,7 @@ export default {
   .rightlinemsg5 {
     position: absolute;
     top: vh(600);
-    left: vw(20);
+    right: vw(20);
     width: vw(450);
     z-index: 10;
     max-height: vh(260);
@@ -751,7 +753,7 @@ export default {
   .rightlinemsg4 {
     position: absolute;
     top: vh(180);
-    left: vw(20);
+    right: vw(20);
     max-width: vw(600);
     z-index: 10;
     max-height: vh(400);
