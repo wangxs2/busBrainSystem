@@ -33,6 +33,7 @@
       <div class="bttit">
         <div>序号</div>
         <div>线路名称</div>
+        <div>所属公司</div>
         <div style="position: relative">
           非直线系数
           <img
@@ -117,6 +118,7 @@
         >
           <div style="white-space: nowrap">{{ n + 1 }}</div>
           <div>{{ item.name }}</div>
+          <div>{{ item.company }}</div>
           <div>{{ item.fzxxs }}</div>
           <div>{{ item.lengthall }}</div>
           <div>{{ item.lhsleng }}</div>

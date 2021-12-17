@@ -567,8 +567,8 @@ const Map = {
         </div>
       </div>
     </div>`
-  this.M_openInfoWin(name.lnglat, kcontent)
-  this.M_map.setZoomAndCenter(16, name.lnglat,true)
+    this.M_openInfoWin(name.lnglat, kcontent)
+    this.M_map.setZoomAndCenter(16, name.lnglat,true)
 
   },
 
@@ -624,8 +624,221 @@ const Map = {
       this.M_InfoWindow.setContent(info)
       this.M_InfoWindow.open(this.M_map, pos)
     },
- 
+
     
+    //绘制所有的公交线路
+    zhounanxianLine (arr,type) {
+      let lir = [], lir1 = [],lir2 = [],zz=[]
+      if (this.kyLineOver) {
+        this.kyLineOver.clearOverlays()
+      }
+      if ( this.kymassnew){
+        this.kymassnew.clearOverlays()
+      }
+      var text = null
+      arr.forEach(iteam=> {
+        if (type==1){
+          if (iteam.geom) {
+            let libug = new AMap.Polyline({
+              path: this.Q_setData(iteam.geom),
+              strokeColor:iteam.lineColor,
+              strokeOpacity: 1,
+              strokeWeight: 5,
+              zIndex: 10,
+              cursor: 'pointer',
+              // map:this.M_map,
+              strokeStyle: "solid",
+            })
+            libug.on('mouseover', e => {
+
+              text = new AMap.Text({
+                text: iteam.routeName,
+                anchor: 'center', // 设置文本标记锚点
+                draggable: true,
+                cursor: 'pointer',
+                // angle:10,
+                style: {
+                  'padding': '0.05rem 0.05rem',
+                  'margin-bottom': '1rem',
+                  'border-radius': '0.25rem',
+                  'background-color': 'white',
+                  'width': '1rem',
+                  'border-width': 0,
+                  'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                  'text-align': 'center',
+                  'font-size': '20px',
+                  'color': 'blue'
+                },
+                position: e.lnglat
+              });
+
+              text.setMap(this.M_map);
+            })
+            libug.on('mouseout', e => {
+              this.M_map.remove(text)
+
+            })
+            lir.push(libug)
+          }
+          zz=zz.concat(lir)
+        } else {
+          if(iteam.adjustPer){
+
+            let libug=new AMap.Marker({
+              position: [121.612223,31.102648],
+              icon: require('../../assets/image/icon_gj1.png'),
+              offset: new AMap.Pixel(-12, -12),
+              extData: {
+                name:'医学园区公交枢纽站'
+              },
+              cursor: 'pointer',
+            })
+            libug.on('click',e=>{
+              this.iszd=true
+              this.detailobj=e.target.getExtData()
+              this.allstationin_openInfoWin([121.612223,31.102648],e.target.getExtData())  
+              // this.toDetail(this.detailobj)
+              // this.M_openInfoWin([this.detailobj.lnglat[0],this.detailobj.lnglat[1]],this.detailobj)
+              
+            })
+            this.kymassnew.addOverlays([libug])
+            this.M_map.add(this.kymassnew)
+          }
+
+          if (iteam.geom) {
+            let libug = new AMap.Polyline({
+              path: this.Q_setData(iteam.geom),
+              strokeColor:'#007aff',
+              strokeOpacity: 1,
+              strokeWeight: 5,
+              zIndex: 10,
+              cursor: 'pointer',
+              // map:this.M_map,
+              strokeStyle: "solid",
+            })
+            libug.on('mouseover', e => {
+
+              text = new AMap.Text({
+                text: iteam.routeName,
+                anchor: 'center', // 设置文本标记锚点
+                draggable: true,
+                cursor: 'pointer',
+                // angle:10,
+                style: {
+                  'padding': '0.05rem 0.05rem',
+                  'margin-bottom': '1rem',
+                  'border-radius': '0.25rem',
+                  'background-color': 'white',
+                  'width': '1rem',
+                  'border-width': 0,
+                  'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                  'text-align': 'center',
+                  'font-size': '20px',
+                  'color': 'blue'
+                },
+                position: e.lnglat
+              });
+
+              text.setMap(this.M_map);
+            })
+            libug.on('mouseout', e => {
+              this.M_map.remove(text)
+
+            })
+            lir.push(libug)
+          }
+          if (iteam.adjustPer) {
+            let libug1 = new AMap.Polyline({
+              path: this.Q_setData(iteam.adjustPer),
+              strokeColor:'#FECB00',
+              strokeOpacity: 1,
+              strokeWeight: 5,
+              zIndex: 10,
+              cursor: 'pointer',
+              // map:this.M_map,
+              strokeStyle: "dashed",
+            })
+            libug1.on('mouseover', e => {
+
+              text = new AMap.Text({
+                text: iteam.routeName,
+                anchor: 'center', // 设置文本标记锚点
+                draggable: true,
+                cursor: 'pointer',
+                // angle:10,
+                style: {
+                  'padding': '0.05rem 0.05rem',
+                  'margin-bottom': '1rem',
+                  'border-radius': '0.25rem',
+                  'background-color': 'white',
+                  'width': '1rem',
+                  'border-width': 0,
+                  'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                  'text-align': 'center',
+                  'font-size': '20px',
+                  'color': 'blue'
+                },
+                position: e.lnglat
+              });
+
+              text.setMap(this.M_map);
+            })
+            libug1.on('mouseout', e => {
+              this.M_map.remove(text)
+
+            })
+            lir1.push(libug1)
+          }
+          if (iteam.adjustNext) {
+            let libug2 = new AMap.Polyline({
+              path: this.Q_setData(iteam.adjustNext),
+              strokeColor: '#ff6e00',
+              strokeOpacity: 1,
+              strokeWeight: 5,
+              strokeStyle: 'dashed',
+              strokeDasharray: [10, 5],
+              zIndex: 10,
+              cursor: 'pointer',
+              // map:this.M_map,
+            })
+            libug2.on('mouseover', e => {
+
+              text = new AMap.Text({
+                text: iteam.name,
+                anchor: 'center', // 设置文本标记锚点
+                draggable: true,
+                cursor: 'pointer',
+                // angle:10,
+                style: {
+                  'padding': '0.05rem 0.05rem',
+                  'margin-bottom': '1rem',
+                  'border-radius': '0.25rem',
+                  'background-color': 'white',
+                  'width': '1rem',
+                  'border-width': 0,
+                  'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                  'text-align': 'center',
+                  'font-size': '20px',
+                  'color': 'blue'
+                },
+                position: e.lnglat
+              });
+
+              text.setMap(this.M_map);
+            })
+            libug2.on('mouseout', e => {
+              this.M_map.remove(text)
+
+            })
+            lir2.push(libug2)
+          }
+           zz = lir.concat(lir2,lir1)
+        }
+  
+        this.kyLineOver.addOverlays(zz)
+        this.M_map.add(this.kyLineOver)
+      })
+    },
   }
 }
 

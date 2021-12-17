@@ -72,10 +72,30 @@
         <div class="btn confirm" @click="confirmSearch">确 定</div>
       </div>
     </div>
-    <div class="line-color-box">
-      <div class="name-line" v-for="(item, index) in lineData" :key="index">
-        <div class="name">{{ item.routeName }}</div>
-        <div class="line" :style="{ background: item.lineColor }"></div>
+    <div class="line-color-box" v-if="lineTipBox">
+      <div v-if="lineData && lineData.length > 0">
+        <div class="name-line" v-for="(item, index) in lineData" :key="index">
+          <div class="name">{{ item.routeName }}</div>
+          <div class="line" :style="{ background: item.lineColor }"></div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="name-line">
+          <div class="name">暂无数据</div>
+        </div>
+      </div>
+    </div>
+    <div class="line-color-box" v-if="!lineTipBox">
+      <div class="name-line">
+        <div class="name">调整前</div>
+        <div class="line" style="background: #007aff"></div>
+      </div>
+      <div class="name-line name-line1">
+        <div class="name">调整后</div>
+        <div class="line-box">
+          <div class="line1" style="background: #fecb00"></div>
+          <div class="line1" style="background: #ff6e00"></div>
+        </div>
       </div>
     </div>
     <!-- 线路排序按钮 -->
@@ -193,6 +213,7 @@
 <script>
 import MapMixin from '../mapmimx'
 import myline from '../linall.json'
+import zhounanxianLine from '../zhounanxianLine.json'
 export default {
   mixins: [MapMixin],
   components: {
@@ -234,6 +255,7 @@ export default {
       noLineOptimizeShow: false,
       adjustwayScoreShow: false,
       searchInputBoxShow: true,
+      lineTipBox: true,
       lineOpQuery: {
         length: 13,
         lengthOnlineZlPer: 60,
@@ -241,12 +263,13 @@ export default {
         passengerOnline: 1000,
       },
       lineData: [],
-      lineDataNo: []
+      lineDataNo: [],
+      lineAllRouteData: []
     };
   },
   beforeCreate () { },
   created () {
-    this.getroaddata()
+    this.getAllRouteData()
     //  沪塘专线
     //     万周专线
     //     627路
@@ -296,6 +319,8 @@ export default {
     // },
     // 点击非骨干列表展示调整方式-评分弹框
     toDetailNoOptimize (row, index) {
+      this.lineTipBox = false
+      this.zhounanxianLine([row], 2)
       this.nowindex = index
       this.lineSortBtnShow = false
       // 点击确定地图显示线路
@@ -313,6 +338,8 @@ export default {
       this.noLineOptimizeBtnShow = false
       this.noLineOptimizeShow = false
       this.adjustwayScoreShow = false
+      this.getroaddata()
+      this.lineTipBox = true
     },
     expertont () {
       this.linewData1 = this.linewData
@@ -324,8 +351,33 @@ export default {
       var b = Math.floor(Math.random() * 256); //随机生成256以内b值
       return `rgb(${r},${g},${b})`; //返回rgb(r,g,b)格式颜色
     },
-    getroaddata () {
+    getAllRouteData () {
       this.assloading = true
+      this.$fetchPost(
+        "route/composite",
+        {
+          cfd: -1, // 重复度
+          gjcf: -1,
+          fzxxs: -1, // 非直线系数
+          cd: -1, // 长度
+          bglrc: -1, // 百公里人次
+          mzl: -1, // 满载率
+          ifFilter: true
+        },
+        "json"
+      ).then(res => {
+        res.result.forEach(iteam => {
+          myline.forEach(itam => {
+            if (iteam.lineName == itam.name) {
+              itam.geom = iteam.geom
+            }
+          })
+        })
+        this.lineAllRouteData = myline
+        this.getroaddata()
+      })
+    },
+    getroaddata () {
       this.lineData = []
       this.lineDataNo = []
       this.$fetchPost(
@@ -338,15 +390,27 @@ export default {
         }
       ).then(res => {
         this.assloading = false
-        this.lineData = res.result
+        res.result.forEach(iteam => {
+          this.lineAllRouteData.forEach((item, index) => {
+            if (item.name == iteam.routeName) {
+              iteam.geom = item.geom
+              iteam.lineColor = this.randomRgbColor()
+              this.lineData.push(iteam)
+
+            }
+          })
+        })
         this.lineData.forEach((item, index) => {
-          item.lineColor = this.randomRgbColor()
-          this.lineSearchPudong(item.routeName, item)
+          if (item.routeName == '周南线') {
+            item.adjustPer = zhounanxianLine.adjustPer
+            item.adjustNext = zhounanxianLine.adjustNext
+          }
           if (index !== 0) {
             this.lineDataNo.push(item)
           }
         })
 
+        this.zhounanxianLine(this.lineData, 1)
 
       })
 
@@ -496,7 +560,7 @@ export default {
     left: vw(20);
     width: vw(300);
     z-index: 10;
-    height: vh(300);
+    max-height: vh(300);
     padding: vh(20) vw(20);
     // overflow: hidden;
     flex-direction: column;
@@ -511,6 +575,9 @@ export default {
       display: flex;
       align-items: center;
       margin-bottom: vh(10);
+      &:last-child {
+        margin-bottom: 0;
+      }
       .name {
         font-size: vw(20);
         color: #fff;
@@ -519,6 +586,19 @@ export default {
         width: vw(100);
         height: vh(8);
         margin-left: vw(20);
+      }
+      &.name-line1 {
+        .line-box {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-left: vw(20);
+          width: vw(100);
+          .line1 {
+            width: vw(45);
+            height: vh(8);
+          }
+        }
       }
     }
   }
