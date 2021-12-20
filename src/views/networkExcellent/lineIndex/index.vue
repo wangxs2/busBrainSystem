@@ -289,7 +289,7 @@ export default {
       this.nowindex = index
       this.alllinepo([row])
       this.stationSearchPudong([row])
-      this.linewData1 = [itam]
+      this.linewData1 = [row]
 
     },
     toDetail1 (val) {

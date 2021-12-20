@@ -90,11 +90,17 @@
         <div class="name">调整前</div>
         <div class="line" style="background: #007aff"></div>
       </div>
-      <div class="name-line name-line1">
+      <div class="name-line name-line1" v-if="lineName == '周南线'">
         <div class="name">调整后</div>
         <div class="line-box">
           <div class="line1" style="background: #fecb00"></div>
           <div class="line1" style="background: #ff6e00"></div>
+        </div>
+      </div>
+      <div class="name-line" v-if="lineName == '978路'">
+        <div class="name">调整后</div>
+        <div class="line-box" v-if="lineName == '978路'">
+          <div class="line" style="background: #ff6e00"></div>
         </div>
       </div>
     </div>
@@ -264,7 +270,8 @@ export default {
       },
       lineData: [],
       lineDataNo: [],
-      lineAllRouteData: []
+      lineAllRouteData: [],
+      lineName: ''
     };
   },
   beforeCreate () { },
@@ -279,7 +286,7 @@ export default {
 
   },
   mounted () {
-    this.M_initMap('lineIndex')
+    this.M_initMap('lineIndex', 11, [121.544346, 31.221461])
   },
 
   methods: {
@@ -320,6 +327,7 @@ export default {
     // 点击非骨干列表展示调整方式-评分弹框
     toDetailNoOptimize (row, index) {
       this.lineTipBox = false
+      this.lineName = row.routeName
       this.zhounanxianLine([row], 2)
       this.nowindex = index
       this.lineSortBtnShow = false
@@ -340,6 +348,7 @@ export default {
       this.adjustwayScoreShow = false
       this.getroaddata()
       this.lineTipBox = true
+      this.M_map.setZoomAndCenter(11, [121.544346, 31.221461])
     },
     expertont () {
       this.linewData1 = this.linewData
@@ -404,6 +413,9 @@ export default {
           if (item.routeName == '周南线') {
             item.adjustPer = zhounanxianLine.adjustPer
             item.adjustNext = zhounanxianLine.adjustNext
+          }
+          if (item.routeName == '978路') {
+            item.line798OldGeomNew = zhounanxianLine.line798OldGeomNew
           }
           if (index !== 0) {
             this.lineDataNo.push(item)
