@@ -17,22 +17,6 @@
           type="number"
         ></el-input>
         <div style="margin-left: 0.2vw">km</div>
-        <!-- <el-select
-          size="small"
-          filterable
-          clearable
-          @clear="expertont"
-          @change="toDetail1()"
-          v-model="value"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="(item, index) in linewData"
-            :key="index"
-            :label="item.name"
-            :value="item.name"
-          ></el-option>
-        </el-select> -->
       </div>
       <div class="search-box">
         <div style="margin-right: 0.6vw; width: 15vw">
@@ -68,7 +52,6 @@
         <div style="margin-right: 0.6vw; width: 15vw">定班线筛除</div>
       </div>
       <div class="btn-box">
-        <!-- <div class="btn cancel" @click="cancelSearch">取 消</div> -->
         <div class="btn confirm" @click="confirmSearch">确 定</div>
       </div>
     </div>
@@ -134,7 +117,6 @@
         <div style="position: relative">高峰发车间隔</div>
         <div>分值</div>
       </div>
-      <!-- @click="toDetail(item, n)" -->
       <div class="tablbox">
         <div
           :class="nowindex == n ? 'bttit bttit1 bttit2' : 'bttit bttit1'"
@@ -227,12 +209,7 @@ export default {
   data () {
     return {
       nowindex: -1,
-      value: '',
-      snroad: '121.49271,31.186894,121.493453,31.183938,121.493926,31.18176,121.494625,31.178514,121.494946,31.17707,121.495417,31.174377,121.495666,31.173264,121.496045,31.171363,121.496526,31.170036,121.496946,31.16796,121.497064,31.166019,121.497185,31.16426,121.497434,31.162621,121.49773,31.161365,121.498394,31.159383,121.49941,31.157792,121.50027,31.156861,121.501573,31.155051,121.502069,31.154084,121.502791,31.153049,121.504402,31.151955,121.505419,31.151051,121.50563,31.150697,121.506013,31.149826,121.506485,31.148637,121.507918,31.146588,121.509881,31.144123,121.511801,31.141768,121.512654,31.140481,121.514089,31.138258,121.516229,31.134982,121.519945,31.128903,121.521159,31.126932',
       assloading: true,
-      linewData: [],
-      linewData1: [],
-      input: '',
       adjustType: [
         {
           name: '缩短',
@@ -271,29 +248,19 @@ export default {
       lineData: [],
       lineDataNo: [],
       lineAllRouteData: [],
-      lineName: ''
+      lineName: '',
+      mapCenterLnglat: [121.544346, 31.221461]
     };
   },
   beforeCreate () { },
   created () {
     this.getAllRouteData()
-    //  沪塘专线
-    //     万周专线
-    //     627路
-    //     973路
-    //     755路
-    //     810路
-
   },
   mounted () {
-    this.M_initMap('lineIndex', 11, [121.544346, 31.221461])
+    this.M_initMap('lineIndex', 11, this.mapCenterLnglat)
   },
 
   methods: {
-    // 取消搜索默认线网数据
-    cancelSearch () {
-
-    },
     // 确认搜索默认线网数据
     confirmSearch () {
       this.M_map.clearMap();
@@ -326,9 +293,10 @@ export default {
     // },
     // 点击非骨干列表展示调整方式-评分弹框
     toDetailNoOptimize (row, index) {
+      this.setPloylineArr = []
       this.lineTipBox = false
       this.lineName = row.routeName
-      this.zhounanxianLine([row], 2)
+      this.lineAndTextModel([row], 2)
       this.nowindex = index
       this.lineSortBtnShow = false
       // 点击确定地图显示线路
@@ -348,11 +316,7 @@ export default {
       this.adjustwayScoreShow = false
       this.getroaddata()
       this.lineTipBox = true
-      this.M_map.setZoomAndCenter(11, [121.544346, 31.221461])
-    },
-    expertont () {
-      this.linewData1 = this.linewData
-      this.alllinepo(this.linewData)
+      this.M_map.setZoomAndCenter(11, this.mapCenterLnglat)
     },
     randomRgbColor () { //随机生成RGB颜色
       var r = Math.floor(Math.random() * 256); //随机生成256以内r值
@@ -387,6 +351,7 @@ export default {
       })
     },
     getroaddata () {
+      this.assloading = true
       this.lineData = []
       this.lineDataNo = []
       this.$fetchPost(
@@ -413,38 +378,22 @@ export default {
           if (item.routeName == '周南线') {
             item.adjustPer = zhounanxianLine.adjustPer
             item.adjustNext = zhounanxianLine.adjustNext
+            item.centerLnglat = [121.612223, 31.102648]
           }
           if (item.routeName == '978路') {
             item.line798OldGeomNew = zhounanxianLine.line798OldGeomNew
+            item.centerLnglat = [121.492129, 31.154291]
           }
           if (index !== 0) {
             this.lineDataNo.push(item)
           }
         })
 
-        this.zhounanxianLine(this.lineData, 1)
+        this.lineAndTextModel(this.lineData, 1)
 
       })
 
     },
-    getGaoDeLine (name) {
-
-    },
-    toDetail (row, index) {
-      this.nowindex = index
-      this.alllinepo([row])
-      this.linewData1 = [row]
-
-    },
-    toDetail1 () {
-      this.linewData.forEach(itam => {
-        if (itam.name == this.value) {
-          this.alllinepo([itam])
-          this.linewData1 = [itam]
-        }
-      })
-
-    }
 
   }
 };
