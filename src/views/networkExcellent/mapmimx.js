@@ -169,6 +169,21 @@ const Map = {
     this.M_map.setFitView(this.linegjxlw,true)
 
   },
+
+  //绘制上南路
+  gjxlwmsg1(path,item){
+    let linegjxlw = new AMap.Polyline({
+      path: path,
+      strokeColor:'#e95757',
+      strokeOpacity: 1,
+      strokeWeight: 10,
+      zIndex:9999,
+      map:this.M_map,
+      strokeStyle: "solid",
+    })
+    this.M_map.setFitView(this.linegjxlw,true)
+
+  },
   
 
   //绘制线网优化页面公交线路
@@ -245,8 +260,10 @@ const Map = {
   //绘制所有的公交线路
   alllinepo(arr,type){
     let lir=[]
+  
     if(this.kyLineOver){
       this.kyLineOver.clearOverlays()
+      // this.M_map.remove(this.kyLineOver)
     }
     arr.forEach(iteam=>{
       if(iteam.geom){
@@ -344,6 +361,47 @@ const Map = {
     })
     this.kymassnew.addOverlays(lir)
       this.M_map.add(this.kymassnew)
+
+  },
+  //绘制所有的站点
+  allstation2(arr,type){
+
+    let lir=[]
+    // if(this.kymassnew){
+    //   this.kymassnew.clearOverlays()
+    // }
+    arr.forEach(iteam=>{
+      if(iteam.lnglat){
+        let libug=new AMap.Marker({
+          position: iteam.lnglat,
+          icon: new AMap.Icon({
+            image: iteam.type==1?require('../../assets/image/icon_dt.png'):require('../../assets/image/icon_gj1.png'),
+            size: [24, 24],
+            imageSize: [24, 24],
+          }),
+          offset: new AMap.Pixel(-12, -12),
+          extData: iteam,
+          cursor: 'pointer',
+        })
+        // libug.on('click',e=>{
+        //   // this.iszd=true
+        //   // this.detailobj=e.target.getExtData()
+        //   if(e.target.getExtData().type==1){
+        //     this.toDetail(e.target.getExtData())
+        //   }
+        //   if(type==5){
+        //     this.toDetail(e.target.getExtData(),5)
+        //   }
+        //   this.allstationin_openInfoWin([e.target.getExtData().lnglat[0],e.target.getExtData().lnglat[1]],e.target.getExtData())
+        // })
+        lir.push(libug)
+      }
+      
+      
+      
+    })
+    // this.kymassnew.addOverlays(lir)
+      this.M_map.add(lir)
 
   },
 
@@ -632,6 +690,7 @@ const Map = {
     
     //线网优化页面线路 划线，text 显示
     lineAndTextModel (arr,type) {
+      this.setPloylineArr=[]
       if (this.kyLineOver) {
         this.kyLineOver.clearOverlays()
       }

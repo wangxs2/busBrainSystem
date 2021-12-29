@@ -14,6 +14,7 @@
         <el-input
           v-model="lineOpQuery.length"
           placeholder="长度"
+          size="small"
           type="number"
         ></el-input>
         <div style="margin-left: 0.2vw">km</div>
@@ -25,6 +26,7 @@
         <el-input
           v-model="lineOpQuery.lengthOnlineZlPer"
           placeholder="长度"
+          size="small"
           type="number"
         ></el-input>
         <div style="margin-left: 0.2vw">%</div>
@@ -36,6 +38,7 @@
         <el-input
           v-model="lineOpQuery.passengerOnlinePer"
           placeholder="客流量"
+          size="small"
           type="number"
         ></el-input>
         <div style="margin-left: 0.2vw">%</div>
@@ -45,6 +48,7 @@
         <el-input
           v-model="lineOpQuery.passengerOnline"
           placeholder="客流量"
+          size="small"
           type="number"
         ></el-input>
       </div>
@@ -52,7 +56,81 @@
         <div style="margin-right: 0.6vw; width: 15vw">定班线筛除</div>
       </div>
       <div class="btn-box">
-        <div class="btn confirm" @click="confirmSearch">确 定</div>
+        <div class="btn confirm" style="cursor:pointer" @click="confirmSearch">确 定</div>
+      </div>
+    </div>
+    <div class="search-box-wrapper1" v-if="lineSortBtnShow">
+      <div style="display: flex;justify-content:space-between;margin-bottom:1.6vh;font-weight:bold">
+        <div>因素</div>
+        <div style="width:28%">权重</div>
+      </div>
+      <div class="search-box">
+        <div style="margin-right: 0.6vw; width: 15vw">线路途经客运走廊的客流量</div>
+        <el-input
+          v-model="lineOpQuery1.length1"
+          placeholder="线路途经客运走廊的客流量"
+          size="small"
+          type="number"
+        ></el-input>
+        <div style="margin-left: 0.2vw">%</div>
+      </div>
+      <div class="search-box">
+        <div style="margin-right: 0.6vw; width: 15vw">
+          高峰发车间隔
+        </div>
+        <el-input
+          v-model="lineOpQuery1.length2"
+          placeholder="高峰发车间隔"
+          size="small"
+          type="number"
+        ></el-input>
+        <div style="margin-left: 0.2vw">%</div>
+      </div>
+      <div class="search-box">
+        <div style="margin-right: 0.6vw; width: 15vw">
+          途经客运走廊线路长度
+        </div>
+        <el-input
+          v-model="lineOpQuery1.length3"
+          placeholder="途经客运走廊线路长度"
+          size="small"
+          type="number"
+        ></el-input>
+        <div style="margin-left: 0.2vw">%</div>
+      </div>
+      <div class="search-box">
+        <div style="margin-right: 0.6vw; width: 15vw">线路客流量</div>
+        <el-input
+          v-model="lineOpQuery1.length4"
+          placeholder="线路客流量"
+          size="small"
+          type="number"
+        ></el-input>
+        <div style="margin-left: 0.2vw">%</div>
+      </div>
+      <div class="search-box">
+        <div style="margin-right: 0.6vw; width: 15vw">非直线系数</div>
+        <el-input
+          v-model="lineOpQuery1.length5"
+          placeholder="非直线系数"
+          size="small"
+          type="number"
+        ></el-input>
+        <div style="margin-left: 0.2vw">%</div>
+      </div>
+       <div class="search-box">
+        <div style="margin-right: 0.6vw; width: 15vw">途经客运走廊线路长度占比</div>
+        <el-input
+          v-model="lineOpQuery1.length6"
+          placeholder="途经客运走廊线路长度占比"
+          size="small"
+          type="number"
+        ></el-input>
+        <div style="margin-left: 0.2vw">%</div>
+      </div>
+      
+      <div class="btn-box">
+        <!-- <div class="btn confirm" style="cursor:pointer" @click="confirmSearch">确 定</div> -->
       </div>
     </div>
     <div class="line-color-box" v-if="lineTipBox">
@@ -201,6 +279,7 @@
 <script>
 import MapMixin from '../mapmimx'
 import myline from '../linall.json'
+import mystatezcg from '../gjzdlat1.json'
 import zhounanxianLine from '../zhounanxianLine.json'
 export default {
   mixins: [MapMixin],
@@ -209,7 +288,8 @@ export default {
   data () {
     return {
       nowindex: -1,
-      assloading: true,
+      assloading: false,
+      snroad: '121.49271,31.186894,121.493453,31.183938,121.493926,31.18176,121.494625,31.178514,121.494946,31.17707,121.495417,31.174377,121.495666,31.173264,121.496045,31.171363,121.496526,31.170036,121.496946,31.16796,121.497064,31.166019,121.497185,31.16426,121.497434,31.162621,121.49773,31.161365,121.498394,31.159383,121.49941,31.157792,121.50027,31.156861,121.501573,31.155051,121.502069,31.154084,121.502791,31.153049,121.504402,31.151955,121.505419,31.151051,121.50563,31.150697,121.506013,31.149826,121.506485,31.148637,121.507918,31.146588,121.509881,31.144123,121.511801,31.141768,121.512654,31.140481,121.514089,31.138258,121.516229,31.134982,121.519945,31.128903,121.521159,31.126932',
       adjustType: [
         {
           name: '缩短',
@@ -245,6 +325,15 @@ export default {
         passengerOnlinePer: 40,
         passengerOnline: 1000,
       },
+      lineOpQuery1:{
+        length1: 18,
+        length2: 17,
+        length3: 17,
+        length4: 16,
+        length5: 16,
+        length6: 16,
+
+      },
       lineData: [],
       lineDataNo: [],
       lineAllRouteData: [],
@@ -258,6 +347,8 @@ export default {
   },
   mounted () {
     this.M_initMap('lineIndex', 11, this.mapCenterLnglat)
+    this.gjxlwmsg1(this.TestsetData(this.snroad, 2))
+    this.allstation2(mystatezcg)
   },
 
   methods: {
@@ -269,11 +360,79 @@ export default {
     },
     // 线路排序
     lineSort () {
-      this.nowindex = null
+      console.log(this.lineOpQuery1.length1)
+      console.log(Number(this.lineOpQuery1.length1)+Number(this.lineOpQuery1.length2)+Number(this.lineOpQuery1.length3)+Number(this.lineOpQuery1.length4)+Number(this.lineOpQuery1.length5)+Number(this.lineOpQuery1.length6))
+
+      if(this.lineOpQuery1.length1==''||this.lineOpQuery1.length2==''||this.lineOpQuery1.length3==''||this.lineOpQuery1.length4==''||this.lineOpQuery1.length5==''||this.lineOpQuery1.length6==''){
+          this.$message({
+          message: '所有因素权重值不能为空！！！',
+          type: 'warning',
+          duration:4000
+        });
+      }else if(Number(this.lineOpQuery1.length1)+Number(this.lineOpQuery1.length2)+Number(this.lineOpQuery1.length3)+Number(this.lineOpQuery1.length4)+Number(this.lineOpQuery1.length5)+Number(this.lineOpQuery1.length6)!==100){
+         this.$message({
+          message: '所有因素权重值相加必须等于1！！！',
+          type: 'warning',
+          duration:4000
+        });
+      }else{
+
+        this.nowindex = null
       this.lineSortBtnShow = false
       this.lineSortShow = true
       this.noLineOptimizeBtnShow = true
       this.searchInputBoxShow = false
+
+         this.assloading = true
+        this.lineData = []
+        this.lineDataNo = []
+       
+        this.$fetchPost(
+          "net/xwyh",
+          {
+            length: Number(this.lineOpQuery.length),
+            lengthOnlineZlPer: Number(this.lineOpQuery.lengthOnlineZlPer),
+            passengerOnlinePer: Number(this.lineOpQuery.passengerOnlinePer),
+            passengerOnline: Number(this.lineOpQuery.passengerOnline),
+            per1:Number(this.lineOpQuery1.length1)/100,
+            per2:Number(this.lineOpQuery1.length2)/100,
+            per3:Number(this.lineOpQuery1.length3)/100,
+            per4:Number(this.lineOpQuery1.length4)/100,
+            per5:Number(this.lineOpQuery1.length5)/100,
+            per6:Number(this.lineOpQuery1.length6)/100
+          }
+        ).then(res => {
+          this.assloading = false
+          res.result.forEach(iteam => {
+            this.lineAllRouteData.forEach((item, index) => {
+              if (item.name == iteam.routeName) {
+                iteam.geom = item.geom
+                iteam.lineColor = this.randomRgbColor()
+                this.lineData.push(iteam)
+
+              }
+            })
+          })
+          this.lineData.forEach((item, index) => {
+            if (item.routeName == '周南线') {
+              item.adjustPer = zhounanxianLine.adjustPer
+              item.adjustNext = zhounanxianLine.adjustNext
+              item.centerLnglat = [121.612223, 31.102648]
+            }
+            if (item.routeName == '978路') {
+              item.line798OldGeomNew = zhounanxianLine.line798OldGeomNew
+              item.centerLnglat = [121.492129, 31.154291]
+            }
+            if (index !== 0) {
+              this.lineDataNo.push(item)
+            }
+          })
+
+          this.lineAndTextModel(this.lineData, 1)
+
+        })
+
+      }
     },
     // // 骨干线路优化
     // lineOptimize () {
@@ -346,14 +505,17 @@ export default {
             }
           })
         })
+        this.assloading = false
         this.lineAllRouteData = myline
-        this.getroaddata()
+        // this.getroaddata()
       })
     },
     getroaddata () {
       this.assloading = true
       this.lineData = []
       this.lineDataNo = []
+      this.gjxlwmsg1(this.TestsetData(this.snroad, 2))
+      this.allstation2(mystatezcg)
       this.$fetchPost(
         "net/xwyh",
         {
@@ -361,6 +523,12 @@ export default {
           lengthOnlineZlPer: Number(this.lineOpQuery.lengthOnlineZlPer),
           passengerOnlinePer: Number(this.lineOpQuery.passengerOnlinePer),
           passengerOnline: Number(this.lineOpQuery.passengerOnline),
+          // per1:Number(this.lineOpQuery1.length1)/100,
+          // per2:Number(this.lineOpQuery1.length2)/100,
+          // per3:Number(this.lineOpQuery1.length3)/100,
+          // per4:Number(this.lineOpQuery1.length4)/100,
+          // per5:Number(this.lineOpQuery1.length5)/100,
+          // per6:Number(this.lineOpQuery1.length6)/100
         }
       ).then(res => {
         this.assloading = false
@@ -388,7 +556,7 @@ export default {
             this.lineDataNo.push(item)
           }
         })
-
+       
         this.lineAndTextModel(this.lineData, 1)
 
       })
@@ -485,8 +653,8 @@ export default {
     top: vh(200);
     left: vw(20);
     z-index: 10;
-    background: rgba(12, 38, 104, 0.7);
-
+    background: rgba(12, 38, 104, 0.8);
+    box-shadow: 0px 0px vh(15) rgba(69, 120, 255, 1) inset;
     .search-box {
       box-sizing: border-box;
       display: flex;
@@ -504,7 +672,7 @@ export default {
       display: flex;
       justify-content: flex-end;
       .btn {
-        padding: vh(10) vw(20);
+        padding: vh(8) vw(16);
         border: 1px solid #27b6ff;
         border-radius: vw(5);
         &.cancel {
@@ -514,6 +682,43 @@ export default {
         }
       }
     }
+  }
+  .search-box-wrapper1{
+    padding: vh(10) vw(16);
+    position: absolute;
+    top: vh(200);
+    right: vw(20);
+    z-index: 10;
+    background: rgba(12, 38, 104, 0.8);
+    box-shadow: 0px 0px vh(15) rgba(69, 120, 255, 1) inset;
+    .search-box {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      color: #dae4ff;
+      margin-bottom: vh(10);
+      &:last-child {
+        margin-bottom: 0;
+      }
+      .el-input {
+        width: vw(100);
+      }
+    }
+    .btn-box {
+      display: flex;
+      justify-content: flex-end;
+      .btn {
+        padding: vh(8) vw(16);
+        border: 1px solid #27b6ff;
+        border-radius: vw(5);
+        &.cancel {
+        }
+        &.confirm {
+          margin-left: vw(10);
+        }
+      }
+    }
+
   }
   .line-color-box {
     position: absolute;
@@ -572,6 +777,7 @@ export default {
     .line-sort {
       font-size: vw(20);
       padding: vh(10) vw(20);
+      
       background: rgba(12, 38, 104, 1);
       border: 1px solid rgba(69, 120, 255, 0.6);
       box-shadow: 0px 0px vh(15) rgba(69, 120, 255, 1) inset;

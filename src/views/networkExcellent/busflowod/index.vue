@@ -118,7 +118,7 @@ export default {
 
     },
       getall(){
-          this.$fetchGet("tranfer/odList",{
+          this.$fetchGet("transfer/odList",{
             date:this.value1,
             lineName:this.value,
             type:this.isbtn
@@ -134,9 +134,6 @@ export default {
                         this.M_map.remove(this.marker2)
                         this.M_map.remove(this.busPolylineod)
                     }
-
-                    
-                   
                     //实例化公交线路查询类，只取回一条路线
                     if(!this.linesearch1){
                         this.linesearch1 = new AMap.LineSearch({
